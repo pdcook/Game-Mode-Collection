@@ -1,0 +1,12 @@
+﻿{
+  "name": "Deck_Builder",
+  "version_number": "#VERSION#",
+  "website_url": "https://github.com/pdcook/DeckBuilder",
+  "description": "Assemble your deck before the match!",
+  "dependencies": [
+    "willis81808-UnboundLib-2.10.2",
+    "willis81808-MMHook-1.0.0",
+    "Pykess-ModdingUtils-0.2.6",
+    "Pykess-CardChoiceSpawnUniqueCardPatch-0.1.7"
+  ]
+}
