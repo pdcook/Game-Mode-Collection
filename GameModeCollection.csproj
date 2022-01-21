@@ -61,6 +61,9 @@
     <Reference Include="PhotonUnityNetworking, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\PhotonUnityNetworking.dll</HintPath>
     </Reference>
+    <Reference Include="RoundsWithFriends">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -104,6 +107,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GameModeCollection.cs" />
+    <Compile Include="GameModeHandlers\CrownControlHandlers.cs" />
+    <Compile Include="GameModes\GM_CrownControl.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
