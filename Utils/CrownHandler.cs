@@ -5,12 +5,13 @@ using UnboundLib.GameModes;
 
 public class CrownHandler : MonoBehaviour
 {
+	private bool hidden = true;
 	private float crownPos;
 	public AnimationCurve transitionCurve;
 	private int currentCrownHolder = -1;
 	private int previousCrownHolder = -1;
 	internal Rigidbody2D Rig => this.GetComponent<Rigidbody2D>();
-	internal CircleCollider2D Col => this.GetComponent<CircleCollider2D>();
+	internal BoxCollider2D Col => this.GetComponent<BoxCollider2D>();
 	public int CrownHolder => this.currentCrownHolder;
 	internal static CrownHandler MakeCrownHandler(Transform parent)
 	{
@@ -21,21 +22,39 @@ public class CrownHandler : MonoBehaviour
 		CrownHandler crownHandler = crown.AddComponent<CrownHandler>();
 		crownHandler.transitionCurve = new AnimationCurve((Keyframe[])crown.GetComponent<GameCrownHandler>().transitionCurve.InvokeMethod("GetKeys"));
 		crownHandler.gameObject.AddComponent<Rigidbody2D>();
-		crownHandler.gameObject.AddComponent<CircleCollider2D>();
+		BoxCollider2D bCol = crownHandler.gameObject.AddComponent<BoxCollider2D>();
+		bCol.size = new Vector2(1f, 0.5f);
+		bCol.edgeRadius = 0.1f;
 
 		UnityEngine.GameObject.DestroyImmediate(crown.GetComponent<GameCrownHandler>());
 
 		return crownHandler;
 	}
-
 	void Start()
     {
 		this.transform.localScale = Vector3.one;
 		this.transform.GetChild(0).localScale = new Vector3(0.5f, 0.4f, 1f);
     }
 
+	public void Reset()
+    {
+		this.hidden = true;
+		this.currentCrownHolder = -1;
+		this.previousCrownHolder = -1;
+    }
+
+	public void Spawn(Vector3 position)
+    {
+		this.hidden = false;
+		this.SetPos(position);
+		this.SetVel(Vector2.zero);
+		this.SetRot(0f);
+		this.SetAngularVel(0f);
+    }
+
 	public void SetPos(Vector3 position)
     {
+		this.GiveCrownToPlayer(-1);
 		this.transform.position = position;
 	}
 	public void SetVel(Vector2 velocity)
@@ -48,12 +67,29 @@ public class CrownHandler : MonoBehaviour
 		this.Rig.angularVelocity = angularVelocity;
     }
 
+	public void SetRot(float rot)
+    {
+		this.Rig.rotation = rot;
+    }
+
+	void OnCollisionEnter2D(Collision2D collision2D)
+    {
+		int? playerID = collision2D?.collider?.GetComponent<Player>()?.playerID;
+		if (playerID != null)
+        {
+			this.GiveCrownToPlayer((int)playerID);
+        }
+    }
+
 	void Update()
     {
-		if (this.currentCrownHolder != -1)
+		if (this.currentCrownHolder != -1 || this.hidden)
 		{
 			this.Rig.isKinematic = true;
+			this.SetRot(0f);
+			this.SetAngularVel(0f);
 			this.Col.enabled = false;
+			if (this.hidden) { this.SetPos(100000f * Vector2.up); }
 		}
 		else
         {
@@ -77,7 +113,7 @@ public class CrownHandler : MonoBehaviour
 	{
 		this.previousCrownHolder = this.currentCrownHolder == -1 ? playerID : this.currentCrownHolder;
 		this.currentCrownHolder = playerID;
-		if (this.currentCrownHolder != -1) { base.StartCoroutine(this.IGiveCrownToPlayer()); }
+		if (this.currentCrownHolder != -1 && !this.hidden) { base.StartCoroutine(this.IGiveCrownToPlayer()); }
 	}
 
 
