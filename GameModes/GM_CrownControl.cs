@@ -60,6 +60,7 @@ namespace GameModeCollection.GameModes
             if (GameManager.instance.isPlaying) { return; }
 
             this.crown = CrownHandler.MakeCrownHandler(this.transform);
+            this.ResetDeathCounter();
 
             base.StartGame();
         }
@@ -93,11 +94,17 @@ namespace GameModeCollection.GameModes
 
         public override IEnumerator DoRoundStart()
         {
-            yield return base.DoRoundStart();
+            yield return this.StartCoroutine(base.DoRoundStart());
         }
         public override IEnumerator DoPointStart()
         {
-            yield return base.DoPointStart();
+            GameModeCollection.Log("POINT START");
+            //yield return this.StartCoroutine(base.DoPointStart());
+            GameModeCollection.Log("POINT START, RESET CROWN");
+            this.crown.SetPos(100f * Vector2.up);
+            this.crown.SetVel(Vector2.zero);
+            this.crown.SetAngularVel(0f);
+            yield break;
         }
     }
 }
