@@ -34,10 +34,19 @@ public class CrownHandler : MonoBehaviour
 		this.transform.GetChild(0).localScale = new Vector3(0.5f, 0.4f, 1f);
     }
 
-	public void SetCrownPos(Vector3 position)
+	public void SetPos(Vector3 position)
     {
 		this.transform.position = position;
 	}
+	public void SetVel(Vector2 velocity)
+    {
+		this.Rig.velocity = velocity;
+    }
+
+	public void SetAngularVel(float angularVelocity)
+    {
+		this.Rig.angularVelocity = angularVelocity;
+    }
 
 	void Update()
     {
