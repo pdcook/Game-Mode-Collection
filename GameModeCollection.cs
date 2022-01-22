@@ -3,7 +3,10 @@ using HarmonyLib;
 using UnboundLib;
 using UnityEngine;
 using UnboundLib.Utils.UI;
+using UnboundLib.GameModes;
 using TMPro;
+using GameModeCollection.GameModeHandlers;
+using GameModeCollection.GameModes;
 
 namespace GameModeCollection
 {
@@ -50,6 +53,9 @@ namespace GameModeCollection
 
             // add GUI to modoptions menu
             //Unbound.RegisterMenu(ModName, () => { }, GUI, null, false);
+
+            GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());
+            GameModeManager.AddHandler<GM_CrownControl>(TeamCrownControlHandler.GameModeID, new TeamCrownControlHandler());
 
         }
 
