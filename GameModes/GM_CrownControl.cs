@@ -39,6 +39,8 @@ namespace GameModeCollection.GameModes
 
         private CrownHandler crown;
 
+        private Coroutine CrownControlCO;
+
         private Dictionary<int, int> deathsThisBattle = new Dictionary<int, int>() { };
         private Dictionary<int, float> teamHeldFor = new Dictionary<int, float>() { };
 
@@ -57,7 +59,7 @@ namespace GameModeCollection.GameModes
 
         private void ResetForBattle()
         {
-            this.ResetCrown();
+            this.crown.Reset();
             this.ResetDeaths();
             this.ResetHeldFor();
         }
@@ -69,6 +71,20 @@ namespace GameModeCollection.GameModes
             {
                 this.teamHeldFor[tID] = 0f;
             }
+        }
+
+        private void SyncHeldFor()
+        {
+            if (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient)
+            {
+                NetworkingManager.RPC_Others(typeof(GM_CrownControl), nameof(RPCA_SyncHeldFor), this.teamHeldFor);
+            }
+        }
+
+        [UnboundRPC]
+        private static void RPCA_SyncHeldFor(Dictionary<int, float> teamHeldFor)
+        {
+            GM_CrownControl.instance.teamHeldFor = teamHeldFor.ToDictionary(kv => kv.Key, kv=>kv.Value);
         }
 
         private void ResetDeaths()
@@ -155,6 +171,8 @@ namespace GameModeCollection.GameModes
                 this.crown.SetAngularVel(-GM_CrownControl.crownAngularVelocityMult*((Vector2)killedPlayer.data.playerVel.GetFieldValue("velocity")).x);
             }
 
+            this.SyncHeldFor();
+
             this.awaitingRespawn.Add(killedPlayer.playerID);
             this.StartCoroutine(this.IRespawnPlayer(killedPlayer, delayPenaltyPerDeath*(this.deathsThisBattle[killedPlayer.playerID]-1) + baseRespawnDelay));
         }
@@ -173,14 +191,14 @@ namespace GameModeCollection.GameModes
         public override IEnumerator DoRoundStart()
         {
             this.ResetForBattle();
-            this.StartCoroutine(this.DoCrownControl());
+            this.CrownControlCO = this.StartCoroutine(this.DoCrownControl());
             yield return base.DoRoundStart();
             this.SpawnCrown();
         }
         public override IEnumerator DoPointStart()
         {
             this.ResetForBattle();
-            this.StartCoroutine(this.DoCrownControl());
+            this.CrownControlCO = this.StartCoroutine(this.DoCrownControl());
             yield return base.DoPointStart();
             this.SpawnCrown();
         }
@@ -215,27 +233,24 @@ namespace GameModeCollection.GameModes
                     winningTeamID = -1;
                 }
 
-                if (winningTeamID != null)
+                if (winningTeamID != null && PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
                 {
-                    if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+                    foreach (Player player in PlayerManager.instance.players.Where(p => !p.data.dead && p.teamID != winningTeamID))
                     {
-                        foreach (Player player in PlayerManager.instance.players.Where(p => !p.data.dead && p.teamID != winningTeamID))
+                        player.data.view.RPC("RPCA_Die", RpcTarget.All, new object[]
                         {
-                            player.data.view.RPC("RPCA_Die", RpcTarget.All, new object[]
-                            {
-                                    new Vector2(0, 1)
-                            });
-                        }
-                        yield return null;
-                        this.CallEndRound();
-                        NetworkingManager.RPC(
-                            typeof(GM_CrownControl),
-                            nameof(GM_CrownControl.RPCA_NextRound),
-                            winningTeamID != -1 ? new int[] { (int)winningTeamID } : new int[] { },
-                            this.teamPoints,
-                            this.teamRounds
-                        );
+                                new Vector2(0, 1)
+                        });
                     }
+                    yield return null;
+                    this.CallEndRound();
+                    NetworkingManager.RPC(
+                        typeof(GM_CrownControl),
+                        nameof(GM_CrownControl.RPCA_NextRound),
+                        winningTeamID != -1 ? new int[] { (int)winningTeamID } : new int[] { },
+                        this.teamPoints,
+                        this.teamRounds
+                    );
                     break;
                 }
                 yield return null;
@@ -255,15 +270,9 @@ namespace GameModeCollection.GameModes
         {
             GM_CrownControl.instance.awaitingRespawn.Clear();
             TimeHandler.instance.DoSlowDown();
-        }
-
-        private void ResetCrown()
-        {
-            GM_CrownControl.instance.crown.Reset();
-            return;
-            if (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient)
+            if (GM_CrownControl.instance.CrownControlCO != null)
             {
-                NetworkingManager.RPC(typeof(GM_CrownControl), nameof(RPCA_ResetCrown));
+                GM_CrownControl.instance.StopCoroutine(GM_CrownControl.instance.CrownControlCO);
             }
         }
 

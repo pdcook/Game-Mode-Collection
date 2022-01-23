@@ -252,18 +252,15 @@ namespace GameModeCollection.Utils.UI
 			else
             {
 				ProjectileCollision projCol = collision2D?.collider?.GetComponent<ProjectileCollision>();
-				if (projCol != null)
+				if (projCol != null && projCol.transform.parent != null && (projCol.transform.parent.GetComponentInChildren<PhotonView>().IsMine || PhotonNetwork.OfflineMode))
                 {
-					this.TakeForce((Vector2)projCol.transform.position, projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward);
+					Vector2 point = (Vector2)projCol.transform.position;
+					Vector2 force = projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward;
+					this.View.RPC(nameof(this.RPCA_TakeForce), RpcTarget.All, point, force);
 					projCol.Die();
                 }
             }
 		}
-
-		public void TakeForce(Vector2 point, Vector2 force)
-        {
-			if (this.View.IsMine || PhotonNetwork.OfflineMode) { this.View.RPC(nameof(this.RPCA_TakeForce), RpcTarget.All, point, force); }	
-        }
 		[PunRPC]
 		void RPCA_TakeForce(Vector2 point, Vector2 force)
         {
