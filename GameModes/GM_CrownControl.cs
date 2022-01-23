@@ -6,6 +6,8 @@ using UnityEngine;
 using UnboundLib;
 using UnboundLib.Networking;
 using Photon.Pun;
+using GameModeCollection.Extensions;
+using GameModeCollection.Utils.UI;
 
 namespace GameModeCollection.GameModes
 {
@@ -23,9 +25,11 @@ namespace GameModeCollection.GameModes
     /// </summary>
     public class GM_CrownControl : RWFGameMode
     {
-        private static GM_CrownControl instance;
+        internal static GM_CrownControl instance;
 
         private const float secondsNeededToWin = 10f;
+
+        private const float crownAngularVelocityMult = 10f;
 
         private const float delayPenaltyPerDeath = 1f;
         private const float baseRespawnDelay = 1f;
@@ -41,6 +45,13 @@ namespace GameModeCollection.GameModes
         {
             GM_CrownControl.instance = this;
             base.Awake();
+        }
+
+        protected override void Start()
+        {
+            // register prefab
+            GameObject _ = CrownPrefab.Crown;
+            base.Start();
         }
 
         private void ResetForBattle()
@@ -92,15 +103,31 @@ namespace GameModeCollection.GameModes
             return best;
         }
 
+        public void SetCrown(CrownHandler crownHandler)
+        {
+            this.crown = crownHandler;
+        }
+        public void DestroyCrown()
+        {
+            if (this.crown != null)
+            {
+                UnityEngine.GameObject.DestroyImmediate(this.crown);
+            }
+        }
+
         public override void StartGame()
         {
+            base.StartGame();
+        }
 
-            if (GameManager.instance.isPlaying) { return; }
+        public override IEnumerator DoStartGame()
+        {
+            // this will wait until the crown exists
+            yield return CrownHandler.MakeCrownHandler();
 
-            this.crown = CrownHandler.MakeCrownHandler(this.transform);
             this.ResetForBattle();
 
-            base.StartGame();
+            yield return base.DoStartGame();
         }
 
         public override void PlayerJoined(Player player)
@@ -124,7 +151,7 @@ namespace GameModeCollection.GameModes
 
                 this.crown.GiveCrownToPlayer(-1);
                 this.crown.SetVel((Vector2)killedPlayer.data.playerVel.GetFieldValue("velocity"));
-                this.crown.SetAngularVel(-3f*((Vector2)killedPlayer.data.playerVel.GetFieldValue("velocity")).x);
+                this.crown.SetAngularVel(-GM_CrownControl.crownAngularVelocityMult*((Vector2)killedPlayer.data.playerVel.GetFieldValue("velocity")).x);
             }
 
             this.awaitingRespawn.Add(killedPlayer.playerID);
@@ -169,6 +196,10 @@ namespace GameModeCollection.GameModes
                 {
                     float time = this.teamHeldFor[tID] + ((this.crown.CrownHolder != -1 && PlayerManager.instance.players[this.crown.CrownHolder].teamID == tID) ? this.crown.HeldFor : 0f);
 
+                    UIHandler.instance.roundCounterSmall.UpdateText(tID, 
+                        UnityEngine.Mathf.Clamp(time, 0f, GM_CrownControl.secondsNeededToWin).ToString("0.00"),
+                        PlayerManager.instance.GetPlayersInTeam(tID).First().GetTeamColors().color);
+
                     if (time > GM_CrownControl.secondsNeededToWin)
                     {
                         winningTeamID = tID;
@@ -178,6 +209,17 @@ namespace GameModeCollection.GameModes
 
                 if (winningTeamID != -1)
                 {
+                    if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+                    {
+                        foreach (Player player in PlayerManager.instance.players.Where(p => !p.data.dead && p.teamID != winningTeamID))
+                        {
+                            player.data.view.RPC("RPCA_Die", RpcTarget.All, new object[]
+                            {
+                                    new Vector2(0, 1)
+                            });
+                        }
+                    }
+                    yield return null;
                     TimeHandler.instance.DoSlowDown();
                     if (PhotonNetwork.IsMasterClient)
                     {
