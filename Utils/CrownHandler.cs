@@ -83,7 +83,7 @@ namespace GameModeCollection.Utils.UI
 
 		private const float Bounciness = 0.2f;
 		private const float Friction = 0.2f;
-		private const float Mass = 0.001f;
+		private const float Mass = 1f;
 		private const float MinAngularDrag = 0.1f;
 		private const float MaxAngularDrag = 1f;
 		private const float MinDrag = 0f;
@@ -270,17 +270,6 @@ namespace GameModeCollection.Utils.UI
 			if (this.Rig.velocity.sqrMagnitude < CrownHandler.MaxSpeedSqr)
             {
 				this.Rig.AddForceAtPosition(force, point);
-				//this.Rig.velocity += force / this.Rig.mass;
-            }
-			return;
-			if (this.Rig.angularVelocity < CrownHandler.MaxAngularSpeed)
-            {
-				Vector2 r = point - this.Rig.position;
-				float torque = Vector3.Cross(r, force).z;
-				// moment of inertia of a rectangular plate
-				float I = this.Rig.mass * (1f / 12f);
-
-				this.Rig.angularVelocity += torque / I;
             }
         }
 

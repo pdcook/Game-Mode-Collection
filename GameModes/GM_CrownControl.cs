@@ -226,11 +226,8 @@ namespace GameModeCollection.GameModes
                                     new Vector2(0, 1)
                             });
                         }
-                    }
-                    yield return null;
-                    TimeHandler.instance.DoSlowDown();
-                    if (PhotonNetwork.IsMasterClient)
-                    {
+                        yield return null;
+                        this.CallEndRound();
                         NetworkingManager.RPC(
                             typeof(GM_CrownControl),
                             nameof(GM_CrownControl.RPCA_NextRound),
@@ -244,6 +241,20 @@ namespace GameModeCollection.GameModes
                 yield return null;
             }
             yield break;
+        }
+
+        private void CallEndRound()
+        {
+            if (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient)
+            {
+                NetworkingManager.RPC(typeof(GM_CrownControl), nameof(RPCA_EndRound));
+            }
+        }
+        [UnboundRPC]
+        private static void RPCA_EndRound()
+        {
+            GM_CrownControl.instance.awaitingRespawn.Clear();
+            TimeHandler.instance.DoSlowDown();
         }
 
         private void ResetCrown()
