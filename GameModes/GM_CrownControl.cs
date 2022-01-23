@@ -170,29 +170,6 @@ namespace GameModeCollection.GameModes
                 this.awaitingRespawn.Remove(player.playerID);
             }
         }
-        public void RoundOver(int[] winningTeamIDs)
-        {
-            this.currentWinningTeamID = winningTeamID;
-
-            foreach (var teamID in this.teamPoints.Keys.ToList())
-            {
-                this.teamPoints[teamID] = 0;
-            }
-
-            this.previousRoundWinners = new int[] { winningTeamID };
-
-            this.StartCoroutine(this.RoundTransition(winningTeamID));
-        }
-
-        public void PointOver(int[] winningTeamIDs)
-        {
-            this.currentWinningTeamID = winningTeamID;
-
-            this.previousPointWinners = new int[] { winningTeamID };
-
-            this.StartCoroutine(this.PointTransition(winningTeamID));
-        }
-
         public override IEnumerator DoRoundStart()
         {
             this.ResetForBattle();
@@ -257,7 +234,7 @@ namespace GameModeCollection.GameModes
                         NetworkingManager.RPC(
                             typeof(GM_CrownControl),
                             nameof(GM_CrownControl.RPCA_NextRound),
-                            winningTeamID,
+                            winningTeamID != -1 ? new int[] { (int)winningTeamID } : new int[] { },
                             this.teamPoints,
                             this.teamRounds
                         );
@@ -297,51 +274,6 @@ namespace GameModeCollection.GameModes
         private static void RPCA_SpawnCrown(Vector2 spawnPos)
         {
             GM_CrownControl.instance.crown.Spawn(spawnPos);
-        }
-
-        [UnboundRPC]
-        public static void RPCA_NextRound(int[] winningTeamIDs, Dictionary<int, int> teamPoints, Dictionary<int, int> teamRounds)
-        {
-            var instance = GM_CrownControl.instance;
-
-            if (instance.isTransitioning)
-            {
-                return;
-            }
-
-            GameManager.instance.battleOngoing = false;
-            instance.teamPoints = teamPoints;
-            instance.teamRounds = teamRounds;
-            instance.isTransitioning = true;
-
-            PlayerManager.instance.SetPlayersSimulated(false);
-
-            if (winningTeamIDs.Count() == 0)
-            {
-                instance.PointOver(winningTeamIDs);
-                return;
-            }
-
-            else
-            {
-                foreach (int winningTeamID in winningTeamIDs)
-                {
-                    instance.teamPoints[winningTeamID] = instance.teamPoints[winningTeamID] + 1;
-                }
-
-                if (winningTeamIDs.Select(tID => instance.teamPoints[tID]).All(p => p < (int)GameModeManager.CurrentHandler.Settings["pointsToWinRound"]))
-                {
-                    instance.PointOver(winningTeamIDs);
-                    return;
-                }
-
-                int[] roundWinningTeamIDs = winningTeamIDs.Select(tID => instance.teamPoints[tID]).Where(p => p >= (int)GameModeManager.CurrentHandler.Settings["pointsToWinRound"]).ToArray();
-                foreach (int winningTeamID in roundWinningTeamIDs)
-                {
-                    instance.teamRounds[winningTeamID] = instance.teamRounds[winningTeamID] + 1;
-                }
-                instance.RoundOver(roundWinningTeamIDs);
-            }
         }
     }
 }
