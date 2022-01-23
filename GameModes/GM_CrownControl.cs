@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnboundLib;
+using UnboundLib.Networking;
+using Photon.Pun;
 
 namespace GameModeCollection.GameModes
 {
@@ -20,31 +23,66 @@ namespace GameModeCollection.GameModes
     /// </summary>
     public class GM_CrownControl : RWFGameMode
     {
+        private static GM_CrownControl instance;
+
+        private const float secondsNeededToWin = 10f;
 
         private const float delayPenaltyPerDeath = 1f;
         private const float baseRespawnDelay = 1f;
+        private static readonly Vector2 crownSpawn = new Vector2(0.5f, 0.999f);
+        private List<int> awaitingRespawn = new List<int>() { };
 
         private CrownHandler crown;
 
         private Dictionary<int, int> deathsThisBattle = new Dictionary<int, int>() { };
+        private Dictionary<int, float> teamHeldFor = new Dictionary<int, float>() { };
 
-        private void ResetDeathCounter()
+        protected override void Awake()
+        {
+            GM_CrownControl.instance = this;
+            base.Awake();
+        }
+
+        private void ResetForBattle()
+        {
+            this.ResetCrown();
+            this.ResetDeaths();
+            this.ResetHeldFor();
+        }
+
+        private void ResetHeldFor()
+        {
+            this.teamHeldFor.Clear();
+            foreach (int tID in PlayerManager.instance.players.Select(p => p.teamID).Distinct())
+            {
+                this.teamHeldFor[tID] = 0f;
+            }
+        }
+
+        private void ResetDeaths()
         {
             this.deathsThisBattle.Clear();
             for (int i = 0; i < PlayerManager.instance.players.Count(); i++)
             {
                 this.deathsThisBattle[i] = 0;
             }
+            this.awaitingRespawn.Clear();
         }
 
-        private Vector3 GetFarthestSpawn(int playerID)
+        /// <summary>
+        /// get farthest spawn from all non-team players and the crown
+        /// </summary>
+        /// <param name="teamID"></param>
+        /// <returns></returns>
+        private Vector3 GetFarthestSpawn(int teamID)
         {
             Vector3[] spawns = MapManager.instance.GetSpawnPoints().Select(s => s.localStartPos).ToArray();
             float dist = -1f;
             Vector3 best = Vector3.zero;
             foreach (Vector3 spawn in spawns)
             {
-                float thisDist = PlayerManager.instance.players.Where(p => !p.data.dead && p.playerID != playerID).Select(p => Vector3.Distance(p.transform.position, spawn)).Sum();
+                float thisDist = PlayerManager.instance.players.Where(p => !p.data.dead && p.teamID != teamID).Select(p => Vector3.Distance(p.transform.position, spawn)).Sum();
+                thisDist += Vector2.Distance(this.crown.transform.position, spawn);
                 if (thisDist > dist)
                 {
                     dist = thisDist;
@@ -60,8 +98,7 @@ namespace GameModeCollection.GameModes
             if (GameManager.instance.isPlaying) { return; }
 
             this.crown = CrownHandler.MakeCrownHandler(this.transform);
-            this.crown.Reset();
-            this.ResetDeathCounter();
+            this.ResetForBattle();
 
             base.StartGame();
         }
@@ -74,36 +111,117 @@ namespace GameModeCollection.GameModes
 
         public override void PlayerDied(Player killedPlayer, int teamsAlive)
         {
+            if (this.awaitingRespawn.Contains(killedPlayer.playerID))
+            {
+                return;
+            }
+
             this.deathsThisBattle[killedPlayer.playerID]++;
 
             if (killedPlayer.playerID == this.crown.CrownHolder)
             {
+                this.teamHeldFor[killedPlayer.teamID] += this.crown.HeldFor;
+
                 this.crown.GiveCrownToPlayer(-1);
+                this.crown.SetVel((Vector2)killedPlayer.data.playerVel.GetFieldValue("velocity"));
+                this.crown.SetAngularVel(-3f*((Vector2)killedPlayer.data.playerVel.GetFieldValue("velocity")).x);
             }
 
-
+            this.awaitingRespawn.Add(killedPlayer.playerID);
             this.StartCoroutine(this.IRespawnPlayer(killedPlayer, delayPenaltyPerDeath*this.deathsThisBattle[killedPlayer.playerID] + baseRespawnDelay));
         }
 
         public IEnumerator IRespawnPlayer(Player player, float delay)
         {
             yield return new WaitForSecondsRealtime(delay);
-            player.transform.position = this.GetFarthestSpawn(player.playerID);
-            player.data.healthHandler.Revive(true);
-            player.GetComponent<GeneralInput>().enabled = true;
+            if (this.awaitingRespawn.Contains(player.playerID))
+            {
+                player.transform.position = this.GetFarthestSpawn(player.teamID);
+                player.data.healthHandler.Revive(true);
+                player.GetComponent<GeneralInput>().enabled = true;
+                this.awaitingRespawn.Remove(player.playerID);
+            }
         }
 
         public override IEnumerator DoRoundStart()
         {
-            this.crown.Reset();
+            this.ResetForBattle();
+            this.StartCoroutine(this.DoCrownControl());
             yield return base.DoRoundStart();
-            this.crown.Spawn(100f * Vector2.up);
+            this.SpawnCrown();
         }
         public override IEnumerator DoPointStart()
         {
-            this.crown.Reset();
+            this.ResetForBattle();
+            this.StartCoroutine(this.DoCrownControl());
             yield return base.DoPointStart();
-            this.crown.Spawn(100f * Vector2.up);
+            this.SpawnCrown();
+        }
+
+        private IEnumerator DoCrownControl()
+        {
+            while (true)
+            {
+
+                int winningTeamID = -1;
+
+                foreach (int tID in this.teamHeldFor.Keys)
+                {
+                    float time = this.teamHeldFor[tID] + ((this.crown.CrownHolder != -1 && PlayerManager.instance.players[this.crown.CrownHolder].teamID == tID) ? this.crown.HeldFor : 0f);
+
+                    if (time > GM_CrownControl.secondsNeededToWin)
+                    {
+                        winningTeamID = tID;
+                        break;
+                    }
+                }
+
+                if (winningTeamID != -1)
+                {
+                    TimeHandler.instance.DoSlowDown();
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        NetworkingManager.RPC(
+                            typeof(RWFGameMode),
+                            nameof(RWFGameMode.RPCA_NextRound),
+                            winningTeamID,
+                            this.teamPoints,
+                            this.teamRounds
+                        );
+                    }
+                    break;
+                }
+                yield return null;
+            }
+            yield break;
+        }
+
+        private void ResetCrown()
+        {
+            if (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient)
+            {
+                NetworkingManager.RPC(typeof(GM_CrownControl), nameof(RPCA_ResetCrown));
+            }
+        }
+
+        private void SpawnCrown()
+        {
+            if (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient)
+            {
+                NetworkingManager.RPC(typeof(GM_CrownControl), nameof(RPCA_SpawnCrown), GM_CrownControl.crownSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
+            }
+        }
+
+        [UnboundRPC]
+        private static void RPCA_ResetCrown()
+        {
+            GM_CrownControl.instance.crown.Reset();
+        }
+
+        [UnboundRPC]
+        private static void RPCA_SpawnCrown(Vector2 spawnPos)
+        {
+            GM_CrownControl.instance.crown.Spawn(spawnPos);
         }
     }
 }

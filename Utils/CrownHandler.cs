@@ -2,9 +2,13 @@
 using UnityEngine;
 using UnboundLib;
 using UnboundLib.GameModes;
+using MapEmbiggener;
+using System.Linq;
 
 public class CrownHandler : MonoBehaviour
 {
+	private const float MaxFreeTime = 10f;
+
 	private bool hidden = true;
 	private float crownPos;
 	public AnimationCurve transitionCurve;
@@ -13,6 +17,21 @@ public class CrownHandler : MonoBehaviour
 	internal Rigidbody2D Rig => this.GetComponent<Rigidbody2D>();
 	internal BoxCollider2D Col => this.GetComponent<BoxCollider2D>();
 	public int CrownHolder => this.currentCrownHolder;
+
+	private float freeFor = 0f;
+	private float _heldFor = 0f;
+	public float HeldFor
+	{
+		get
+        {
+			return this._heldFor;
+        }
+		private set
+        {
+			this._heldFor = value;
+        }
+	} 
+
 	internal static CrownHandler MakeCrownHandler(Transform parent)
 	{
 		GM_ArmsRace gm = GameModeManager.GetGameMode<GM_ArmsRace>(GameModeManager.ArmsRaceID);
@@ -43,10 +62,14 @@ public class CrownHandler : MonoBehaviour
 		this.previousCrownHolder = -1;
     }
 
-	public void Spawn(Vector3 position)
+	/// <summary>
+	/// takes in a NORMALIZED vector between (0,0,0) and (1,1,0) which represents the percentage across the bounds on each axis
+	/// </summary>
+	/// <param name="normalized_position"></param>
+	public void Spawn(Vector3 normalized_position)
     {
 		this.hidden = false;
-		this.SetPos(position);
+		this.SetPos(OutOfBoundsUtils.GetPoint(normalized_position));
 		this.SetVel(Vector2.zero);
 		this.SetRot(0f);
 		this.SetAngularVel(0f);
@@ -71,6 +94,22 @@ public class CrownHandler : MonoBehaviour
     {
 		this.Rig.rotation = rot;
     }
+    private Vector3 GetFarthestSpawnFromPlayers()
+    {
+        Vector3[] spawns = MapManager.instance.GetSpawnPoints().Select(s => s.localStartPos).ToArray();
+        float dist = -1f;
+        Vector3 best = Vector3.zero;
+        foreach (Vector3 spawn in spawns)
+        {
+            float thisDist = PlayerManager.instance.players.Where(p => !p.data.dead).Select(p => Vector3.Distance(p.transform.position, spawn)).Sum();
+            if (thisDist > dist)
+            {
+                dist = thisDist;
+                best = spawn;
+            }
+        }
+        return best;
+    }
 
 	void OnCollisionEnter2D(Collision2D collision2D)
     {
@@ -85,6 +124,8 @@ public class CrownHandler : MonoBehaviour
     {
 		if (this.currentCrownHolder != -1 || this.hidden)
 		{
+			this.HeldFor += TimeHandler.deltaTime;
+
 			this.Rig.isKinematic = true;
 			this.SetRot(0f);
 			this.SetAngularVel(0f);
@@ -93,8 +134,15 @@ public class CrownHandler : MonoBehaviour
 		}
 		else
         {
+			this.freeFor += TimeHandler.deltaTime;
+
 			this.Rig.isKinematic = false;
 			this.Col.enabled = true;
+			if (!OutOfBoundsUtils.IsInsideBounds(this.transform.position, out Vector3 _) || this.freeFor > CrownHandler.MaxFreeTime)
+            {
+				OutOfBoundsUtils.IsInsideBounds(GetFarthestSpawnFromPlayers(), out Vector3 newSpawn);
+				this.Spawn(newSpawn);
+            }
         }
     }
 
@@ -111,6 +159,8 @@ public class CrownHandler : MonoBehaviour
 
 	public void GiveCrownToPlayer(int playerID)
 	{
+		this.HeldFor = 0f;
+		this.freeFor = 0f;
 		this.previousCrownHolder = this.currentCrownHolder == -1 ? playerID : this.currentCrownHolder;
 		this.currentCrownHolder = playerID;
 		if (this.currentCrownHolder != -1 && !this.hidden) { base.StartCoroutine(this.IGiveCrownToPlayer()); }
