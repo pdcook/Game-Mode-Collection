@@ -80,7 +80,6 @@ namespace GameModeCollection.Utils.UI
 		internal BoxCollider2D Col => this.GetComponent<BoxCollider2D>();
 		internal PhotonView View => this.GetComponent<PhotonView>();
 		internal SpriteRenderer Renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
-		//internal NetworkPhysicsObject NetPhys => this.GetComponent<NetworkPhysicsObject>();
 		public int CrownHolder => this.currentCrownHolder;
 
 		private float fadeInTime = 0f;
@@ -139,7 +138,6 @@ namespace GameModeCollection.Utils.UI
 			this.Rig.angularDrag = CrownHandler.MinAngularDrag;
 			this.Rig.mass = CrownHandler.Mass;
 
-			//if (this.View) { this.View.ObservedComponents.Add(this.NetPhys); }
 			if (this.View) { this.View.ObservedComponents.Add(this); }
 
 		}
@@ -227,8 +225,8 @@ namespace GameModeCollection.Utils.UI
             {
 				Vector2 r = point - this.Rig.position;
 				float torque = Vector3.Cross(r, force).z;
-				// moment of inertia of a rectangular plate at about a perpendicular axis passing through the point r, relative to the COM
-				float I = this.Rig.mass * ((1.25f) / 12f + r.sqrMagnitude);
+				// moment of inertia of a rectangular plate
+				float I = this.Rig.mass * (1f / 12f);
 
 				this.Rig.angularVelocity += torque / I;
             }
