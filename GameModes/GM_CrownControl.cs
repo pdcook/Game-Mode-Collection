@@ -240,6 +240,8 @@ namespace GameModeCollection.GameModes
 
         private void ResetCrown()
         {
+            GM_CrownControl.instance.crown.Reset();
+            return;
             if (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient)
             {
                 NetworkingManager.RPC(typeof(GM_CrownControl), nameof(RPCA_ResetCrown));

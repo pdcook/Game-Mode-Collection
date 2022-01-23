@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnboundLib;
 using UnboundLib.GameModes;
@@ -6,6 +7,7 @@ using MapEmbiggener;
 using System.Linq;
 using GameModeCollection.GameModes;
 using Photon.Pun;
+using Sonigon;
 
 namespace GameModeCollection.Utils.UI
 {
@@ -45,8 +47,13 @@ namespace GameModeCollection.Utils.UI
 
     }
 	[RequireComponent(typeof(PhotonView))]
-	public class CrownHandler : MonoBehaviour, IPunInstantiateMagicCallback
+	public class CrownHandler : MonoBehaviour, IPunInstantiateMagicCallback, IPunObservable
 	{
+
+		private readonly int sendFreq = 5;
+		private int currentFrame = 5;
+		private float lastTime = 0f;
+		private List<ObjectSyncPackage> syncPackages = new List<ObjectSyncPackage>();
 
 		private static CrownHandler instance;
 
@@ -72,7 +79,8 @@ namespace GameModeCollection.Utils.UI
 		internal Rigidbody2D Rig => this.GetComponent<Rigidbody2D>();
 		internal BoxCollider2D Col => this.GetComponent<BoxCollider2D>();
 		internal PhotonView View => this.GetComponent<PhotonView>();
-		internal SpriteRenderer renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
+		internal SpriteRenderer Renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
+		//internal NetworkPhysicsObject NetPhys => this.GetComponent<NetworkPhysicsObject>();
 		public int CrownHolder => this.currentCrownHolder;
 
 		private float fadeInTime = 0f;
@@ -118,6 +126,10 @@ namespace GameModeCollection.Utils.UI
 
 			yield return new WaitUntil(() => CrownHandler.instance != null);
 		}
+		void Awake()
+        {
+			this.currentFrame = UnityEngine.Random.Range(0, this.sendFreq);
+        }
 		void Start()
 		{
 			this.transform.localScale = Vector3.one;
@@ -126,6 +138,10 @@ namespace GameModeCollection.Utils.UI
 			this.Rig.drag = CrownHandler.MinDrag;
 			this.Rig.angularDrag = CrownHandler.MinAngularDrag;
 			this.Rig.mass = CrownHandler.Mass;
+
+			//if (this.View) { this.View.ObservedComponents.Add(this.NetPhys); }
+			if (this.View) { this.View.ObservedComponents.Add(this); }
+
 		}
 
 		public void Reset()
@@ -133,6 +149,8 @@ namespace GameModeCollection.Utils.UI
 			this.hidden = true;
 			this.currentCrownHolder = -1;
 			this.previousCrownHolder = -1;
+			this.HeldFor = 0f;
+			this.freeFor = 0f;
 		}
 
 		/// <summary>
@@ -224,6 +242,15 @@ namespace GameModeCollection.Utils.UI
 
 		void Update()
 		{
+			if (this.transform.parent == null)
+            {
+				this.Rig.isKinematic = true;
+				this.transform.position = 100000f * Vector2.up;
+				this.currentCrownHolder = -1;
+				this.previousCrownHolder = -1;
+				return;
+            }
+
 			if (this.currentCrownHolder != -1 || this.hidden)
 			{
 				this.HeldFor += TimeHandler.deltaTime;
@@ -233,9 +260,9 @@ namespace GameModeCollection.Utils.UI
 				this.SetAngularVel(0f);
 				this.Col.enabled = false;
 				if (this.hidden) { this.SetPos(100000f * Vector2.up); }
-				if (this.renderer.color.a != 1f)
+				if (this.Renderer.color.a != 1f)
                 {
-					this.renderer.color = new Color(this.renderer.color.r, this.renderer.color.g, this.renderer.color.b, 1f);
+					this.Renderer.color = new Color(this.Renderer.color.r, this.Renderer.color.g, this.Renderer.color.b, 1f);
                 }
 			}
 			else
@@ -279,7 +306,28 @@ namespace GameModeCollection.Utils.UI
                 {
 					a = 0f;
                 }
-				this.renderer.color = new Color(this.renderer.color.r, this.renderer.color.g, this.renderer.color.b, a);
+				this.Renderer.color = new Color(this.Renderer.color.r, this.Renderer.color.g, this.Renderer.color.b, a);
+
+				// syncing
+				if (this.syncPackages.Count > 0)
+				{
+					if (this.syncPackages[0].timeDelta > 0f)
+					{
+						this.syncPackages[0].timeDelta -= Time.deltaTime * 1.5f * (1f + (float)this.syncPackages.Count * 0.5f);
+					}
+					else
+					{
+						if (this.syncPackages.Count > 2)
+						{
+							this.syncPackages.RemoveAt(0);
+						}
+						this.transform.position = this.syncPackages[0].pos;
+						this.transform.rotation = Quaternion.LookRotation(Vector3.forward, this.syncPackages[0].rot);
+						this.Rig.velocity = this.syncPackages[0].vel;
+						this.Rig.angularVelocity = this.syncPackages[0].angularVel;
+						this.syncPackages.RemoveAt(0);
+					}
+				}
 			}
 		}
 
@@ -296,12 +344,17 @@ namespace GameModeCollection.Utils.UI
 
 		public void GiveCrownToPlayer(int playerID)
 		{
+			if (this.View.IsMine && !this.hidden) { this.View.RPC(nameof(RPCA_GiveCrownToPlayer), RpcTarget.All, playerID); }
+		}
+		[PunRPC]
+		private void RPCA_GiveCrownToPlayer(int playerID)
+        {
 			this.HeldFor = 0f;
 			this.freeFor = 0f;
 			this.previousCrownHolder = this.currentCrownHolder == -1 ? playerID : this.currentCrownHolder;
 			this.currentCrownHolder = playerID;
 			if (this.currentCrownHolder != -1 && !this.hidden) { base.StartCoroutine(this.IGiveCrownToPlayer()); }
-		}
+        }
 
 
 		private IEnumerator IGiveCrownToPlayer()
@@ -313,6 +366,37 @@ namespace GameModeCollection.Utils.UI
 			}
 			yield break;
 		}
-
+        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+        {
+			this.currentFrame++;
+			if (stream.IsWriting)
+			{
+				if (this.currentFrame >= this.sendFreq)
+				{
+					this.currentFrame = 0;
+					stream.SendNext((Vector2)this.transform.position);
+					stream.SendNext((Vector2)this.transform.up);
+					stream.SendNext(this.Rig.velocity);
+					stream.SendNext(this.Rig.angularVelocity);
+					if (this.lastTime == 0f)
+					{
+						this.lastTime = Time.time;
+					}
+					stream.SendNext(Time.time - this.lastTime);
+					this.lastTime = Time.time;
+					return;
+				}
+			}
+			else
+			{
+				ObjectSyncPackage objectSyncPackage = new ObjectSyncPackage();
+				objectSyncPackage.pos = (Vector2)stream.ReceiveNext();
+				objectSyncPackage.rot = (Vector2)stream.ReceiveNext();
+				objectSyncPackage.vel = (Vector2)stream.ReceiveNext();
+				objectSyncPackage.angularVel = (float)stream.ReceiveNext();
+				objectSyncPackage.timeDelta = (float)stream.ReceiveNext();
+				this.syncPackages.Add(objectSyncPackage);
+			}
+		}
     }
 }
