@@ -45,27 +45,48 @@ namespace GameModeCollection.Utils.UI
             }
         }
 
+
     }
 	[RequireComponent(typeof(PhotonView))]
 	public class CrownHandler : MonoBehaviour, IPunInstantiateMagicCallback, IPunObservable
 	{
+		private static PhysicsMaterial2D _CrownMaterial = null;
+		public static PhysicsMaterial2D CrownMaterial
+        {
+			get
+            {
+				if (CrownHandler._CrownMaterial == null)
+                {
+                    CrownHandler._CrownMaterial = new PhysicsMaterial2D
+                    {
+                        bounciness = CrownHandler.Bounciness,
+                        friction = CrownHandler.Friction
+                    };
+                }
+
+				return CrownHandler._CrownMaterial;
+            }
+        }
 
 		private readonly int sendFreq = 5;
 		private int currentFrame = 5;
 		private float lastTime = 0f;
-		private List<ObjectSyncPackage> syncPackages = new List<ObjectSyncPackage>();
+		private List<CrownSyncPackage> syncPackages = new List<CrownSyncPackage>();
 
 		private static CrownHandler instance;
 
 		private const float MaxFreeTime = 20f;
+		private const float MaxRespawns = 20;
 
 		private const float FadeOutTime = 3f;
 		private const float FadeInTime = 1f;
 
-		private const float Mass = 0.1f;
+		private const float Bounciness = 0.2f;
+		private const float Friction = 0.2f;
+		private const float Mass = 0.001f;
 		private const float MinAngularDrag = 0.1f;
 		private const float MaxAngularDrag = 1f;
-		private const float MinDrag = 0.1f;
+		private const float MinDrag = 0f;
 		private const float MaxDrag = 5f;
 		private const float MaxSpeed = 100f;
 		private static readonly float MaxSpeedSqr = CrownHandler.MaxSpeed*CrownHandler.MaxSpeed;
@@ -82,6 +103,7 @@ namespace GameModeCollection.Utils.UI
 		internal SpriteRenderer Renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
 		public int CrownHolder => this.currentCrownHolder;
 
+		private int respawns = 0;
 		private float fadeInTime = 0f;
 		private float freeFor = 0f;
 		private float _heldFor = 0f;
@@ -138,9 +160,22 @@ namespace GameModeCollection.Utils.UI
 			this.Rig.angularDrag = CrownHandler.MinAngularDrag;
 			this.Rig.mass = CrownHandler.Mass;
 
-			if (this.View) { this.View.ObservedComponents.Add(this); }
+			this.Col.sharedMaterial = CrownHandler.CrownMaterial;
+			this.Rig.sharedMaterial = CrownHandler.CrownMaterial;
+
+			this.gameObject.layer = LayerMask.NameToLayer("PlayerObjectCollider");
+
+			if (this.View != null && this.View.ObservedComponents != null) { this.View.ObservedComponents.Add(this); }
 
 		}
+
+		public bool TooManyRespawns
+        {
+			get
+            {
+				return this.respawns >= CrownHandler.MaxRespawns;
+            }
+        }
 
 		public void Reset()
 		{
@@ -149,6 +184,7 @@ namespace GameModeCollection.Utils.UI
 			this.previousCrownHolder = -1;
 			this.HeldFor = 0f;
 			this.freeFor = 0f;
+			this.respawns = 0;
 		}
 
 		/// <summary>
@@ -157,6 +193,11 @@ namespace GameModeCollection.Utils.UI
 		/// <param name="normalized_position"></param>
 		public void Spawn(Vector3 normalized_position)
 		{
+			if (this.TooManyRespawns) 
+			{
+				this.hidden = true;
+				return; 
+			}
 			this.hidden = false;
 			this.fadeInTime = 0f;
 			this.SetPos(OutOfBoundsUtils.GetPoint(normalized_position));
@@ -208,6 +249,15 @@ namespace GameModeCollection.Utils.UI
 			{
 				this.GiveCrownToPlayer((int)playerID);
 			}
+			else
+            {
+				ProjectileCollision projCol = collision2D?.collider?.GetComponent<ProjectileCollision>();
+				if (projCol != null)
+                {
+					this.TakeForce((Vector2)projCol.transform.position, projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward);
+					projCol.Die();
+                }
+            }
 		}
 
 		public void TakeForce(Vector2 point, Vector2 force)
@@ -219,8 +269,10 @@ namespace GameModeCollection.Utils.UI
         {
 			if (this.Rig.velocity.sqrMagnitude < CrownHandler.MaxSpeedSqr)
             {
-				this.Rig.velocity += force / this.Rig.mass;
+				this.Rig.AddForceAtPosition(force, point);
+				//this.Rig.velocity += force / this.Rig.mass;
             }
+			return;
 			if (this.Rig.angularVelocity < CrownHandler.MaxAngularSpeed)
             {
 				Vector2 r = point - this.Rig.position;
@@ -249,6 +301,33 @@ namespace GameModeCollection.Utils.UI
 				return;
             }
 
+            // syncing
+            if (this.syncPackages.Count > 0)
+            {
+                if (this.syncPackages[0].timeDelta > 0f)
+                {
+                    this.syncPackages[0].timeDelta -= Time.deltaTime * 1.5f * (1f + (float)this.syncPackages.Count * 0.5f);
+                }
+                else
+                {
+                    if (this.syncPackages.Count > 2)
+                    {
+                        this.syncPackages.RemoveAt(0);
+                    }
+					if (!this.Rig.isKinematic)
+                    {
+                        this.transform.position = this.syncPackages[0].pos;
+                        this.transform.rotation = Quaternion.LookRotation(Vector3.forward, this.syncPackages[0].rot);
+                        this.Rig.velocity = this.syncPackages[0].vel;
+                        this.Rig.angularVelocity = this.syncPackages[0].angularVel;
+                    }
+					this.respawns = this.syncPackages[0].respawns;
+					this.HeldFor = this.syncPackages[0].held;
+					this.freeFor = this.syncPackages[0].free;
+                    this.syncPackages.RemoveAt(0);
+                }
+            }
+
 			if (this.currentCrownHolder != -1 || this.hidden)
 			{
 				this.HeldFor += TimeHandler.deltaTime;
@@ -274,6 +353,7 @@ namespace GameModeCollection.Utils.UI
 				{
 					OutOfBoundsUtils.IsInsideBounds(GetFarthestSpawnFromPlayers(), out Vector3 newSpawn);
 					this.Spawn(newSpawn);
+					this.respawns++;
 				}
 				// if it has gone off the sides, have it bounce back in
 				if (normalizedPoint.x <= 0f)
@@ -306,26 +386,6 @@ namespace GameModeCollection.Utils.UI
                 }
 				this.Renderer.color = new Color(this.Renderer.color.r, this.Renderer.color.g, this.Renderer.color.b, a);
 
-				// syncing
-				if (this.syncPackages.Count > 0)
-				{
-					if (this.syncPackages[0].timeDelta > 0f)
-					{
-						this.syncPackages[0].timeDelta -= Time.deltaTime * 1.5f * (1f + (float)this.syncPackages.Count * 0.5f);
-					}
-					else
-					{
-						if (this.syncPackages.Count > 2)
-						{
-							this.syncPackages.RemoveAt(0);
-						}
-						this.transform.position = this.syncPackages[0].pos;
-						this.transform.rotation = Quaternion.LookRotation(Vector3.forward, this.syncPackages[0].rot);
-						this.Rig.velocity = this.syncPackages[0].vel;
-						this.Rig.angularVelocity = this.syncPackages[0].angularVel;
-						this.syncPackages.RemoveAt(0);
-					}
-				}
 			}
 		}
 
@@ -381,20 +441,37 @@ namespace GameModeCollection.Utils.UI
 						this.lastTime = Time.time;
 					}
 					stream.SendNext(Time.time - this.lastTime);
+					stream.SendNext(this.respawns);
+					stream.SendNext(this.HeldFor);
+					stream.SendNext(this.freeFor);
 					this.lastTime = Time.time;
 					return;
 				}
 			}
 			else
 			{
-				ObjectSyncPackage objectSyncPackage = new ObjectSyncPackage();
+				CrownSyncPackage objectSyncPackage = new CrownSyncPackage();
 				objectSyncPackage.pos = (Vector2)stream.ReceiveNext();
 				objectSyncPackage.rot = (Vector2)stream.ReceiveNext();
 				objectSyncPackage.vel = (Vector2)stream.ReceiveNext();
 				objectSyncPackage.angularVel = (float)stream.ReceiveNext();
 				objectSyncPackage.timeDelta = (float)stream.ReceiveNext();
+				objectSyncPackage.respawns = (int)stream.ReceiveNext();
+				objectSyncPackage.held = (float)stream.ReceiveNext();
+				objectSyncPackage.free = (float)stream.ReceiveNext();
 				this.syncPackages.Add(objectSyncPackage);
 			}
 		}
+    }
+	public class CrownSyncPackage
+    {
+		public Vector2 pos;
+		public Vector2 rot;
+		public Vector2 vel;
+		public float angularVel;
+		public float timeDelta;
+		public int respawns;
+		public float held;
+		public float free;
     }
 }

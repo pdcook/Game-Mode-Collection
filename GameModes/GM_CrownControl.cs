@@ -8,6 +8,7 @@ using UnboundLib.Networking;
 using Photon.Pun;
 using GameModeCollection.Extensions;
 using GameModeCollection.Utils.UI;
+using UnboundLib.GameModes;
 
 namespace GameModeCollection.GameModes
 {
@@ -19,15 +20,15 @@ namespace GameModeCollection.GameModes
     /// A team wins when they have held the crown for a requisite amount of time.
     /// 
     /// - Players respawn after a few seconds during battles, the time they are dead gets longer the more times they die
-    /// - If the crown goes OOB off the right, left, or bottom while it is not controlled by a player, it is respawned at a random point above ground on the battlefield
-    /// - If the crown goes untouched for too long, it is respawned at the center of the battlefield
+    /// - If the crown goes OOB off the bottom while it is not controlled by a player, it is respawned at the spawn point farthest from all players 
+    /// - If the crown goes untouched for too long, it is respawned at the farthest spawnpoint from all players
     /// 
     /// </summary>
     public class GM_CrownControl : RWFGameMode
     {
         internal static GM_CrownControl instance;
 
-        private const float secondsNeededToWin = 10f;
+        private const float secondsNeededToWin = 20f;
 
         private const float crownAngularVelocityMult = 10f;
 
@@ -155,7 +156,7 @@ namespace GameModeCollection.GameModes
             }
 
             this.awaitingRespawn.Add(killedPlayer.playerID);
-            this.StartCoroutine(this.IRespawnPlayer(killedPlayer, delayPenaltyPerDeath*this.deathsThisBattle[killedPlayer.playerID] + baseRespawnDelay));
+            this.StartCoroutine(this.IRespawnPlayer(killedPlayer, delayPenaltyPerDeath*(this.deathsThisBattle[killedPlayer.playerID]-1) + baseRespawnDelay));
         }
 
         public IEnumerator IRespawnPlayer(Player player, float delay)
@@ -168,6 +169,28 @@ namespace GameModeCollection.GameModes
                 player.GetComponent<GeneralInput>().enabled = true;
                 this.awaitingRespawn.Remove(player.playerID);
             }
+        }
+        public void RoundOver(int[] winningTeamIDs)
+        {
+            this.currentWinningTeamID = winningTeamID;
+
+            foreach (var teamID in this.teamPoints.Keys.ToList())
+            {
+                this.teamPoints[teamID] = 0;
+            }
+
+            this.previousRoundWinners = new int[] { winningTeamID };
+
+            this.StartCoroutine(this.RoundTransition(winningTeamID));
+        }
+
+        public void PointOver(int[] winningTeamIDs)
+        {
+            this.currentWinningTeamID = winningTeamID;
+
+            this.previousPointWinners = new int[] { winningTeamID };
+
+            this.StartCoroutine(this.PointTransition(winningTeamID));
         }
 
         public override IEnumerator DoRoundStart()
@@ -190,15 +213,19 @@ namespace GameModeCollection.GameModes
             while (true)
             {
 
-                int winningTeamID = -1;
+                int? winningTeamID = null;
 
                 foreach (int tID in this.teamHeldFor.Keys)
                 {
                     float time = this.teamHeldFor[tID] + ((this.crown.CrownHolder != -1 && PlayerManager.instance.players[this.crown.CrownHolder].teamID == tID) ? this.crown.HeldFor : 0f);
 
+                    /*
                     UIHandler.instance.roundCounterSmall.UpdateText(tID, 
                         UnityEngine.Mathf.Clamp(time, 0f, GM_CrownControl.secondsNeededToWin).ToString("0.00"),
                         PlayerManager.instance.GetPlayersInTeam(tID).First().GetTeamColors().color);
+                    */
+                    UIHandler.instance.roundCounterSmall.UpdateClock(tID, 
+                        UnityEngine.Mathf.Clamp(time, 0f, GM_CrownControl.secondsNeededToWin)/GM_CrownControl.secondsNeededToWin);
 
                     if (time > GM_CrownControl.secondsNeededToWin)
                     {
@@ -206,8 +233,12 @@ namespace GameModeCollection.GameModes
                         break;
                     }
                 }
+                if (winningTeamID == null && this.crown.TooManyRespawns)
+                {
+                    winningTeamID = -1;
+                }
 
-                if (winningTeamID != -1)
+                if (winningTeamID != null)
                 {
                     if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
                     {
@@ -224,8 +255,8 @@ namespace GameModeCollection.GameModes
                     if (PhotonNetwork.IsMasterClient)
                     {
                         NetworkingManager.RPC(
-                            typeof(RWFGameMode),
-                            nameof(RWFGameMode.RPCA_NextRound),
+                            typeof(GM_CrownControl),
+                            nameof(GM_CrownControl.RPCA_NextRound),
                             winningTeamID,
                             this.teamPoints,
                             this.teamRounds
@@ -266,6 +297,51 @@ namespace GameModeCollection.GameModes
         private static void RPCA_SpawnCrown(Vector2 spawnPos)
         {
             GM_CrownControl.instance.crown.Spawn(spawnPos);
+        }
+
+        [UnboundRPC]
+        public static void RPCA_NextRound(int[] winningTeamIDs, Dictionary<int, int> teamPoints, Dictionary<int, int> teamRounds)
+        {
+            var instance = GM_CrownControl.instance;
+
+            if (instance.isTransitioning)
+            {
+                return;
+            }
+
+            GameManager.instance.battleOngoing = false;
+            instance.teamPoints = teamPoints;
+            instance.teamRounds = teamRounds;
+            instance.isTransitioning = true;
+
+            PlayerManager.instance.SetPlayersSimulated(false);
+
+            if (winningTeamIDs.Count() == 0)
+            {
+                instance.PointOver(winningTeamIDs);
+                return;
+            }
+
+            else
+            {
+                foreach (int winningTeamID in winningTeamIDs)
+                {
+                    instance.teamPoints[winningTeamID] = instance.teamPoints[winningTeamID] + 1;
+                }
+
+                if (winningTeamIDs.Select(tID => instance.teamPoints[tID]).All(p => p < (int)GameModeManager.CurrentHandler.Settings["pointsToWinRound"]))
+                {
+                    instance.PointOver(winningTeamIDs);
+                    return;
+                }
+
+                int[] roundWinningTeamIDs = winningTeamIDs.Select(tID => instance.teamPoints[tID]).Where(p => p >= (int)GameModeManager.CurrentHandler.Settings["pointsToWinRound"]).ToArray();
+                foreach (int winningTeamID in roundWinningTeamIDs)
+                {
+                    instance.teamRounds[winningTeamID] = instance.teamRounds[winningTeamID] + 1;
+                }
+                instance.RoundOver(roundWinningTeamIDs);
+            }
         }
     }
 }
