@@ -116,7 +116,9 @@
     <Compile Include="Extensions\RoundCounter.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\CrownControlHandlers.cs" />
+    <Compile Include="GameModeHandlers\HideNSeekHandlers.cs" />
     <Compile Include="GameModes\GM_CrownControl.cs" />
+    <Compile Include="GameModes\GM_HideNSeek.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\CrownHandler.cs" />
   </ItemGroup>
