@@ -7,6 +7,8 @@ using UnboundLib.GameModes;
 using TMPro;
 using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes;
+using UnboundLib.Cards;
+using UnboundLib.Utils;
 
 namespace GameModeCollection
 {
@@ -57,6 +59,9 @@ namespace GameModeCollection
 
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());
             GameModeManager.AddHandler<GM_CrownControl>(TeamCrownControlHandler.GameModeID, new TeamCrownControlHandler());
+            
+            CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
+            GameModeManager.AddHandler<GM_HideNSeek>(HideNSeekHandler.GameModeID, new HideNSeekHandler());
 
         }
 
