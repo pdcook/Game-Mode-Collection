@@ -7,7 +7,7 @@ using UnboundLib;
 using UnboundLib.Networking;
 using Photon.Pun;
 using GameModeCollection.Extensions;
-using GameModeCollection.Utils.UI;
+using GameModeCollection.Objects.GameModeObjects;
 
 namespace GameModeCollection.GameModes
 {

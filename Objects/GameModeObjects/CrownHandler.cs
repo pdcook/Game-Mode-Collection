@@ -1,77 +1,52 @@
-﻿using System.Collections;
+﻿using GameModeCollection.GameModes;
+using MapEmbiggener;
+using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
 using UnboundLib;
 using UnboundLib.GameModes;
-using MapEmbiggener;
-using System.Linq;
-using GameModeCollection.GameModes;
-using Photon.Pun;
-using Sonigon;
+using UnityEngine;
 
-namespace GameModeCollection.Utils.UI
+namespace GameModeCollection.Objects.GameModeObjects
 {
-	public static class CrownPrefab
-    {
+    public static class CrownPrefab
+	{
 		private static GameObject _Crown = null;
 
 		public static GameObject Crown
-        {
+		{
 			get
-            {
+			{
 				if (CrownPrefab._Crown == null)
-                {
+				{
 
-                    GM_ArmsRace gm = GameModeManager.GetGameMode<GM_ArmsRace>(GameModeManager.ArmsRaceID);
+					GM_ArmsRace gm = GameModeManager.GetGameMode<GM_ArmsRace>(GameModeManager.ArmsRaceID);
 
 					GameObject crown = GameObject.Instantiate(gm.gameObject.transform.GetChild(0).gameObject);
-					crown.AddComponent<PhotonView>();
+					GameModeCollection.Log("Crown Prefab Instantiated");
 					UnityEngine.GameObject.DontDestroyOnLoad(crown);
-                    crown.name = "CrownPrefab";
-                    CrownHandler crownHandler = crown.AddComponent<CrownHandler>();
-                    crownHandler.transitionCurve = new AnimationCurve((Keyframe[])crown.GetComponent<GameCrownHandler>().transitionCurve.InvokeMethod("GetKeys"));
-                    Rigidbody2D rig = crownHandler.gameObject.AddComponent<Rigidbody2D>();
-                    BoxCollider2D bCol = crownHandler.gameObject.AddComponent<BoxCollider2D>();
-                    bCol.size = new Vector2(1f, 0.5f);
-                    bCol.edgeRadius = 0.1f;
+					crown.name = "CrownPrefab";
+					// must add required components (PhotonView, Rigidbody2D, Collider2D) first
+					crown.AddComponent<PhotonView>();
+					CrownHandler crownHandler = crown.AddComponent<CrownHandler>();
+					crownHandler.transitionCurve = new AnimationCurve((Keyframe[])crown.GetComponent<GameCrownHandler>().transitionCurve.InvokeMethod("GetKeys"));
 
-                    UnityEngine.GameObject.DestroyImmediate(crown.GetComponent<GameCrownHandler>());
+					UnityEngine.GameObject.DestroyImmediate(crown.GetComponent<GameCrownHandler>());
 
 					PhotonNetwork.PrefabPool.RegisterPrefab(crown.name, crown);
 
 					CrownPrefab._Crown = crown;
-                }
+				}
 				return CrownPrefab._Crown;
-            }
-        }
+			}
+		}
 
 
-    }
-	[RequireComponent(typeof(PhotonView))]
-	public class CrownHandler : MonoBehaviour, IPunInstantiateMagicCallback, IPunObservable
+	}
+	public class CrownHandler : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
 	{
-		private static PhysicsMaterial2D _CrownMaterial = null;
-		public static PhysicsMaterial2D CrownMaterial
-        {
-			get
-            {
-				if (CrownHandler._CrownMaterial == null)
-                {
-                    CrownHandler._CrownMaterial = new PhysicsMaterial2D
-                    {
-                        bounciness = CrownHandler.Bounciness,
-                        friction = CrownHandler.Friction
-                    };
-                }
-
-				return CrownHandler._CrownMaterial;
-            }
-        }
-
-		private readonly int sendFreq = 5;
-		private int currentFrame = 5;
-		private float lastTime = 0f;
-		private List<CrownSyncPackage> syncPackages = new List<CrownSyncPackage>();
+		private List<CrownSyncPackage> crownSyncPackages = new List<CrownSyncPackage>();
 
 		private static CrownHandler instance;
 
@@ -89,7 +64,6 @@ namespace GameModeCollection.Utils.UI
 		private const float MinDrag = 0f;
 		private const float MaxDrag = 5f;
 		private const float MaxSpeed = 100f;
-		private static readonly float MaxSpeedSqr = CrownHandler.MaxSpeed*CrownHandler.MaxSpeed;
 		private const float MaxAngularSpeed = 100f;
 
 		private bool hidden = true;
@@ -97,9 +71,6 @@ namespace GameModeCollection.Utils.UI
 		public AnimationCurve transitionCurve;
 		private int currentCrownHolder = -1;
 		private int previousCrownHolder = -1;
-		internal Rigidbody2D Rig => this.GetComponent<Rigidbody2D>();
-		internal BoxCollider2D Col => this.GetComponent<BoxCollider2D>();
-		internal PhotonView View => this.GetComponent<PhotonView>();
 		internal SpriteRenderer Renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
 		public int CrownHolder => this.currentCrownHolder;
 
@@ -118,64 +89,70 @@ namespace GameModeCollection.Utils.UI
 				this._heldFor = value;
 			}
 		}
-        public void OnPhotonInstantiate(PhotonMessageInfo info)
-        {
+		public override void OnPhotonInstantiate(PhotonMessageInfo info)
+		{
 			object[] instantiationData = info.photonView.InstantiationData;
 
 			this.gameObject.transform.SetParent(GM_CrownControl.instance.transform);
 			GM_CrownControl.instance.SetCrown(this);
 			CrownHandler.instance = this;
-        }
+		}
 
 		internal static IEnumerator MakeCrownHandler()
 		{
 			GM_CrownControl.instance.DestroyCrown();
 			if (CrownHandler.instance != null)
-            {
+			{
 				UnityEngine.GameObject.DestroyImmediate(CrownHandler.instance);
-            }
+			}
 
 			if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
-            {
+			{
 				PhotonNetwork.Instantiate(
 					CrownPrefab.Crown.name,
 					GM_CrownControl.instance.transform.position,
 					GM_CrownControl.instance.transform.rotation,
 					0
 					);
-            }
+			}
 
 			yield return new WaitUntil(() => CrownHandler.instance != null);
 		}
-		void Awake()
+		protected override void Awake()
         {
-			this.currentFrame = UnityEngine.Random.Range(0, this.sendFreq);
+			this.PhysicalProperties = new ItemPhysicalProperties(
+				bounciness: CrownHandler.Bounciness,
+				friction: CrownHandler.Friction,
+				mass: CrownHandler.Mass,
+				minAngularDrag: CrownHandler.MinAngularDrag,
+				maxAngularDrag: CrownHandler.MaxAngularDrag,
+				minDrag: CrownHandler.MinDrag,
+				maxDrag: CrownHandler.MaxDrag,
+				maxAngularSpeed: CrownHandler.MaxAngularSpeed,
+				maxSpeed: CrownHandler.MaxSpeed
+				);
+
+			base.Awake();
         }
-		void Start()
+		protected override void Start()
 		{
 			this.transform.localScale = Vector3.one;
 			this.transform.GetChild(0).localScale = new Vector3(0.5f, 0.4f, 1f);
 
-			this.Rig.drag = CrownHandler.MinDrag;
-			this.Rig.angularDrag = CrownHandler.MinAngularDrag;
-			this.Rig.mass = CrownHandler.Mass;
+			base.Start();
 
-			this.Col.sharedMaterial = CrownHandler.CrownMaterial;
-			this.Rig.sharedMaterial = CrownHandler.CrownMaterial;
-
-			this.gameObject.layer = LayerMask.NameToLayer("PlayerObjectCollider");
-
-			if (this.View != null && this.View.ObservedComponents != null) { this.View.ObservedComponents.Add(this); }
-
+			this.Trig.radius = 2f;
+            this.Col.size = new Vector2(1f, 0.5f);
+            this.Col.edgeRadius = 0.1f;
 		}
 
 		public bool TooManyRespawns
-        {
+		{
 			get
-            {
+			{
 				return this.respawns >= CrownHandler.MaxRespawns;
-            }
-        }
+			}
+		}
 
 		public void Reset()
 		{
@@ -193,10 +170,10 @@ namespace GameModeCollection.Utils.UI
 		/// <param name="normalized_position"></param>
 		public void Spawn(Vector3 normalized_position)
 		{
-			if (this.TooManyRespawns) 
+			if (this.TooManyRespawns)
 			{
 				this.hidden = true;
-				return; 
+				return;
 			}
 			this.hidden = false;
 			this.fadeInTime = 0f;
@@ -206,24 +183,10 @@ namespace GameModeCollection.Utils.UI
 			this.SetAngularVel(0f);
 		}
 
-		public void SetPos(Vector3 position)
+		public override void SetPos(Vector3 position)
 		{
 			this.GiveCrownToPlayer(-1);
-			this.transform.position = position;
-		}
-		public void SetVel(Vector2 velocity)
-		{
-			this.Rig.velocity = velocity;
-		}
-
-		public void SetAngularVel(float angularVelocity)
-		{
-			this.Rig.angularVelocity = angularVelocity;
-		}
-
-		public void SetRot(float rot)
-		{
-			this.Rig.rotation = rot;
+			base.SetPos(position);
 		}
 		private Vector3 GetFarthestSpawnFromPlayers()
 		{
@@ -242,77 +205,52 @@ namespace GameModeCollection.Utils.UI
 			return best;
 		}
 
-		void OnCollisionEnter2D(Collision2D collision2D)
+		protected internal override void OnCollisionEnter2D(Collision2D collision2D)
 		{
 			int? playerID = collision2D?.collider?.GetComponent<Player>()?.playerID;
 			if (playerID != null)
 			{
 				this.GiveCrownToPlayer((int)playerID);
 			}
-			else
-            {
-				ProjectileCollision projCol = collision2D?.collider?.GetComponent<ProjectileCollision>();
-				if (projCol != null && projCol.transform.parent != null && (projCol.transform.parent.GetComponentInChildren<PhotonView>().IsMine || PhotonNetwork.OfflineMode))
-                {
-					Vector2 point = (Vector2)projCol.transform.position;
-					Vector2 force = projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward;
-					this.View.RPC(nameof(this.RPCA_TakeForce), RpcTarget.All, point, force);
-					projCol.Die();
-                }
-            }
+			base.OnCollisionEnter2D(collision2D);
 		}
-		[PunRPC]
-		void RPCA_TakeForce(Vector2 point, Vector2 force)
+        protected internal override void OnTriggerEnter2D(Collider2D collider2D)
         {
-			if (this.Rig.velocity.sqrMagnitude < CrownHandler.MaxSpeedSqr)
-            {
-				this.Rig.AddForceAtPosition(force, point);
-            }
+			int? playerID = collider2D?.GetComponent<Player>()?.playerID;
+			if (playerID != null)
+			{
+				this.GiveCrownToPlayer((int)playerID);
+			}
+            base.OnTriggerEnter2D(collider2D);
         }
-
-		void FixedUpdate()
-        {
-			this.Rig.drag = UnityEngine.Mathf.LerpUnclamped(CrownHandler.MinDrag, CrownHandler.MaxDrag, this.Rig.velocity.sqrMagnitude / CrownHandler.MaxSpeedSqr);
-			this.Rig.angularDrag = UnityEngine.Mathf.LerpUnclamped(CrownHandler.MinAngularDrag, CrownHandler.MaxAngularDrag, UnityEngine.Mathf.Abs(this.Rig.angularVelocity) / CrownHandler.MaxAngularSpeed);
-        }
-
-		void Update()
+        protected override void Update()
 		{
 			if (this.transform.parent == null)
-            {
+			{
 				this.Rig.isKinematic = true;
 				this.transform.position = 100000f * Vector2.up;
 				this.currentCrownHolder = -1;
 				this.previousCrownHolder = -1;
 				return;
-            }
+			}
 
-            // syncing
-            if (this.syncPackages.Count > 0)
-            {
-                if (this.syncPackages[0].timeDelta > 0f)
-                {
-                    this.syncPackages[0].timeDelta -= Time.deltaTime * 1.5f * (1f + (float)this.syncPackages.Count * 0.5f);
-                }
-                else
-                {
-                    if (this.syncPackages.Count > 2)
-                    {
-                        this.syncPackages.RemoveAt(0);
-                    }
-					if (!this.Rig.isKinematic)
-                    {
-                        this.transform.position = this.syncPackages[0].pos;
-                        this.transform.rotation = Quaternion.LookRotation(Vector3.forward, this.syncPackages[0].rot);
-                        this.Rig.velocity = this.syncPackages[0].vel;
-                        this.Rig.angularVelocity = this.syncPackages[0].angularVel;
-                    }
-					this.respawns = this.syncPackages[0].respawns;
-					this.HeldFor = this.syncPackages[0].held;
-					this.freeFor = this.syncPackages[0].free;
-                    this.syncPackages.RemoveAt(0);
-                }
-            }
+			base.Update();
+
+			// syncing
+			if (this.crownSyncPackages.Count > 0)
+			{
+				if (this.TimeDelta <= 0f)
+				{
+					if (this.crownSyncPackages.Count > 2)
+					{
+						this.crownSyncPackages.RemoveAt(0);
+					}
+					this.respawns = this.crownSyncPackages[0].respawns;
+					this.HeldFor = this.crownSyncPackages[0].held;
+					this.freeFor = this.crownSyncPackages[0].free;
+					this.crownSyncPackages.RemoveAt(0);
+				}
+			}
 
 			if (this.currentCrownHolder != -1 || this.hidden)
 			{
@@ -322,11 +260,12 @@ namespace GameModeCollection.Utils.UI
 				this.SetRot(0f);
 				this.SetAngularVel(0f);
 				this.Col.enabled = false;
+				this.Trig.enabled = false;
 				if (this.hidden) { this.SetPos(100000f * Vector2.up); }
 				if (this.Renderer.color.a != 1f)
-                {
+				{
 					this.Renderer.color = new Color(this.Renderer.color.r, this.Renderer.color.g, this.Renderer.color.b, 1f);
-                }
+				}
 			}
 			else
 			{
@@ -334,6 +273,7 @@ namespace GameModeCollection.Utils.UI
 
 				this.Rig.isKinematic = false;
 				this.Col.enabled = true;
+				this.Trig.enabled = true;
 				// if the crown has gone OOB off the bottom of the map OR hasn't been touched in a long enough time, respawn it
 				if ((!OutOfBoundsUtils.IsInsideBounds(this.transform.position, out Vector3 normalizedPoint) && (normalizedPoint.y <= 0f)) || this.freeFor > CrownHandler.MaxFreeTime)
 				{
@@ -343,33 +283,33 @@ namespace GameModeCollection.Utils.UI
 				}
 				// if it has gone off the sides, have it bounce back in
 				if (normalizedPoint.x <= 0f)
-                {
+				{
 					this.Rig.velocity = new Vector2(UnityEngine.Mathf.Abs(this.Rig.velocity.x), this.Rig.velocity.y);
-                }
+				}
 				else if (normalizedPoint.x >= 1f)
-                {
+				{
 					this.Rig.velocity = new Vector2(-UnityEngine.Mathf.Abs(this.Rig.velocity.x), this.Rig.velocity.y);
-                }
+				}
 
 				// update colors as necessary
 				float a = 1f;
 				if (this.fadeInTime < CrownHandler.FadeInTime)
-                {
+				{
 					a = UnityEngine.Mathf.Lerp(0f, 1f, this.fadeInTime / CrownHandler.FadeInTime);
 					this.fadeInTime += TimeHandler.deltaTime;
-                }
+				}
 				else if (CrownHandler.MaxFreeTime >= this.freeFor && CrownHandler.MaxFreeTime - this.freeFor <= CrownHandler.FadeOutTime)
-                {
+				{
 					a = UnityEngine.Mathf.Lerp(0f, 1f, (CrownHandler.MaxFreeTime - this.freeFor) / CrownHandler.FadeOutTime);
-                }
+				}
 				else if (CrownHandler.MaxFreeTime >= this.freeFor)
-                {
+				{
 					a = 1f;
-                }
+				}
 				else
-                {
+				{
 					a = 0f;
-                }
+				}
 				this.Renderer.color = new Color(this.Renderer.color.r, this.Renderer.color.g, this.Renderer.color.b, a);
 
 			}
@@ -392,13 +332,13 @@ namespace GameModeCollection.Utils.UI
 		}
 		[PunRPC]
 		private void RPCA_GiveCrownToPlayer(int playerID)
-        {
+		{
 			this.HeldFor = 0f;
 			this.freeFor = 0f;
 			this.previousCrownHolder = this.currentCrownHolder == -1 ? playerID : this.currentCrownHolder;
 			this.currentCrownHolder = playerID;
 			if (this.currentCrownHolder != -1 && !this.hidden) { base.StartCoroutine(this.IGiveCrownToPlayer()); }
-        }
+		}
 
 
 		private IEnumerator IGiveCrownToPlayer()
@@ -410,54 +350,33 @@ namespace GameModeCollection.Utils.UI
 			}
 			yield break;
 		}
-        public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-        {
-			this.currentFrame++;
+		public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+		{
 			if (stream.IsWriting)
 			{
-				if (this.currentFrame >= this.sendFreq)
+				if (this.CurrentFrame >= this.sendFreq)
 				{
-					this.currentFrame = 0;
-					stream.SendNext((Vector2)this.transform.position);
-					stream.SendNext((Vector2)this.transform.up);
-					stream.SendNext(this.Rig.velocity);
-					stream.SendNext(this.Rig.angularVelocity);
-					if (this.lastTime == 0f)
-					{
-						this.lastTime = Time.time;
-					}
-					stream.SendNext(Time.time - this.lastTime);
 					stream.SendNext(this.respawns);
 					stream.SendNext(this.HeldFor);
 					stream.SendNext(this.freeFor);
-					this.lastTime = Time.time;
-					return;
 				}
 			}
 			else
 			{
 				CrownSyncPackage objectSyncPackage = new CrownSyncPackage();
-				objectSyncPackage.pos = (Vector2)stream.ReceiveNext();
-				objectSyncPackage.rot = (Vector2)stream.ReceiveNext();
-				objectSyncPackage.vel = (Vector2)stream.ReceiveNext();
-				objectSyncPackage.angularVel = (float)stream.ReceiveNext();
-				objectSyncPackage.timeDelta = (float)stream.ReceiveNext();
 				objectSyncPackage.respawns = (int)stream.ReceiveNext();
 				objectSyncPackage.held = (float)stream.ReceiveNext();
 				objectSyncPackage.free = (float)stream.ReceiveNext();
-				this.syncPackages.Add(objectSyncPackage);
+				this.crownSyncPackages.Add(objectSyncPackage);
 			}
+
+			base.OnPhotonSerializeView(stream, info);
 		}
-    }
+	}
 	public class CrownSyncPackage
-    {
-		public Vector2 pos;
-		public Vector2 rot;
-		public Vector2 vel;
-		public float angularVel;
-		public float timeDelta;
+	{
 		public int respawns;
 		public float held;
 		public float free;
-    }
+	}
 }

@@ -33,11 +33,11 @@ namespace GameModeCollection
 #else
         public static readonly bool DEBUG = false;
 #endif
-        internal static void Log(string str)
+        internal static void Log(object msg)
         {
             if (DEBUG)
             {
-                UnityEngine.Debug.Log($"[{ModName}] {str}");
+                UnityEngine.Debug.Log($"[{ModName}] {msg.ToString()}");
             }
         }
 
