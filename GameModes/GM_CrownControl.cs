@@ -168,6 +168,7 @@ namespace GameModeCollection.GameModes
                 this.crown.GiveCrownToPlayer(-1);
                 this.crown.SetVel((Vector2)killedPlayer.data.playerVel.GetFieldValue("velocity"));
                 this.crown.SetAngularVel(-GM_CrownControl.crownAngularVelocityMult*((Vector2)killedPlayer.data.playerVel.GetFieldValue("velocity")).x);
+                this.crown.AddRandomAngularVelocity();
             }
 
             this.SyncHeldFor();

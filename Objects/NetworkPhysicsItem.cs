@@ -13,16 +13,18 @@ using System;
 namespace GameModeCollection.Objects
 {
 	public class ItemPhysicalProperties
-    {
+	{
 		private const float DefaultBounciness = 0.2f;
 		private const float DefaultFriction = 0.2f;
-		private const float DefaultMass = 50f;
+		private const float DefaultMass = 500f;
 		private const float DefaultMinAngularDrag = 0.1f;
 		private const float DefaultMaxAngularDrag = 1f;
 		private const float DefaultMinDrag = 0f;
 		private const float DefaultMaxDrag = 5f;
-		private const float DefaultMaxSpeed = 100f;
-		private const float DefaultMaxAngularSpeed = 100f;
+		private const float DefaultMaxSpeed = 200f;
+		private const float DefaultMaxAngularSpeed = 1000f;
+		private const float DefaultPhysicsForceMult = 1f;
+		private const float DefaultPhysicsImpulseMult = 1f;
 
 		public readonly float Bounciness;
 		public readonly float Friction;
@@ -34,19 +36,23 @@ namespace GameModeCollection.Objects
 		public readonly float MaxDrag;
 		public readonly float MaxSpeed;
 		public readonly float MaxAngularSpeed;
+		public readonly float PhysicsForceMult;
+		public readonly float PhysicsImpulseMult;
 		public float MaxSpeedSqr => this.MaxSpeed * this.MaxSpeed;
 
 		public ItemPhysicalProperties(
 			float bounciness = DefaultBounciness,
-            float friction = DefaultFriction,
-            float mass = DefaultMass,
-            float minAngularDrag = DefaultMinAngularDrag,
-            float maxAngularDrag = DefaultMaxAngularDrag,
-            float minDrag = DefaultMinDrag,
-            float maxDrag = DefaultMaxDrag,
-            float maxAngularSpeed = DefaultMaxAngularSpeed,
-            float maxSpeed = DefaultMaxSpeed)
-        {
+			float friction = DefaultFriction,
+			float mass = DefaultMass,
+			float minAngularDrag = DefaultMinAngularDrag,
+			float maxAngularDrag = DefaultMaxAngularDrag,
+			float minDrag = DefaultMinDrag,
+			float maxDrag = DefaultMaxDrag,
+			float maxAngularSpeed = DefaultMaxAngularSpeed,
+			float maxSpeed = DefaultMaxSpeed,
+			float forceMult = DefaultPhysicsForceMult,
+			float impulseMult = DefaultPhysicsImpulseMult)
+		{
 			this.Bounciness = bounciness;
 			this.Friction = friction;
 			this.Mass = mass;
@@ -56,26 +62,36 @@ namespace GameModeCollection.Objects
 			this.MaxDrag = maxDrag;
 			this.MaxSpeed = maxSpeed;
 			this.MaxAngularSpeed = maxAngularSpeed;
-        }
+			this.PhysicsForceMult = forceMult;
+			this.PhysicsImpulseMult = impulseMult;
+		}
 
-    }
+	}
 	public abstract class PhysicsItem : MonoBehaviour
-    {
-		public const float PhysicsForceMult = 1 / 1000f;
+	{
+		public abstract ItemPhysicalProperties PhysicalProperties { get; }
+		public static readonly int Layer = LayerMask.NameToLayer("PlayerObjectCollider"); // PlayerObjectCollider layer (layer 19)
 		protected internal abstract void OnCollisionEnter2D(Collision2D collision2D);
 		protected internal abstract void OnCollisionExit2D(Collision2D collision2D);
 		protected internal abstract void OnCollisionStay2D(Collision2D collision2D);
 		protected internal abstract void OnTriggerEnter2D(Collider2D collider2D);
 		protected internal abstract void OnTriggerExit2D(Collider2D collider2D);
 		protected internal abstract void OnTriggerStay2D(Collider2D collider2D);
-    }
+	}
 	[RequireComponent(typeof(PhotonView))]
 	[RequireComponent(typeof(Rigidbody2D))]
 	public abstract class NetworkPhysicsItem<TCollider, TTrigger> : PhysicsItem, IPunInstantiateMagicCallback, IPunObservable where TCollider : Collider2D where TTrigger : Collider2D
 	{
-		protected ItemPhysicalProperties PhysicalProperties = new ItemPhysicalProperties();
 
-		private PhysicsMaterial2D _Material = null;
+		protected const string SyncedPositionKey = "__pos__";
+		protected const string SyncedRotationKey = "__rot__";
+		protected const string SyncedVelocityKey = "__vel__";
+		protected const string SyncedAngularVelocityKey = "__angularVel__";
+
+		protected ItemPhysicalProperties _PhysicalProperties = new ItemPhysicalProperties();
+        public override ItemPhysicalProperties PhysicalProperties => this._PhysicalProperties;
+
+        private PhysicsMaterial2D _Material = null;
 		public PhysicsMaterial2D Material
 		{
 			get
@@ -92,45 +108,89 @@ namespace GameModeCollection.Objects
 				return this._Material;
 			}
 		}
+		private Dictionary<string, object> _dataToSync = new Dictionary<string, object>() { };
+		protected string[] GetSyncedKeys()
+		{
+			return this._dataToSync.Keys.ToArray();
+		}
+		protected object GetSyncedData(string key, object default_value = default)
+		{
+			if (this._dataToSync.TryGetValue(key, out object value))
+			{
+				return value;
+			}
+			else
+			{
+				GameModeCollection.LogWarning($"Key \"{key}\" not found in syncing data of NetworkPhysicsItem component of {this.name}.");
+			}
+			return default_value;
+		}
+		protected T GetSyncedData<T>(string key, T default_value = default)
+		{
+			if (this._dataToSync.TryGetValue(key, out object value))
+			{
+				try
+				{
+					return (T)value;
+				}
+				catch (InvalidCastException)
+				{
+					GameModeCollection.LogWarning($"InvalidCastException in NetworkPhysicsItem component of {this.name}: {value.ToString()} cannot be cast to type {typeof(T).ToString()}");
+				}
+			}
+			else
+			{
+				GameModeCollection.LogWarning($"Key \"{key}\" not found in syncing data of NetworkPhysicsItem component of {this.name}.");
+			}
+			return default_value;
+		}
+		protected void SetSyncedData<T>(string key, T value)
+		{
+			this._dataToSync[key] = (object)value;
+		}
+		protected void SetSyncedData(string key, object value)
+		{
+			this._dataToSync[key] = value;
+		}
 
 		protected readonly int sendFreq = 5;
 		private int _currentFrame = 5;
 		protected int CurrentFrame
-        {
+		{
 			get
-            {
+			{
 				return this._currentFrame;
-            }
+			}
 			private set
-            {
+			{
 				this._currentFrame = value;
-            }
-        }
+			}
+		}
 		private float _lastTime = 0f;
 		protected float LastTime
-        {
+		{
 			get
-            {
+			{
 				return this._lastTime;
-            }
+			}
 			private set
-            {
+			{
 				this._lastTime = value;
-            }
-        }
+			}
+		}
 
 		private float _timeDelta = 0f;
 		protected float TimeDelta
-        {
+		{
 			get
-            {
+			{
 				return this._timeDelta;
-            }
+			}
 			set
-            {
+			{
 				this._timeDelta = value;
-            }
-        }
+			}
+		}
 
 		private List<ItemSyncPackage> syncPackages = new List<ItemSyncPackage>();
 
@@ -145,17 +205,17 @@ namespace GameModeCollection.Objects
 		{
 			this.CurrentFrame = UnityEngine.Random.Range(0, this.sendFreq);
 			if (this.Col == null)
-            {
-                GameObject collider = new GameObject("Collider", typeof(TCollider), typeof(ItemTriggerAndCollision));
-                collider.transform.SetParent(this.transform);
+			{
+				GameObject collider = new GameObject("Collider", typeof(TCollider), typeof(ItemTriggerAndCollision));
+				collider.transform.SetParent(this.transform);
 				collider.transform.localScale = Vector3.one;
-            }
+			}
 			if (this.Trig == null)
-            {
-                GameObject trigger = new GameObject("Trigger", typeof(TTrigger), typeof(ItemTriggerAndCollision));
-                trigger.transform.SetParent(this.transform);
+			{
+				GameObject trigger = new GameObject("Trigger", typeof(TTrigger), typeof(ItemTriggerAndCollision));
+				trigger.transform.SetParent(this.transform);
 				trigger.transform.localScale = Vector3.one;
-            }
+			}
 		}
 		protected virtual void Start()
 		{
@@ -170,7 +230,12 @@ namespace GameModeCollection.Objects
 			this.Trig.sharedMaterial = this.Material;
 			this.Rig.sharedMaterial = this.Material;
 
-			this.gameObject.layer = LayerMask.NameToLayer("PlayerObjectCollider");
+			this.SetSyncedData<Vector2>(SyncedPositionKey, (Vector2)this.transform.position);
+			this.SetSyncedData<Vector2>(SyncedRotationKey, (Vector2)this.transform.up);
+			this.SetSyncedData<Vector2>(SyncedVelocityKey, (Vector2)this.Rig.velocity);
+			this.SetSyncedData<float>(SyncedAngularVelocityKey, (float)this.Rig.angularVelocity);
+
+			this.gameObject.layer = PhysicsItem.Layer;
 
 			if (this.View != null && this.View.ObservedComponents != null) { this.View.ObservedComponents.Add(this); }
 
@@ -195,50 +260,47 @@ namespace GameModeCollection.Objects
 		}
 		protected internal override void OnCollisionEnter2D(Collision2D collision2D)
 		{
-            ProjectileCollision projCol = collision2D?.collider?.GetComponent<ProjectileCollision>();
-            if (projCol != null && projCol?.transform?.parent?.GetComponent<ProjectileHit>() != null && (projCol.transform.parent.GetComponentInChildren<PhotonView>().IsMine || PhotonNetwork.OfflineMode))
-            {
-                Vector2 point = (Vector2)projCol.transform.position;
-                Vector2 force = projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward;
-                this.View.RPC(nameof(this.RPCA_DoBulletHit), RpcTarget.All, projCol.transform.parent.GetComponentInChildren<PhotonView>().ViewID, point, force, (Vector2)(-projCol.transform.forward));
-            }
-		}
-        protected internal override void OnCollisionExit2D(Collision2D collision2D)
-        {
-
-        }
-        protected internal override void OnCollisionStay2D(Collision2D collision2D)
-        {
-
-        }
-        protected internal override void OnTriggerEnter2D(Collider2D collider2D)
-        {
-
-        }
-        protected internal override void OnTriggerExit2D(Collider2D collider2D)
-        {
-
-        }
-        protected internal override void OnTriggerStay2D(Collider2D collider2D)
-        {
-
-        }
-		[PunRPC]
-		protected virtual void RPCA_SendForce(Vector2 force, Vector2 point)
-        {
-			if (this.Rig.velocity.sqrMagnitude < this.PhysicalProperties.MaxSpeedSqr)
+			ProjectileCollision projCol = collision2D?.collider?.GetComponent<ProjectileCollision>();
+			if (projCol != null && projCol?.transform?.parent?.GetComponent<ProjectileHit>() != null && (projCol.transform.parent.GetComponentInChildren<PhotonView>().IsMine || PhotonNetwork.OfflineMode))
 			{
-				this.Rig.AddForceAtPosition(force, point);
+				Vector2 point = (Vector2)projCol.transform.position;
+				Vector2 force = projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward;
+				this.View.RPC(nameof(this.RPCA_DoBulletHit), RpcTarget.All, projCol.transform.parent.GetComponentInChildren<PhotonView>().ViewID, point, force, (Vector2)(-projCol.transform.forward));
 			}
-        }
+		}
+		protected internal override void OnCollisionExit2D(Collision2D collision2D)
+		{
+
+		}
+		protected internal override void OnCollisionStay2D(Collision2D collision2D)
+		{
+
+		}
+		protected internal override void OnTriggerEnter2D(Collider2D collider2D)
+		{
+
+		}
+		protected internal override void OnTriggerExit2D(Collider2D collider2D)
+		{
+
+		}
+		protected internal override void OnTriggerStay2D(Collider2D collider2D)
+		{
+
+		}
+		[PunRPC]
+		protected virtual void RPCA_SendForce(Vector2 force, Vector2 point, byte forceMode = (byte)ForceMode2D.Force)
+		{
+			ForceMode2D forceMode2D = (ForceMode2D)forceMode;
+			float mult = 1f;
+			if (forceMode2D == ForceMode2D.Force) { mult = this.PhysicalProperties.PhysicsForceMult; }
+			if (forceMode2D == ForceMode2D.Impulse) { mult = this.PhysicalProperties.PhysicsImpulseMult; }
+				this.Rig.AddForceAtPosition(force * mult, point, forceMode2D);
+		}
 		[PunRPC]
 		protected virtual void RPCA_DoBulletHit(int viewID, Vector2 point, Vector2 force, Vector2 normal)
 		{
-			if (this.Rig.velocity.sqrMagnitude < this.PhysicalProperties.MaxSpeedSqr)
-			{
-				// bullets use Impulse
-				this.Rig.AddForceAtPosition(force, point, ForceMode2D.Impulse);
-			}
+			this.RPCA_SendForce(force, point, (byte)ForceMode2D.Impulse);
 			this.StartCoroutine(this.DoBulletHitWhenReady(viewID, point, normal));
 		}
 		protected virtual IEnumerator DoBulletHitWhenReady(int viewID, Vector2 point, Vector2 normal)
@@ -248,9 +310,9 @@ namespace GameModeCollection.Objects
 			ProjectileHit projHit = bullet?.GetComponent<ProjectileHit>();
 			ProjectileCollision projCol = bullet?.GetComponentInChildren<ProjectileCollision>();
 			if (bullet == null || projHit == null || projCol == null)
-            {
+			{
 				yield break;
-            }
+			}
 			if (projHit.isAllowedToSpawnObjects)
 			{
 				HitInfo hitInfo = new HitInfo()
@@ -269,6 +331,7 @@ namespace GameModeCollection.Objects
 				}
 				projHit.transform.position = hitInfo.point + hitInfo.normal * 0.01f;
 			}
+			projCol.Die();
 		}
 
 		protected virtual void FixedUpdate()
@@ -293,18 +356,40 @@ namespace GameModeCollection.Objects
 					{
 						this.syncPackages.RemoveAt(0);
 					}
-					if (!this.Rig.isKinematic)
-					{
-						this.transform.position = this.syncPackages[0].pos;
-						this.transform.rotation = Quaternion.LookRotation(Vector3.forward, this.syncPackages[0].rot);
-						this.Rig.velocity = this.syncPackages[0].vel;
-						this.Rig.angularVelocity = this.syncPackages[0].angularVel;
-					}
+					// read all synced data
+					this._dataToSync = this.syncPackages[0].syncedData;
 					this.syncPackages.RemoveAt(0);
+
+					// update physics
+					this.ReadSyncedPhysicsData();
+
+					// update all other data
+					this.ReadSyncedData();
+
 				}
 			}
 		}
-		public virtual void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+		private void SetPhysicsDataToSync()
+		{
+			this.SetSyncedData(SyncedPositionKey, (Vector2)this.transform.position);
+			this.SetSyncedData(SyncedRotationKey, (Vector2)this.transform.up);
+			this.SetSyncedData(SyncedVelocityKey, (Vector2)this.Rig.velocity);
+			this.SetSyncedData(SyncedAngularVelocityKey, (float)this.Rig.angularVelocity);
+		}
+		private void ReadSyncedPhysicsData()
+		{
+			// update physics
+			if (!this.Rig.isKinematic)
+			{
+				this.transform.position = this.GetSyncedData<Vector2>(SyncedPositionKey);
+				this.transform.rotation = Quaternion.LookRotation(Vector3.forward, this.GetSyncedData<Vector2>(SyncedRotationKey));
+				this.Rig.velocity = this.GetSyncedData<Vector2>(SyncedVelocityKey);
+				this.Rig.angularVelocity = this.GetSyncedData<float>(SyncedAngularVelocityKey);
+			}
+		}
+		protected abstract void SetDataToSync();
+		protected abstract void ReadSyncedData();
+		public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 		{
 			this.CurrentFrame++;
 			if (stream.IsWriting)
@@ -312,10 +397,10 @@ namespace GameModeCollection.Objects
 				if (this.CurrentFrame >= this.sendFreq)
 				{
 					this.CurrentFrame = 0;
-					stream.SendNext((Vector2)this.transform.position);
-					stream.SendNext((Vector2)this.transform.up);
-					stream.SendNext(this.Rig.velocity);
-					stream.SendNext(this.Rig.angularVelocity);
+					this.SetPhysicsDataToSync();
+					this.SetDataToSync();
+					stream.SendNext(this._dataToSync);
+					// timeDelta is special and is sent separately
 					if (this.LastTime == 0f)
 					{
 						this.LastTime = Time.time;
@@ -328,63 +413,57 @@ namespace GameModeCollection.Objects
 			else
 			{
 				ItemSyncPackage objectSyncPackage = new ItemSyncPackage();
-				objectSyncPackage.pos = (Vector2)stream.ReceiveNext();
-				objectSyncPackage.rot = (Vector2)stream.ReceiveNext();
-				objectSyncPackage.vel = (Vector2)stream.ReceiveNext();
-				objectSyncPackage.angularVel = (float)stream.ReceiveNext();
+				objectSyncPackage.syncedData = (Dictionary<string, object>)stream.ReceiveNext();
 				objectSyncPackage.timeDelta = (float)stream.ReceiveNext();
 				this.syncPackages.Add(objectSyncPackage);
 			}
 		}
 
-    }
-    public class ItemSyncPackage
+	}
+	public class ItemSyncPackage
 	{
-		public Vector2 pos;
-		public Vector2 rot;
-		public Vector2 vel;
-		public float angularVel;
+		public Dictionary<string, object> syncedData;
 		public float timeDelta;
 	}
-    [RequireComponent(typeof(Collider2D))]
-    class ItemTriggerAndCollision : MonoBehaviour 
-    {
-        PhysicsItem Item => this.gameObject?.GetComponentInParent<PhysicsItem>();
-        Collider2D Col => this.GetComponent<Collider2D>();
+	[RequireComponent(typeof(Collider2D))]
+	class ItemTriggerAndCollision : MonoBehaviour
+	{
+		PhysicsItem Item => this.gameObject?.GetComponentInParent<PhysicsItem>();
+		Collider2D Col => this.GetComponent<Collider2D>();
 
-        void Start()
-        {
-            if (this.Item == null) { Destroy(this); }
+		void Start()
+		{
+			if (this.Item == null) { Destroy(this); }
 
-			this.gameObject.layer = LayerMask.NameToLayer("PlayerObjectCollider");
-        }
-        internal void SetAsTrigger(bool isTrigger)
-        {
-            this.Col.isTrigger = isTrigger;
-        }
-        void OnCollisionEnter2D(Collision2D collision2D)
-        {
+			this.gameObject.layer = PhysicsItem.Layer;
+		}
+		internal void SetAsTrigger(bool isTrigger)
+		{
+			this.Col.isTrigger = isTrigger;
+		}
+		void OnCollisionEnter2D(Collision2D collision2D)
+		{
 			if (!this.Col.isTrigger) { this.Item.OnCollisionEnter2D(collision2D); }
-        }
-        void OnCollisionExit2D(Collision2D collision2D)
-        {
+		}
+		void OnCollisionExit2D(Collision2D collision2D)
+		{
 			if (!this.Col.isTrigger) { this.Item.OnCollisionExit2D(collision2D); }
-        }
-        void OnCollisionStay2D(Collision2D collision2D)
-        {
-            if (!this.Col.isTrigger) { this.Item.OnCollisionStay2D(collision2D); }
-        }
-        void OnTriggerEnter2D(Collider2D collider2D)
-        {
-            if (this.Col.isTrigger) { this.Item.OnTriggerEnter2D(collider2D); }
-        }
-        void OnTriggerExit2D(Collider2D collider2D)
-        {
-            if (this.Col.isTrigger) { this.Item.OnTriggerExit2D(collider2D); }
-        }
-        void OnTriggerStay2D(Collider2D collider2D)
-        {
-            if (this.Col.isTrigger) { this.Item.OnTriggerStay2D(collider2D); }
-        }
-    }
+		}
+		void OnCollisionStay2D(Collision2D collision2D)
+		{
+			if (!this.Col.isTrigger) { this.Item.OnCollisionStay2D(collision2D); }
+		}
+		void OnTriggerEnter2D(Collider2D collider2D)
+		{
+			if (this.Col.isTrigger) { this.Item.OnTriggerEnter2D(collider2D); }
+		}
+		void OnTriggerExit2D(Collider2D collider2D)
+		{
+			if (this.Col.isTrigger) { this.Item.OnTriggerExit2D(collider2D); }
+		}
+		void OnTriggerStay2D(Collider2D collider2D)
+		{
+			if (this.Col.isTrigger) { this.Item.OnTriggerStay2D(collider2D); }
+		}
+	}
 }

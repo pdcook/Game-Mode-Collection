@@ -40,6 +40,13 @@ namespace GameModeCollection
                 UnityEngine.Debug.Log($"[{ModName}] {msg.ToString()}");
             }
         }
+        internal static void LogWarning(object msg)
+        {
+            if (DEBUG)
+            {
+                UnityEngine.Debug.LogWarning($"[{ModName}] {msg.ToString()}");
+            }
+        }
 
 
         private void Awake()

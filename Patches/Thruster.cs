@@ -16,7 +16,7 @@ namespace GameModeCollection.Patches
                 PhysicsItem item = ___follow.target.GetComponent<PhysicsItem>();
                 if (item.GetComponent<PhotonView>().IsMine || PhotonNetwork.OfflineMode)
                 {
-                    item.GetComponent<PhotonView>().RPC("RPCA_SendForce", RpcTarget.All, (Vector2)__instance.transform.forward * __instance.force * __instance.physicsObjectM * PhysicsItem.PhysicsForceMult, (Vector2)__instance.transform.position);
+                    item.GetComponent<PhotonView>().RPC("RPCA_SendForce", RpcTarget.All, (Vector2)__instance.transform.forward * __instance.force * __instance.physicsObjectM, (Vector2)__instance.transform.position, (byte)ForceMode2D.Force);
                 }
             }
         }

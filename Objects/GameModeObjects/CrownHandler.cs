@@ -46,11 +46,9 @@ namespace GameModeCollection.Objects.GameModeObjects
 	}
 	public class CrownHandler : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
 	{
-		private List<CrownSyncPackage> crownSyncPackages = new List<CrownSyncPackage>();
-
 		private static CrownHandler instance;
 
-		private const float TriggerRadius = 1f;
+		private const float TriggerRadius = 1.5f;
 
 		private const float MaxFreeTime = 20f;
 		private const float MaxRespawns = 20;
@@ -60,13 +58,15 @@ namespace GameModeCollection.Objects.GameModeObjects
 
 		private const float Bounciness = 0.2f;
 		private const float Friction = 0.2f;
-		private const float Mass = 50f;
+		private const float Mass = 500f;
 		private const float MinAngularDrag = 0.1f;
 		private const float MaxAngularDrag = 1f;
 		private const float MinDrag = 0f;
 		private const float MaxDrag = 5f;
-		private const float MaxSpeed = 100f;
-		private const float MaxAngularSpeed = 100f;
+		private const float MaxSpeed = 200f;
+		private const float MaxAngularSpeed = 1000f;
+		private const float PhysicsForceMult = 1f;
+		private const float PhysicsImpulseMult = 1f;
 
 		private bool hidden = true;
 		private float crownPos;
@@ -122,7 +122,7 @@ namespace GameModeCollection.Objects.GameModeObjects
 		}
 		protected override void Awake()
         {
-			this.PhysicalProperties = new ItemPhysicalProperties(
+			this._PhysicalProperties = new ItemPhysicalProperties(
 				bounciness: CrownHandler.Bounciness,
 				friction: CrownHandler.Friction,
 				mass: CrownHandler.Mass,
@@ -131,7 +131,9 @@ namespace GameModeCollection.Objects.GameModeObjects
 				minDrag: CrownHandler.MinDrag,
 				maxDrag: CrownHandler.MaxDrag,
 				maxAngularSpeed: CrownHandler.MaxAngularSpeed,
-				maxSpeed: CrownHandler.MaxSpeed
+				maxSpeed: CrownHandler.MaxSpeed,
+				forceMult: CrownHandler.PhysicsForceMult,
+				impulseMult: CrownHandler.PhysicsImpulseMult
 				);
 
 			base.Awake();
@@ -238,22 +240,6 @@ namespace GameModeCollection.Objects.GameModeObjects
 
 			base.Update();
 
-			// syncing
-			if (this.crownSyncPackages.Count > 0)
-			{
-				if (this.TimeDelta <= 0f)
-				{
-					if (this.crownSyncPackages.Count > 2)
-					{
-						this.crownSyncPackages.RemoveAt(0);
-					}
-					this.respawns = this.crownSyncPackages[0].respawns;
-					this.HeldFor = this.crownSyncPackages[0].held;
-					this.freeFor = this.crownSyncPackages[0].free;
-					this.crownSyncPackages.RemoveAt(0);
-				}
-			}
-
 			if (this.currentCrownHolder != -1 || this.hidden)
 			{
 				this.HeldFor += TimeHandler.deltaTime;
@@ -294,7 +280,7 @@ namespace GameModeCollection.Objects.GameModeObjects
 				}
 
 				// update colors as necessary
-				float a = 1f;
+				float a;
 				if (this.fadeInTime < CrownHandler.FadeInTime)
 				{
 					a = UnityEngine.Mathf.Lerp(0f, 1f, this.fadeInTime / CrownHandler.FadeInTime);
@@ -327,6 +313,15 @@ namespace GameModeCollection.Objects.GameModeObjects
 			base.transform.position = position;
 		}
 
+		public void AddRandomAngularVelocity(float min = -CrownHandler.MaxAngularSpeed, float max = CrownHandler.MaxAngularSpeed)
+        {
+			if (this.View.IsMine) { this.View.RPC(nameof(RPCA_AddAngularVel), RpcTarget.All, UnityEngine.Random.Range(min, max)); }
+        }
+		[PunRPC]
+		public void RPCA_AddAngularVel(float angVelToAdd)
+        {
+			this.Rig.angularVelocity += angVelToAdd;
+        }
 
 		public void GiveCrownToPlayer(int playerID)
 		{
@@ -341,8 +336,6 @@ namespace GameModeCollection.Objects.GameModeObjects
 			this.currentCrownHolder = playerID;
 			if (this.currentCrownHolder != -1 && !this.hidden) { base.StartCoroutine(this.IGiveCrownToPlayer()); }
 		}
-
-
 		private IEnumerator IGiveCrownToPlayer()
 		{
 			for (float i = 0f; i < this.transitionCurve.keys[this.transitionCurve.keys.Length - 1].time; i += Time.unscaledDeltaTime)
@@ -352,33 +345,23 @@ namespace GameModeCollection.Objects.GameModeObjects
 			}
 			yield break;
 		}
-		public override void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
-		{
-			if (stream.IsWriting)
-			{
-				if (this.CurrentFrame >= this.sendFreq)
-				{
-					stream.SendNext(this.respawns);
-					stream.SendNext(this.HeldFor);
-					stream.SendNext(this.freeFor);
-				}
-			}
-			else
-			{
-				CrownSyncPackage objectSyncPackage = new CrownSyncPackage();
-				objectSyncPackage.respawns = (int)stream.ReceiveNext();
-				objectSyncPackage.held = (float)stream.ReceiveNext();
-				objectSyncPackage.free = (float)stream.ReceiveNext();
-				this.crownSyncPackages.Add(objectSyncPackage);
-			}
 
-			base.OnPhotonSerializeView(stream, info);
-		}
-	}
-	public class CrownSyncPackage
-	{
-		public int respawns;
-		public float held;
-		public float free;
-	}
+		private const string SyncedRespawnsKey = "Crown_Respawns";
+		private const string SyncedHeldForKey = "Crown_Held_For";
+		private const string SyncedFreeForKey = "Crown_Free_For";
+
+        protected override void SetDataToSync()
+        {
+			this.SetSyncedData(SyncedRespawnsKey, (int)this.respawns);
+			this.SetSyncedData(SyncedHeldForKey, (float)this.HeldFor);
+			this.SetSyncedData(SyncedFreeForKey, (float)this.freeFor);
+        }
+        protected override void ReadSyncedData()
+        {
+			// syncing
+			this.respawns = this.GetSyncedData<int>(SyncedRespawnsKey, this.respawns);
+			this.HeldFor = this.GetSyncedData<float>(SyncedHeldForKey, this.HeldFor);
+			this.freeFor = this.GetSyncedData<float>(SyncedFreeForKey, this.freeFor);
+        }
+    }
 }
