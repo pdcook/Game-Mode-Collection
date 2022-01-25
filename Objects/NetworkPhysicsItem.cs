@@ -16,7 +16,7 @@ namespace GameModeCollection.Objects
     {
 		private const float DefaultBounciness = 0.2f;
 		private const float DefaultFriction = 0.2f;
-		private const float DefaultMass = 1f;
+		private const float DefaultMass = 50f;
 		private const float DefaultMinAngularDrag = 0.1f;
 		private const float DefaultMaxAngularDrag = 1f;
 		private const float DefaultMinDrag = 0f;
@@ -61,6 +61,7 @@ namespace GameModeCollection.Objects
     }
 	public abstract class PhysicsItem : MonoBehaviour
     {
+		public const float PhysicsForceMult = 1 / 1000f;
 		protected internal abstract void OnCollisionEnter2D(Collision2D collision2D);
 		protected internal abstract void OnCollisionExit2D(Collision2D collision2D);
 		protected internal abstract void OnCollisionStay2D(Collision2D collision2D);
@@ -194,16 +195,13 @@ namespace GameModeCollection.Objects
 		}
 		protected internal override void OnCollisionEnter2D(Collision2D collision2D)
 		{
-			if (this.View.IsMine || PhotonNetwork.OfflineMode)
-			{
-				ProjectileCollision projCol = collision2D?.collider?.GetComponent<ProjectileCollision>();
-				if (projCol != null && projCol.transform.parent != null && (projCol.transform.parent.GetComponentInChildren<PhotonView>().IsMine || PhotonNetwork.OfflineMode))
-				{
-					Vector2 point = (Vector2)projCol.transform.position;
-					Vector2 force = projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward;
-					this.View.RPC(nameof(this.RPCA_DoBulletHit), RpcTarget.All, projCol.transform.parent.GetComponentInChildren<PhotonView>().ViewID, point, force, (Vector2)(-projCol.transform.forward));
-				}
-			}
+            ProjectileCollision projCol = collision2D?.collider?.GetComponent<ProjectileCollision>();
+            if (projCol != null && projCol?.transform?.parent?.GetComponent<ProjectileHit>() != null && (projCol.transform.parent.GetComponentInChildren<PhotonView>().IsMine || PhotonNetwork.OfflineMode))
+            {
+                Vector2 point = (Vector2)projCol.transform.position;
+                Vector2 force = projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward;
+                this.View.RPC(nameof(this.RPCA_DoBulletHit), RpcTarget.All, projCol.transform.parent.GetComponentInChildren<PhotonView>().ViewID, point, force, (Vector2)(-projCol.transform.forward));
+            }
 		}
         protected internal override void OnCollisionExit2D(Collision2D collision2D)
         {
@@ -226,20 +224,33 @@ namespace GameModeCollection.Objects
 
         }
 		[PunRPC]
+		protected virtual void RPCA_SendForce(Vector2 force, Vector2 point)
+        {
+			if (this.Rig.velocity.sqrMagnitude < this.PhysicalProperties.MaxSpeedSqr)
+			{
+				this.Rig.AddForceAtPosition(force, point);
+			}
+        }
+		[PunRPC]
 		protected virtual void RPCA_DoBulletHit(int viewID, Vector2 point, Vector2 force, Vector2 normal)
 		{
 			if (this.Rig.velocity.sqrMagnitude < this.PhysicalProperties.MaxSpeedSqr)
 			{
-				this.Rig.AddForceAtPosition(force, point);
+				// bullets use Impulse
+				this.Rig.AddForceAtPosition(force, point, ForceMode2D.Impulse);
 			}
 			this.StartCoroutine(this.DoBulletHitWhenReady(viewID, point, normal));
 		}
 		protected virtual IEnumerator DoBulletHitWhenReady(int viewID, Vector2 point, Vector2 normal)
 		{
 			yield return new WaitUntil(() => PhotonNetwork.GetPhotonView(viewID) != null);
-			GameObject bullet = PhotonNetwork.GetPhotonView(viewID).gameObject;
-			ProjectileHit projHit = bullet.GetComponent<ProjectileHit>();
-			ProjectileCollision projCol = bullet.GetComponentInChildren<ProjectileCollision>();
+			GameObject bullet = PhotonNetwork.GetPhotonView(viewID)?.gameObject;
+			ProjectileHit projHit = bullet?.GetComponent<ProjectileHit>();
+			ProjectileCollision projCol = bullet?.GetComponentInChildren<ProjectileCollision>();
+			if (bullet == null || projHit == null || projCol == null)
+            {
+				yield break;
+            }
 			if (projHit.isAllowedToSpawnObjects)
 			{
 				HitInfo hitInfo = new HitInfo()
@@ -258,7 +269,6 @@ namespace GameModeCollection.Objects
 				}
 				projHit.transform.position = hitInfo.point + hitInfo.normal * 0.01f;
 			}
-			projCol.Die();
 		}
 
 		protected virtual void FixedUpdate()

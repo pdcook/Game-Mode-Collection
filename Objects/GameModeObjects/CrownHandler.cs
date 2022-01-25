@@ -50,6 +50,8 @@ namespace GameModeCollection.Objects.GameModeObjects
 
 		private static CrownHandler instance;
 
+		private const float TriggerRadius = 1f;
+
 		private const float MaxFreeTime = 20f;
 		private const float MaxRespawns = 20;
 
@@ -58,7 +60,7 @@ namespace GameModeCollection.Objects.GameModeObjects
 
 		private const float Bounciness = 0.2f;
 		private const float Friction = 0.2f;
-		private const float Mass = 1f;
+		private const float Mass = 50f;
 		private const float MinAngularDrag = 0.1f;
 		private const float MaxAngularDrag = 1f;
 		private const float MinDrag = 0f;
@@ -141,7 +143,7 @@ namespace GameModeCollection.Objects.GameModeObjects
 
 			base.Start();
 
-			this.Trig.radius = 2f;
+			this.Trig.radius = CrownHandler.TriggerRadius;
             this.Col.size = new Vector2(1f, 0.5f);
             this.Col.edgeRadius = 0.1f;
 		}

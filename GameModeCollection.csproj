@@ -120,6 +120,8 @@
     <Compile Include="GameModes\GM_CrownControl.cs" />
     <Compile Include="GameModes\GM_HideNSeek.cs" />
     <Compile Include="Objects\NetworkPhysicsItem.cs" />
+    <Compile Include="Patches\Explosion.cs" />
+    <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameModeObjects\CrownHandler.cs" />
   </ItemGroup>
