@@ -232,8 +232,7 @@ namespace GameModeCollection.GameModes
                 {
                     winningTeamID = -1;
                 }
-
-                if (winningTeamID != null && PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+                if (winningTeamID != null && (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode))
                 {
                     foreach (Player player in PlayerManager.instance.players.Where(p => !p.data.dead && p.teamID != winningTeamID))
                     {
