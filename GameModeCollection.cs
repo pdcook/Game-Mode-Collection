@@ -62,7 +62,7 @@ namespace GameModeCollection
 
         private void OnDestroy()
         {
-            harmony.UnpatchAll();
+            harmony.UnpatchAll(GameModeCollection.ModId);
         }
 
         internal static string GetConfigKey(string key) => $"{GameModeCollection.ModName}_{key}";
