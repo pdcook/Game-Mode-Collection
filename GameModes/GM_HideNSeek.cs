@@ -148,9 +148,12 @@ namespace GameModeCollection.GameModes
         private IEnumerator DoHideNSeek()
         {
             this.timeLeft = this.timeLimit;
+            this.startTimer = true;
             while (true)
             {
-                // UIHandler.instance.roundCounterSmall.UpdateClock(0, this.timeLeft/timeLimit, Color.black);
+                var white = Color.white * 0.9f;
+                white.a = 1f;
+                UIHandler.instance.roundCounterSmall.UpdateClock(0, this.timeLeft/ this.timeLimit, white);
                 // foreach (var hiderID in this.hiderIDs)
                 // {
                 //     UIHandler.instance.roundCounterSmall.UpdateText(hiderID, this.otherTeamKills[hiderID].ToString());
@@ -173,7 +176,6 @@ namespace GameModeCollection.GameModes
                     );
                 }
 
-                this.startTimer = true;
                 yield return null;
             }
         }
