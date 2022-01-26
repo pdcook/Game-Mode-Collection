@@ -33,7 +33,7 @@ namespace GameModeCollection.GameModes
 
         private const float delayPenaltyPerDeath = 1f;
         private const float baseRespawnDelay = 1f;
-        private static readonly Vector2 crownSpawn = new Vector2(0.5f, 0.999f);
+        private static readonly Vector2 crownSpawn = new Vector2(0.5f, 1f);
         private List<int> awaitingRespawn = new List<int>() { };
 
         private CrownHandler crown;

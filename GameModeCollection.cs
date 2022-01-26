@@ -66,6 +66,8 @@ namespace GameModeCollection
 
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());
             GameModeManager.AddHandler<GM_CrownControl>(TeamCrownControlHandler.GameModeID, new TeamCrownControlHandler());
+            GameModeManager.AddHandler<GM_Dodgeball>(DodgeballHandler.GameModeID, new DodgeballHandler());
+            GameModeManager.AddHandler<GM_Dodgeball>(TeamDodgeballHandler.GameModeID, new TeamDodgeballHandler());
             
             CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
             GameModeManager.AddHandler<GM_HideNSeek>(HideNSeekHandler.GameModeID, new HideNSeekHandler());

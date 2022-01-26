@@ -27,7 +27,7 @@ namespace GameModeCollection.Objects.GameModeObjects
 					GameModeCollection.Log("Crown Prefab Instantiated");
 					UnityEngine.GameObject.DontDestroyOnLoad(crown);
 					crown.name = "CrownPrefab";
-					// must add required components (PhotonView, Rigidbody2D, Collider2D) first
+					// must add required components (PhotonView) first
 					crown.AddComponent<PhotonView>();
 					CrownHandler crownHandler = crown.AddComponent<CrownHandler>();
 					crownHandler.transitionCurve = new AnimationCurve((Keyframe[])crown.GetComponent<GameCrownHandler>().transitionCurve.InvokeMethod("GetKeys"));
