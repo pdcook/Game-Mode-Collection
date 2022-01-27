@@ -8,11 +8,15 @@ using UnboundLib.Networking;
 using Photon.Pun;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects.GameModeObjects;
+using System;
 
 namespace GameModeCollection.GameModes
 {
     /// <summary>
     /// 
+    /// Can be played FFA or as teams
+    /// 
+    /// Points awarded to either: the last team standing, or the team who deals the final blow to the dodgeball
     /// 
     /// </summary>
     public class GM_Dodgeball : RWFGameMode
@@ -102,7 +106,7 @@ namespace GameModeCollection.GameModes
             yield return DeathRod.MakeDeathRod();
 
             this.ResetAllObjects();
-            this.CurrentDodgeable = Dodgeable.Ball;
+            this.CurrentDodgeable = Dodgeable.Box;
 
             yield return base.DoStartGame();
         }
@@ -113,16 +117,40 @@ namespace GameModeCollection.GameModes
             this.deathBox.Reset();
             this.deathRod.Reset();
         }
+        public void SetRandomObject()
+        {
+            if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+            {
+                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SetObject), (byte)((Enum.GetValues(typeof(Dodgeable))).Cast<Dodgeable>().ToList().Where(d => d!=Dodgeable.None).OrderBy(_ => UnityEngine.Random.Range(0f, 1f)).First()));
+            }
+        }
+        [UnboundRPC]
+        private static void RPCA_SetObject(byte obj)
+        {
+            GM_Dodgeball.instance.CurrentDodgeable = (Dodgeable)obj;
+        }
 
         public override IEnumerator DoRoundStart()
         {
+            this.SetRandomObject();
             yield return base.DoRoundStart();
             this.SpawnDodgeable();
         }
         public override IEnumerator DoPointStart()
         {
+            this.SetRandomObject();
             yield return base.DoPointStart();
             this.SpawnDodgeable();
+        }
+        public override void RoundOver(int[] winningTeamIDs)
+        {
+            this.ResetAllObjects();
+            base.RoundOver(winningTeamIDs);
+        }
+        public override void PointOver(int[] winningTeamIDs)
+        {
+            this.ResetAllObjects();
+            base.PointOver(winningTeamIDs);
         }
         private void SpawnDodgeable()
         {
