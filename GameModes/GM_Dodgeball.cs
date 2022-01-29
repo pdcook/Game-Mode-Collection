@@ -17,12 +17,12 @@ namespace GameModeCollection.GameModes
     /// Can be played FFA or as teams
     /// 
     /// Points awarded to either: the last team standing, or the team who deals the final blow to the dodgeball
+    /// Guns, bullets, explosives, etc do not do damage to players
     /// 
     /// </summary>
     public class GM_Dodgeball : RWFGameMode
     {
-
-        public enum Dodgeable
+        public enum Dodgable
         {
             Ball,
             Box,
@@ -34,16 +34,56 @@ namespace GameModeCollection.GameModes
 
         internal static readonly Vector2 ballSpawn = new Vector2(0.5f, 1f);
 
-        private Dodgeable _currentDodgeable = Dodgeable.None;
-        public Dodgeable CurrentDodgeable
+        private Dodgable _currentDodgableType = Dodgable.None;
+        public Dodgable CurrentDodgableType
         {
             get
             {
-                return this._currentDodgeable;
+                return this._currentDodgableType;
             }
             private set
             {
-                this._currentDodgeable = value;
+                this._currentDodgableType = value;
+            }
+        }
+        public GameObject CurrentDodgableObject
+        {
+            get
+            {
+                switch (this.CurrentDodgableType)
+                {
+                    case Dodgable.Ball:
+                        return this.deathBall.gameObject;
+                    case Dodgable.Box:
+                        return this.deathBox.gameObject;
+                    case Dodgable.Rod:
+                        return this.deathRod.gameObject;
+                    case Dodgable.None:
+                        return null;
+                    default:
+                        return null;
+                }
+            }
+        }
+        public DeathObjectHealth CurrentDodgableHealth
+        {
+            get
+            {
+                return this.CurrentDodgableObject?.GetComponent<DeathObjectHealth>();
+            }
+        }
+        public bool CurrentDodgableAlive
+        {
+            get
+            {
+                return !(this.CurrentDodgableHealth?.Dead ?? true);
+            }
+        }
+        public Player PlayerLastDamagedDodgable
+        {
+            get
+            {
+                return this.CurrentDodgableHealth.LastSourceOfDamage; 
             }
         }
 
@@ -98,6 +138,18 @@ namespace GameModeCollection.GameModes
             _ = DeathObjectPrefabs.DeathRod;
             base.Start();
         }
+        public override void PlayerDied(Player killedPlayer, int teamsAlive)
+        {
+            base.PlayerDied(killedPlayer, teamsAlive);
+        }
+        public void PlayerKilledDodgable(Player player)
+        {
+            TimeHandler.instance.DoSlowDown();
+            if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+            {
+                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(GM_Dodgeball.RPCA_NextRound), new int[] { player.teamID }, this.teamPoints, this.teamRounds);
+            }
+        }
         public override IEnumerator DoStartGame()
         {
             // these will wait until the objects exist
@@ -106,7 +158,11 @@ namespace GameModeCollection.GameModes
             yield return DeathRod.MakeDeathRod();
 
             this.ResetAllObjects();
-            this.CurrentDodgeable = Dodgeable.Box;
+            this.CurrentDodgableType = Dodgable.Box;
+
+            this.deathBall.GetComponent<DeathObjectHealth>().AddPlayerKilledAction(this.PlayerKilledDodgable);
+            this.deathBox.GetComponent<DeathObjectHealth>().AddPlayerKilledAction(this.PlayerKilledDodgable);
+            this.deathRod.GetComponent<DeathObjectHealth>().AddPlayerKilledAction(this.PlayerKilledDodgable);
 
             yield return base.DoStartGame();
         }
@@ -121,26 +177,26 @@ namespace GameModeCollection.GameModes
         {
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
-                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SetObject), (byte)((Enum.GetValues(typeof(Dodgeable))).Cast<Dodgeable>().ToList().Where(d => d!=Dodgeable.None).OrderBy(_ => UnityEngine.Random.Range(0f, 1f)).First()));
+                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SetObject), (byte)((Enum.GetValues(typeof(Dodgable))).Cast<Dodgable>().ToList().Where(d => d!=Dodgable.None).OrderBy(_ => UnityEngine.Random.Range(0f, 1f)).First()));
             }
         }
         [UnboundRPC]
         private static void RPCA_SetObject(byte obj)
         {
-            GM_Dodgeball.instance.CurrentDodgeable = (Dodgeable)obj;
+            GM_Dodgeball.instance.CurrentDodgableType = (Dodgable)obj;
         }
 
         public override IEnumerator DoRoundStart()
         {
             this.SetRandomObject();
             yield return base.DoRoundStart();
-            this.SpawnDodgeable();
+            this.SpawnDodgable();
         }
         public override IEnumerator DoPointStart()
         {
             this.SetRandomObject();
             yield return base.DoPointStart();
-            this.SpawnDodgeable();
+            this.SpawnDodgable();
         }
         public override void RoundOver(int[] winningTeamIDs)
         {
@@ -152,17 +208,17 @@ namespace GameModeCollection.GameModes
             this.ResetAllObjects();
             base.PointOver(winningTeamIDs);
         }
-        private void SpawnDodgeable()
+        private void SpawnDodgable()
         {
-            if (this.CurrentDodgeable == Dodgeable.Ball && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
+            if (this.CurrentDodgableType == Dodgable.Ball && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
             {
                 NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnBall), GM_Dodgeball.ballSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
             }
-            else if (this.CurrentDodgeable == Dodgeable.Box && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
+            else if (this.CurrentDodgableType == Dodgable.Box && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
             {
                 NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnBox), GM_Dodgeball.ballSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
             }
-            else if (this.CurrentDodgeable == Dodgeable.Rod && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
+            else if (this.CurrentDodgableType == Dodgable.Rod && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
             {
                 NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnRod), GM_Dodgeball.ballSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
             }

@@ -8,6 +8,8 @@ using UnboundLib;
 using UnboundLib.GameModes;
 using UnityEngine;
 using System.Reflection;
+using System;
+using Sonigon;
 
 namespace GameModeCollection.Objects.GameModeObjects
 {
@@ -226,7 +228,6 @@ namespace GameModeCollection.Objects.GameModeObjects
     public static class DeathObjectConstants
     {
         public const float MaxFreeTime = 20f;
-        public const float MaxRespawns = 20;
 
         public const float Bounciness = 1f;
         public const float Friction = 0.2f;
@@ -238,10 +239,10 @@ namespace GameModeCollection.Objects.GameModeObjects
         public const float MaxSpeed = 200f;
         public const float MaxAngularSpeed = 1000f;
         public const float PhysicsForceMult = 1f;
-        public const float PhysicsImpulseMult = 5f;
+        public const float PhysicsImpulseMult = 1.5f;
 
-        public const float Damage = 1f;
-        public const float Force = 1f;
+        public const float Damage = 0.5f;
+        public const float Force = 1000f;
 
         public const float MaxHealth = 1000f;
 
@@ -368,7 +369,37 @@ namespace GameModeCollection.Objects.GameModeObjects
 
     public class DeathObjectHealth : MonoBehaviour
     {
+        private PhotonView View => this.gameObject.GetComponent<PhotonView>();
+        private DeathObjectDamagable Damagable => this.gameObject.GetComponent<DeathObjectDamagable>();
         private Player _lastSourceOfDamage = null;
+        private bool _dead = false;
+        private Action<Player> onPlayerKilledAction = null;
+        public void ResetPlayerKilledAction()
+        {
+            this.onPlayerKilledAction = null;
+        }
+        public void AddPlayerKilledAction(Action<Player> action)
+        {
+            if (this.onPlayerKilledAction is null)
+            {
+                this.onPlayerKilledAction = action;
+            }
+            else
+            {
+                this.onPlayerKilledAction += action;
+            }
+        }
+        public bool Dead
+        {
+            get
+            {
+                return this._dead;
+            }
+            private set
+            {
+                this._dead = value;
+            }
+        }
         public Player LastSourceOfDamage
         {
             get
@@ -392,14 +423,53 @@ namespace GameModeCollection.Objects.GameModeObjects
                 this._Health = value;
             }
         }
-        public void ResetHealth()
+        private float lastDamaged = -1f;
+        public void Revive()
         {
-            this.Health = DeathObjectConstants.MaxHealth;
+            this.Health = UnityEngine.Mathf.Clamp(2f * PlayerManager.instance.players.Select(p => p.data.maxHealth).Sum(), 200f, DeathObjectConstants.MaxHealth);
+            this.Dead = false;
+            this.LastSourceOfDamage = null;
         }
-        public void TakeDamage(float damage, Player damagingPlayer)
+        public void TakeDamage(Vector2 damage, Player damagingPlayer)
         {
-            this.Health -= damage;
+            if (this.Dead) { return; }
+            this.Health -= damage.magnitude;
             this.LastSourceOfDamage = damagingPlayer;
+
+            if (this.Health <= 0f && this.View.IsMine)
+            {
+                this.View.RPC(nameof(RPCA_Die), RpcTarget.All, damage, damagingPlayer.playerID);
+            }
+
+            if (damagingPlayer != null)
+            {
+                damagingPlayer.data.stats.DealtDamage(damage, false, null);
+            }
+
+            if (this.lastDamaged + 0.15f < Time.time && damagingPlayer != null && damagingPlayer.data.stats.lifeSteal != 0f)
+            {
+                SoundManager.Instance.Play(damagingPlayer.data.healthHandler.soundDamageLifeSteal, this.transform);
+            }
+
+            this.lastDamaged = Time.time;
+        }
+        [PunRPC]
+        private void RPCA_Die(Vector2 deathDirection, int killingPlayerID)
+        {
+            this.Dead = true;
+            this.Damagable.StopAllCoroutines();
+            Player killingPlayer = PlayerManager.instance.players.Find(p => p.playerID == killingPlayerID);
+            if (killingPlayer is null)
+            {
+                killingPlayer = PlayerManager.instance.players.FirstOrDefault();
+            }
+            if (killingPlayer is null) { return; }
+            // play death effect
+            GamefeelManager.GameFeel(deathDirection.normalized * 3f);
+            DeathEffect deathEffect = GameObject.Instantiate(killingPlayer.data.healthHandler.deathEffect, this.transform.position, this.transform.rotation).GetComponent<DeathEffect>();
+            deathEffect.gameObject.transform.localScale = 2f * Vector3.one;
+            deathEffect.PlayDeath(killingPlayer.GetTeamColors().color, killingPlayer.data.playerVel, deathDirection, -1);
+            this.onPlayerKilledAction?.Invoke(killingPlayer);
         }
     }
 
@@ -409,8 +479,8 @@ namespace GameModeCollection.Objects.GameModeObjects
         private float Damage => DeathObjectConstants.Damage;
         private float Force => DeathObjectConstants.Force;
 
-        private DeathObjectDamagable Damagable => this.gameObject.GetComponent<DeathObjectDamagable>();
-        private DeathObjectHealth Health => this.gameObject.GetComponent<DeathObjectHealth>();
+        public DeathObjectDamagable Damagable => this.gameObject.GetComponent<DeathObjectDamagable>();
+        public DeathObjectHealth Health => this.gameObject.GetComponent<DeathObjectHealth>();
 
         private Vector2? _previousSpawn = null;
 
@@ -435,8 +505,6 @@ namespace GameModeCollection.Objects.GameModeObjects
 
         private bool hidden = true;
         internal SpriteRenderer Renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
-        private int respawns = 0;
-        private float freeFor = 0f;
 
         private Mode _currentMode = Mode.Normal;
         public Mode CurrentMode
@@ -497,20 +565,11 @@ namespace GameModeCollection.Objects.GameModeObjects
             this.CurrentMode = (Mode)mode;
         }
 
-        public bool TooManyRespawns
-        {
-            get
-            {
-                return this.respawns >= DeathObjectConstants.MaxRespawns;
-            }
-        }
-
         public void Reset()
         {
             this.hidden = true;
-            this.freeFor = 0f;
-            this.respawns = 0;
             this._previousSpawn = null;
+            this.Health.Revive();
         }
 
         /// <summary>
@@ -519,13 +578,7 @@ namespace GameModeCollection.Objects.GameModeObjects
         /// <param name="normalized_position"></param>
         public void Spawn(Vector3 normalized_position)
         {
-            if (this.TooManyRespawns)
-            {
-                this.hidden = true;
-                return;
-            }
             this.hidden = false;
-            this.freeFor = 0f;
             this.SetPos(OutOfBoundsUtils.GetPoint(normalized_position));
             this.SetVel(Vector2.zero);
             this.SetRot(0f);
@@ -544,7 +597,6 @@ namespace GameModeCollection.Objects.GameModeObjects
         }
         protected override void RPCA_SendForce(Vector2 force, Vector2 point, byte forceMode = (byte)ForceMode2D.Force)
         {
-            this.freeFor = 0f;
             base.RPCA_SendForce(force, point, forceMode);
         }
         protected internal override void OnCollisionEnter2D(Collision2D collision)
@@ -552,7 +604,6 @@ namespace GameModeCollection.Objects.GameModeObjects
             this.Rig.velocity *= 1.05f; // extra bouncy
             if (collision?.collider?.GetComponent<PlayerCollision>() != null)
             {
-                this.freeFor = 0f;
                 PlayerCollision playerCol = collision.collider.GetComponent<PlayerCollision>();
                 CharacterData data = playerCol.GetComponent<CharacterData>();
                 PhotonView view = data.view;
@@ -577,6 +628,8 @@ namespace GameModeCollection.Objects.GameModeObjects
         }
         protected override void Update()
         {
+            if (this.Health.Dead) { this.hidden = true; }
+
             if (this.transform.parent == null || this.hidden)
             {
                 this.Rig.isKinematic = true;
@@ -586,18 +639,10 @@ namespace GameModeCollection.Objects.GameModeObjects
 
             base.Update();
 
-            this.freeFor += TimeHandler.deltaTime;
-
             this.Rig.isKinematic = false;
             this.Col.enabled = true;
             this.Trig.enabled = true;
-            // if the object hasn't been touched in a long enough time, respawn it
             OutOfBoundsUtils.IsInsideBounds(this.transform.position, out Vector3 normalizedPoint);
-            if (this.freeFor > DeathObjectConstants.MaxFreeTime)
-            {
-                this.Spawn(this.PreviousSpawn);
-                this.respawns++;
-            }
             // if it has gone off the sides, have it bounce back in
             if (normalizedPoint.x <= 0f)
             {
@@ -611,23 +656,22 @@ namespace GameModeCollection.Objects.GameModeObjects
             {
                 this.Rig.velocity = new Vector2(this.Rig.velocity.x, 1.5f*UnityEngine.Mathf.Abs(this.Rig.velocity.y));
             }
+            // if it has gone off the top, just increase it's velocity downwards until it's back in
+            else if (normalizedPoint.y >= 1f)
+            {
+                this.Rig.velocity = new Vector2(this.Rig.velocity.x, this.Rig.velocity.y - this.Rig.mass*Time.deltaTime);
+            }
         }
 
-        private const string SyncedRespawnsKey = "DeathObject_Respawns";
-        private const string SyncedFreeForKey = "DeathObject_Free_For";
         private const string SyncedModeKey = "DeathObject_Mode";
 
         protected override void SetDataToSync()
         {
-            this.SetSyncedData(SyncedRespawnsKey, (int)this.respawns);
-            this.SetSyncedData(SyncedFreeForKey, (float)this.freeFor);
             this.SetSyncedData(SyncedModeKey, (byte)this.CurrentMode);
         }
         protected override void ReadSyncedData()
         {
             // syncing
-            this.respawns = this.GetSyncedData<int>(SyncedRespawnsKey, this.respawns);
-            this.freeFor = this.GetSyncedData<float>(SyncedFreeForKey, this.freeFor);
             this.CurrentMode = (Mode)this.GetSyncedData<byte>(SyncedModeKey, (byte)this.CurrentMode);
         }
 
@@ -652,6 +696,7 @@ namespace GameModeCollection.Objects.GameModeObjects
     {
 
         private PhotonView View => this.gameObject.GetComponent<PhotonView>();
+        private DeathObjectHealth Health => this.gameObject.GetComponent<DeathObjectHealth>();
 
         public override void CallTakeDamage(Vector2 damage, Vector2 damagePosition, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true)
         {
@@ -671,16 +716,37 @@ namespace GameModeCollection.Objects.GameModeObjects
         public override void TakeDamage(Vector2 damage, Vector2 damagePosition, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true, bool ignoreBlock = false)
         {
             if (damage == Vector2.zero) { return; }
-            this.TakeDamage(damage, damagePosition, Color.red, damagingWeapon, damagingPlayer, lethal, ignoreBlock);
+            this.TakeDamage(damage, damagePosition, damagingPlayer?.GetTeamColors()?.color ?? Color.red, damagingWeapon, damagingPlayer, lethal, ignoreBlock);
         }
 
         public override void TakeDamage(Vector2 damage, Vector2 damagePosition, Color dmgColor, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true, bool ignoreBlock = false)
         {
-            this.GetComponent<DeathObjectHealth>().TakeDamage(damage.magnitude, damagingPlayer);
+            this.Health.TakeDamage(damage, damagingPlayer);
             foreach (PlayerSkinParticle skin in this.GetComponentsInChildren<PlayerSkinParticle>())
             {
                 skin.BlinkColor(dmgColor);
             }
+        }
+        public void TakeDamageOverTime(Vector2 damage, Vector2 position, float time, float interval, Color color, SoundEvent soundDamageOverTime, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true)
+        {
+            this.StartCoroutine(this.DoDamageOverTime(damage, position, time, interval, color, soundDamageOverTime, damagingWeapon, damagingPlayer, lethal));
+        }
+        private IEnumerator DoDamageOverTime(Vector2 damage, Vector2 position, float time, float interval, Color color, SoundEvent soundDamageOverTime, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true)
+        {
+            float damageDealt = 0f;
+            float damageToDeal = damage.magnitude;
+            float dpt = damageToDeal / time * interval;
+            while (damageDealt < damageToDeal)
+            {
+                if (soundDamageOverTime != null && !this.Health.Dead)
+                {
+                    SoundManager.Instance.Play(soundDamageOverTime, this.transform);
+                }
+                damageDealt += dpt;
+                this.TakeDamage(damage.normalized * dpt, position, color, damagingWeapon, damagingPlayer, lethal, false);
+                yield return new WaitForSeconds(interval / TimeHandler.timeScale);
+            }
+            yield break;
         }
         [PunRPC]
         private void RPCA_TakeDamage(Vector2 damage, Vector2 position, bool lethal = true, int playerID = -1)

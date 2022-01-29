@@ -313,16 +313,16 @@ namespace GameModeCollection.Objects
 			{
 				yield break;
 			}
+            HitInfo hitInfo = new HitInfo()
+            {
+                collider = this.Col,
+                transform = this.transform,
+                rigidbody = this.Rig,
+                point = point,
+                normal = normal,
+            };
 			if (projHit.isAllowedToSpawnObjects)
 			{
-				HitInfo hitInfo = new HitInfo()
-				{
-					collider = this.Col,
-					transform = this.transform,
-					rigidbody = this.Rig,
-					point = point,
-					normal = normal,
-				};
 				GamefeelManager.GameFeel(projHit.transform.forward * projHit.shake);
 				DynamicParticles.instance.PlayBulletHit(projHit.damage, projHit.transform, hitInfo, projHit.projectileColor);
 				for (int i = 0; i < projHit.objectsToSpawn.Length; i++)
@@ -331,6 +331,23 @@ namespace GameModeCollection.Objects
 				}
 				projHit.transform.position = hitInfo.point + hitInfo.normal * 0.01f;
 			}
+			bool flag = false;
+			if (projHit.effects != null && projHit.effects.Count() != 0)
+            {
+				for (int j = 0; j < projHit.effects.Count; j++)
+				{
+					HasToReturn hasToReturn = projHit.effects[j].DoHitEffect(hitInfo);
+					if (hasToReturn == HasToReturn.hasToReturn)
+					{
+						flag = true;
+					}
+					if (hasToReturn == HasToReturn.hasToReturnNow)
+					{
+						yield break;
+					}
+				}
+			}
+			if (flag) { yield break; }
 			projCol.Die();
 		}
 

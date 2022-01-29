@@ -18,7 +18,7 @@ namespace GameModeCollection.GameModeHandlers
             maxTeams: null,
             maxClients: null)
         {
-
+            this.Settings.Add(GameModeCollection.AllowEnemyDamageKey, false);
         }
     }
     public class TeamDodgeballHandler : RWFGameModeHandler<GM_Dodgeball>
@@ -37,7 +37,7 @@ namespace GameModeCollection.GameModeHandlers
             maxTeams: null,
             maxClients: null)
         {
-
+            this.Settings.Add(GameModeCollection.AllowEnemyDamageKey, false);
         }
     }
 }

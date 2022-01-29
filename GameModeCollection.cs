@@ -22,7 +22,7 @@ namespace GameModeCollection
         private const string ModId = "pykessandbosssloth.rounds.plugins.gamemodecollection";
         private const string ModName = "Game Mode Collection";
         public const string Version = "0.0.0";
-        private string CompatibilityModName => ModName.Replace(" ", "");
+        private static string CompatibilityModName => ModName.Replace(" ", "");
 
         public static GameModeCollection instance;
 
@@ -47,7 +47,6 @@ namespace GameModeCollection
                 UnityEngine.Debug.LogWarning($"[{ModName}] {msg.ToString()}");
             }
         }
-
 
         private void Awake()
         {
@@ -79,7 +78,66 @@ namespace GameModeCollection
             harmony.UnpatchAll(GameModeCollection.ModId);
         }
 
-        internal static string GetConfigKey(string key) => $"{GameModeCollection.ModName}_{key}";
+        internal static string GetConfigKey(string key) => $"{GameModeCollection.CompatibilityModName}_{key}";
+
+        internal static string AllowEnemyDamageKey => "allowEnemyDamage";
+        internal static string AllowTeamDamageKey => "allowTeamDamage";
+        internal static string AllowSelfDamageKey => "allowSelfDamage";
+
+        internal static bool EnemyDamageAllowed
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return true;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(AllowEnemyDamageKey, out object allow) && !(bool)allow)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+        internal static bool TeamDamageAllowed
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return true;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(AllowTeamDamageKey, out object allow) && !(bool)allow)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
+        internal static bool SelfDamageAllowed
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return true;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(AllowSelfDamageKey, out object allow) && !(bool)allow)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
 
         private static void GUI(GameObject menu)
         {

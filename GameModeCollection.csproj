@@ -128,6 +128,9 @@
     <Compile Include="Objects\GameModeObjects\DeathObjectHandler.cs" />
     <Compile Include="Objects\NetworkPhysicsItem.cs" />
     <Compile Include="Patches\Explosion.cs" />
+    <Compile Include="Patches\HealthHandler.cs" />
+    <Compile Include="Patches\ProjectileHit.cs" />
+    <Compile Include="Patches\RayHitPoison.cs" />
     <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameModeObjects\CrownHandler.cs" />
