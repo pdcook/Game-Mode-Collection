@@ -99,15 +99,16 @@ namespace GameModeCollection.Objects.GameModeObjects
 			GM_CrownControl.instance.SetCrown(this);
 			CrownHandler.instance = this;
 		}
-
+        internal static void DestroyCrown()
+        {
+            GM_CrownControl.instance.DestroyCrown();
+            if (CrownHandler.instance != null)
+            {
+                UnityEngine.GameObject.DestroyImmediate(CrownHandler.instance);
+            }
+        }
 		internal static IEnumerator MakeCrownHandler()
 		{
-			GM_CrownControl.instance.DestroyCrown();
-			if (CrownHandler.instance != null)
-			{
-				UnityEngine.GameObject.DestroyImmediate(CrownHandler.instance);
-			}
-
 			if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
 			{
 				PhotonNetwork.Instantiate(
@@ -158,7 +159,12 @@ namespace GameModeCollection.Objects.GameModeObjects
 			}
 		}
 
-		public void Reset()
+        protected override bool SyncDataNow()
+        {
+			return !this.hidden;
+        }
+
+        public void Reset()
 		{
 			this.hidden = true;
 			this.currentCrownHolder = -1;

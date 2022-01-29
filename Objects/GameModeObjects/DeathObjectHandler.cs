@@ -231,15 +231,16 @@ namespace GameModeCollection.Objects.GameModeObjects
 
         public const float Bounciness = 1f;
         public const float Friction = 0.2f;
-        public const float Mass = 500f;
-        public const float MinAngularDrag = 0.1f;
+        public const float Mass = 10000f;
+        public const float MinAngularDrag = 0f;
         public const float MaxAngularDrag = 1f;
         public const float MinDrag = 0f;
         public const float MaxDrag = 5f;
         public const float MaxSpeed = 200f;
         public const float MaxAngularSpeed = 1000f;
-        public const float PhysicsForceMult = 1f;
-        public const float PhysicsImpulseMult = 1.5f;
+        public const float PhysicsForceMult = 30f;
+        public const float PhysicsImpulseMult = 30f;
+        public const float ThrusterDurationMult = 1f;
 
         public const float Damage = 0.5f;
         public const float Force = 1000f;
@@ -267,14 +268,16 @@ namespace GameModeCollection.Objects.GameModeObjects
 
             this.Col.radius = DeathBall.Radius;
         }
-        internal static IEnumerator MakeDeathBall()
+        internal static void DestroyDeathBall()
         {
             GM_Dodgeball.instance.DestroyDeathBall();
             if (DeathBall.instance != null)
             {
                 UnityEngine.GameObject.DestroyImmediate(DeathBall.instance);
             }
-
+        }
+        internal static IEnumerator MakeDeathBall()
+        {
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
                 PhotonNetwork.Instantiate(
@@ -299,14 +302,16 @@ namespace GameModeCollection.Objects.GameModeObjects
             GM_Dodgeball.instance.SetDeathObject(this);
             DeathBox.instance = this;
         }
-        internal static IEnumerator MakeDeathBox()
+        internal static void DestroyDeathBox()
         {
             GM_Dodgeball.instance.DestroyDeathBox();
             if (DeathBox.instance != null)
             {
                 UnityEngine.GameObject.DestroyImmediate(DeathBox.instance);
             }
-
+        }
+        internal static IEnumerator MakeDeathBox()
+        {
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
                 PhotonNetwork.Instantiate(
@@ -337,14 +342,16 @@ namespace GameModeCollection.Objects.GameModeObjects
             GM_Dodgeball.instance.SetDeathObject(this);
             DeathRod.instance = this;
         }
-        internal static IEnumerator MakeDeathRod()
+        internal static void DestroyDeathRod()
         {
             GM_Dodgeball.instance.DestroyDeathRod();
             if (DeathRod.instance != null)
             {
                 UnityEngine.GameObject.DestroyImmediate(DeathRod.instance);
             }
-
+        }
+        internal static IEnumerator MakeDeathRod()
+        {
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
                 PhotonNetwork.Instantiate(
@@ -374,6 +381,24 @@ namespace GameModeCollection.Objects.GameModeObjects
         private Player _lastSourceOfDamage = null;
         private bool _dead = false;
         private Action<Player> onPlayerKilledAction = null;
+
+        private float _invulnerableFor = 0f;
+        public float InvulnerableFor
+        {
+            get
+            {
+                return this._invulnerableFor;
+            }
+            private set
+            {
+                this._invulnerableFor = value;
+            }
+        }
+        public void SetInvulnerableFor(float time)
+        {
+            this.InvulnerableFor = time;
+        }
+
         public void ResetPlayerKilledAction()
         {
             this.onPlayerKilledAction = null;
@@ -424,6 +449,13 @@ namespace GameModeCollection.Objects.GameModeObjects
             }
         }
         private float lastDamaged = -1f;
+        void Update()
+        {
+            if (this.InvulnerableFor > 0f)
+            {
+                this.InvulnerableFor -= Time.deltaTime;
+            }
+        }
         public void Revive()
         {
             this.Health = UnityEngine.Mathf.Clamp(2f * PlayerManager.instance.players.Select(p => p.data.maxHealth).Sum(), 200f, DeathObjectConstants.MaxHealth);
@@ -432,7 +464,7 @@ namespace GameModeCollection.Objects.GameModeObjects
         }
         public void TakeDamage(Vector2 damage, Player damagingPlayer)
         {
-            if (this.Dead) { return; }
+            if (this.Dead || this.InvulnerableFor > 0f) { return; }
             this.Health -= damage.magnitude;
             this.LastSourceOfDamage = damagingPlayer;
 
@@ -475,7 +507,14 @@ namespace GameModeCollection.Objects.GameModeObjects
 
     public abstract class DeathObjectHandler<TCollision> : NetworkPhysicsItem<TCollision, CircleCollider2D> where TCollision : Collider2D
     {
-
+        private const float InvulnerabilityTime = 2f;
+        protected override int sendFreq
+        {
+            get
+            {
+                return 5;
+            }
+        }
         private float Damage => DeathObjectConstants.Damage;
         private float Force => DeathObjectConstants.Force;
 
@@ -494,7 +533,7 @@ namespace GameModeCollection.Objects.GameModeObjects
                 }
                 else
                 {
-                    return GM_Dodgeball.ballSpawn;
+                    return GM_Dodgeball.objSpawn;
                 }
             }
             private set
@@ -518,7 +557,10 @@ namespace GameModeCollection.Objects.GameModeObjects
                 this._currentMode = value;
             }
         }
-
+        protected override bool SyncDataNow()
+        {
+			return !this.hidden;
+        }
         protected override void Awake()
         {
             this._PhysicalProperties = new ItemPhysicalProperties(
@@ -532,7 +574,8 @@ namespace GameModeCollection.Objects.GameModeObjects
                 maxAngularSpeed: DeathObjectConstants.MaxAngularSpeed,
                 maxSpeed: DeathObjectConstants.MaxSpeed,
                 forceMult: DeathObjectConstants.PhysicsForceMult,
-                impulseMult: DeathObjectConstants.PhysicsImpulseMult
+                impulseMult: DeathObjectConstants.PhysicsImpulseMult,
+                thrusterDurationMult: DeathObjectConstants.ThrusterDurationMult
                 );
 
             base.Awake();
@@ -585,6 +628,7 @@ namespace GameModeCollection.Objects.GameModeObjects
             this.SetAngularVel(0f);
             this.PreviousSpawn = normalized_position;
             this.AddRandomAngularVelocity();
+            this.Health.SetInvulnerableFor(InvulnerabilityTime);
         }
         public void AddRandomAngularVelocity(float min = -DeathObjectConstants.MaxAngularSpeed, float max = DeathObjectConstants.MaxAngularSpeed)
         {
@@ -595,6 +639,7 @@ namespace GameModeCollection.Objects.GameModeObjects
         {
             this.Rig.angularVelocity += angVelToAdd;
         }
+        [PunRPC]
         protected override void RPCA_SendForce(Vector2 force, Vector2 point, byte forceMode = (byte)ForceMode2D.Force)
         {
             base.RPCA_SendForce(force, point, forceMode);
@@ -659,7 +704,7 @@ namespace GameModeCollection.Objects.GameModeObjects
             // if it has gone off the top, just increase it's velocity downwards until it's back in
             else if (normalizedPoint.y >= 1f)
             {
-                this.Rig.velocity = new Vector2(this.Rig.velocity.x, this.Rig.velocity.y - this.Rig.mass*Time.deltaTime);
+                this.Rig.velocity = new Vector2(this.Rig.velocity.x, this.Rig.velocity.y - DeathObjectConstants.MaxSpeed*Time.deltaTime);
             }
         }
 

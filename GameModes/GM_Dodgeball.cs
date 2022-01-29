@@ -9,6 +9,7 @@ using Photon.Pun;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects.GameModeObjects;
 using System;
+using UnboundLib.GameModes;
 
 namespace GameModeCollection.GameModes
 {
@@ -32,7 +33,9 @@ namespace GameModeCollection.GameModes
 
         internal static GM_Dodgeball instance;
 
-        internal static readonly Vector2 ballSpawn = new Vector2(0.5f, 1f);
+        private Coroutine ExtraObjectsCO = null;
+
+        internal static readonly Vector2 objSpawn = new Vector2(0.5f, 1f);
 
         private Dodgable _currentDodgableType = Dodgable.None;
         public Dodgable CurrentDodgableType
@@ -153,9 +156,24 @@ namespace GameModeCollection.GameModes
         public override IEnumerator DoStartGame()
         {
             // these will wait until the objects exist
+            GameModeCollection.Log("[GM_DodgeBall] Destroying Objects...");
+            DeathBall.DestroyDeathBall();
+            yield return this.WaitForSyncUp();
+            yield return new WaitForEndOfFrame();
+            DeathBox.DestroyDeathBox();
+            yield return this.WaitForSyncUp();
+            yield return new WaitForEndOfFrame();
+            DeathRod.DestroyDeathRod();
+            yield return this.WaitForSyncUp();
+            yield return new WaitForEndOfFrame();
+
+            GameModeCollection.Log("[GM_DodgeBall] Creating Objects...");
             yield return DeathBall.MakeDeathBall();
             yield return DeathBox.MakeDeathBox();
             yield return DeathRod.MakeDeathRod();
+            GameModeCollection.Log("[GM_DodgeBall] Objects Created.");
+
+            yield return this.WaitForSyncUp();
 
             this.ResetAllObjects();
             this.CurrentDodgableType = Dodgable.Box;
@@ -185,42 +203,81 @@ namespace GameModeCollection.GameModes
         {
             GM_Dodgeball.instance.CurrentDodgableType = (Dodgable)obj;
         }
+        public IEnumerator SpawnExtraObjects()
+        {
+            if (!PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode)
+            {
+                yield break;
+            }
+
+            List<Dodgable> nextUp = ((Enum.GetValues(typeof(Dodgable))).Cast<Dodgable>().ToList().Where(d => d != Dodgable.None && d != this.CurrentDodgableType).OrderBy(_ => UnityEngine.Random.Range(0f, 1f))).ToList();
+
+            for (int i = 0; i < nextUp.Count(); i++)
+            {
+                yield return new WaitForSecondsRealtime(UnityEngine.Random.Range(1f, 3f));
+
+                if (UnityEngine.Random.Range(0f, 1f) <= (float)this.teamRounds.Values.Max()/(float)(int)GameModeManager.CurrentHandler.Settings["roundsToWinGame"])
+                {
+                    this.SpawnDodgable(nextUp[i]);                
+                }
+            }
+        }
 
         public override IEnumerator DoRoundStart()
         {
+            this.ResetAllObjects();
             this.SetRandomObject();
             yield return base.DoRoundStart();
-            this.SpawnDodgable();
+            this.SpawnDodgable(this.CurrentDodgableType);
+            if (this.ExtraObjectsCO != null)
+            {
+                this.StopCoroutine(this.ExtraObjectsCO);
+            }
+            this.ExtraObjectsCO = this.StartCoroutine(this.SpawnExtraObjects());
         }
         public override IEnumerator DoPointStart()
         {
+            this.ResetAllObjects();
             this.SetRandomObject();
             yield return base.DoPointStart();
-            this.SpawnDodgable();
+            this.SpawnDodgable(this.CurrentDodgableType);
+            if (this.ExtraObjectsCO != null)
+            {
+                this.StopCoroutine(this.ExtraObjectsCO);
+            }
+            this.ExtraObjectsCO = this.StartCoroutine(this.SpawnExtraObjects());
         }
         public override void RoundOver(int[] winningTeamIDs)
         {
+            if (this.ExtraObjectsCO != null)
+            {
+                this.StopCoroutine(this.ExtraObjectsCO);
+            }
             this.ResetAllObjects();
             base.RoundOver(winningTeamIDs);
         }
         public override void PointOver(int[] winningTeamIDs)
         {
+            if (this.ExtraObjectsCO != null)
+            {
+                this.StopCoroutine(this.ExtraObjectsCO);
+            }
             this.ResetAllObjects();
             base.PointOver(winningTeamIDs);
         }
-        private void SpawnDodgable()
+        private void SpawnDodgable(Dodgable dodgable)
         {
-            if (this.CurrentDodgableType == Dodgable.Ball && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
+            if (dodgable == Dodgable.Ball && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
             {
-                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnBall), GM_Dodgeball.ballSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
+                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnBall), GM_Dodgeball.objSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
             }
-            else if (this.CurrentDodgableType == Dodgable.Box && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
+            else if (dodgable == Dodgable.Box && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
             {
-                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnBox), GM_Dodgeball.ballSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
+                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnBox), GM_Dodgeball.objSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
             }
-            else if (this.CurrentDodgableType == Dodgable.Rod && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
+            else if (dodgable == Dodgable.Rod && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
             {
-                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnRod), GM_Dodgeball.ballSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
+                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnRod), GM_Dodgeball.objSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
             }
         }
 

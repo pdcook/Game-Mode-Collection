@@ -25,6 +25,7 @@ namespace GameModeCollection.Objects
 		private const float DefaultMaxAngularSpeed = 1000f;
 		private const float DefaultPhysicsForceMult = 1f;
 		private const float DefaultPhysicsImpulseMult = 1f;
+		private const float DefaultThrusterDurationMult = 1f;
 
 		public readonly float Bounciness;
 		public readonly float Friction;
@@ -38,6 +39,7 @@ namespace GameModeCollection.Objects
 		public readonly float MaxAngularSpeed;
 		public readonly float PhysicsForceMult;
 		public readonly float PhysicsImpulseMult;
+		public readonly float ThrusterDurationMult;
 		public float MaxSpeedSqr => this.MaxSpeed * this.MaxSpeed;
 
 		public ItemPhysicalProperties(
@@ -51,7 +53,8 @@ namespace GameModeCollection.Objects
 			float maxAngularSpeed = DefaultMaxAngularSpeed,
 			float maxSpeed = DefaultMaxSpeed,
 			float forceMult = DefaultPhysicsForceMult,
-			float impulseMult = DefaultPhysicsImpulseMult)
+			float impulseMult = DefaultPhysicsImpulseMult,
+			float thrusterDurationMult = DefaultThrusterDurationMult)
 		{
 			this.Bounciness = bounciness;
 			this.Friction = friction;
@@ -64,6 +67,7 @@ namespace GameModeCollection.Objects
 			this.MaxAngularSpeed = maxAngularSpeed;
 			this.PhysicsForceMult = forceMult;
 			this.PhysicsImpulseMult = impulseMult;
+			this.ThrusterDurationMult = thrusterDurationMult;
 		}
 
 	}
@@ -71,12 +75,20 @@ namespace GameModeCollection.Objects
 	{
 		public abstract ItemPhysicalProperties PhysicalProperties { get; }
 		public static readonly int Layer = LayerMask.NameToLayer("PlayerObjectCollider"); // PlayerObjectCollider layer (layer 19)
+		private PhotonView View => this.gameObject.GetComponent<PhotonView>();
 		protected internal abstract void OnCollisionEnter2D(Collision2D collision2D);
 		protected internal abstract void OnCollisionExit2D(Collision2D collision2D);
 		protected internal abstract void OnCollisionStay2D(Collision2D collision2D);
 		protected internal abstract void OnTriggerEnter2D(Collider2D collider2D);
 		protected internal abstract void OnTriggerExit2D(Collider2D collider2D);
 		protected internal abstract void OnTriggerStay2D(Collider2D collider2D);
+		protected internal virtual void CallTakeForce(Vector2 force, Vector2 point, ForceMode2D forceMode = ForceMode2D.Force)
+		{
+			this.View?.RPC(nameof(RPCA_SendForce), RpcTarget.All, force, point, (byte)forceMode);
+		}
+		[PunRPC]
+		protected abstract void RPCA_SendForce(Vector2 force, Vector2 point, byte forceMode);
+
 	}
 	[RequireComponent(typeof(PhotonView))]
 	[RequireComponent(typeof(Rigidbody2D))]
@@ -153,7 +165,13 @@ namespace GameModeCollection.Objects
 			this._dataToSync[key] = value;
 		}
 
-		protected readonly int sendFreq = 5;
+		protected virtual int sendFreq
+		{
+			get
+            {
+				return 5;
+            }
+		}
 		private int _currentFrame = 5;
 		protected int CurrentFrame
 		{
@@ -289,7 +307,7 @@ namespace GameModeCollection.Objects
 
 		}
 		[PunRPC]
-		protected virtual void RPCA_SendForce(Vector2 force, Vector2 point, byte forceMode = (byte)ForceMode2D.Force)
+		protected override void RPCA_SendForce(Vector2 force, Vector2 point, byte forceMode)
 		{
 			ForceMode2D forceMode2D = (ForceMode2D)forceMode;
 			float mult = 1f;
@@ -406,8 +424,10 @@ namespace GameModeCollection.Objects
 		}
 		protected abstract void SetDataToSync();
 		protected abstract void ReadSyncedData();
+		protected abstract bool SyncDataNow();
 		public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
 		{
+			if (!this.SyncDataNow()) { return; }
 			this.CurrentFrame++;
 			if (stream.IsWriting)
 			{

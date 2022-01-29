@@ -138,8 +138,17 @@ namespace GameModeCollection.GameModes
 
         public override IEnumerator DoStartGame()
         {
+
+            CrownHandler.DestroyCrown();
+
+            yield return this.WaitForSyncUp();
+
+            yield return new WaitForEndOfFrame();
+
             // this will wait until the crown exists
             yield return CrownHandler.MakeCrownHandler();
+
+            yield return this.WaitForSyncUp();
 
             this.ResetForBattle();
 
