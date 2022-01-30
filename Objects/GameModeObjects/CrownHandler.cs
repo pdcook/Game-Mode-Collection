@@ -358,16 +358,16 @@ namespace GameModeCollection.Objects.GameModeObjects
 
         protected override void SetDataToSync()
         {
-			this.SetSyncedData(SyncedRespawnsKey, (int)this.respawns);
-			this.SetSyncedData(SyncedHeldForKey, (float)this.HeldFor);
-			this.SetSyncedData(SyncedFreeForKey, (float)this.freeFor);
+			this.SetSyncedInt(SyncedRespawnsKey, this.respawns);
+			this.SetSyncedFloat(SyncedHeldForKey, this.HeldFor);
+			this.SetSyncedFloat(SyncedFreeForKey, this.freeFor);
         }
         protected override void ReadSyncedData()
         {
 			// syncing
-			this.respawns = this.GetSyncedData<int>(SyncedRespawnsKey, this.respawns);
-			this.HeldFor = this.GetSyncedData<float>(SyncedHeldForKey, this.HeldFor);
-			this.freeFor = this.GetSyncedData<float>(SyncedFreeForKey, this.freeFor);
+			this.respawns = this.GetSyncedInt(SyncedRespawnsKey, this.respawns);
+			this.HeldFor = this.GetSyncedFloat(SyncedHeldForKey, this.HeldFor);
+			this.freeFor = this.GetSyncedFloat(SyncedFreeForKey, this.freeFor);
         }
     }
 }

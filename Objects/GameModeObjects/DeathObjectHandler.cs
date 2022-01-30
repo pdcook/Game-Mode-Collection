@@ -15,7 +15,6 @@ namespace GameModeCollection.Objects.GameModeObjects
 {
     public static class DeathObjectPrefabs
     {
-
         public static int Layer => LayerMask.NameToLayer("Player");
         public static int SortingLayerID => SortingLayer.NameToID("Player0");
 
@@ -508,13 +507,6 @@ namespace GameModeCollection.Objects.GameModeObjects
     public abstract class DeathObjectHandler<TCollision> : NetworkPhysicsItem<TCollision, CircleCollider2D> where TCollision : Collider2D
     {
         private const float InvulnerabilityTime = 2f;
-        protected override int sendFreq
-        {
-            get
-            {
-                return 5;
-            }
-        }
         private float Damage => DeathObjectConstants.Damage;
         private float Force => DeathObjectConstants.Force;
 
@@ -622,6 +614,7 @@ namespace GameModeCollection.Objects.GameModeObjects
         public void Spawn(Vector3 normalized_position)
         {
             this.hidden = false;
+            this.gameObject.SetActive(true);
             this.SetPos(OutOfBoundsUtils.GetPoint(normalized_position));
             this.SetVel(Vector2.zero);
             this.SetRot(0f);
@@ -679,6 +672,7 @@ namespace GameModeCollection.Objects.GameModeObjects
             {
                 this.Rig.isKinematic = true;
                 this.transform.position = 100000f * Vector2.up;
+                this.gameObject.SetActive(false);
                 return;
             }
 
@@ -712,22 +706,12 @@ namespace GameModeCollection.Objects.GameModeObjects
 
         protected override void SetDataToSync()
         {
-            this.SetSyncedData(SyncedModeKey, (byte)this.CurrentMode);
+            this.SetSyncedInt(SyncedModeKey, (int)this.CurrentMode);
         }
         protected override void ReadSyncedData()
         {
             // syncing
-            this.CurrentMode = (Mode)this.GetSyncedData<byte>(SyncedModeKey, (byte)this.CurrentMode);
-        }
-
-        public enum Shapes
-        {
-            Circle,
-            Square,
-            Rod,
-            Triangle,
-            Star,
-            Random
+            this.CurrentMode = (Mode)this.GetSyncedInt(SyncedModeKey, (int)this.CurrentMode);
         }
         public enum Mode
         {

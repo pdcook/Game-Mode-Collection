@@ -95,11 +95,6 @@ namespace GameModeCollection.Objects
 	public abstract class NetworkPhysicsItem<TCollider, TTrigger> : PhysicsItem, IPunInstantiateMagicCallback, IPunObservable where TCollider : Collider2D where TTrigger : Collider2D
 	{
 
-		protected const string SyncedPositionKey = "__pos__";
-		protected const string SyncedRotationKey = "__rot__";
-		protected const string SyncedVelocityKey = "__vel__";
-		protected const string SyncedAngularVelocityKey = "__angularVel__";
-
 		protected ItemPhysicalProperties _PhysicalProperties = new ItemPhysicalProperties();
         public override ItemPhysicalProperties PhysicalProperties => this._PhysicalProperties;
 
@@ -120,35 +115,27 @@ namespace GameModeCollection.Objects
 				return this._Material;
 			}
 		}
-		private Dictionary<string, object> _dataToSync = new Dictionary<string, object>() { };
+		private Dictionary<string, int> _intDataToSync = new Dictionary<string, int>() { };
+		private Dictionary<string, string> _stringDataToSync = new Dictionary<string, string>() { };
+		private Dictionary<string, float> _floatDataToSync = new Dictionary<string, float>() { };
+
 		protected string[] GetSyncedKeys()
 		{
-			return this._dataToSync.Keys.ToArray();
+			return this._intDataToSync.Keys.Concat(this._stringDataToSync.Keys).Concat(this._floatDataToSync.Keys).ToArray();
 		}
 		protected object GetSyncedData(string key, object default_value = default)
 		{
-			if (this._dataToSync.TryGetValue(key, out object value))
+			if (this._intDataToSync.TryGetValue(key, out int value))
 			{
 				return value;
 			}
-			else
+			else if (this._stringDataToSync.TryGetValue(key, out string value1))
 			{
-				GameModeCollection.LogWarning($"Key \"{key}\" not found in syncing data of NetworkPhysicsItem component of {this.name}.");
+				return value1;
 			}
-			return default_value;
-		}
-		protected T GetSyncedData<T>(string key, T default_value = default)
-		{
-			if (this._dataToSync.TryGetValue(key, out object value))
+			else if (this._floatDataToSync.TryGetValue(key, out float value2))
 			{
-				try
-				{
-					return (T)value;
-				}
-				catch (InvalidCastException)
-				{
-					GameModeCollection.LogWarning($"InvalidCastException in NetworkPhysicsItem component of {this.name}: {value.ToString()} cannot be cast to type {typeof(T).ToString()}");
-				}
+				return value2;
 			}
 			else
 			{
@@ -156,16 +143,56 @@ namespace GameModeCollection.Objects
 			}
 			return default_value;
 		}
-		protected void SetSyncedData<T>(string key, T value)
+		protected int GetSyncedInt(string key, int default_value = default)
 		{
-			this._dataToSync[key] = (object)value;
+			if (this._intDataToSync.TryGetValue(key, out int value))
+			{
+                return value;
+			}
+			else
+			{
+				GameModeCollection.LogWarning($"Key \"{key}\" not found in syncing data of NetworkPhysicsItem component of {this.name}.");
+			}
+			return default_value;
 		}
-		protected void SetSyncedData(string key, object value)
+		protected string GetSyncedString(string key, string default_value = default)
 		{
-			this._dataToSync[key] = value;
+			if (this._stringDataToSync.TryGetValue(key, out string value))
+			{
+                return value;
+			}
+			else
+			{
+				GameModeCollection.LogWarning($"Key \"{key}\" not found in syncing data of NetworkPhysicsItem component of {this.name}.");
+			}
+			return default_value;
+		}
+		protected float GetSyncedFloat(string key, float default_value = default)
+		{
+			if (this._floatDataToSync.TryGetValue(key, out float value))
+			{
+                return value;
+			}
+			else
+			{
+				GameModeCollection.LogWarning($"Key \"{key}\" not found in syncing data of NetworkPhysicsItem component of {this.name}.");
+			}
+			return default_value;
+		}
+		protected void SetSyncedInt(string key, int value)
+		{
+			this._intDataToSync[key] = value;
+		}
+		protected void SetSyncedString(string key, string value)
+		{
+			this._stringDataToSync[key] = value;
+		}
+		protected void SetSyncedFloat(string key, float value)
+		{
+			this._floatDataToSync[key] = value;
 		}
 
-		protected virtual int sendFreq
+		private int sendFreq
 		{
 			get
             {
@@ -247,11 +274,6 @@ namespace GameModeCollection.Objects
 			this.Col.sharedMaterial = this.Material;
 			this.Trig.sharedMaterial = this.Material;
 			this.Rig.sharedMaterial = this.Material;
-
-			this.SetSyncedData<Vector2>(SyncedPositionKey, (Vector2)this.transform.position);
-			this.SetSyncedData<Vector2>(SyncedRotationKey, (Vector2)this.transform.up);
-			this.SetSyncedData<Vector2>(SyncedVelocityKey, (Vector2)this.Rig.velocity);
-			this.SetSyncedData<float>(SyncedAngularVelocityKey, (float)this.Rig.angularVelocity);
 
 			this.gameObject.layer = PhysicsItem.Layer;
 
@@ -392,34 +414,24 @@ namespace GameModeCollection.Objects
 						this.syncPackages.RemoveAt(0);
 					}
 					// read all synced data
-					this._dataToSync = this.syncPackages[0].syncedData;
+					if (!this.Rig.isKinematic)
+                    {
+                        this.transform.position = this.syncPackages[0].pos;
+                        this.transform.rotation = Quaternion.LookRotation(Vector3.forward, this.syncPackages[0].rot);
+                        this.Rig.velocity = this.syncPackages[0].vel;
+                        this.Rig.angularVelocity = this.syncPackages[0].angularVel;
+                    }
+					this._intDataToSync = this.syncPackages[0].syncedIntData;
+					this._stringDataToSync = this.syncPackages[0].syncedStringData;
+					this._floatDataToSync = this.syncPackages[0].syncedFloatData;
+
 					this.syncPackages.RemoveAt(0);
 
-					// update physics
-					this.ReadSyncedPhysicsData();
 
 					// update all other data
 					this.ReadSyncedData();
 
 				}
-			}
-		}
-		private void SetPhysicsDataToSync()
-		{
-			this.SetSyncedData(SyncedPositionKey, (Vector2)this.transform.position);
-			this.SetSyncedData(SyncedRotationKey, (Vector2)this.transform.up);
-			this.SetSyncedData(SyncedVelocityKey, (Vector2)this.Rig.velocity);
-			this.SetSyncedData(SyncedAngularVelocityKey, (float)this.Rig.angularVelocity);
-		}
-		private void ReadSyncedPhysicsData()
-		{
-			// update physics
-			if (!this.Rig.isKinematic)
-			{
-				this.transform.position = this.GetSyncedData<Vector2>(SyncedPositionKey);
-				this.transform.rotation = Quaternion.LookRotation(Vector3.forward, this.GetSyncedData<Vector2>(SyncedRotationKey));
-				this.Rig.velocity = this.GetSyncedData<Vector2>(SyncedVelocityKey);
-				this.Rig.angularVelocity = this.GetSyncedData<float>(SyncedAngularVelocityKey);
 			}
 		}
 		protected abstract void SetDataToSync();
@@ -434,33 +446,51 @@ namespace GameModeCollection.Objects
 				if (this.CurrentFrame >= this.sendFreq)
 				{
 					this.CurrentFrame = 0;
-					this.SetPhysicsDataToSync();
-					this.SetDataToSync();
-					stream.SendNext(this._dataToSync);
+					stream.SendNext((Vector2)this.transform.position);
+					stream.SendNext((Vector2)this.transform.up);
+					stream.SendNext((Vector2)this.Rig.velocity);
+					stream.SendNext(this.Rig.angularVelocity);
 					// timeDelta is special and is sent separately
 					if (this.LastTime == 0f)
 					{
 						this.LastTime = Time.time;
 					}
 					stream.SendNext(Time.time - this.LastTime);
+					// send all other data
+					this.SetDataToSync();
+					stream.SendNext(this._intDataToSync);
+					stream.SendNext(this._stringDataToSync);
+					stream.SendNext(this._floatDataToSync);
 					this.LastTime = Time.time;
 					return;
 				}
 			}
 			else
 			{
-				ItemSyncPackage objectSyncPackage = new ItemSyncPackage();
-				objectSyncPackage.syncedData = (Dictionary<string, object>)stream.ReceiveNext();
-				objectSyncPackage.timeDelta = (float)stream.ReceiveNext();
-				this.syncPackages.Add(objectSyncPackage);
+				ItemSyncPackage itemSyncPackage = new ItemSyncPackage();
+				itemSyncPackage.pos = (Vector2)stream.ReceiveNext();
+				itemSyncPackage.rot = (Vector2)stream.ReceiveNext();
+				itemSyncPackage.vel = (Vector2)stream.ReceiveNext();
+				itemSyncPackage.angularVel = (float)stream.ReceiveNext();
+				itemSyncPackage.timeDelta = UnityEngine.Mathf.Clamp((float)stream.ReceiveNext(), 0f, 0.1f);
+				itemSyncPackage.syncedIntData = (Dictionary<string, int>)stream.ReceiveNext();
+				itemSyncPackage.syncedStringData = (Dictionary<string, string>)stream.ReceiveNext();
+				itemSyncPackage.syncedFloatData = (Dictionary<string, float>)stream.ReceiveNext();
+				this.syncPackages.Add(itemSyncPackage);
 			}
 		}
 
 	}
 	public class ItemSyncPackage
 	{
-		public Dictionary<string, object> syncedData;
 		public float timeDelta;
+		public Vector2 pos;
+		public Vector2 rot;
+		public Vector2 vel;
+		public float angularVel;
+		public Dictionary<string, int> syncedIntData;
+		public Dictionary<string, string> syncedStringData;
+		public Dictionary<string, float> syncedFloatData;
 	}
 	[RequireComponent(typeof(Collider2D))]
 	class ItemTriggerAndCollision : MonoBehaviour

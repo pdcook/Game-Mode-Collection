@@ -20,6 +20,8 @@ namespace GameModeCollection.GameModes
     /// Points awarded to either: the last team standing, or the team who deals the final blow to the dodgeball
     /// Guns, bullets, explosives, etc do not do damage to players
     /// 
+    /// As the team in first place gets closer to winnining, it becomes more and more likely for multiple dodgeballs to spawn
+    /// 
     /// </summary>
     public class GM_Dodgeball : RWFGameMode
     {
@@ -79,7 +81,8 @@ namespace GameModeCollection.GameModes
         {
             get
             {
-                return !(this.CurrentDodgableHealth?.Dead ?? true);
+                //return !(this.CurrentDodgableHealth?.Dead ?? true);
+                return !this.CurrentDodgableHealth.Dead;
             }
         }
         public Player PlayerLastDamagedDodgable
@@ -147,6 +150,8 @@ namespace GameModeCollection.GameModes
         }
         public void PlayerKilledDodgable(Player player)
         {
+            // point ends only if the player killed the "main" dodgable
+            if (this.CurrentDodgableAlive) { return; }
             TimeHandler.instance.DoSlowDown();
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
