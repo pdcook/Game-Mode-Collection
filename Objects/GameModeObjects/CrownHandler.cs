@@ -227,7 +227,7 @@ namespace GameModeCollection.Objects.GameModeObjects
         protected internal override void OnTriggerEnter2D(Collider2D collider2D)
         {
 			int? playerID = collider2D?.GetComponent<Player>()?.playerID;
-			if (playerID != null)
+			if (playerID != null && PlayerManager.instance.CanSeePlayer(this.transform.position, PlayerManager.instance.players.Find(p => p.playerID == playerID)).canSee)
 			{
 				this.GiveCrownToPlayer((int)playerID);
 			}
