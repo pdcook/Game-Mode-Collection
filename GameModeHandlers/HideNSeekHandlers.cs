@@ -18,7 +18,8 @@ namespace GameModeCollection.GameModeHandlers
             playersRequiredToStartGame: 3,
             maxPlayers: null,
             maxTeams: null,
-            maxClients: null)
+            maxClients: null,
+            description: "1/3 of the players are randomly selected every point to be the seeker. Seekers are bright red and have (amount of hiders x 15) seconds to kill all the hiders. Hiders get a effect that makes them weaker. Point are given based on kills or if the time runs out.")
         {
 
         }
