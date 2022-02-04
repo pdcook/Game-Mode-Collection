@@ -111,18 +111,18 @@ namespace GameModeCollection.GameModes
         {
             var instance = GM_HideNSeek.instance;
             
-            Random.InitState(seed);
-            
+            var rnd = new System.Random(seed);
+
             var amountOfSeekers = Mathf.Floor(instance.players.Count / 3);
             if(amountOfSeekers == 0) { amountOfSeekers = 1; }
             // Set the seeker IDs
             for (int i = 0; i < amountOfSeekers; i++)
             {
-                var randomIndex = Random.Range(0, instance.players.Count);
+                var randomIndex = rnd.Next(0, instance.players.Count+1);
                 // If the ID is already in the list, try again
                 while (instance.seekerIDs.Contains(instance.players[randomIndex].playerID))
                 {
-                    randomIndex = Random.Range(0, instance.players.Count);
+                    randomIndex = rnd.Next(0, instance.players.Count+1);
                 }
                 instance.seekerIDs.Add(instance.players[randomIndex].playerID);
                 GameModeCollection.instance.ExecuteAfterFrames(2, () =>
