@@ -52,6 +52,19 @@ namespace GameModeCollection.GameModes
             instance = this;
         }
 
+        private void OnEnable()
+        {
+            base.OnDisable();
+            GameModeManager.AddHook(GameModeHooks.HookBattleStart, this.OnBattleStart);
+        }
+
+
+        public override void OnDisable()
+        {
+            base.OnDisable();
+            GameModeManager.RemoveHook(GameModeHooks.HookBattleStart, this.OnBattleStart);
+        }
+
         public override void StartGame()
         {
             if (GameManager.instance.isPlaying) { return; }
@@ -101,6 +114,7 @@ namespace GameModeCollection.GameModes
             Random.InitState(seed);
             
             var amountOfSeekers = Mathf.Floor(instance.players.Count / 3);
+            if(amountOfSeekers == 0) { amountOfSeekers = 1; }
             // Set the seeker IDs
             for (int i = 0; i < amountOfSeekers; i++)
             {
@@ -111,9 +125,12 @@ namespace GameModeCollection.GameModes
                     randomIndex = Random.Range(0, instance.players.Count);
                 }
                 instance.seekerIDs.Add(instance.players[randomIndex].playerID);
-                var colorEffect = instance.players[randomIndex].gameObject.GetOrAddComponent<ReversibleColorEffect>();
-                colorEffect.SetColor(Color.red);
-                colorEffect.ApplyColor();
+                GameModeCollection.instance.ExecuteAfterFrames(2, () =>
+                {
+                    var colorEffect = instance.players[randomIndex].gameObject.GetOrAddComponent<ReversibleColorEffect>();
+                    colorEffect.SetColor(Color.red);
+                    colorEffect.ApplyColor();
+                });
                 GameModeCollection.Log("[Hide&Seek] Seeker ID: " + instance.players[randomIndex].playerID);
             }
 
@@ -127,6 +144,16 @@ namespace GameModeCollection.GameModes
             }
             
             instance.timeLeft = instance.timeLimit;
+        }
+
+        public IEnumerator OnBattleStart(IGameModeHandler handler)
+        {
+            foreach (var colorEffect in this.players.Values.Select(player => player.GetComponent<ReversibleColorEffect>()).Where(colorEffect => colorEffect != null))
+            {
+                colorEffect.ApplyColor();
+            }
+
+            yield return null;
         }
 
         public override void PlayerJoined(Player player)
