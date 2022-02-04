@@ -97,12 +97,15 @@ namespace GameModeCollection.GameModes
 
             if (PhotonNetwork.IsMasterClient)
             {
-                var seed = Random.Range(0, int.MaxValue);
-                NetworkingManager.RPC(
-                    typeof(GM_HideNSeek),
-                    nameof(GM_HideNSeek.RPCA_GenerateTeams),
-                    seed
-                );
+                this.ExecuteAfterFrames(1, () =>
+                {
+                    var seed = Random.Range(0, int.MaxValue);
+                    NetworkingManager.RPC(
+                        typeof(GM_HideNSeek),
+                        nameof(GM_HideNSeek.RPCA_GenerateTeams),
+                        seed
+                    );
+                });
             }
         }
 
@@ -118,11 +121,11 @@ namespace GameModeCollection.GameModes
             // Set the seeker IDs
             for (int i = 0; i < amountOfSeekers; i++)
             {
-                var randomIndex = rnd.Next(0, instance.players.Count+1);
+                var randomIndex = rnd.Next(0, instance.players.Count);
                 // If the ID is already in the list, try again
                 while (instance.seekerIDs.Contains(instance.players[randomIndex].playerID))
                 {
-                    randomIndex = rnd.Next(0, instance.players.Count+1);
+                    randomIndex = rnd.Next(0, instance.players.Count);
                 }
                 instance.seekerIDs.Add(instance.players[randomIndex].playerID);
                 GameModeCollection.instance.ExecuteAfterFrames(2, () =>
@@ -148,9 +151,12 @@ namespace GameModeCollection.GameModes
 
         public IEnumerator OnBattleStart(IGameModeHandler handler)
         {
-            foreach (var colorEffect in this.players.Values.Select(player => player.GetComponent<ReversibleColorEffect>()).Where(colorEffect => colorEffect != null))
+            foreach (var player in this.players.Values)
             {
-                colorEffect.ApplyColor();
+                if (player.GetComponent<ReversibleColorEffect>())
+                {
+                    player.GetComponent<ReversibleColorEffect>().ApplyColor();
+                }
             }
 
             yield return null;
@@ -387,12 +393,29 @@ namespace GameModeCollection.GameModes
             this.ResetGame();
             yield return base.DoRoundStart();
             this.HideNSeekCO = this.StartCoroutine(this.DoHideNSeek());
+            
+            foreach (var player in this.players.Values)
+            {
+                if (player.GetComponent<ReversibleColorEffect>())
+                {
+                    player.GetComponent<ReversibleColorEffect>().ApplyColor();
+                }
+            }
         }
         public override IEnumerator DoPointStart()
         {
             this.ResetGame();
             yield return base.DoPointStart();
             this.HideNSeekCO = this.StartCoroutine(this.DoHideNSeek());
+            
+            foreach (var player in this.players.Values)
+            {
+                if (player.GetComponent<ReversibleColorEffect>())
+                {
+                    player.GetComponent<ReversibleColorEffect>().ApplyColor();
+                }
+            }
+
         }
     }
     
