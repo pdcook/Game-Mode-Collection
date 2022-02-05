@@ -25,6 +25,10 @@ namespace GameModeCollection.Objects
 		private const float DefaultMaxAngularSpeed = 1000f;
 		private const float DefaultPhysicsForceMult = 1f;
 		private const float DefaultPhysicsImpulseMult = 1f;
+		private const float DefaultPhysicsPlayerPushMult = 100f;
+		private const float DefaultPhysicsPlayerForceMult = 1f;
+		private const float DefaultPhysicsPlayerDamageMult = 1f;
+		private const float DefaultPhysicsCollisionDamageThreshold = 1f;
 		private const float DefaultThrusterDurationMult = 1f;
 
 		public readonly float Bounciness;
@@ -39,6 +43,10 @@ namespace GameModeCollection.Objects
 		public readonly float MaxAngularSpeed;
 		public readonly float PhysicsForceMult;
 		public readonly float PhysicsImpulseMult;
+		public readonly float PhysicsPlayerPushMult;
+		public readonly float PhysicsPlayerForceMult;
+		public readonly float PhysicsPlayerDamageMult;
+		public readonly float PhysicsCollisionDamageThreshold;
 		public readonly float ThrusterDurationMult;
 		public float MaxSpeedSqr => this.MaxSpeed * this.MaxSpeed;
 
@@ -54,6 +62,10 @@ namespace GameModeCollection.Objects
 			float maxSpeed = DefaultMaxSpeed,
 			float forceMult = DefaultPhysicsForceMult,
 			float impulseMult = DefaultPhysicsImpulseMult,
+			float playerPushMult = DefaultPhysicsPlayerPushMult,
+			float playerForceMult = DefaultPhysicsPlayerForceMult,
+			float playerDamageMult = DefaultPhysicsPlayerDamageMult,
+			float collisionDamageThreshold = DefaultPhysicsCollisionDamageThreshold,
 			float thrusterDurationMult = DefaultThrusterDurationMult)
 		{
 			this.Bounciness = bounciness;
@@ -67,6 +79,10 @@ namespace GameModeCollection.Objects
 			this.MaxAngularSpeed = maxAngularSpeed;
 			this.PhysicsForceMult = forceMult;
 			this.PhysicsImpulseMult = impulseMult;
+			this.PhysicsPlayerPushMult = playerPushMult;
+			this.PhysicsPlayerForceMult = playerForceMult;
+			this.PhysicsPlayerDamageMult = playerDamageMult;
+			this.PhysicsCollisionDamageThreshold = collisionDamageThreshold;
 			this.ThrusterDurationMult = thrusterDurationMult;
 		}
 
@@ -74,7 +90,7 @@ namespace GameModeCollection.Objects
 	public abstract class PhysicsItem : MonoBehaviour
 	{
 		public abstract ItemPhysicalProperties PhysicalProperties { get; }
-		public static readonly int Layer = LayerMask.NameToLayer("PlayerObjectCollider"); // PlayerObjectCollider layer (layer 19)
+		public static readonly int Layer = LayerMask.NameToLayer("IgnorePlayer"); // layer that physics objects are on, although this causes things to interact with background objects too
 		private PhotonView View => this.gameObject.GetComponent<PhotonView>();
 		protected internal abstract void OnCollisionEnter2D(Collision2D collision2D);
 		protected internal abstract void OnCollisionExit2D(Collision2D collision2D);
@@ -82,6 +98,7 @@ namespace GameModeCollection.Objects
 		protected internal abstract void OnTriggerEnter2D(Collider2D collider2D);
 		protected internal abstract void OnTriggerExit2D(Collider2D collider2D);
 		protected internal abstract void OnTriggerStay2D(Collider2D collider2D);
+		protected internal abstract Vector3 Push(CharacterData data);
 		protected internal virtual void CallTakeForce(Vector2 force, Vector2 point, ForceMode2D forceMode = ForceMode2D.Force)
 		{
 			this.View?.RPC(nameof(RPCA_SendForce), RpcTarget.All, force, point, (byte)forceMode);
@@ -199,45 +216,13 @@ namespace GameModeCollection.Objects
 				return 5;
             }
 		}
-		private int _currentFrame = 5;
-		protected int CurrentFrame
-		{
-			get
-			{
-				return this._currentFrame;
-			}
-			private set
-			{
-				this._currentFrame = value;
-			}
-		}
-		private float _lastTime = 0f;
-		protected float LastTime
-		{
-			get
-			{
-				return this._lastTime;
-			}
-			private set
-			{
-				this._lastTime = value;
-			}
-		}
 
-		private float _timeDelta = 0f;
-		protected float TimeDelta
-		{
-			get
-			{
-				return this._timeDelta;
-			}
-			set
-			{
-				this._timeDelta = value;
-			}
-		}
+        protected int CurrentFrame { get; private set; } = 5;
+        protected float LastTime { get; private set; } = 0f;
+        protected float TimeDelta { get; private set; } = 0f;
+		protected float SinceDealDamage { get; private set; } = 0f;
 
-		private List<ItemSyncPackage> syncPackages = new List<ItemSyncPackage>();
+        private List<ItemSyncPackage> syncPackages = new List<ItemSyncPackage>();
 
 		public Rigidbody2D Rig => this.GetComponent<Rigidbody2D>();
 		public TCollider Col => this.transform?.Find("Collider")?.GetComponent<TCollider>();
@@ -328,6 +313,62 @@ namespace GameModeCollection.Objects
 		{
 
 		}
+        protected internal override Vector3 Push(CharacterData data)
+        {
+			if (!data.view.IsMine) { return Vector3.zero; }
+			Vector2 vector = data.input.direction * 8f;
+			Vector2 vector2 = this.Col.bounds.ClosestPoint(data.transform.position);
+			float num = Vector2.Angle(vector, vector2 - (Vector2)data.transform.position);
+			float d = (90f - num) / 90f;
+			Vector2 b = TimeHandler.fixedDeltaTime * vector * d * this.PhysicalProperties.PhysicsPlayerPushMult * 1000f;
+			this.CallTakeForce(b, vector2, ForceMode2D.Force);
+
+            float d2 = Mathf.Clamp((Vector2.Angle(this.Rig.velocity, base.transform.position - data.transform.position) - 90f) / 90f, 0f, 1f);
+            this.OnPlayerCollision(this.Rig.velocity * d2, data);
+			return -vector;
+		}
+
+		protected virtual void OnPlayerCollision(Vector2 collision, CharacterData player)
+        {
+			if (player.view.IsMine)
+			{
+				if (this.SinceDealDamage < 1f)
+				{
+					return;
+				}
+				Vector3 a = collision * this.PhysicalProperties.PhysicsPlayerDamageMult;
+				if (a.magnitude < this.PhysicalProperties.PhysicsCollisionDamageThreshold)
+				{
+					return;
+				}
+				float d = Mathf.Pow(this.Rig.mass / 20000f, 2f);
+				float d2 = Mathf.Pow(this.Rig.mass / 20000f, 0.5f);
+				player.healthHandler.CallTakeDamage(a * 0.3f * d, player.transform.position, null, null, true);
+				player.healthHandler.CallTakeForce(collision * this.PhysicalProperties.PhysicsPlayerForceMult * d2, ForceMode2D.Impulse, false, false, a.magnitude * 0.05f);
+				if (player.block.IsBlocking())
+				{
+					this.Rig.velocity *= -1.1f;
+					this.Rig.angularVelocity *= -1.1f;
+				}
+				else if (this.Rig.mass < 80000f)
+				{
+					this.Rig.velocity *= -0.5f * (20000f / this.Rig.mass);
+					this.Rig.angularVelocity *= -0.5f * (20000f / this.Rig.mass);
+				}
+				this.SinceDealDamage = 0f;
+				this.View.RPC(nameof(RPCA_PlayerCollision), RpcTarget.AllViaServer, collision, this.Rig.velocity, base.transform.position, player.view.ViewID );
+			}
+		}
+		[PunRPC]
+		protected virtual void RPCA_PlayerCollision(Vector2 collision, Vector2 velAfter, Vector3 position, int playerID)
+		{
+			CharacterData data = PhotonNetwork.GetPhotonView(playerID).GetComponent<CharacterData>();
+			base.transform.position = position;
+			this.Rig.velocity = velAfter;
+			this.SinceDealDamage = 0f;
+			this.StartCoroutine(data.GetComponent<PlayerCollision>().IDoBounce((Vector2)data.playerVel.GetFieldValue("velocity")));
+		}
+
 		[PunRPC]
 		protected override void RPCA_SendForce(Vector2 force, Vector2 point, byte forceMode)
 		{

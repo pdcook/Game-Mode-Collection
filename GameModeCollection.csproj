@@ -142,6 +142,7 @@
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
     <Compile Include="Patches\LegRayCast.cs" />
+    <Compile Include="Patches\PlayerCollision.cs" />
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />
     <Compile Include="Patches\Thruster.cs" />
