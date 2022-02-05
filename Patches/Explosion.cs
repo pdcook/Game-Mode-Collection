@@ -16,10 +16,10 @@ namespace GameModeCollection.Patches
         static void DoPhysicsItemExplosions(Explosion instance, Collider2D[] colliders)
         {
             // this patch is only necessary if items are on the layer ignored by explosions, layer 19
-            if (PhysicsItem.Layer != 19) { return; }
+            if (PhysicsItem.ColliderLayer != 19) { return; }
 
             float radius = instance.scaleRadius ? instance.transform.localScale.x : 1f;
-            foreach (Collider2D collider in colliders.Where(c => c.gameObject.layer == PhysicsItem.Layer))
+            foreach (Collider2D collider in colliders.Where(c => c.gameObject.layer == PhysicsItem.ColliderLayer))
             {
                 if (collider?.GetComponentInParent<PhysicsItem>() != null && ((bool)collider?.GetComponentInParent<PhotonView>()?.IsMine || PhotonNetwork.OfflineMode))
                 {

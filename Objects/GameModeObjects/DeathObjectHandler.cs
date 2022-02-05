@@ -487,18 +487,6 @@ namespace GameModeCollection.Objects.GameModeObjects
         protected internal override void OnCollisionEnter2D(Collision2D collision)
         {
             this.Rig.velocity *= 1.05f; // extra bouncy
-            if (collision?.collider?.GetComponent<PlayerCollision>() != null)
-            {
-                PlayerCollision playerCol = collision.collider.GetComponent<PlayerCollision>();
-                CharacterData data = playerCol.GetComponent<CharacterData>();
-                PhotonView view = data.view;
-                if (PhotonNetwork.OfflineMode || view.IsMine)
-                {
-                    view.RPC("RPCADoBounce", RpcTarget.All, (Vector2)(this.transform.position - playerCol.transform.position).normalized, playerCol.transform.position);
-                    data.healthHandler.CallTakeDamage(this.Damage * this.Rig.velocity, data.transform.position, null, null, true);
-                    data.healthHandler.CallTakeForce(this.Force * this.Rig.velocity, ForceMode2D.Impulse, false, false, (this.Damage * this.Rig.velocity).magnitude / 20f);
-                }
-            }
             base.OnCollisionEnter2D(collision);
         }
         protected override void Update()

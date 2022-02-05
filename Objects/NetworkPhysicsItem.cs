@@ -30,6 +30,7 @@ namespace GameModeCollection.Objects
 		private const float DefaultPhysicsPlayerDamageMult = 1f;
 		private const float DefaultPhysicsCollisionDamageThreshold = 1f;
 		private const float DefaultThrusterDurationMult = 1f;
+		private const bool DefaultIgnoreBackgroundObjects = true;
 
 		public readonly float Bounciness;
 		public readonly float Friction;
@@ -48,6 +49,7 @@ namespace GameModeCollection.Objects
 		public readonly float PhysicsPlayerDamageMult;
 		public readonly float PhysicsCollisionDamageThreshold;
 		public readonly float ThrusterDurationMult;
+		public readonly bool IgnoreBackgroundObjects;
 		public float MaxSpeedSqr => this.MaxSpeed * this.MaxSpeed;
 
 		public ItemPhysicalProperties(
@@ -66,7 +68,8 @@ namespace GameModeCollection.Objects
 			float playerForceMult = DefaultPhysicsPlayerForceMult,
 			float playerDamageMult = DefaultPhysicsPlayerDamageMult,
 			float collisionDamageThreshold = DefaultPhysicsCollisionDamageThreshold,
-			float thrusterDurationMult = DefaultThrusterDurationMult)
+			float thrusterDurationMult = DefaultThrusterDurationMult,
+			bool ignoreBackgroundObjects = DefaultIgnoreBackgroundObjects)
 		{
 			this.Bounciness = bounciness;
 			this.Friction = friction;
@@ -84,13 +87,15 @@ namespace GameModeCollection.Objects
 			this.PhysicsPlayerDamageMult = playerDamageMult;
 			this.PhysicsCollisionDamageThreshold = collisionDamageThreshold;
 			this.ThrusterDurationMult = thrusterDurationMult;
+			this.IgnoreBackgroundObjects = ignoreBackgroundObjects;
 		}
 
 	}
 	public abstract class PhysicsItem : MonoBehaviour
 	{
 		public abstract ItemPhysicalProperties PhysicalProperties { get; }
-		public static readonly int Layer = LayerMask.NameToLayer("IgnorePlayer"); // layer that physics objects are on, although this causes things to interact with background objects too
+		public static readonly int ColliderLayer = LayerMask.NameToLayer("IgnorePlayer"); // layer that physics objects are on, although this causes things to interact with background objects too
+		public static readonly int TriggerLayer = LayerMask.NameToLayer("PlayerObjectCollider");
 		private PhotonView View => this.gameObject.GetComponent<PhotonView>();
 		protected internal abstract void OnCollisionEnter2D(Collision2D collision2D);
 		protected internal abstract void OnCollisionExit2D(Collision2D collision2D);
@@ -220,13 +225,14 @@ namespace GameModeCollection.Objects
         protected int CurrentFrame { get; private set; } = 5;
         protected float LastTime { get; private set; } = 0f;
         protected float TimeDelta { get; private set; } = 0f;
-		protected float SinceDealDamage { get; private set; } = 0f;
+		protected float SinceDealDamage { get; private set; } = 100f;
 
         private List<ItemSyncPackage> syncPackages = new List<ItemSyncPackage>();
 
 		public Rigidbody2D Rig => this.GetComponent<Rigidbody2D>();
 		public TCollider Col => this.transform?.Find("Collider")?.GetComponent<TCollider>();
 		public TTrigger Trig => this.transform?.Find("Trigger")?.GetComponent<TTrigger>();
+		internal IgnoreBackgroundObjects IgnoreBackground => this.transform?.Find("IgnoreBackground")?.GetComponent<IgnoreBackgroundObjects>();
 		public PhotonView View => this.GetComponent<PhotonView>();
 
 		public abstract void OnPhotonInstantiate(PhotonMessageInfo info);
@@ -246,11 +252,20 @@ namespace GameModeCollection.Objects
 				trigger.transform.SetParent(this.transform);
 				trigger.transform.localScale = Vector3.one;
 			}
+			if (this.transform?.Find("IgnoreBackground") == null)
+            {
+				GameObject ignoreBackground = new GameObject("IgnoreBackground", typeof(IgnoreBackgroundObjects));
+				ignoreBackground.transform.SetParent(this.transform);
+            }
 		}
 		protected virtual void Start()
 		{
 			this.Col.GetComponent<ItemTriggerAndCollision>().SetAsTrigger(false);
 			this.Trig.GetComponent<ItemTriggerAndCollision>().SetAsTrigger(true);
+			if (this.PhysicalProperties.IgnoreBackgroundObjects)
+			{
+				this.IgnoreBackground.SetColliderToTrack(this.Col);
+			}
 
 			this.Rig.drag = this.PhysicalProperties.MinDrag;
 			this.Rig.angularDrag = this.PhysicalProperties.MinAngularDrag;
@@ -260,7 +275,7 @@ namespace GameModeCollection.Objects
 			this.Trig.sharedMaterial = this.Material;
 			this.Rig.sharedMaterial = this.Material;
 
-			this.gameObject.layer = PhysicsItem.Layer;
+			this.gameObject.layer = PhysicsItem.ColliderLayer;
 
 			if (this.View != null && this.View.ObservedComponents != null) { this.View.ObservedComponents.Add(this); }
 
@@ -440,6 +455,7 @@ namespace GameModeCollection.Objects
 
 		protected virtual void Update()
 		{
+			this.SinceDealDamage += TimeHandler.deltaTime;
 			// syncing
 			if (this.syncPackages.Count > 0)
 			{
@@ -543,11 +559,12 @@ namespace GameModeCollection.Objects
 		{
 			if (this.Item == null) { Destroy(this); }
 
-			this.gameObject.layer = PhysicsItem.Layer;
+			this.gameObject.layer = this.Col.isTrigger ? PhysicsItem.TriggerLayer : PhysicsItem.ColliderLayer;
 		}
 		internal void SetAsTrigger(bool isTrigger)
 		{
 			this.Col.isTrigger = isTrigger;
+			this.gameObject.layer = this.Col.isTrigger ? PhysicsItem.TriggerLayer : PhysicsItem.ColliderLayer;
 		}
 		void OnCollisionEnter2D(Collision2D collision2D)
 		{

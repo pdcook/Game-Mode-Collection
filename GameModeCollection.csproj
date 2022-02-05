@@ -133,15 +133,16 @@
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
     <Compile Include="Objects\GameModeObjects\DeathObjectHandler.cs" />
+    <Compile Include="Objects\IgnoreBackgroundObjects.cs" />
     <Compile Include="Objects\NetworkPhysicsItem.cs" />
     <Compile Include="Objects\ObjectDamagable.cs" />
     <Compile Include="Objects\ObjectHealthHandler.cs" />
     <Compile Include="Objects\ObjectParticleSkin.cs" />
     <Compile Include="Objects\ObjectUIUtils.cs" />
+    <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
-    <Compile Include="Patches\LegRayCast.cs" />
     <Compile Include="Patches\PlayerCollision.cs" />
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />

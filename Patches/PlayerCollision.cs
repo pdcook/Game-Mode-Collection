@@ -8,7 +8,6 @@ using GameModeCollection.Objects;
 using System;
 namespace GameModeCollection.Patches
 {
-    [HarmonyDebug]
     [HarmonyPatch(typeof(PlayerCollision),"FixedUpdate")]
     class PlayerCollision_Patch_FixedUpdate
     {
@@ -26,7 +25,7 @@ namespace GameModeCollection.Patches
             /// Some notes:
             /// - ldloc.2 loads the array of RaycastHit2D's `array` (local variable)
             /// - ldloc.s 6 loads the loop index `j` (local variable)
-            /// - preceeded by the previous two, ldelema RaycastHit2D loads the address in memory for `array[j]`
+            /// - preceeded by the previous two, ldelem RaycastHit2D loads `array[j]`
 
             List<CodeInstruction> codes = instructions.ToList();
 
@@ -39,23 +38,15 @@ namespace GameModeCollection.Patches
                  *  num5 = Mathf.Clamp(num5, 0f, 10f);
                  * 
                  */
-                //try
-                //{
-                    if (codes[i].opcode == OpCodes.Stloc_S && codes[i].operand.ToString().EndsWith("(11)")
-                        && codes[i - 1].Calls(m_clamp)
-                        && codes[i - 2].opcode == OpCodes.Ldc_R4 && (float)codes[i - 2].operand == 10f
-                        && codes[i - 3].opcode == OpCodes.Ldc_R4 && (float)codes[i - 3].operand == 0.0f
-                       )
-                    {
-                        index = i + 1;
-                        break;
-                    }
-                //}
-                /*
-                catch (InvalidCastException)
+                if (codes[i].opcode == OpCodes.Stloc_S && codes[i].operand.ToString().EndsWith("(11)")
+                    && codes[i - 1].Calls(m_clamp)
+                    && codes[i - 2].opcode == OpCodes.Ldc_R4 && (float)codes[i - 2].operand == 10f
+                    && codes[i - 3].opcode == OpCodes.Ldc_R4 && (float)codes[i - 3].operand == 0.0f
+                   )
                 {
-
-                }*/
+                    index = i + 1;
+                    break;
+                }
             }
 
             if (index == -1) { UnityEngine.Debug.LogError("[GameModeCollection][PlayerCollisionPatch] INSTRUCTION NOT FOUND."); }
@@ -65,8 +56,6 @@ namespace GameModeCollection.Patches
             codes.Insert(index + 2, new CodeInstruction(OpCodes.Ldelem, typeof(UnityEngine.RaycastHit2D)));
             codes.Insert(index + 3, new CodeInstruction(OpCodes.Ldarg_0));
             codes.Insert(index + 4, new CodeInstruction(OpCodes.Ldfld, f_data));
-            //codes.Insert(index + 5, new CodeInstruction(OpCodes.Pop));
-            //codes.Insert(index + 6, new CodeInstruction(OpCodes.Pop));
             codes.Insert(index + 5, new CodeInstruction(OpCodes.Call, m_push));
 
             return codes.AsEnumerable();
