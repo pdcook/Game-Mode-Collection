@@ -31,24 +31,48 @@ namespace GameModeCollection.GameModes
             base.Awake();
         }
         
+        public void SetBomb(BombObjectHandler bombHandler)
+        {
+            this.bomb = bombHandler;
+        }
+        
         public override IEnumerator DoStartGame()
         {
-            yield return base.DoStartGame();
-
             yield return new WaitForEndOfFrame();
 
             yield return BombObjectHandler.MakeBombHandler();
+            
+            yield return base.DoStartGame();
+        }
+        
+        private void ResetForBattle()
+        {
+            this.bomb.Reset();
+        }
+
+        public override void PointOver(int winningTeamID)
+        {
+            base.PointOver(winningTeamID);
+            this.ResetForBattle();
+        }
+
+        public IEnumerator DoStartPoint()
+        {
+            this.bomb.Spawn();
+            yield break;
         }
 
         public override IEnumerator DoRoundStart()
         {
-            
+            this.ResetForBattle();
             yield return base.DoRoundStart();
+            yield return this.DoStartPoint();
         }
         public override IEnumerator DoPointStart()
         {
-            this.bomb.SetPos(new Vector3(0,30,0));
+            this.ResetForBattle();
             yield return base.DoPointStart();
+            yield return this.DoStartPoint();
         }
     }
 }
