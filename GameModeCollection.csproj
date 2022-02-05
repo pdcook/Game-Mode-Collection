@@ -46,17 +46,20 @@
       <HintPath>$(ProfileFolder)\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="CardChoiceSpawnUniqueCardPatch">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\CardChoiceSpawnUniqueCardPatch.dll</HintPath>
+      <HintPath>%(RoundsFolder)\BepInEx\plugins\CardChoiceSpawnUniqueCardPatch.dll</HintPath>
     </Reference>
     <Reference Include="InControl, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\Rounds_Data\Managed\InControl.dll</HintPath>
+      <HintPath>%(RoundsFolder)\Rounds_Data\Managed\InControl.dll</HintPath>
+    </Reference>
+    <Reference Include="LocalZoom">
+      <HintPath>%(RoundsFolder)\BepInEx\plugins\LocalZoom.dll</HintPath>
     </Reference>
     <Reference Include="MapEmbiggener">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\MapEmbiggener.dll</HintPath>
+      <HintPath>%(RoundsFolder)\BepInEx\plugins\MapEmbiggener.dll</HintPath>
     </Reference>
     <Reference Include="ModdingUtils">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\ModdingUtils.dll</HintPath>
+      <HintPath>%(RoundsFolder)\BepInEx\plugins\ModdingUtils.dll</HintPath>
     </Reference>
     <Reference Include="PhotonRealtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\PhotonRealtime.dll</HintPath>
@@ -65,18 +68,18 @@
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\PhotonUnityNetworking.dll</HintPath>
     </Reference>
     <Reference Include="RoundsWithFriends">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
+      <HintPath>%(RoundsFolder)\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
     </Reference>
     <Reference Include="SonigonAudioEngine.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\Rounds_Data\Managed\SonigonAudioEngine.Runtime.dll</HintPath>
+      <HintPath>%(RoundsFolder)\Rounds_Data\Managed\SonigonAudioEngine.Runtime.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnboundLib">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\UnboundLib\UnboundLib.dll</HintPath>
+      <HintPath>%(RoundsFolder)\BepInEx\plugins\UnboundLib\UnboundLib.dll</HintPath>
     </Reference>
     <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\Unity.TextMeshPro.dll</HintPath>
@@ -104,7 +107,7 @@
     </Reference>
     <Reference Include="UnityEngine.SpriteMaskModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\Rounds_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
+      <HintPath>$(RoundsFolder)\Rounds_Data\Managed\UnityEngine.SpriteMaskModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\UnityEngine.UI.dll</HintPath>
@@ -119,12 +122,15 @@
   <ItemGroup>
     <Compile Include="Extensions\RoundCounter.cs" />
     <Compile Include="GameModeCollection.cs" />
+    <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
     <Compile Include="GameModeHandlers\CrownControlHandlers.cs" />
     <Compile Include="GameModeHandlers\HideNSeekHandlers.cs" />
     <Compile Include="GameModeHandlers\DodgeballHandlers.cs" />
+    <Compile Include="GameModes\GM_BombDefusal.cs" />
     <Compile Include="GameModes\GM_CrownControl.cs" />
     <Compile Include="GameModes\GM_HideNSeek.cs" />
     <Compile Include="GameModes\GM_Dodgeball.cs" />
+    <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
     <Compile Include="Objects\GameModeObjects\DeathObjectHandler.cs" />
     <Compile Include="Objects\NetworkPhysicsItem.cs" />
     <Compile Include="Patches\DamageBox.cs" />
