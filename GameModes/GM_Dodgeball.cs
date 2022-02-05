@@ -28,6 +28,7 @@ namespace GameModeCollection.GameModes
         public enum Dodgable
         {
             Ball,
+            Triangle,
             Box,
             Rod,
             None
@@ -59,6 +60,8 @@ namespace GameModeCollection.GameModes
                 {
                     case Dodgable.Ball:
                         return this.deathBall.gameObject;
+                    case Dodgable.Triangle:
+                        return this.deathTriangle.gameObject;
                     case Dodgable.Box:
                         return this.deathBox.gameObject;
                     case Dodgable.Rod:
@@ -94,11 +97,16 @@ namespace GameModeCollection.GameModes
         }
 
         private DeathBall deathBall;
+        private DeathTriangle deathTriangle;
         private DeathBox deathBox;
         private DeathRod deathRod;
         public void SetDeathObject(DeathBall deathObjectHandler)
         {
                 this.deathBall = deathObjectHandler;
+        }
+        public void SetDeathObject(DeathTriangle deathObjectHandler)
+        {
+                this.deathTriangle = deathObjectHandler;
         }
         public void SetDeathObject(DeathBox deathObjectHandler)
         {
@@ -113,6 +121,13 @@ namespace GameModeCollection.GameModes
             if (this.deathBall != null)
             {
                 UnityEngine.GameObject.DestroyImmediate(this.deathBall);
+            }
+        }
+        public void DestroyDeathTriangle()
+        {
+            if (this.deathTriangle != null)
+            {
+                UnityEngine.GameObject.DestroyImmediate(this.deathTriangle);
             }
         }
         public void DestroyDeathBox()
@@ -140,6 +155,7 @@ namespace GameModeCollection.GameModes
         {
             // register prefabs
             GameObject _ = DeathObjectPrefabs.DeathBall;
+            _ = DeathObjectPrefabs.DeathTriangle;
             _ = DeathObjectPrefabs.DeathBox;
             _ = DeathObjectPrefabs.DeathRod;
             base.Start();
@@ -165,6 +181,9 @@ namespace GameModeCollection.GameModes
             DeathBall.DestroyDeathBall();
             yield return this.WaitForSyncUp();
             yield return new WaitForEndOfFrame();
+            DeathTriangle.DestroyDeathTriangle();
+            yield return this.WaitForSyncUp();
+            yield return new WaitForEndOfFrame();
             DeathBox.DestroyDeathBox();
             yield return this.WaitForSyncUp();
             yield return new WaitForEndOfFrame();
@@ -174,6 +193,7 @@ namespace GameModeCollection.GameModes
 
             GameModeCollection.Log("[GM_DodgeBall] Creating Objects...");
             yield return DeathBall.MakeDeathBall();
+            yield return DeathTriangle.MakeDeathTriangle();
             yield return DeathBox.MakeDeathBox();
             yield return DeathRod.MakeDeathRod();
             GameModeCollection.Log("[GM_DodgeBall] Objects Created.");
@@ -184,6 +204,7 @@ namespace GameModeCollection.GameModes
             this.CurrentDodgableType = Dodgable.Box;
 
             this.deathBall.GetComponent<DeathObjectHealth>().AddPlayerKilledAction(this.PlayerKilledDodgable);
+            this.deathTriangle.GetComponent<DeathObjectHealth>().AddPlayerKilledAction(this.PlayerKilledDodgable);
             this.deathBox.GetComponent<DeathObjectHealth>().AddPlayerKilledAction(this.PlayerKilledDodgable);
             this.deathRod.GetComponent<DeathObjectHealth>().AddPlayerKilledAction(this.PlayerKilledDodgable);
 
@@ -193,6 +214,7 @@ namespace GameModeCollection.GameModes
         public void ResetAllObjects()
         {
             this.deathBall.Reset();
+            this.deathTriangle.Reset();
             this.deathBox.Reset();
             this.deathRod.Reset();
         }
@@ -276,6 +298,10 @@ namespace GameModeCollection.GameModes
             {
                 NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnBall), GM_Dodgeball.objSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
             }
+            else if (dodgable == Dodgable.Triangle && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
+            {
+                NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnTriangle), GM_Dodgeball.objSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
+            }
             else if (dodgable == Dodgable.Box && (PhotonNetwork.OfflineMode || PhotonNetwork.IsMasterClient))
             {
                 NetworkingManager.RPC(typeof(GM_Dodgeball), nameof(RPCA_SpawnBox), GM_Dodgeball.objSpawn + new Vector2(UnityEngine.Random.Range(-0.01f, 0.01f), 0f));
@@ -290,6 +316,11 @@ namespace GameModeCollection.GameModes
         private static void RPCA_SpawnBall(Vector2 spawnPos)
         {
             GM_Dodgeball.instance.deathBall.Spawn(spawnPos);
+        }
+        [UnboundRPC]
+        private static void RPCA_SpawnTriangle(Vector2 spawnPos)
+        {
+            GM_Dodgeball.instance.deathTriangle.Spawn(spawnPos);
         }
         [UnboundRPC]
         private static void RPCA_SpawnBox(Vector2 spawnPos)

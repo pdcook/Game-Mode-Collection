@@ -130,9 +130,14 @@
     <Compile Include="GameModes\GM_CrownControl.cs" />
     <Compile Include="GameModes\GM_HideNSeek.cs" />
     <Compile Include="GameModes\GM_Dodgeball.cs" />
+    <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
     <Compile Include="Objects\GameModeObjects\DeathObjectHandler.cs" />
     <Compile Include="Objects\NetworkPhysicsItem.cs" />
+    <Compile Include="Objects\ObjectDamagable.cs" />
+    <Compile Include="Objects\ObjectHealthHandler.cs" />
+    <Compile Include="Objects\ObjectParticleSkin.cs" />
+    <Compile Include="Objects\ObjectUIUtils.cs" />
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\HealthHandler.cs" />

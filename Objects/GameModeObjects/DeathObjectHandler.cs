@@ -18,7 +18,7 @@ namespace GameModeCollection.Objects.GameModeObjects
         public static int Layer => LayerMask.NameToLayer("Player");
         public static int SortingLayerID => SortingLayer.NameToID("Player0");
 
-        private readonly static PlayerSkin DefaultObjectColors = new PlayerSkin()
+        private readonly static PlayerSkin DefaultDeathObjectColors = new PlayerSkin()
         {
             winText = Color.white,
             color = Color.white,
@@ -35,48 +35,45 @@ namespace GameModeCollection.Objects.GameModeObjects
                 if (DeathObjectPrefabs._DeathBall == null)
                 {
                     GameObject deathBall = new GameObject("DeathBallPrefab");
-                    GameObject deathBallArt = GameObject.Instantiate(PlayerAssigner.instance.playerPrefab.transform.GetChild(0).GetChild(0).gameObject, deathBall.transform);
-                    deathBallArt.name = "Sprite";
-                    deathBallArt.gameObject.layer = Layer;
-                    deathBallArt.transform.localScale = Vector3.one;
-                    deathBallArt.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-                    deathBallArt.GetComponent<SpriteRenderer>().sprite = Sprites.Circle;
-                    deathBallArt.GetComponent<SpriteMask>().sprite = Sprites.Circle;
+                    ObjectParticleSkin.AddObjectParticleSkin(deathBall.transform, Sprites.Circle, DefaultDeathObjectColors);
 
-                    PlayerSkin skin = ((PlayerSkinBank)typeof(PlayerSkinBank).GetProperty("Instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null, null)).skins[0].currentPlayerSkin;
-                    PlayerSkin newSkin = GameObject.Instantiate(skin, deathBall.transform).gameObject.GetComponent<PlayerSkin>();
-                    newSkin.gameObject.layer = Layer;
-                    newSkin.gameObject.name = "DeathBallSkin";
-                    newSkin.transform.localScale = Vector3.one;
-                    UnityEngine.GameObject.DontDestroyOnLoad(newSkin);
-                    newSkin.color = DefaultObjectColors.color;
-                    newSkin.backgroundColor = DefaultObjectColors.backgroundColor;
-                    newSkin.winText = DefaultObjectColors.winText;
-                    newSkin.particleEffect = DefaultObjectColors.particleEffect;
-                    PlayerSkinParticle newSkinPart = newSkin.GetComponentInChildren<PlayerSkinParticle>();
-                    ParticleSystem part = newSkinPart.GetComponent<ParticleSystem>();
-                    ParticleSystem.MainModule main = part.main;
-                    ParticleSystem.MinMaxGradient startColor = main.startColor;
-                    startColor.colorMin = DefaultObjectColors.backgroundColor;
-                    startColor.colorMax = DefaultObjectColors.color;
-                    main.startColor = startColor;
-
-                    newSkinPart.SetFieldValue("startColor1", DefaultObjectColors.backgroundColor);
-                    newSkinPart.SetFieldValue("startColor2", DefaultObjectColors.color);
-
-                    GameModeCollection.Log("Deathball Prefab Instantiated");
+                    GameModeCollection.Log("DeathBall Prefab Instantiated");
                     UnityEngine.GameObject.DontDestroyOnLoad(deathBall);
 
                     // must add required components (PhotonView) first
                     deathBall.AddComponent<PhotonView>();
                     deathBall.AddComponent<DeathBall>();
-                    deathBall.AddComponent<SetSpriteLayer>();
 
                     PhotonNetwork.PrefabPool.RegisterPrefab(deathBall.name, deathBall);
 
                     DeathObjectPrefabs._DeathBall = deathBall;
                 }
                 return DeathObjectPrefabs._DeathBall;
+            }
+        }
+        private static GameObject _DeathTriangle = null;
+
+        public static GameObject DeathTriangle
+        {
+            get
+            {
+                if (DeathObjectPrefabs._DeathTriangle == null)
+                {
+                    GameObject deathTriangle = new GameObject("DeathTrianglePrefab");
+                    ObjectParticleSkin.AddObjectParticleSkin(deathTriangle.transform, Sprites.Triangle, DefaultDeathObjectColors);
+
+                    GameModeCollection.Log("DeathTriangle Prefab Instantiated");
+                    UnityEngine.GameObject.DontDestroyOnLoad(deathTriangle);
+
+                    // must add required components (PhotonView) first
+                    deathTriangle.AddComponent<PhotonView>();
+                    deathTriangle.AddComponent<DeathTriangle>();
+
+                    PhotonNetwork.PrefabPool.RegisterPrefab(deathTriangle.name, deathTriangle);
+
+                    DeathObjectPrefabs._DeathTriangle = deathTriangle;
+                }
+                return DeathObjectPrefabs._DeathTriangle;
             }
         }
         private static GameObject _DeathBox = null;
@@ -88,34 +85,7 @@ namespace GameModeCollection.Objects.GameModeObjects
                 if (DeathObjectPrefabs._DeathBox == null)
                 {
                     GameObject deathBox = new GameObject("DeathBoxPrefab");
-                    GameObject deathBoxArt = GameObject.Instantiate(PlayerAssigner.instance.playerPrefab.transform.GetChild(0).GetChild(0).gameObject, deathBox.transform);
-                    deathBoxArt.name = "Sprite";
-                    deathBoxArt.gameObject.layer = Layer;
-                    deathBoxArt.transform.localScale = Vector3.one;
-                    deathBoxArt.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-                    deathBoxArt.GetComponent<SpriteRenderer>().sprite = Sprites.Box;
-                    deathBoxArt.GetComponent<SpriteMask>().sprite = Sprites.Box;
-
-                    PlayerSkin skin = ((PlayerSkinBank)typeof(PlayerSkinBank).GetProperty("Instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null, null)).skins[0].currentPlayerSkin;
-                    PlayerSkin newSkin = GameObject.Instantiate(skin, deathBox.transform).gameObject.GetComponent<PlayerSkin>();
-                    newSkin.gameObject.layer = Layer;
-                    newSkin.gameObject.name = "DeathBoxSkin";
-                    newSkin.transform.localScale = Vector3.one;
-                    UnityEngine.GameObject.DontDestroyOnLoad(newSkin);
-                    newSkin.color = DefaultObjectColors.color;
-                    newSkin.backgroundColor = DefaultObjectColors.backgroundColor;
-                    newSkin.winText = DefaultObjectColors.winText;
-                    newSkin.particleEffect = DefaultObjectColors.particleEffect;
-                    PlayerSkinParticle newSkinPart = newSkin.GetComponentInChildren<PlayerSkinParticle>();
-                    ParticleSystem part = newSkinPart.GetComponent<ParticleSystem>();
-                    ParticleSystem.MainModule main = part.main;
-                    ParticleSystem.MinMaxGradient startColor = main.startColor;
-                    startColor.colorMin = DefaultObjectColors.backgroundColor;
-                    startColor.colorMax = DefaultObjectColors.color;
-                    main.startColor = startColor;
-
-                    newSkinPart.SetFieldValue("startColor1", DefaultObjectColors.backgroundColor);
-                    newSkinPart.SetFieldValue("startColor2", DefaultObjectColors.color);
+                    ObjectParticleSkin.AddObjectParticleSkin(deathBox.transform, Sprites.Box, DefaultDeathObjectColors);
 
                     GameModeCollection.Log("DeathBox Prefab Instantiated");
                     UnityEngine.GameObject.DontDestroyOnLoad(deathBox);
@@ -123,7 +93,6 @@ namespace GameModeCollection.Objects.GameModeObjects
                     // must add required components (PhotonView) first
                     deathBox.AddComponent<PhotonView>();
                     deathBox.AddComponent<DeathBox>();
-                    deathBox.AddComponent<SetSpriteLayer>();
 
                     PhotonNetwork.PrefabPool.RegisterPrefab(deathBox.name, deathBox);
 
@@ -141,34 +110,7 @@ namespace GameModeCollection.Objects.GameModeObjects
                 if (DeathObjectPrefabs._DeathRod == null)
                 {
                     GameObject deathRod = new GameObject("DeathRodPrefab");
-                    GameObject deathRodArt = GameObject.Instantiate(PlayerAssigner.instance.playerPrefab.transform.GetChild(0).GetChild(0).gameObject, deathRod.transform);
-                    deathRodArt.name = "Sprite";
-                    deathRodArt.gameObject.layer = Layer;
-                    deathRodArt.transform.localScale = Vector3.one;
-                    deathRodArt.GetComponent<SpriteRenderer>().maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
-                    deathRodArt.GetComponent<SpriteRenderer>().sprite = Sprites.Box;
-                    deathRodArt.GetComponent<SpriteMask>().sprite = Sprites.Box;
-
-                    PlayerSkin skin = ((PlayerSkinBank)typeof(PlayerSkinBank).GetProperty("Instance", BindingFlags.NonPublic | BindingFlags.Static).GetValue(null, null)).skins[0].currentPlayerSkin;
-                    PlayerSkin newSkin = GameObject.Instantiate(skin, deathRod.transform).gameObject.GetComponent<PlayerSkin>();
-                    newSkin.gameObject.layer = Layer;
-                    newSkin.gameObject.name = "DeathRodSkin";
-                    newSkin.transform.localScale = Vector3.one;
-                    UnityEngine.GameObject.DontDestroyOnLoad(newSkin);
-                    newSkin.color = DefaultObjectColors.color;
-                    newSkin.backgroundColor = DefaultObjectColors.backgroundColor;
-                    newSkin.winText = DefaultObjectColors.winText;
-                    newSkin.particleEffect = DefaultObjectColors.particleEffect;
-                    PlayerSkinParticle newSkinPart = newSkin.GetComponentInChildren<PlayerSkinParticle>();
-                    ParticleSystem part = newSkinPart.GetComponent<ParticleSystem>();
-                    ParticleSystem.MainModule main = part.main;
-                    ParticleSystem.MinMaxGradient startColor = main.startColor;
-                    startColor.colorMin = DefaultObjectColors.backgroundColor;
-                    startColor.colorMax = DefaultObjectColors.color;
-                    main.startColor = startColor;
-
-                    newSkinPart.SetFieldValue("startColor1", DefaultObjectColors.backgroundColor);
-                    newSkinPart.SetFieldValue("startColor2", DefaultObjectColors.color);
+                    ObjectParticleSkin.AddObjectParticleSkin(deathRod.transform, Sprites.Box, DefaultDeathObjectColors);
 
                     GameModeCollection.Log("DeathRod Prefab Instantiated");
                     UnityEngine.GameObject.DontDestroyOnLoad(deathRod);
@@ -176,50 +118,12 @@ namespace GameModeCollection.Objects.GameModeObjects
                     // must add required components (PhotonView) first
                     deathRod.AddComponent<PhotonView>();
                     deathRod.AddComponent<DeathRod>();
-                    deathRod.AddComponent<SetSpriteLayer>();
 
                     PhotonNetwork.PrefabPool.RegisterPrefab(deathRod.name, deathRod);
 
                     DeathObjectPrefabs._DeathRod = deathRod;
                 }
                 return DeathObjectPrefabs._DeathRod;
-            }
-        }
-    }
-    static class Sprites
-    {
-        public static Sprite Circle => PlayerAssigner.instance.playerPrefab.transform.GetChild(0).GetChild(0).gameObject.GetComponent<SpriteRenderer>().sprite;
-        public static Sprite Box => ((GameObject)Resources.Load("4 map objects/Box")).GetComponentInChildren<SpriteRenderer>().sprite;
-    }
-    class SetSpriteLayer : MonoBehaviour
-    {
-        void Start()
-        {
-            int layerID = SortingLayer.NameToID("Player0");
-            this.SetSpriteLayerOfChildren(this.gameObject, layerID);
-            this.InitParticles(this.gameObject.GetComponentsInChildren<PlayerSkinParticle>(), layerID);
-        }
-        private void SetSpriteLayerOfChildren(GameObject obj, int layer)
-        {
-            SpriteMask[] sprites = obj.GetComponentsInChildren<SpriteMask>();
-            for (int i = 0; i < sprites.Length; i++)
-            {
-                sprites[i].frontSortingLayerID = layer;
-                sprites[i].backSortingLayerID = layer;
-            }
-        }
-        private void InitParticles(PlayerSkinParticle[] parts, int layer)
-        {
-            foreach (PlayerSkinParticle skinpart in parts)
-            {
-                ParticleSystem part = skinpart.GetComponent<ParticleSystem>();
-                skinpart.SetFieldValue("part", part);
-                part.GetComponent<ParticleSystemRenderer>().sortingLayerID = layer;
-                ParticleSystem.MainModule main = part.main;
-                skinpart.SetFieldValue("main", main);
-                skinpart.SetFieldValue("startColor1", main.startColor.colorMin);
-                skinpart.SetFieldValue("startColor2", main.startColor.colorMax);
-                part.Play();
             }
         }
     }
@@ -288,6 +192,58 @@ namespace GameModeCollection.Objects.GameModeObjects
             }
 
             yield return new WaitUntil(() => DeathBall.instance != null);
+        }
+    }
+    public class DeathTriangle : DeathObjectHandler<PolygonCollider2D>
+    {
+        private static DeathTriangle instance;
+
+        private const float Radius = 1f;
+
+        public override void OnPhotonInstantiate(PhotonMessageInfo info)
+        {
+            object[] instantiationData = info.photonView.InstantiationData;
+
+            this.gameObject.transform.SetParent(GM_Dodgeball.instance.transform);
+            GM_Dodgeball.instance.SetDeathObject(this);
+            DeathTriangle.instance = this;
+        }
+        protected override void Start()
+        {
+            base.Start();
+
+            this.transform.GetChild(0).transform.localScale = new Vector3(0.4f, 0.4f, 1f);
+            this.Col.transform.localScale = new Vector3(0.4f, 0.4f, 1f);
+            Sprite sprite = this.transform.GetChild(0).GetComponentInChildren<SpriteMask>().sprite;
+            int shapeCount = sprite.GetPhysicsShapeCount();
+            List<Vector2> physicsShape = new List<Vector2>() { };
+            for (int i = 0; i < shapeCount; i++)
+            {
+                sprite.GetPhysicsShape(i, physicsShape);
+                this.Col.SetPath(i, physicsShape.ToArray());
+            }
+        }
+        internal static void DestroyDeathTriangle()
+        {
+            GM_Dodgeball.instance.DestroyDeathTriangle();
+            if (DeathTriangle.instance != null)
+            {
+                UnityEngine.GameObject.DestroyImmediate(DeathTriangle.instance);
+            }
+        }
+        internal static IEnumerator MakeDeathTriangle()
+        {
+            if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
+            {
+                PhotonNetwork.Instantiate(
+                    DeathObjectPrefabs.DeathTriangle.name,
+                    GM_Dodgeball.instance.transform.position,
+                    GM_Dodgeball.instance.transform.rotation,
+                    0
+                    );
+            }
+
+            yield return new WaitUntil(() => DeathTriangle.instance != null);
         }
     }
     public class DeathBox : DeathObjectHandler<BoxCollider2D>
@@ -373,126 +329,23 @@ namespace GameModeCollection.Objects.GameModeObjects
         }
     }
 
-    public class DeathObjectHealth : MonoBehaviour
+    public class DeathObjectHealth : ObjectHealthHandler
     {
-        private PhotonView View => this.gameObject.GetComponent<PhotonView>();
-        private DeathObjectDamagable Damagable => this.gameObject.GetComponent<DeathObjectDamagable>();
-        private Player _lastSourceOfDamage = null;
-        private bool _dead = false;
-        private Action<Player> onPlayerKilledAction = null;
-
-        private float _invulnerableFor = 0f;
-        public float InvulnerableFor
+        public override void Revive()
         {
-            get
-            {
-                return this._invulnerableFor;
-            }
-            private set
-            {
-                this._invulnerableFor = value;
-            }
-        }
-        public void SetInvulnerableFor(float time)
-        {
-            this.InvulnerableFor = time;
-        }
-
-        public void ResetPlayerKilledAction()
-        {
-            this.onPlayerKilledAction = null;
-        }
-        public void AddPlayerKilledAction(Action<Player> action)
-        {
-            if (this.onPlayerKilledAction is null)
-            {
-                this.onPlayerKilledAction = action;
-            }
-            else
-            {
-                this.onPlayerKilledAction += action;
-            }
-        }
-        public bool Dead
-        {
-            get
-            {
-                return this._dead;
-            }
-            private set
-            {
-                this._dead = value;
-            }
-        }
-        public Player LastSourceOfDamage
-        {
-            get
-            {
-                return this._lastSourceOfDamage;
-            }
-            private set
-            {
-                this._lastSourceOfDamage = value;
-            }
-        }
-        private float _Health;
-        public float Health
-        {
-            get
-            {
-                return this._Health;
-            }
-            private set
-            {
-                this._Health = value;
-            }
-        }
-        private float lastDamaged = -1f;
-        void Update()
-        {
-            if (this.InvulnerableFor > 0f)
-            {
-                this.InvulnerableFor -= Time.deltaTime;
-            }
-        }
-        public void Revive()
-        {
-            this.Health = UnityEngine.Mathf.Clamp(2f * PlayerManager.instance.players.Select(p => p.data.maxHealth).Sum(), 200f, DeathObjectConstants.MaxHealth);
-            this.Dead = false;
-            this.LastSourceOfDamage = null;
-        }
-        public void TakeDamage(Vector2 damage, Player damagingPlayer)
-        {
-            if (this.Dead || this.InvulnerableFor > 0f) { return; }
-            this.Health -= damage.magnitude;
-            this.LastSourceOfDamage = damagingPlayer;
-
-            if (this.Health <= 0f && this.View.IsMine)
-            {
-                this.View.RPC(nameof(RPCA_Die), RpcTarget.All, damage, damagingPlayer.playerID);
-            }
-
-            if (damagingPlayer != null)
-            {
-                damagingPlayer.data.stats.DealtDamage(damage, false, null);
-            }
-
-            if (this.lastDamaged + 0.15f < Time.time && damagingPlayer != null && damagingPlayer.data.stats.lifeSteal != 0f)
-            {
-                SoundManager.Instance.Play(damagingPlayer.data.healthHandler.soundDamageLifeSteal, this.transform);
-            }
-
-            this.lastDamaged = Time.time;
+            this.MaxHealth = UnityEngine.Mathf.Clamp(2f * PlayerManager.instance.players.Select(p => p.data.maxHealth).Sum(), 200f, DeathObjectConstants.MaxHealth);
+            base.Revive();
         }
         [PunRPC]
-        private void RPCA_Die(Vector2 deathDirection, int killingPlayerID)
+        protected override void RPCA_Die(Vector2 deathDirection, int killingPlayerID)
         {
-            this.Dead = true;
-            this.Damagable.StopAllCoroutines();
+            base.RPCA_Die(deathDirection, killingPlayerID);
             Player killingPlayer = PlayerManager.instance.players.Find(p => p.playerID == killingPlayerID);
             if (killingPlayer is null)
             {
+                // get any player to use for the deathEffect and color
                 killingPlayer = PlayerManager.instance.players.FirstOrDefault();
+
             }
             if (killingPlayer is null) { return; }
             // play death effect
@@ -500,18 +353,14 @@ namespace GameModeCollection.Objects.GameModeObjects
             DeathEffect deathEffect = GameObject.Instantiate(killingPlayer.data.healthHandler.deathEffect, this.transform.position, this.transform.rotation).GetComponent<DeathEffect>();
             deathEffect.gameObject.transform.localScale = 2f * Vector3.one;
             deathEffect.PlayDeath(killingPlayer.GetTeamColors().color, killingPlayer.data.playerVel, deathDirection, -1);
-            this.onPlayerKilledAction?.Invoke(killingPlayer);
         }
     }
 
-    public abstract class DeathObjectHandler<TCollision> : NetworkPhysicsItem<TCollision, CircleCollider2D> where TCollision : Collider2D
+    public abstract class DeathObjectHandler<TCollision> : DamagableNetworkPhysicsItem<TCollision, CircleCollider2D> where TCollision : Collider2D
     {
         private const float InvulnerabilityTime = 2f;
         private float Damage => DeathObjectConstants.Damage;
         private float Force => DeathObjectConstants.Force;
-
-        public DeathObjectDamagable Damagable => this.gameObject.GetComponent<DeathObjectDamagable>();
-        public DeathObjectHealth Health => this.gameObject.GetComponent<DeathObjectHealth>();
 
         private Vector2? _previousSpawn = null;
 
@@ -581,7 +430,7 @@ namespace GameModeCollection.Objects.GameModeObjects
 
             base.Start();
 
-            this.gameObject.GetOrAddComponent<DeathObjectDamagable>();
+            this.gameObject.GetOrAddComponent<ObjectDamagable>();
             this.gameObject.GetOrAddComponent<DeathObjectHealth>();
 
             this.Trig.enabled = false;
@@ -652,16 +501,6 @@ namespace GameModeCollection.Objects.GameModeObjects
                     data.healthHandler.CallTakeForce(this.Force * this.Rig.velocity, ForceMode2D.Impulse, false, false, (this.Damage * this.Rig.velocity).magnitude / 20f);
                 }
             }
-            ProjectileCollision projCol = collision?.collider?.GetComponent<ProjectileCollision>();
-            if (projCol != null && projCol?.transform?.parent?.GetComponent<ProjectileHit>() != null && (projCol.transform.parent.GetComponentInChildren<PhotonView>().IsMine || PhotonNetwork.OfflineMode))
-            {
-                Vector2 point = (Vector2)projCol.transform.position;
-                Vector2 damage = projCol.gameObject.GetComponentInParent<ProjectileHit>().dealDamageMultiplierr * (projCol.gameObject.GetComponentInParent<ProjectileHit>().bulletCanDealDeamage ? projCol.gameObject.GetComponentInParent<ProjectileHit>().damage : 1f) * (Vector2)projCol.transform.parent.forward;
-                Player damagingPlayer = projCol.gameObject.GetComponentInParent<ProjectileHit>().ownPlayer;
-                GameObject damagingWeapon = projCol.gameObject.GetComponentInParent<ProjectileHit>().ownWeapon;
-                this.Damagable.CallTakeDamage(damage, point, damagingWeapon, damagingPlayer, true);
-            }
-
             base.OnCollisionEnter2D(collision);
         }
         protected override void Update()
@@ -718,79 +557,6 @@ namespace GameModeCollection.Objects.GameModeObjects
             Normal,
             Flubber,
             Pac,
-        }
-    }
-    [RequireComponent(typeof(PhotonView))]
-    public class DeathObjectDamagable : Damagable
-    {
-
-        private PhotonView View => this.gameObject.GetComponent<PhotonView>();
-        private DeathObjectHealth Health => this.gameObject.GetComponent<DeathObjectHealth>();
-
-        public override void CallTakeDamage(Vector2 damage, Vector2 damagePosition, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true)
-        {
-            if (damage == Vector2.zero)
-            {
-                return;
-            }
-            this.View.RPC(nameof(RPCA_TakeDamage), RpcTarget.All, new object[]
-            {
-                damage,
-                damagePosition,
-                lethal,
-                (damagingPlayer != null) ? damagingPlayer.playerID : -1
-            });
-        }
-
-        public override void TakeDamage(Vector2 damage, Vector2 damagePosition, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true, bool ignoreBlock = false)
-        {
-            if (damage == Vector2.zero) { return; }
-            this.TakeDamage(damage, damagePosition, damagingPlayer?.GetTeamColors()?.color ?? Color.red, damagingWeapon, damagingPlayer, lethal, ignoreBlock);
-        }
-
-        public override void TakeDamage(Vector2 damage, Vector2 damagePosition, Color dmgColor, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true, bool ignoreBlock = false)
-        {
-            this.Health.TakeDamage(damage, damagingPlayer);
-            foreach (PlayerSkinParticle skin in this.GetComponentsInChildren<PlayerSkinParticle>())
-            {
-                skin.BlinkColor(dmgColor);
-            }
-        }
-        public void TakeDamageOverTime(Vector2 damage, Vector2 position, float time, float interval, Color color, SoundEvent soundDamageOverTime, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true)
-        {
-            this.StartCoroutine(this.DoDamageOverTime(damage, position, time, interval, color, soundDamageOverTime, damagingWeapon, damagingPlayer, lethal));
-        }
-        private IEnumerator DoDamageOverTime(Vector2 damage, Vector2 position, float time, float interval, Color color, SoundEvent soundDamageOverTime, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true)
-        {
-            float damageDealt = 0f;
-            float damageToDeal = damage.magnitude;
-            float dpt = damageToDeal / time * interval;
-            while (damageDealt < damageToDeal)
-            {
-                if (soundDamageOverTime != null && !this.Health.Dead)
-                {
-                    SoundManager.Instance.Play(soundDamageOverTime, this.transform);
-                }
-                damageDealt += dpt;
-                this.TakeDamage(damage.normalized * dpt, position, color, damagingWeapon, damagingPlayer, lethal, false);
-                yield return new WaitForSeconds(interval / TimeHandler.timeScale);
-            }
-            yield break;
-        }
-        [PunRPC]
-        private void RPCA_TakeDamage(Vector2 damage, Vector2 position, bool lethal = true, int playerID = -1)
-        {
-            if (damage == Vector2.zero)
-            {
-                return;
-            }
-            Player playerWithID = PlayerManager.instance.players.Where(p => p.playerID == playerID).FirstOrDefault();
-            GameObject damagingWeapon = null;
-            if (playerWithID != null)
-            {
-                damagingWeapon = playerWithID.data.weaponHandler.gun.gameObject;
-            }
-            this.TakeDamage(damage, position, damagingWeapon, playerWithID, lethal, true);
         }
     }
 }

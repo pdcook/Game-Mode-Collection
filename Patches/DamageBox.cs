@@ -2,10 +2,8 @@
 using UnityEngine;
 using UnboundLib;
 using UnboundLib.Networking;
-using GameModeCollection.Objects.GameModeObjects;
 using GameModeCollection.Objects;
 using Sonigon;
-using Photon.Pun;
 namespace GameModeCollection.Patches
 {
     [HarmonyPatch(typeof(DamageBox), "Collide")]
@@ -48,7 +46,7 @@ namespace GameModeCollection.Patches
 			if (componentInParent && componentInParent.GetComponent<HealthHandler>() == null)
             {
 				// this would usually throw a null reference exception in the original method
-                if (componentInParent.GetComponent<DeathObjectDamagable>() == null)
+                if (componentInParent.GetComponent<ObjectDamagable>() == null)
                 {
                     return false;
                 }

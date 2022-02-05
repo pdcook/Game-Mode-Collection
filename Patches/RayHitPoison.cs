@@ -1,4 +1,4 @@
-﻿using GameModeCollection.Objects.GameModeObjects;
+﻿using GameModeCollection.Objects;
 using UnityEngine;
 using HarmonyLib;
 
@@ -16,7 +16,7 @@ namespace GameModeCollection.Patches
             }
             RayHitPoison[] componentsInChildren = __instance.transform.root.GetComponentsInChildren<RayHitPoison>();
             ProjectileHit componentInParent = __instance.GetComponentInParent<ProjectileHit>();
-            hit.transform.GetComponent<DeathObjectDamagable>()?.TakeDamageOverTime(componentInParent.damage * __instance.transform.forward / (float)componentsInChildren.Length, __instance.transform.position, __instance.time, __instance.interval, __instance.color, __instance.soundEventDamageOverTime, __instance.GetComponentInParent<ProjectileHit>().ownWeapon, __instance.GetComponentInParent<ProjectileHit>().ownPlayer, true);
+            hit.transform.GetComponent<ObjectDamagable>()?.TakeDamageOverTime(componentInParent.damage * __instance.transform.forward / (float)componentsInChildren.Length, __instance.transform.position, __instance.time, __instance.interval, __instance.color, __instance.soundEventDamageOverTime, __instance.GetComponentInParent<ProjectileHit>().ownWeapon, __instance.GetComponentInParent<ProjectileHit>().ownPlayer, true);
         }
 
     }
