@@ -198,8 +198,6 @@ namespace GameModeCollection.Objects.GameModeObjects
     {
         private static DeathTriangle instance;
 
-        private const float Radius = 1f;
-
         public override void OnPhotonInstantiate(PhotonMessageInfo info)
         {
             object[] instantiationData = info.photonView.InstantiationData;
