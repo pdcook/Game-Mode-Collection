@@ -93,7 +93,7 @@ namespace GameModeCollection.Objects
 	}
 	public abstract class PhysicsItem : MonoBehaviour
 	{
-		public abstract ItemPhysicalProperties PhysicalProperties { get; }
+		public abstract ItemPhysicalProperties PhysicalProperties { get; protected set; }
 		public static readonly int ColliderLayer = LayerMask.NameToLayer("IgnorePlayer"); // layer that physics objects are on, although this causes things to interact with background objects too
 		public static readonly int TriggerLayer = LayerMask.NameToLayer("PlayerObjectCollider");
 		private PhotonView View => this.gameObject.GetComponent<PhotonView>();
@@ -118,8 +118,7 @@ namespace GameModeCollection.Objects
 	public abstract class NetworkPhysicsItem<TCollider, TTrigger> : PhysicsItem, IPunInstantiateMagicCallback, IPunObservable where TCollider : Collider2D where TTrigger : Collider2D
 	{
 
-		protected ItemPhysicalProperties _PhysicalProperties = new ItemPhysicalProperties();
-        public override ItemPhysicalProperties PhysicalProperties => this._PhysicalProperties;
+		public override ItemPhysicalProperties PhysicalProperties { get; protected set; } = new ItemPhysicalProperties();
 
         private PhysicsMaterial2D _Material = null;
 		public PhysicsMaterial2D Material

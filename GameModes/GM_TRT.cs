@@ -60,19 +60,21 @@ namespace GameModeCollection.GameModes
         protected override void Start()
         {
             // register prefab
-            GameObject _ = CardItemPrefab.CardItem;
+            GameObject _ = CardItemPrefabs.CardItem;
+            // spawn handler
+            _ = CardItemPrefabs.CardItemHandler;
             base.Start();
         }
         public override IEnumerator DoRoundStart()
         {
             yield return base.DoRoundStart();
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.First(), Vector3.zero, Quaternion.identity);
+            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity);
         }
 
         public override IEnumerator DoPointStart()
         {
             yield return base.DoPointStart();
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.First(), Vector3.zero, Quaternion.identity);
+            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity);
         }
 
 

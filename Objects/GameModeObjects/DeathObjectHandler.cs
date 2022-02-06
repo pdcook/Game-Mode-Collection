@@ -399,7 +399,7 @@ namespace GameModeCollection.Objects.GameModeObjects
         }
         protected override void Awake()
         {
-            this._PhysicalProperties = new ItemPhysicalProperties(
+            this.PhysicalProperties = new ItemPhysicalProperties(
                 bounciness: DeathObjectConstants.Bounciness,
                 friction: DeathObjectConstants.Friction,
                 mass: DeathObjectConstants.Mass,
