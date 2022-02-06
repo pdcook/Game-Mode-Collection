@@ -4,16 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GameModeCollection.Extensions;
-using ModdingUtils.Extensions;
 using ModdingUtils.MonoBehaviours;
 using ModdingUtils.Utils;
 using Photon.Pun;
+using Sonigon;
 using TMPro;
 using UnboundLib;
 using UnboundLib.Cards;
 using UnboundLib.GameModes;
 using UnboundLib.Networking;
-using UnboundLib.Utils;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -80,6 +79,15 @@ namespace GameModeCollection.GameModes
                 colorEffect.ApplyColor();
                 
                 player.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().color = new Color(0.6132076f, 0.6132076f, 0.6132076f, 1);
+                
+                var trail = player.gameObject.GetOrAddComponent<TrailRenderer>();
+                trail.startColor = Color.green;
+                trail.endColor = Color.red;
+                trail.time = 1f;
+                trail.startWidth = 0.5f;
+                trail.emitting = false;
+                trail.sharedMaterial = player.transform.Find("Art/Health").GetComponent<SpriteRenderer>().material;
+                trail.Clear();
             }
 
             if (PhotonNetwork.IsMasterClient)
@@ -193,6 +201,12 @@ namespace GameModeCollection.GameModes
                         nameof(GM_HideNSeek.RPCA_MyNextRound),
                         hiderOtherTeamKills
                     );
+                }
+
+                if (this.timeLeft / this.timeLimit < 0.5f && this.hiderIDs.Count(p => !this.players[p].data.dead) == 1)
+                {
+                    var player = this.players.Values.First(p => !p.data.dead && this.hiderIDs.Contains(p.playerID));
+                    player.GetComponent<TrailRenderer>().emitting = true;
                 }
 
                 yield return null;
