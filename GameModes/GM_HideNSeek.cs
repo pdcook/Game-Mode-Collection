@@ -4,15 +4,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GameModeCollection.Extensions;
-using ModdingUtils.Extensions;
 using ModdingUtils.MonoBehaviours;
 using ModdingUtils.Utils;
 using Photon.Pun;
+using Sonigon;
+using TMPro;
 using UnboundLib;
 using UnboundLib.Cards;
 using UnboundLib.GameModes;
 using UnboundLib.Networking;
-using UnboundLib.Utils;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -25,9 +25,10 @@ namespace GameModeCollection.GameModes
     /// The hiders will get a hidden hider card which makes them weaker than the seekers.
     ///
     /// The hiders get 1 point for every seeker they kill if the hiders win the round.
-    /// The seekers get (amount of seekers) points * (percentage of hiders killed) if the seekers win the round.
+    /// The seekers get 3 points * (percentage of hiders killed) if the seekers win the round.
+    /// If the seeker dies by accident so dying to the bounds all hiders get 1 point.
     ///
-    /// NOTE: If this gamemode is played with cards that don't remove themself properly some thing will go wrong.
+    /// NOTE: If this gamemode is played with cards that don't remove themself properly some thing WILL  go wrong.
     /// </summary>
     public class GM_HideNSeek : RWFGameMode
     {
@@ -36,9 +37,6 @@ namespace GameModeCollection.GameModes
         public List<int> hiderIDs = new List<int>();
         public Dictionary<int, Player> players = new Dictionary<int, Player>();
         public Dictionary<int, int> otherTeamKills = new Dictionary<int, int>();
-        public Dictionary<int, int> pointsToGive = new Dictionary<int, int>();
-        public List<int> deathPlayers = new List<int>();
-        public int[] lastPointWinningTeamIDs;
         public float timeLimit => this.hiderIDs.Count*15f;
         public float timeLeft;
         public bool startTimer = false;
@@ -50,19 +48,6 @@ namespace GameModeCollection.GameModes
         {
             base.Awake();
             instance = this;
-        }
-
-        private void OnEnable()
-        {
-            base.OnDisable();
-            GameModeManager.AddHook(GameModeHooks.HookBattleStart, this.OnBattleStart);
-        }
-
-
-        public override void OnDisable()
-        {
-            base.OnDisable();
-            GameModeManager.RemoveHook(GameModeHooks.HookBattleStart, this.OnBattleStart);
         }
 
         public override void StartGame()
@@ -81,7 +66,6 @@ namespace GameModeCollection.GameModes
             // Reset the game mode
             this.seekerIDs.Clear();
             this.hiderIDs.Clear();
-            this.deathPlayers.Clear();
 
 
             // Reset things
@@ -93,48 +77,71 @@ namespace GameModeCollection.GameModes
                 colorEffect.SetLivesToEffect(100);
                 colorEffect.SetColor(player.GetTeamColors().color);
                 colorEffect.ApplyColor();
+                
+                player.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().color = new Color(0.6132076f, 0.6132076f, 0.6132076f, 1);
+                
+                var trail = player.gameObject.GetOrAddComponent<TrailRenderer>();
+                trail.startColor = Color.green;
+                trail.endColor = Color.red;
+                trail.time = 1f;
+                trail.startWidth = 0.5f;
+                trail.emitting = false;
+                trail.sharedMaterial = player.transform.Find("Art/Health").GetComponent<SpriteRenderer>().material;
+                trail.Clear();
             }
 
             if (PhotonNetwork.IsMasterClient)
             {
-                this.ExecuteAfterFrames(1, () =>
+                // Get seekerIDs
+                var amountOfSeekers = Mathf.Floor(instance.players.Count / 3);
+                if(amountOfSeekers == 0) { amountOfSeekers = 1; }
+                var localSeekerIDs = new List<int>();
+                // Set the seeker IDs
+                for (int i = 0; i < amountOfSeekers; i++)
                 {
-                    var seed = Random.Range(0, int.MaxValue);
+                    var randomIndex = Random.Range(0, instance.players.Count);
+                    // If the ID is already in the list, try again
+                    while (instance.seekerIDs.Contains(instance.players[randomIndex].playerID))
+                    {
+                        randomIndex = Random.Range(0, instance.players.Count);
+                    }
+                    localSeekerIDs.Add(randomIndex);
+                }
+
+                // this.ExecuteAfterFrames(1, () =>
+                // {
                     NetworkingManager.RPC(
                         typeof(GM_HideNSeek),
                         nameof(GM_HideNSeek.RPCA_GenerateTeams),
-                        seed
+                        localSeekerIDs.ToArray()
                     );
-                });
+                // });
             }
         }
 
         [UnboundRPC]
-        public static void RPCA_GenerateTeams(int seed)
+        public static void RPCA_GenerateTeams(int[] localSeekerIDs)
         {
+            
             var instance = GM_HideNSeek.instance;
             
-            var rnd = new System.Random(seed);
-
-            var amountOfSeekers = Mathf.Floor(instance.players.Count / 3);
-            if(amountOfSeekers == 0) { amountOfSeekers = 1; }
-            // Set the seeker IDs
-            for (int i = 0; i < amountOfSeekers; i++)
+            if (!PhotonNetwork.IsMasterClient)
             {
-                var randomIndex = rnd.Next(0, instance.players.Count);
-                // If the ID is already in the list, try again
-                while (instance.seekerIDs.Contains(instance.players[randomIndex].playerID))
-                {
-                    randomIndex = rnd.Next(0, instance.players.Count);
-                }
-                instance.seekerIDs.Add(instance.players[randomIndex].playerID);
+                instance.ResetGame();
+            }
+            // Set the seeker IDs
+            foreach (var index in localSeekerIDs)
+            {
+                instance.seekerIDs.Add(instance.players[index].playerID);
                 GameModeCollection.instance.ExecuteAfterFrames(2, () =>
                 {
-                    var colorEffect = instance.players[randomIndex].gameObject.GetOrAddComponent<ReversibleColorEffect>();
+                    var colorEffect = instance.players[index].gameObject.GetOrAddComponent<ReversibleColorEffect>();
+                    colorEffect.SetLivesToEffect(100);
                     colorEffect.SetColor(Color.red);
                     colorEffect.ApplyColor();
+                    instance.players[index].GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().color = Color.red;
                 });
-                GameModeCollection.Log("[Hide&Seek] Seeker ID: " + instance.players[randomIndex].playerID);
+                GameModeCollection.Log("[Hide&Seek] Seeker ID: " + instance.players[index].playerID);
             }
 
             // Set the hider IDs
@@ -143,23 +150,10 @@ namespace GameModeCollection.GameModes
                 instance.hiderIDs.Add(player.playerID);
                 Cards.instance.AddCardToPlayer(player, HiderCard.instance, addToCardBar: false);
 
-                // GameModeCollection.Log("Hider ID: " + player.playerID);
+                // GameModeCollection.Log("[Hide&Seek] Hider ID: " + player.playerID);
             }
             
             instance.timeLeft = instance.timeLimit;
-        }
-
-        public IEnumerator OnBattleStart(IGameModeHandler handler)
-        {
-            foreach (var player in this.players.Values)
-            {
-                if (player.GetComponent<ReversibleColorEffect>())
-                {
-                    player.GetComponent<ReversibleColorEffect>().ApplyColor();
-                }
-            }
-
-            yield return null;
         }
 
         public override void PlayerJoined(Player player)
@@ -186,7 +180,7 @@ namespace GameModeCollection.GameModes
             {
                 var white = Color.white * 0.9f;
                 white.a = 1f;
-                UIHandler.instance.roundCounterSmall.UpdateClock(0, this.timeLeft/ this.timeLimit, white);
+                UIHandler.instance.roundCounterSmall.UpdateClock(0, this.timeLeft/ this.timeLimit, white, new Vector2(0.175f, 0.175f));
                 // foreach (var hiderID in this.hiderIDs)
                 // {
                 //     UIHandler.instance.roundCounterSmall.UpdateText(hiderID, this.otherTeamKills[hiderID].ToString());
@@ -209,6 +203,12 @@ namespace GameModeCollection.GameModes
                     );
                 }
 
+                if (this.timeLeft / this.timeLimit < 0.5f && this.hiderIDs.Count(p => !this.players[p].data.dead) == 1)
+                {
+                    var player = this.players.Values.First(p => !p.data.dead && this.hiderIDs.Contains(p.playerID));
+                    player.GetComponent<TrailRenderer>().emitting = true;
+                }
+
                 yield return null;
             }
         }
@@ -223,11 +223,6 @@ namespace GameModeCollection.GameModes
 
         public override void PlayerDied(Player killedPlayer, int teamsAlive)
         {
-            if (this.deathPlayers.Contains(killedPlayer.playerID))
-            {
-                return;
-            }
-
             var playerKiller = PlayerManager.instance.players.FirstOrDefault(p => p.data.lastDamagedPlayer == killedPlayer &&
                                                                          (float)p.data.stats.GetFieldValue("sinceDealtDamage") <= 1.5f && !p.data.dead);
             if (playerKiller != null && playerKiller != killedPlayer)
@@ -248,8 +243,6 @@ namespace GameModeCollection.GameModes
                 //     this.otherTeamKills[playerKiller.playerID]--;
                 // }
             }
-            
-            this.deathPlayers.Add(killedPlayer.playerID);
 
             // Check if all hiders are dead
             if(this.hiderIDs.Select(id => this.players[id]).All(p => p.data.dead))
@@ -390,7 +383,10 @@ namespace GameModeCollection.GameModes
 
         public override IEnumerator DoRoundStart()
         {
-            this.ResetGame();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                this.ResetGame();
+            }
             yield return base.DoRoundStart();
             this.HideNSeekCO = this.StartCoroutine(this.DoHideNSeek());
             
@@ -404,7 +400,10 @@ namespace GameModeCollection.GameModes
         }
         public override IEnumerator DoPointStart()
         {
-            this.ResetGame();
+            if (PhotonNetwork.IsMasterClient)
+            {
+                this.ResetGame();
+            }
             yield return base.DoPointStart();
             this.HideNSeekCO = this.StartCoroutine(this.DoHideNSeek());
             
@@ -441,8 +440,8 @@ namespace GameModeCollection.GameModes
         {
             cardInfo.allowMultiple = false;
 
-            gun.damage = 0.75f;
-            statModifiers.health = 0.75f;
+            gun.damage = 0.85f;
+            statModifiers.health = 0.85f;
         }
 
         protected override CardInfoStat[] GetStats()

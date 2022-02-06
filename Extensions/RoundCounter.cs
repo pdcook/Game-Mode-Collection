@@ -79,7 +79,7 @@ namespace GameModeCollection.Extensions
             return teamText;
         }
 
-        public static void UpdateClock(this RoundCounter instance, int teamID, float perc, Color? colorToSet = null)
+        public static void UpdateClock(this RoundCounter instance, int teamID, float perc, Color? colorToSet = null, Vector2? scale = null)
         {
             Color color = colorToSet ?? PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
 
@@ -91,6 +91,10 @@ namespace GameModeCollection.Extensions
             teamClock.transform.Find("Border").GetComponent<ProceduralImage>().color = color;
             teamClock.transform.Find("Mid").GetComponent<ProceduralImage>().enabled = false;
             teamClock.transform.Find("Fill").GetComponent<ProceduralImage>().fillAmount = perc;
+            if(scale != null)
+            {
+                teamClock.transform.localScale = scale.Value;
+            }
         }
 
         public static void UpdateText(this RoundCounter instance, int teamID, string text, Color? colorToSet = null)
