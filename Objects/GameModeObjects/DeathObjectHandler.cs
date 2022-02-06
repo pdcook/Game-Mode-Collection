@@ -486,7 +486,7 @@ namespace GameModeCollection.Objects.GameModeObjects
         }
         protected internal override void OnCollisionEnter2D(Collision2D collision)
         {
-            this.Rig.velocity *= 1.05f; // extra bouncy
+            this.Rig.velocity *= 1.25f; // extra bouncy
             base.OnCollisionEnter2D(collision);
         }
         protected override void Update()

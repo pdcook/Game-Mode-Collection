@@ -103,6 +103,7 @@ namespace GameModeCollection.Objects
 		protected internal abstract void OnTriggerEnter2D(Collider2D collider2D);
 		protected internal abstract void OnTriggerExit2D(Collider2D collider2D);
 		protected internal abstract void OnTriggerStay2D(Collider2D collider2D);
+		protected internal abstract void BulletPush(Vector2 force, Vector2 worldPoint, CharacterData asker);
 		protected internal abstract Vector3 Push(CharacterData data);
 		protected internal virtual void CallTakeForce(Vector2 force, Vector2 point, ForceMode2D forceMode = ForceMode2D.Force)
 		{
@@ -300,13 +301,7 @@ namespace GameModeCollection.Objects
 		}
 		protected internal override void OnCollisionEnter2D(Collision2D collision2D)
 		{
-			ProjectileCollision projCol = collision2D?.collider?.GetComponent<ProjectileCollision>();
-			if (projCol != null && projCol?.transform?.parent?.GetComponent<ProjectileHit>() != null && (projCol.transform.parent.GetComponentInChildren<PhotonView>().IsMine || PhotonNetwork.OfflineMode))
-			{
-				Vector2 point = (Vector2)projCol.transform.position;
-				Vector2 force = projCol.gameObject.GetComponentInParent<ProjectileHit>().force * (Vector2)projCol.transform.parent.forward;
-				this.View.RPC(nameof(this.RPCA_DoBulletHit), RpcTarget.All, projCol.transform.parent.GetComponentInChildren<PhotonView>().ViewID, point, force, (Vector2)(-projCol.transform.forward));
-			}
+
 		}
 		protected internal override void OnCollisionExit2D(Collision2D collision2D)
 		{
@@ -328,6 +323,13 @@ namespace GameModeCollection.Objects
 		{
 
 		}
+        protected internal override void BulletPush(Vector2 force, Vector2 worldPoint, CharacterData asker)
+        {
+			if (this.View.IsMine)
+            {
+				this.Rig.AddForceAtPosition(force * this.PhysicalProperties.PhysicsImpulseMult, worldPoint, ForceMode2D.Impulse);
+            }
+        }
         protected internal override Vector3 Push(CharacterData data)
         {
 			if (!data.view.IsMine) { return Vector3.zero; }
@@ -392,59 +394,6 @@ namespace GameModeCollection.Objects
 			if (forceMode2D == ForceMode2D.Force) { mult = this.PhysicalProperties.PhysicsForceMult; }
 			if (forceMode2D == ForceMode2D.Impulse) { mult = this.PhysicalProperties.PhysicsImpulseMult; }
 				this.Rig.AddForceAtPosition(force * mult, point, forceMode2D);
-		}
-		[PunRPC]
-		protected virtual void RPCA_DoBulletHit(int viewID, Vector2 point, Vector2 force, Vector2 normal)
-		{
-			this.RPCA_SendForce(force, point, (byte)ForceMode2D.Impulse);
-			this.StartCoroutine(this.DoBulletHitWhenReady(viewID, point, normal));
-		}
-		protected virtual IEnumerator DoBulletHitWhenReady(int viewID, Vector2 point, Vector2 normal)
-		{
-			yield return new WaitUntil(() => PhotonNetwork.GetPhotonView(viewID) != null);
-			GameObject bullet = PhotonNetwork.GetPhotonView(viewID)?.gameObject;
-			ProjectileHit projHit = bullet?.GetComponent<ProjectileHit>();
-			ProjectileCollision projCol = bullet?.GetComponentInChildren<ProjectileCollision>();
-			if (bullet == null || projHit == null || projCol == null)
-			{
-				yield break;
-			}
-            HitInfo hitInfo = new HitInfo()
-            {
-                collider = this.Col,
-                transform = this.transform,
-                rigidbody = this.Rig,
-                point = point,
-                normal = normal,
-            };
-			if (projHit.isAllowedToSpawnObjects)
-			{
-				GamefeelManager.GameFeel(projHit.transform.forward * projHit.shake);
-				DynamicParticles.instance.PlayBulletHit(projHit.damage, projHit.transform, hitInfo, projHit.projectileColor);
-				for (int i = 0; i < projHit.objectsToSpawn.Length; i++)
-				{
-					ObjectsToSpawn.SpawnObject(projHit.transform, hitInfo, projHit.objectsToSpawn[i], null, projHit.team, projHit.damage, (SpawnedAttack)projHit.GetFieldValue("spawnedAttack"), false);
-				}
-				projHit.transform.position = hitInfo.point + hitInfo.normal * 0.01f;
-			}
-			bool flag = false;
-			if (projHit.effects != null && projHit.effects.Count() != 0)
-            {
-				for (int j = 0; j < projHit.effects.Count; j++)
-				{
-					HasToReturn hasToReturn = projHit.effects[j].DoHitEffect(hitInfo);
-					if (hasToReturn == HasToReturn.hasToReturn)
-					{
-						flag = true;
-					}
-					if (hasToReturn == HasToReturn.hasToReturnNow)
-					{
-						yield break;
-					}
-				}
-			}
-			if (flag) { yield break; }
-			projCol.Die();
 		}
 
 		protected virtual void FixedUpdate()

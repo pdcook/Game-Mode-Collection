@@ -49,7 +49,7 @@ namespace GameModeCollection.Patches
                 }
             }
 
-            if (index == -1) { UnityEngine.Debug.LogError("[GameModeCollection][PlayerCollisionPatch] INSTRUCTION NOT FOUND."); }
+            if (index == -1) { GameModeCollection.LogError("[PlayerCollisionPatch] INSTRUCTION NOT FOUND."); }
 
             codes.Insert(index, new CodeInstruction(OpCodes.Ldloc_2));
             codes.Insert(index + 1, new CodeInstruction(OpCodes.Ldloc_S, 6));

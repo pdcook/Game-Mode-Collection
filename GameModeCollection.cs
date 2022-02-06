@@ -37,15 +37,19 @@ namespace GameModeCollection
         {
             if (DEBUG)
             {
-                UnityEngine.Debug.Log($"[{ModName}] {msg.ToString()}");
+                UnityEngine.Debug.Log($"[{ModName}] {msg}");
             }
         }
         internal static void LogWarning(object msg)
         {
             if (DEBUG)
             {
-                UnityEngine.Debug.LogWarning($"[{ModName}] {msg.ToString()}");
+                UnityEngine.Debug.LogWarning($"[{ModName}] {msg}");
             }
+        }
+        internal static void LogError(object msg)
+        {
+            UnityEngine.Debug.LogError($"[{ModName}] {msg}");
         }
 
         private void Awake()
