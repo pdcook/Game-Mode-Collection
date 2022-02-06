@@ -8,6 +8,7 @@ using ModdingUtils.Extensions;
 using ModdingUtils.MonoBehaviours;
 using ModdingUtils.Utils;
 using Photon.Pun;
+using TMPro;
 using UnboundLib;
 using UnboundLib.Cards;
 using UnboundLib.GameModes;
@@ -25,7 +26,8 @@ namespace GameModeCollection.GameModes
     /// The hiders will get a hidden hider card which makes them weaker than the seekers.
     ///
     /// The hiders get 1 point for every seeker they kill if the hiders win the round.
-    /// The seekers get (amount of seekers) points * (percentage of hiders killed) if the seekers win the round.
+    /// The seekers get 3 points * (percentage of hiders killed) if the seekers win the round.
+    /// If the seeker dies by accident so dying to the bounds all hiders get 1 point.
     ///
     /// NOTE: If this gamemode is played with cards that don't remove themself properly some thing WILL  go wrong.
     /// </summary>
@@ -76,6 +78,8 @@ namespace GameModeCollection.GameModes
                 colorEffect.SetLivesToEffect(100);
                 colorEffect.SetColor(player.GetTeamColors().color);
                 colorEffect.ApplyColor();
+                
+                player.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().color = new Color(0.6132076f, 0.6132076f, 0.6132076f, 1);
             }
 
             if (PhotonNetwork.IsMasterClient)
@@ -127,6 +131,7 @@ namespace GameModeCollection.GameModes
                     colorEffect.SetLivesToEffect(100);
                     colorEffect.SetColor(Color.red);
                     colorEffect.ApplyColor();
+                    instance.players[index].GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>().color = Color.red;
                 });
                 GameModeCollection.Log("[Hide&Seek] Seeker ID: " + instance.players[index].playerID);
             }
@@ -167,7 +172,7 @@ namespace GameModeCollection.GameModes
             {
                 var white = Color.white * 0.9f;
                 white.a = 1f;
-                UIHandler.instance.roundCounterSmall.UpdateClock(0, this.timeLeft/ this.timeLimit, white);
+                UIHandler.instance.roundCounterSmall.UpdateClock(0, this.timeLeft/ this.timeLimit, white, new Vector2(0.175f, 0.175f));
                 // foreach (var hiderID in this.hiderIDs)
                 // {
                 //     UIHandler.instance.roundCounterSmall.UpdateText(hiderID, this.otherTeamKills[hiderID].ToString());
@@ -421,8 +426,8 @@ namespace GameModeCollection.GameModes
         {
             cardInfo.allowMultiple = false;
 
-            gun.damage = 0.75f;
-            statModifiers.health = 0.75f;
+            gun.damage = 0.85f;
+            statModifiers.health = 0.85f;
         }
 
         protected override CardInfoStat[] GetStats()
