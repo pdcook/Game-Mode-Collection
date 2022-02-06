@@ -24,16 +24,16 @@ namespace GameModeCollection.GameModes
     /// 
     /// Notes:
     /// 
-    /// - Each client flips over cards ONLY they walk near, and they stay flipped (large circular trigger collider)
-    /// - Cards can be collected by walking near them (smaller box trigger collider just barely larger than card's box collider)
-    /// - Cards have health (possibly proportional to their card health stat) and can be shot and permanently destroyed
-    /// - Each client sees ONLY their own card bar, until they die and enter spectator mode
-    /// - Players can have a max of two cards
-    /// - Dead players have a separate text chat
-    /// - Players can discard cards by clicking on the square in the card bar
-    /// - If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
-    /// - If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
-    /// - Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
+    /// - [X] Each client flips over cards ONLY they walk near, and they stay flipped (large circular trigger collider)
+    /// - [X] Cards can be collected by walking near them (smaller box trigger collider just barely larger than card's box collider)
+    /// - [X] Cards have health (possibly proportional to their card health stat) and can be shot and permanently destroyed
+    /// - [ ] Each client sees ONLY their own card bar, until they die and enter spectator mode
+    /// - [ ] Players can have a max of two cards
+    /// - [ ] Dead players have a separate text chat
+    /// - [ ] Players can discard cards by clicking on the square in the card bar
+    /// - [ ] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
+    /// - [ ] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
+    /// - [ ] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
     /// 
     /// Roles:
     /// - Innocent
@@ -68,13 +68,13 @@ namespace GameModeCollection.GameModes
         public override IEnumerator DoRoundStart()
         {
             yield return base.DoRoundStart();
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity);
+            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, 100f);
         }
 
         public override IEnumerator DoPointStart()
         {
             yield return base.DoPointStart();
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity);
+            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, 100f);
         }
 
 

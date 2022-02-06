@@ -4,7 +4,7 @@ namespace GameModeCollection.GameModeHandlers
 {
     public class TRTHandler : RWFGameModeHandler<GM_TRT>
     {
-        internal const string GameModeName = "TRT";
+        internal const string GameModeName = "Trouble in Rounds Town";
         internal const string GameModeID = "TroubleInRoundsTown";
         public TRTHandler() : base(
             name: GameModeName,

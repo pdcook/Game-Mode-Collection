@@ -50,9 +50,11 @@ namespace GameModeCollection.Objects
 
 
     }
-    class CardItem : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
+    [RequireComponent(typeof(ObjectDamagable))]
+    [RequireComponent(typeof(CardItemHealth))]
+    class CardItem : DamagableNetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
     {
-        internal static IEnumerator MakeCardItem(CardInfo card, Vector3 position, Quaternion rotation)
+        internal static IEnumerator MakeCardItem(CardInfo card, Vector3 position, Quaternion rotation, float maxHealth = -1f)
         {
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
@@ -61,7 +63,7 @@ namespace GameModeCollection.Objects
                         position,
                         rotation,
                         0,
-                        new object[] { card.cardName }
+                        new object[] { card.cardName, maxHealth }
                     );
             }
 
@@ -79,6 +81,11 @@ namespace GameModeCollection.Objects
 
             // data[0] is the name of the card
             this.CardName = (string)data[0];
+            // data[1] is the maximum health of the card - if it is -1, then it is unkillable
+            float health = (float)data[1];
+            this.Health.MaxHealth = health > 0f ? health : float.MaxValue;
+            this.Health.Revive();
+
             this.Card = CardManager.GetCardInfoWithName(this.CardName);
 
             this.gameObject.name = $"{this.CardName} Item";
@@ -108,6 +115,9 @@ namespace GameModeCollection.Objects
         {
             base.Start();
 
+            this.gameObject.GetOrAddComponent<ObjectDamagable>();
+            this.gameObject.GetOrAddComponent<CardItemHealth>();
+
             this.Col.size = Vector3.one;
             this.Trig.radius = 40f;
             this.transform.localScale = 0.15f * Vector3.one;
@@ -116,7 +126,8 @@ namespace GameModeCollection.Objects
         protected internal override void OnTriggerEnter2D(Collider2D collider2D)
         {
             if (collider2D?.GetComponent<Player>() != null
-                && (collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false))
+                && (collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false)
+                && this.CanSeePlayer(collider2D.GetComponent<Player>()))
             {
                 this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true);
             }
@@ -137,9 +148,17 @@ namespace GameModeCollection.Objects
             if (collider2D?.GetComponent<Player>() != null
                 && (collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false))
             {
-                if (Vector2.Distance(collider2D.GetComponent<Player>().data.playerVel.position, this.transform.position) < CollectionDistance)
+                if (this.CanSeePlayer(collider2D.GetComponent<Player>()))
                 {
-                    this.CheckPlayerCollect(collider2D.GetComponent<Player>());
+                    this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true);
+                    if (Vector2.Distance(collider2D.GetComponent<Player>().data.playerVel.position, this.transform.position) < CollectionDistance)
+                    {
+                        this.CheckPlayerCollect(collider2D.GetComponent<Player>());
+                    }
+                }
+                else
+                {
+                    this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(false);
                 }
             }
             base.OnTriggerStay2D(collider2D);
@@ -162,9 +181,25 @@ namespace GameModeCollection.Objects
 
             this.HasBeenTaken = true;
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, this.Card, false, "", 0, 0, true);
-            Destroy(this.gameObject);
+            this.CallDestroy();
         }
 
+		private bool CanSeePlayer(Player player)
+        {
+			RaycastHit2D[] array = Physics2D.RaycastAll(this.transform.position, (player.data.playerVel.position - (Vector2)this.transform.position).normalized, Vector2.Distance(this.transform.position, player.data.playerVel.position), PlayerManager.instance.canSeePlayerMask);
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (array[i].transform
+					&& !array[i].transform.root.GetComponent<SpawnedAttack>()
+					&& !array[i].transform.root.GetComponent<Player>()
+					&& !array[i].transform.root.GetComponent<CardItemHandler>()
+					)
+				{
+					return false;
+				}
+			}
+			return true;
+        }
         protected override void ReadSyncedData()
         {
         }
@@ -176,6 +211,18 @@ namespace GameModeCollection.Objects
         protected override bool SyncDataNow()
         {
             return true;
+        }
+        public void CallDestroy()
+        {
+            this.View.RPC(nameof(RPCA_DestroyCardItem), RpcTarget.All);
+        }
+        [PunRPC]
+        private void RPCA_DestroyCardItem()
+        {
+            if (this.View.IsMine)
+            {
+                PhotonNetwork.Destroy(this.gameObject);
+            }
         }
     }
     [RequireComponent(typeof(CircleCollider2D))]
@@ -222,6 +269,27 @@ namespace GameModeCollection.Objects
         {
             return this.transform.GetComponentsInChildren<CardItem>().ToList().Find(c => c.CardName == cardName && c.CardObj == null);
         }
+    }
+    class CardItemHealth : ObjectHealthHandler
+    {
+        [PunRPC]
+        protected override void RPCA_Die(Vector2 deathDirection, int killingPlayerID)
+        {
+            base.RPCA_Die(deathDirection, killingPlayerID);
+            Player killingPlayer = PlayerManager.instance.players.Find(p => p.playerID == killingPlayerID);
+            if (killingPlayer is null)
+            {
+                // get any player to use for the deathEffect and color
+                killingPlayer = PlayerManager.instance.players.FirstOrDefault();
 
+            }
+            if (killingPlayer is null) { return; }
+            // play death effect
+            GamefeelManager.GameFeel(deathDirection.normalized * 1f);
+            DeathEffect deathEffect = GameObject.Instantiate(killingPlayer.data.healthHandler.deathEffect, this.transform.position, this.transform.rotation).GetComponent<DeathEffect>();
+            deathEffect.gameObject.transform.localScale = Vector3.one;
+            deathEffect.PlayDeath(killingPlayer.GetTeamColors().color, killingPlayer.data.playerVel, deathDirection, -1);
+            this.GetComponent<CardItem>().CallDestroy();
+        }
     }
 }
