@@ -65,8 +65,8 @@ namespace GameModeCollection.Objects.GameModeObjects
 		private const float MaxDrag = 5f;
 		private const float MaxSpeed = 200f;
 		private const float MaxAngularSpeed = 1000f;
-		private const float PhysicsForceMult = 1f;
-		private const float PhysicsImpulseMult = 1f;
+		private const float PhysicsForceMult = 10f;
+		private const float PhysicsImpulseMult = 0.001f;
 
 		private bool hidden = true;
 		private float crownPos;

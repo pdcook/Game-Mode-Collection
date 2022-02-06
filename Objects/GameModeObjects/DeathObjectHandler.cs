@@ -134,19 +134,18 @@ namespace GameModeCollection.Objects.GameModeObjects
 
         public const float Bounciness = 1f;
         public const float Friction = 0.2f;
-        public const float Mass = 10000f;
+        public const float Mass = 20000f;
         public const float MinAngularDrag = 0f;
         public const float MaxAngularDrag = 1f;
         public const float MinDrag = 0f;
         public const float MaxDrag = 5f;
         public const float MaxSpeed = 200f;
         public const float MaxAngularSpeed = 1000f;
-        public const float PhysicsForceMult = 30f;
-        public const float PhysicsImpulseMult = 30f;
+        public const float PhysicsForceMult = 5f;
+        public const float PhysicsImpulseMult = 2f;
         public const float ThrusterDurationMult = 1f;
-
-        public const float Damage = 0.5f;
-        public const float Force = 1000f;
+        public const float PlayerForceMult = 1f;
+        public const float PlayerDamageMult = 5f;
 
         public const float MaxHealth = 1000f;
 
@@ -357,8 +356,6 @@ namespace GameModeCollection.Objects.GameModeObjects
     public abstract class DeathObjectHandler<TCollision> : DamagableNetworkPhysicsItem<TCollision, CircleCollider2D> where TCollision : Collider2D
     {
         private const float InvulnerabilityTime = 2f;
-        private float Damage => DeathObjectConstants.Damage;
-        private float Force => DeathObjectConstants.Force;
 
         private Vector2? _previousSpawn = null;
 
@@ -414,7 +411,9 @@ namespace GameModeCollection.Objects.GameModeObjects
                 maxSpeed: DeathObjectConstants.MaxSpeed,
                 forceMult: DeathObjectConstants.PhysicsForceMult,
                 impulseMult: DeathObjectConstants.PhysicsImpulseMult,
-                thrusterDurationMult: DeathObjectConstants.ThrusterDurationMult
+                thrusterDurationMult: DeathObjectConstants.ThrusterDurationMult,
+                playerForceMult: DeathObjectConstants.PlayerForceMult,
+                playerDamageMult: DeathObjectConstants.PlayerDamageMult
                 );
 
             base.Awake();
@@ -486,8 +485,13 @@ namespace GameModeCollection.Objects.GameModeObjects
         }
         protected internal override void OnCollisionEnter2D(Collision2D collision)
         {
-            this.Rig.velocity *= 1.25f; // extra bouncy
+            this.Rig.velocity *= 1.05f; // extra bouncy
             base.OnCollisionEnter2D(collision);
+        }
+        protected internal override void OnCollisionStay2D(Collision2D collision2D)
+        {
+            this.Rig.velocity += TimeHandler.deltaTime * Vector2.up;
+            base.OnCollisionStay2D(collision2D);
         }
         protected override void Update()
         {
@@ -524,6 +528,15 @@ namespace GameModeCollection.Objects.GameModeObjects
             else if (normalizedPoint.y >= 1f)
             {
                 this.Rig.velocity = new Vector2(this.Rig.velocity.x, this.Rig.velocity.y - DeathObjectConstants.MaxSpeed*Time.deltaTime);
+            }
+            // if it's getting too close to the walls, gently nudge it back in
+            else if (normalizedPoint.x >= 0.9f)
+            {
+                this.Rig.velocity += (this.Rig.velocity.magnitude / 100f) * Vector2.left;
+            }
+            else if (normalizedPoint.x <= 0.1f)
+            {
+                this.Rig.velocity += (this.Rig.velocity.magnitude / 100f) * Vector2.right;
             }
         }
 
