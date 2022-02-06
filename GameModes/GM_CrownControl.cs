@@ -27,7 +27,7 @@ namespace GameModeCollection.GameModes
     {
         internal static GM_CrownControl instance;
 
-        private const float secondsNeededToWin = 20f;
+        internal const float secondsNeededToWin = 20f;
 
         private const float crownAngularVelocityMult = 10f;
 

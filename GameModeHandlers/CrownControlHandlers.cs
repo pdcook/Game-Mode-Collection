@@ -16,7 +16,8 @@ namespace GameModeCollection.GameModeHandlers
             playersRequiredToStartGame: null,
             maxPlayers: null,
             maxTeams: null,
-            maxClients: null)
+            maxClients: null,
+            description: $"Free for all. Hold the crown for {UnityEngine.Mathf.RoundToInt(GM_CrownControl.secondsNeededToWin)} seconds to win. Respawns enabled.")
         {
 
         }
@@ -35,7 +36,8 @@ namespace GameModeCollection.GameModeHandlers
             playersRequiredToStartGame: null,
             maxPlayers: null,
             maxTeams: null,
-            maxClients: null)
+            maxClients: null,
+            description: $"Help your team hold the crown for {UnityEngine.Mathf.RoundToInt(GM_CrownControl.secondsNeededToWin)} seconds to win. Respawns enabled.")
         {
 
         }

@@ -16,7 +16,8 @@ namespace GameModeCollection.GameModeHandlers
             playersRequiredToStartGame: null,
             maxPlayers: null,
             maxTeams: null,
-            maxClients: null)
+            maxClients: null,
+            description: $"Free for all. Be the first to destroy the dodgeball or the last player standing. Enemy damage disabled.")
         {
             this.Settings.Add(GameModeCollection.AllowEnemyDamageKey, false);
         }
@@ -35,7 +36,8 @@ namespace GameModeCollection.GameModeHandlers
             playersRequiredToStartGame: null,
             maxPlayers: null,
             maxTeams: null,
-            maxClients: null)
+            maxClients: null,
+            description: $"Be the first team to destroy the dodgeball or the last team standing. Enemy damage disabled.")
         {
             this.Settings.Add(GameModeCollection.AllowEnemyDamageKey, false);
         }
