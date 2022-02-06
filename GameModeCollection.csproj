@@ -120,16 +120,20 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\CardVisuals.cs" />
     <Compile Include="Extensions\RoundCounter.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
+    <Compile Include="GameModeHandlers\TRTHandler.cs" />
     <Compile Include="GameModeHandlers\CrownControlHandlers.cs" />
     <Compile Include="GameModeHandlers\HideNSeekHandlers.cs" />
     <Compile Include="GameModeHandlers\DodgeballHandlers.cs" />
     <Compile Include="GameModes\GM_BombDefusal.cs" />
+    <Compile Include="GameModes\GM_TRT.cs" />
     <Compile Include="GameModes\GM_CrownControl.cs" />
     <Compile Include="GameModes\GM_HideNSeek.cs" />
     <Compile Include="GameModes\GM_Dodgeball.cs" />
+    <Compile Include="Objects\CardItem.cs" />
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
     <Compile Include="Objects\GameModeObjects\DeathObjectHandler.cs" />
@@ -139,6 +143,8 @@
     <Compile Include="Objects\ObjectHealthHandler.cs" />
     <Compile Include="Objects\ObjectParticleSkin.cs" />
     <Compile Include="Objects\ObjectUIUtils.cs" />
+    <Compile Include="Patches\CardInfo.cs" />
+    <Compile Include="Patches\CardVisuals.cs" />
     <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Explosion.cs" />
