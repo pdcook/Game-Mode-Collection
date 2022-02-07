@@ -8,6 +8,9 @@ using UnboundLib;
 using UnboundLib.Utils;
 using UnityEngine;
 using GameModeCollection.Extensions;
+using HarmonyLib;
+using TMPro;
+using Sonigon;
 
 namespace GameModeCollection.Objects
 {
@@ -180,7 +183,8 @@ namespace GameModeCollection.Objects
             else if (!ModdingUtils.Utils.Cards.instance.PlayerIsAllowedCard(player, this.Card)) { return; }
 
             this.HasBeenTaken = true;
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, this.Card, false, "", 0, 0, true);
+            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, this.Card, false, "", 0, 0, false);
+            CardItemHandler.ClientsideAddToCardBar(player.playerID, this.Card);
             this.CallDestroy();
         }
 
@@ -268,6 +272,35 @@ namespace GameModeCollection.Objects
         CardItem FindMatchingCardItem(string cardName)
         {
             return this.transform.GetComponentsInChildren<CardItem>().ToList().Find(c => c.CardName == cardName && c.CardObj == null);
+        }
+        public static void ClientsideAddToCardBar(int playerID, CardInfo card, string twoLetterCode = "")
+        {
+            if (!PlayerManager.instance.players.Find(p => p.playerID == playerID).data.view.IsMine) { return; }
+
+
+            CardBar[] cardBars = (CardBar[])Traverse.Create(CardBarHandler.instance).Field("cardBars").GetValue();
+            SoundManager.Instance.Play(cardBars[playerID].soundCardPick, cardBars[playerID].transform);
+
+            Traverse.Create(cardBars[playerID]).Field("ci").SetValue(card);
+            GameObject source = (GameObject)Traverse.Create(cardBars[playerID]).Field("source").GetValue();
+            GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(source, source.transform.position, source.transform.rotation, source.transform.parent);
+            gameObject.transform.localScale = Vector3.one;
+            string text = card.cardName;
+            if (twoLetterCode != "") { text = twoLetterCode; }
+            text = text.Substring(0, 2);
+            string text2 = text[0].ToString().ToUpper();
+            if (text.Length > 1)
+            {
+                string str = text[1].ToString().ToLower();
+                text = text2 + str;
+            }
+            else
+            {
+                text = text2;
+            }
+            gameObject.GetComponentInChildren<TextMeshProUGUI>().text = text;
+            Traverse.Create(gameObject.GetComponent<CardBarButton>()).Field("card").SetValue(card);
+            gameObject.gameObject.SetActive(true);
         }
     }
     class CardItemHealth : ObjectHealthHandler

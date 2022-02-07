@@ -67,8 +67,9 @@
     <Reference Include="PhotonUnityNetworking, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\PhotonUnityNetworking.dll</HintPath>
     </Reference>
-    <Reference Include="RoundsWithFriends">
-      <HintPath>%(RoundsFolder)\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
+    <Reference Include="RoundsWithFriends, Version=2.1.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
     </Reference>
     <Reference Include="SonigonAudioEngine.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -121,7 +122,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\CharacterData.cs" />
+    <Compile Include="Extensions\MapManager.cs" />
     <Compile Include="Extensions\RoundCounter.cs" />
+    <Compile Include="Extensions\UIHandler.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
     <Compile Include="GameModeHandlers\TRTHandler.cs" />
