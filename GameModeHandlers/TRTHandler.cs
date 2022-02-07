@@ -19,7 +19,7 @@ namespace GameModeCollection.GameModeHandlers
             maxClients: null,
             description: $"Trouble in ROUNDS Town.")
         {
-
+            this.Settings.Add(GameModeCollection.ReviveOnCardAddKey, false);
         }
     }
 }

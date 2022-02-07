@@ -15,7 +15,7 @@ namespace GameModeCollection.Patches
     {
         static void CallBulletPush(ProjectileHit projectileHit, HitInfo hitInfo)
         {
-            if (hitInfo?.collider == null) { return; }
+            if (hitInfo?.collider == null || projectileHit == null) { return; }
             PhysicsItem item = hitInfo?.collider?.GetComponentInParent<PhysicsItem>();
             if (item != null && projectileHit.canPushBox)
             {

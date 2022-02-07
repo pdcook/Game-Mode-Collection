@@ -85,9 +85,10 @@ namespace GameModeCollection
 
         internal static string GetConfigKey(string key) => $"{GameModeCollection.CompatibilityModName}_{key}";
 
-        internal static string AllowEnemyDamageKey => "allowEnemyDamage";
-        internal static string AllowTeamDamageKey => "allowTeamDamage";
-        internal static string AllowSelfDamageKey => "allowSelfDamage";
+        public static string AllowEnemyDamageKey => GetConfigKey("allowEnemyDamage");
+        public static string AllowTeamDamageKey => GetConfigKey("allowTeamDamage");
+        public static string AllowSelfDamageKey => GetConfigKey("allowSelfDamage");
+        public static string ReviveOnCardAddKey => GetConfigKey("reviveOnCardAdd");
 
         internal static bool EnemyDamageAllowed
         {
@@ -125,7 +126,7 @@ namespace GameModeCollection
                 }
             }
         }
-        internal static bool SelfDamageAllowed
+        public static bool SelfDamageAllowed
         {
             get
             {
@@ -141,6 +142,25 @@ namespace GameModeCollection
                 {
                     return true;
                 }
+            }
+        }
+        public static bool ReviveOnCardAdd
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return true;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(ReviveOnCardAddKey, out object revive) && !(bool)revive)
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+
             }
         }
 
