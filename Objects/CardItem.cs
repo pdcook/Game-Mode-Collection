@@ -141,6 +141,7 @@ namespace GameModeCollection.Objects
                 && this.CanSeePlayer(collider2D.GetComponent<Player>()))
             {
                 this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true);
+                this.CardObj?.PlayAllAnimators();
             }
             base.OnTriggerEnter2D(collider2D);
         }
@@ -151,6 +152,7 @@ namespace GameModeCollection.Objects
                 && !collider2D.GetComponent<Player>().data.dead)
             {
                 this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(false);
+                this.CardObj?.PauseAllAnimators();
             }
             base.OnTriggerExit2D(collider2D);
         }
@@ -295,6 +297,7 @@ namespace GameModeCollection.Objects
                     cardItem.CardObj = collider.transform.root.gameObject;
                     cardItem.CardObj.transform.SetParent(cardItem.transform, false);
                     cardItem.CardObj.transform.localPosition = Vector3.zero;
+                    cardItem.CardObj.PauseAllAnimators();
                     collider.enabled = false;
                 }
                 else

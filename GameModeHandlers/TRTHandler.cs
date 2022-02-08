@@ -19,8 +19,8 @@ namespace GameModeCollection.GameModeHandlers
             maxClients: null,
             description: $"Trouble in ROUNDS Town.")
         {
-            this.Settings.Add(GameModeCollection.ReviveOnCardAddKey, false);
-            this.Settings.Add(GameModeCollection.CreatePlayerCorpsesKey, true);
+            this.Settings.Add(GameModeCollection.ReviveOnCardAddKey, false); // do not revive players when they get a card
+            this.Settings.Add(GameModeCollection.CreatePlayerCorpsesKey, true); // do not hide players when they die, instead make a corpse
         }
     }
 }

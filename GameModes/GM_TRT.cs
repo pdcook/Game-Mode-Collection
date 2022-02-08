@@ -11,6 +11,7 @@ using GameModeCollection.Objects;
 using UnboundLib.GameModes;
 using RWF;
 using Sonigon;
+using UnboundLib.Extensions;
 
 namespace GameModeCollection.GameModes
 {
@@ -27,6 +28,8 @@ namespace GameModeCollection.GameModes
     /// 
     /// Notes:
     /// 
+    /// - [ ] There are no game winners / losers. the game is 4 maps with 4 battles each, the game ends after all 16 have been played
+    /// 
     /// - [X] Each client flips over cards ONLY they walk near, and they stay flipped (large circular trigger collider)
     /// - [X] Cards can be collected by walking near them (smaller box trigger collider just barely larger than card's box collider)
     /// - [X] Cards have health (possibly proportional to their card health stat) and can be shot and permanently destroyed
@@ -34,6 +37,9 @@ namespace GameModeCollection.GameModes
     /// - [ ] Player skins are randomized each round (sorry)
     /// - [ ] Player faces are psuedo-randomized (double sorry)
     /// - [ ] Local zoom is ON. optionally (how?) with the dark shader
+    /// - [ ] RDM is punished (innocent killing innocent) somehow
+    /// - [ ] Clock in upper left corner (with round counter) that counts down. when the timer reaches 0, it turns red, signaling haste mode
+    /// - [ ] below the clock (also with the round counter) is the player's current role
     /// - [X] Each client sees ONLY their own card bar
     /// - [ ]   --> until they die and enter spectator mode
     /// - [~] Players can have a max of one card
@@ -47,10 +53,10 @@ namespace GameModeCollection.GameModes
     /// 
     /// Roles:
     /// - Innocent
-    /// - Traitor (red name, sees other traitors' names as red, notified of other traitors and jesters at start of round) [can have two cards instead of one]
-    /// - Detective (blue name visible to everyone)
+    /// - Traitor (red name, sees other traitors' names as red with a "[T]" in front, notified of other traitors and jesters at start of round) [can have two cards instead of one]
+    /// - Detective (blue name visible to everyone with a "[D]" in front)
     /// Roles for more than four players:
-    /// - Jester (own team) (pink name, visible to the traitors only) [deals no damage]
+    /// - Jester (own team) (pink name, visible to the traitors only with a "[J]" in front) [deals no damage]
     /// - Glitch (is innocent, but appears as a traitor to the traitors)
     /// - Mercenary (innocent) [can have two cards instead of one]
     /// - Phantom (innocent) [haunts their killer with a smoke trail in their color. when their killer dies, they revive with 50% health]
@@ -100,6 +106,25 @@ namespace GameModeCollection.GameModes
             _ = CardItemPrefabs.CardItemHandler;
             base.Start();
         }
+
+        private void RandomizePlayerSkins()
+        {
+            if (!PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode) { return; }
+            int[] newColorIDs = Enumerable.Range(0, UnboundLib.Utils.ExtraPlayerSkins.numberOfSkins).OrderBy(_ => UnityEngine.Random.Range(0f, 1f)).ToArray();
+            foreach (Player player in PlayerManager.instance.players)
+            {
+                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetNewColors), player.playerID, newColorIDs[player.playerID]);
+            }
+        }
+        [UnboundRPC]
+        static void RPCA_SetNewColors(int playerID, int colorID)
+        {
+            Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
+
+            player.AssignColorID(colorID);
+
+        }
+
         private void PlayerCorpse(Player player)
         {
         }
@@ -137,10 +162,15 @@ namespace GameModeCollection.GameModes
             base.PlayerDied(killedPlayer, teamsAlive);
         }
 
+        public override void StartGame()
+        {
+            base.StartGame();
+        }
+
         public override IEnumerator DoStartGame()
         {
             // completely replace original method
-            CardBarHandler.instance.Rebuild();
+            RWF.CardBarHandlerExtensions.Rebuild(CardBarHandler.instance);
             UIHandler.instance.InvokeMethod("SetNumberOfRounds", (int) GameModeManager.CurrentHandler.Settings["roundsToWinGame"]);
             ArtHandler.instance.NextArt();
 
@@ -166,7 +196,7 @@ namespace GameModeCollection.GameModes
             TimeHandler.instance.DoSpeedUp();
             TimeHandler.instance.StartGame();
             GameManager.instance.battleOngoing = true;
-            UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
 
             this.StartCoroutine(this.DoRoundStart());
@@ -184,6 +214,8 @@ namespace GameModeCollection.GameModes
             {
                 yield return null;
             }
+
+            this.RandomizePlayerSkins();
 
             // TODO: REMOVE THIS
             yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
@@ -223,6 +255,8 @@ namespace GameModeCollection.GameModes
                 yield return null;
             }
 
+            this.RandomizePlayerSkins();
+
             // TODO: REMOVE THIS
             yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
 
@@ -261,7 +295,7 @@ namespace GameModeCollection.GameModes
                 yield break;
             }
 
-            this.StartCoroutine(PointVisualizer.instance.DoWinSequence(this.teamPoints, this.teamRounds, winningTeamIDs));
+            this.StartCoroutine(PointVisualizer.instance.DoSequence("TRAITORS WIN", TraitorColor));
 
             yield return new WaitForSecondsRealtime(1f);
             MapManager.instance.LoadNextLevel(false, false);
@@ -282,7 +316,7 @@ namespace GameModeCollection.GameModes
             TimeHandler.instance.DoSpeedUp();
             GameManager.instance.battleOngoing = true;
             this.isTransitioning = false;
-            UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
 
             this.StartCoroutine(this.DoRoundStart());
         }
@@ -290,7 +324,7 @@ namespace GameModeCollection.GameModes
         {
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
 
-            this.StartCoroutine(PointVisualizer.instance.DoSequence(this.teamPoints, this.teamRounds, winningTeamIDs));
+            this.StartCoroutine(PointVisualizer.instance.DoSequence("TRAITORS WIN", TraitorColor));
             yield return new WaitForSecondsRealtime(1f);
 
             MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
@@ -307,10 +341,38 @@ namespace GameModeCollection.GameModes
             TimeHandler.instance.DoSpeedUp();
             GameManager.instance.battleOngoing = true;
             this.isTransitioning = false;
-            UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
 
             this.StartCoroutine(this.DoPointStart());
         }
 
+        public override IEnumerator GameOverTransition(int[] winningTeamIDs)
+        {
+            yield return GameModeManager.TriggerHook(GameModeHooks.HookGameEnd);
+
+            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            //List<Color> colors = winningTeamIDs.Select(tID => PlayerManager.instance.GetPlayersInTeam(tID).First().GetTeamColors().color).ToList();
+            //Color color = AverageColor.Average(colors);
+            UIHandler.instance.DisplayScreenText(Color.white, "TROUBLE\nIN\nROUNDS TOWN", 1f);
+            yield return new WaitForSecondsRealtime(2f);
+            this.GameOverRematch(winningTeamIDs);
+            yield break;
+        }
+        public override void ResetMatch()
+        {
+            UIHandler.instance.StopScreenTextLoop();
+            PlayerManager.instance.InvokeMethod("ResetCharacters");
+
+            foreach (var player in PlayerManager.instance.players)
+            {
+                this.teamPoints[player.teamID] = 0;
+                this.teamRounds[player.teamID] = 0;
+            }
+
+            this.isTransitioning = false;
+            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            CardBarHandler.instance.ResetCardBards();
+            PointVisualizer.instance.ResetPoints();
+        }
     }
 }
