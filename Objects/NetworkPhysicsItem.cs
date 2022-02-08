@@ -31,6 +31,7 @@ namespace GameModeCollection.Objects
 		private const float DefaultPhysicsCollisionDamageThreshold = 1f;
 		private const float DefaultThrusterDurationMult = 1f;
 		private const bool DefaultIgnoreBackgroundObjects = true;
+		private const bool DefaultPlayerCanStandOn = false;
 
 		public readonly float Bounciness;
 		public readonly float Friction;
@@ -50,6 +51,7 @@ namespace GameModeCollection.Objects
 		public readonly float PhysicsCollisionDamageThreshold;
 		public readonly float ThrusterDurationMult;
 		public readonly bool IgnoreBackgroundObjects;
+		public readonly bool PlayerCanStandOn;
 		public float MaxSpeedSqr => this.MaxSpeed * this.MaxSpeed;
 
 		public ItemPhysicalProperties(
@@ -69,7 +71,8 @@ namespace GameModeCollection.Objects
 			float playerDamageMult = DefaultPhysicsPlayerDamageMult,
 			float collisionDamageThreshold = DefaultPhysicsCollisionDamageThreshold,
 			float thrusterDurationMult = DefaultThrusterDurationMult,
-			bool ignoreBackgroundObjects = DefaultIgnoreBackgroundObjects)
+			bool ignoreBackgroundObjects = DefaultIgnoreBackgroundObjects,
+			bool playerCanStandOn = DefaultPlayerCanStandOn)
 		{
 			this.Bounciness = bounciness;
 			this.Friction = friction;
@@ -88,6 +91,7 @@ namespace GameModeCollection.Objects
 			this.PhysicsCollisionDamageThreshold = collisionDamageThreshold;
 			this.ThrusterDurationMult = thrusterDurationMult;
 			this.IgnoreBackgroundObjects = ignoreBackgroundObjects;
+			this.PlayerCanStandOn = playerCanStandOn;
 		}
 
 	}
@@ -266,6 +270,10 @@ namespace GameModeCollection.Objects
 			{
 				this.IgnoreBackground.SetColliderToTrack(this.Col);
 			}
+			if (!this.PhysicalProperties.PlayerCanStandOn)
+            {
+				this.Rig.gameObject.GetOrAddComponent<PlayerDoNotFollow>();
+            }
 
 			this.Rig.drag = this.PhysicalProperties.MinDrag;
 			this.Rig.angularDrag = this.PhysicalProperties.MinAngularDrag;

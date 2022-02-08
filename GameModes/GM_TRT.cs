@@ -31,7 +31,11 @@ namespace GameModeCollection.GameModes
     /// - [X] Cards can be collected by walking near them (smaller box trigger collider just barely larger than card's box collider)
     /// - [X] Cards have health (possibly proportional to their card health stat) and can be shot and permanently destroyed
     /// - [X] Need to patch cards healing players when taken
-    /// - [~?] Each client sees ONLY their own card bar, until they die and enter spectator mode
+    /// - [ ] Player skins are randomized each round (sorry)
+    /// - [ ] Player faces are psuedo-randomized (double sorry)
+    /// - [ ] Local zoom is ON. optionally (how?) with the dark shader
+    /// - [X] Each client sees ONLY their own card bar
+    /// - [ ]   --> until they die and enter spectator mode
     /// - [~] Players can have a max of one card
     /// - [ ] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
     /// - [ ] Dead players have a separate text chat
@@ -62,6 +66,11 @@ namespace GameModeCollection.GameModes
         internal static GM_TRT instance;
 
         private const float PrepPhaseTime = 5f;
+        private const float TimeBetweenCardDrops = 0.5f;
+        private const float CardRandomVelMult = 0.25f;
+        private const float CardRandomVelMin = 3f;
+        private const float CardAngularVelMult = 10f;
+        private const float CardHealth = 100f;
 
         private readonly static Color InnocentColor = new Color32(26, 200, 25, 255);
         private readonly static Color DetectiveColor = new Color32(24, 29, 253, 255);
@@ -91,6 +100,42 @@ namespace GameModeCollection.GameModes
             _ = CardItemPrefabs.CardItemHandler;
             base.Start();
         }
+        private void PlayerCorpse(Player player)
+        {
+        }
+        private IEnumerator DropCardsOnDeath(Player player, CardInfo[] cardsToDrop)
+        {
+            foreach (CardInfo card in cardsToDrop)
+            {
+                yield return new WaitForSecondsRealtime(TimeBetweenCardDrops);
+                Vector2 velocty = (Vector2)player.data.playerVel.GetFieldValue("velocity");
+                yield return CardItem.MakeCardItem(card,
+                                                    player.data.playerVel.position,
+                                                    Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f)),
+                                                    velocty + UnityEngine.Mathf.Clamp(CardRandomVelMult * velocty.magnitude, CardRandomVelMin, float.MaxValue) * new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)),
+                                                    -CardAngularVelMult * velocty.x,
+                                                    CardHealth);
+            }
+            yield break;
+        }
+
+        public override void PlayerDied(Player killedPlayer, int teamsAlive)
+        {
+            // handle TRT corpse creation, dropping cards, check win conditions
+
+            // drop cards
+            GameModeCollection.Log($"Player {killedPlayer.playerID} dropping cards...");
+
+            CardInfo[] cardsToDrop = killedPlayer.data.currentCards.ToArray();
+            killedPlayer.data.currentCards.Clear();
+            this.StartCoroutine(this.DropCardsOnDeath(killedPlayer, cardsToDrop));
+
+            // corpse creation
+            this.PlayerCorpse(killedPlayer);
+
+
+            base.PlayerDied(killedPlayer, teamsAlive);
+        }
 
         public override IEnumerator DoStartGame()
         {
@@ -106,6 +151,7 @@ namespace GameModeCollection.GameModes
             UIHandler.instance.ShowJoinGameText("TROUBLE\nIN\nROUNDS TOWN", PlayerSkinBank.GetPlayerSkinColors(1).winText);
             yield return new WaitForSecondsRealtime(2f);
             UIHandler.instance.HideJoinGameText();
+            yield return this.WaitForSyncUp();
 
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
@@ -115,7 +161,6 @@ namespace GameModeCollection.GameModes
             TimeHandler.instance.DoSpeedUp();
 
             yield return new WaitForSecondsRealtime(1f);
-
             yield return this.WaitForSyncUp();
             MapManager.instance.CallInNewMapAndMovePlayers(MapManager.instance.currentLevelID);
             TimeHandler.instance.DoSpeedUp();
@@ -141,7 +186,7 @@ namespace GameModeCollection.GameModes
             }
 
             // TODO: REMOVE THIS
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, 100f);
+            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
 
             yield return this.WaitForSyncUp();
 
@@ -179,7 +224,7 @@ namespace GameModeCollection.GameModes
             }
 
             // TODO: REMOVE THIS
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, 100f);
+            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
 
             //PlayerManager.instance.SetPlayersSimulated(false);
             yield return this.WaitForSyncUp();

@@ -20,6 +20,7 @@ namespace GameModeCollection.GameModeHandlers
             description: $"Trouble in ROUNDS Town.")
         {
             this.Settings.Add(GameModeCollection.ReviveOnCardAddKey, false);
+            this.Settings.Add(GameModeCollection.CreatePlayerCorpsesKey, true);
         }
     }
 }

@@ -8,7 +8,7 @@ namespace GameModeCollection.Patches
     {
         static void Postfix(CharacterData __instance, Rigidbody2D groundRig)
         {
-            if (__instance != null && groundRig?.GetComponent<PhysicsItem>() != null)
+            if (__instance != null && groundRig?.GetComponent<PlayerDoNotFollow>() != null)
             {
                 __instance.standOnRig = null;
             }

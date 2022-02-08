@@ -1,5 +1,11 @@
 ﻿using HarmonyLib;
 using UnityEngine;
+using UnboundLib;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Linq;
+using System.Collections.Generic;
+using GameModeCollection.Extensions;
 
 namespace GameModeCollection.Patches
 {
@@ -31,6 +37,64 @@ namespace GameModeCollection.Patches
             }
 
             return true;
+        }
+    }
+    [HarmonyPatch(typeof(HealthHandler), nameof(HealthHandler.Revive))]
+    class HealthHandler_Patch_Revive
+    {
+        static void Prefix(HealthHandler __instance, bool isFullRevive)
+        {
+            if (isFullRevive && GameModeCollection.CreatePlayerCorpses)
+            {
+                __instance.ReviveCorpse();
+            }
+        }
+    }
+    [HarmonyPatch(typeof(HealthHandler), "RPCA_Die")]
+    class HealthHandler_Patch_RPCA_Die
+    {
+
+        static void MakeCorpse(HealthHandler healthHandler)
+        {
+            if (GameModeCollection.CreatePlayerCorpses)
+            {
+                healthHandler.MakeCorpse();
+            }
+            else
+            {
+                healthHandler.gameObject.SetActive(false);
+            }
+        }
+
+        // patch to create player corpses instead of hiding dead players
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+
+            var m_setActive = ExtensionMethods.GetMethodInfo(typeof(GameObject), nameof(GameObject.SetActive));
+            var m_makeCorpse = ExtensionMethods.GetMethodInfo(typeof(HealthHandler_Patch_RPCA_Die), nameof(MakeCorpse));
+
+            List<CodeInstruction> codes = instructions.ToList();
+
+            int index = -1;
+
+            for (int i = 0; i < codes.Count(); i++)
+            {
+                if (codes[i].Calls(m_setActive))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            if (index == -1)
+            {
+                GameModeCollection.LogError("[HeathHandler::RPCA_Die Patch] INSTRUCTION NOT FOUND");
+            }
+
+            codes[index] = new CodeInstruction(OpCodes.Nop);
+            codes[index-1] = new CodeInstruction(OpCodes.Nop);
+            codes[index-2] = new CodeInstruction(OpCodes.Call, m_makeCorpse);
+
+            return codes.AsEnumerable();
         }
     }
 }

@@ -122,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\CharacterData.cs" />
+    <Compile Include="Extensions\HealthHandler.cs" />
     <Compile Include="Extensions\MapManager.cs" />
     <Compile Include="Extensions\RoundCounter.cs" />
     <Compile Include="Extensions\UIHandler.cs" />
@@ -146,6 +147,7 @@
     <Compile Include="Objects\ObjectHealthHandler.cs" />
     <Compile Include="Objects\ObjectParticleSkin.cs" />
     <Compile Include="Objects\ObjectUIUtils.cs" />
+    <Compile Include="Objects\PlayerDoNotFollow.cs" />
     <Compile Include="Patches\ApplyCardStats.cs" />
     <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\DamageBox.cs" />

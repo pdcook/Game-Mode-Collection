@@ -89,6 +89,7 @@ namespace GameModeCollection
         public static string AllowTeamDamageKey => GetConfigKey("allowTeamDamage");
         public static string AllowSelfDamageKey => GetConfigKey("allowSelfDamage");
         public static string ReviveOnCardAddKey => GetConfigKey("reviveOnCardAdd");
+        public static string CreatePlayerCorpsesKey => GetConfigKey("createPlayerCorpses");
 
         internal static bool EnemyDamageAllowed
         {
@@ -159,6 +160,25 @@ namespace GameModeCollection
                 else
                 {
                     return true;
+                }
+
+            }
+        }
+        public static bool CreatePlayerCorpses
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(CreatePlayerCorpsesKey, out object create) && (bool)create)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
 
             }

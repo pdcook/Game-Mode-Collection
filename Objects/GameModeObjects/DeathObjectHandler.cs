@@ -350,6 +350,7 @@ namespace GameModeCollection.Objects.GameModeObjects
             DeathEffect deathEffect = GameObject.Instantiate(killingPlayer.data.healthHandler.deathEffect, this.transform.position, this.transform.rotation).GetComponent<DeathEffect>();
             deathEffect.gameObject.transform.localScale = 2f * Vector3.one;
             deathEffect.PlayDeath(killingPlayer.GetTeamColors().color, killingPlayer.data.playerVel, deathDirection, -1);
+            SoundManager.Instance.Play(killingPlayer.data.healthHandler.soundDie, this.transform);
         }
     }
 

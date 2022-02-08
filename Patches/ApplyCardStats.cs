@@ -11,6 +11,11 @@ namespace GameModeCollection.Patches
     {
         static void ReviveOrCompensate(ApplyCardStats instance)
         {
+            if (instance == null || ((Player)instance.GetFieldValue("playerToUpgrade")) == null)
+            {
+                return;
+            }
+
             if (GameModeCollection.ReviveOnCardAdd)
             {
                 // vanilla behaviour
@@ -19,8 +24,9 @@ namespace GameModeCollection.Patches
             }
             else
             {
-                // compensate for health change immediately
+                // compensate for health and respawns change immediately
                 ((Player)instance.GetFieldValue("playerToUpgrade")).GetComponent<CharacterData>().health *= ((CharacterStatModifiers)instance.GetFieldValue("myPlayerStats")).health;
+                ((Player)instance.GetFieldValue("playerToUpgrade")).GetComponent<CharacterData>().stats.remainingRespawns += ((CharacterStatModifiers)instance.GetFieldValue("myPlayerStats")).respawns;
                 return;
             }
 
