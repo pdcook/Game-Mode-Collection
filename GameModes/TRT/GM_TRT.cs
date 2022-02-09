@@ -12,6 +12,8 @@ using UnboundLib.GameModes;
 using RWF;
 using Sonigon;
 using UnboundLib.Extensions;
+using GameModeCollection.Utils;
+using GameModeCollection.GameModes.TRT;
 
 namespace GameModeCollection.GameModes
 {
@@ -28,22 +30,23 @@ namespace GameModeCollection.GameModes
     /// 
     /// Notes:
     /// 
-    /// - [ ] There are no game winners / losers. the game is 4 maps with 4 battles each, the game ends after all 16 have been played
+    /// - [X] There are no game winners / losers. the game is 4 maps with 4 battles each, the game ends after all 16 have been played
     /// 
     /// - [X] Each client flips over cards ONLY they walk near, and they stay flipped (large circular trigger collider)
     /// - [X] Cards can be collected by walking near them (smaller box trigger collider just barely larger than card's box collider)
     /// - [X] Cards have health (possibly proportional to their card health stat) and can be shot and permanently destroyed
     /// - [X] Need to patch cards healing players when taken
-    /// - [ ] Player skins are randomized each round (sorry)
-    /// - [ ] Player faces are psuedo-randomized (double sorry)
+    /// - [X] Player skins are randomized each round (sorry)
+    /// - [X] Player faces are psuedo-randomized (double sorry)
     /// - [ ] Local zoom is ON. optionally (how?) with the dark shader
     /// - [ ] RDM is punished (innocent killing innocent) somehow
     /// - [ ] Clock in upper left corner (with round counter) that counts down. when the timer reaches 0, it turns red, signaling haste mode
+    /// - [ ]   --> Figure out what to do for Haste Mode
     /// - [ ] below the clock (also with the round counter) is the player's current role
     /// - [X] Each client sees ONLY their own card bar
     /// - [ ]   --> until they die and enter spectator mode
     /// - [~] Players can have a max of one card
-    /// - [ ] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
+    /// - [X] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
     /// - [ ] Dead players have a separate text chat
     /// - [ ] Players can discard cards by clicking on the square in the card bar
     /// - [ ] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
@@ -61,7 +64,7 @@ namespace GameModeCollection.GameModes
     /// - Mercenary (innocent) [can have two cards instead of one]
     /// - Phantom (innocent) [haunts their killer with a smoke trail in their color. when their killer dies, they revive with 50% health]
     /// - Killer (own team, can only ever be one at a time, traitors are notified that there is a killer) [has 150% health, starts with a random card (respecting rarity) and can have up to four cards (two more than traitors)]
-    /// - Hypnotist (traitor) [the first player they kill will instantly respawn as a traitor]
+    /// - Hypnotist (traitor) [the first corpse they interact with will respawn as a traitor]
     /// - Zombie (has a chance to spawn instead of all traitors) (cannot have ANY cards) [players killed by any zombie will immediately revive as zombies]
     /// - Swapper ("innocent") (appears to traitors as a jester) [cannot deal damage, when killed, their attacker dies instead and they instantly respawn with the role of the attacker, when the attacker's body is searched they report as a swapper]
     /// - Assassin (traitor) [gets a "target" (never detective unless that is the only option) to which they deal double damage, and half damage to all other players. killing the wrong player results in them dealing half damage for the rest of the round]
@@ -78,19 +81,25 @@ namespace GameModeCollection.GameModes
         private const float CardAngularVelMult = 10f;
         private const float CardHealth = 100f;
 
-        private readonly static Color InnocentColor = new Color32(26, 200, 25, 255);
-        private readonly static Color DetectiveColor = new Color32(24, 29, 253, 255);
-        private readonly static Color TraitorColor = new Color32(199, 25, 24, 255);
-        private readonly static Color JesterColor = new Color32(180, 22, 254, 255);
-        private readonly static Color GlitchColor = new Color32(244, 105, 0, 255);
-        private readonly static Color MercenaryColor = new Color32(246, 200, 0, 255);
-        private readonly static Color PhantomColor = new Color32(82, 225, 255, 255);
-        private readonly static Color KillerColor = new Color32(46, 1, 68, 255);
-        private readonly static Color HypnotistColor = new Color32(255, 80, 235, 255);
-        private readonly static Color ZombieColor = new Color32(70, 97, 0, 255);
-        private readonly static Color SwapperColor = new Color32(111, 0, 253, 255);
-        private readonly static Color AssassinColor = new Color32(112, 50, 1, 255);
-        private readonly static Color VampireColor = new Color32(45, 45, 45, 255);
+        public const int BaseMaxCards = 1;
+        public const float BaseHealth = 100f;
+
+        public readonly static Color InnocentColor = new Color32(26, 200, 25, 255);
+        public readonly static Color DetectiveColor = new Color32(24, 29, 253, 255);
+        public readonly static Color TraitorColor = new Color32(199, 25, 24, 255);
+        public readonly static Color JesterColor = new Color32(180, 22, 254, 255);
+        public readonly static Color GlitchColor = new Color32(244, 105, 0, 255);
+        public readonly static Color MercenaryColor = new Color32(246, 200, 0, 255);
+        public readonly static Color PhantomColor = new Color32(82, 225, 255, 255);
+        public readonly static Color KillerColor = new Color32(46, 1, 68, 255);
+        public readonly static Color HypnotistColor = new Color32(255, 80, 235, 255);
+        public readonly static Color ZombieColor = new Color32(70, 97, 0, 255);
+        public readonly static Color SwapperColor = new Color32(111, 0, 253, 255);
+        public readonly static Color AssassinColor = new Color32(112, 50, 1, 255);
+        public readonly static Color VampireColor = new Color32(45, 45, 45, 255);
+
+        internal int pointsPlayedOnCurrentMap = 0;
+        internal int roundsPlayed = 0;
 
         protected override void Awake()
         {
@@ -106,15 +115,40 @@ namespace GameModeCollection.GameModes
             _ = CardItemPrefabs.CardItemHandler;
             base.Start();
         }
+        
+        public void IdentifyBody(TRT_Corpse corpse, bool detective)
+        {
+            // ID a body
+
+        }
 
         private void RandomizePlayerSkins()
         {
             if (!PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode) { return; }
-            int[] newColorIDs = Enumerable.Range(0, UnboundLib.Utils.ExtraPlayerSkins.numberOfSkins).OrderBy(_ => UnityEngine.Random.Range(0f, 1f)).ToArray();
+            int[] newColorIDs = Enumerable.Range(0, UnboundLib.Utils.ExtraPlayerSkins.numberOfSkins).OrderBy(_ => UnityEngine.Random.Range(0f, 1f)).Distinct().ToArray();
+            for (int i = 0; i < PlayerManager.instance.players.Count(); i++)
+            {
+                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetNewColors), PlayerManager.instance.players[i].playerID, newColorIDs[i]);
+            }
+        }
+        private void RandomizePlayerFaces()
+        {
+            if (!PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode) { return; }
             foreach (Player player in PlayerManager.instance.players)
             {
-                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetNewColors), player.playerID, newColorIDs[player.playerID]);
+                player.data.view.RPC("RPCA_SetFace", RpcTarget.All, new object[]
+                {
+                    UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.eyes.Count()),
+                    RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
+                    UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.mouths.Count()),
+                    RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
+                    UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.accessories.Count()),
+                    RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
+                    UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.accessories.Count()),
+                    RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1)
+                });
             }
+
         }
         [UnboundRPC]
         static void RPCA_SetNewColors(int playerID, int colorID)
@@ -144,8 +178,15 @@ namespace GameModeCollection.GameModes
             yield break;
         }
 
+        public override void PlayerJoined(Player player)
+        {
+            // completely replace original, since we don't need teamPoints or teamRounds
+        }
+
         public override void PlayerDied(Player killedPlayer, int teamsAlive)
         {
+            // completely replace original method
+
             // handle TRT corpse creation, dropping cards, check win conditions
 
             // drop cards
@@ -158,8 +199,17 @@ namespace GameModeCollection.GameModes
             // corpse creation
             this.PlayerCorpse(killedPlayer);
 
-
-            base.PlayerDied(killedPlayer, teamsAlive);
+            // check win condition
+            bool win = true;
+            string winningGroup = "TRAITORS";
+            if (win)
+            {
+                TimeHandler.instance.DoSlowDown();
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_NextRound), winningGroup);
+                }
+            }
         }
 
         public override void StartGame()
@@ -216,6 +266,7 @@ namespace GameModeCollection.GameModes
             }
 
             this.RandomizePlayerSkins();
+            this.RandomizePlayerFaces();
 
             // TODO: REMOVE THIS
             yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
@@ -256,6 +307,7 @@ namespace GameModeCollection.GameModes
             }
 
             this.RandomizePlayerSkins();
+            this.RandomizePlayerFaces();
 
             // TODO: REMOVE THIS
             yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
@@ -288,8 +340,7 @@ namespace GameModeCollection.GameModes
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundEnd);
 
-            int[] winningTeams = GameModeManager.CurrentHandler.GetGameWinners();
-            if (winningTeams.Any())
+            if (this.roundsPlayed >= (int)GameModeManager.CurrentHandler.Settings["roundsToWinGame"])
             {
                 this.GameOver(winningTeamIDs);
                 yield break;
@@ -368,11 +419,45 @@ namespace GameModeCollection.GameModes
                 this.teamPoints[player.teamID] = 0;
                 this.teamRounds[player.teamID] = 0;
             }
+            this.pointsPlayedOnCurrentMap = 0;
+            this.roundsPlayed = 0;
 
             this.isTransitioning = false;
             //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
             CardBarHandler.instance.ResetCardBards();
             PointVisualizer.instance.ResetPoints();
+        }
+
+        [UnboundRPC]
+        public static void RPCA_NextRound(string winningRole)
+        {
+            var instance = GM_TRT.instance;
+
+            if (instance.isTransitioning)
+            {
+                return;
+            }
+
+            GameManager.instance.battleOngoing = false;
+            instance.isTransitioning = true;
+
+            PlayerManager.instance.SetPlayersSimulated(false);
+
+            instance.pointsPlayedOnCurrentMap++;
+
+
+            if (instance.pointsPlayedOnCurrentMap < (int)GameModeManager.CurrentHandler.Settings["pointsToWinRound"])
+            {
+                instance.PointOver(new int[] { });
+                return;
+            }
+            else
+            {
+                instance.pointsPlayedOnCurrentMap = 0;
+                instance.roundsPlayed++;
+                instance.RoundOver(new int[] { });
+            }
+
         }
     }
 }

@@ -129,7 +129,6 @@
     <Compile Include="Extensions\GameObject.cs" />
     <Compile Include="Extensions\HealthHandler.cs" />
     <Compile Include="Extensions\MapManager.cs" />
-    <Compile Include="Extensions\Player.cs" />
     <Compile Include="Extensions\PointVisualizer.cs" />
     <Compile Include="Extensions\RoundCounter.cs" />
     <Compile Include="Extensions\UIHandler.cs" />
@@ -140,10 +139,23 @@
     <Compile Include="GameModeHandlers\HideNSeekHandlers.cs" />
     <Compile Include="GameModeHandlers\DodgeballHandlers.cs" />
     <Compile Include="GameModes\GM_BombDefusal.cs" />
-    <Compile Include="GameModes\GM_TRT.cs" />
+    <Compile Include="GameModes\TRT\GM_TRT.cs" />
     <Compile Include="GameModes\GM_CrownControl.cs" />
     <Compile Include="GameModes\GM_HideNSeek.cs" />
     <Compile Include="GameModes\GM_Dodgeball.cs" />
+    <Compile Include="GameModes\TRT\ITRT_Role.cs" />
+    <Compile Include="GameModes\TRT\Roles\Zombie.cs" />
+    <Compile Include="GameModes\TRT\Roles\Vampire.cs" />
+    <Compile Include="GameModes\TRT\Roles\Hypnotist.cs" />
+    <Compile Include="GameModes\TRT\Roles\Detective.cs" />
+    <Compile Include="GameModes\TRT\Roles\Glitch.cs" />
+    <Compile Include="GameModes\TRT\Roles\Phantom.cs" />
+    <Compile Include="GameModes\TRT\Roles\Innocent.cs" />
+    <Compile Include="GameModes\TRT\Roles\Mercenary.cs" />
+    <Compile Include="GameModes\TRT\Roles\Assassin.cs" />
+    <Compile Include="GameModes\TRT\Roles\Traitor.cs" />
+    <Compile Include="GameModes\TRT\TRT_Corpse.cs" />
+    <Compile Include="GameModes\TRT\TRT_Role.cs" />
     <Compile Include="Objects\CardItem.cs" />
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
@@ -163,10 +175,10 @@
     <Compile Include="Patches\PlayerCollision.cs" />
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />
-    <Compile Include="Patches\RoundCounter.cs" />
     <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameModeObjects\CrownHandler.cs" />
+    <Compile Include="Utils\ClippedGaussian.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
@@ -179,6 +191,7 @@
     <Content Include="publish.ps1" />
     <Content Include="ThunderStore\icon.png" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
