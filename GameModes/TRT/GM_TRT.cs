@@ -14,6 +14,7 @@ using Sonigon;
 using UnboundLib.Extensions;
 using GameModeCollection.Utils;
 using GameModeCollection.GameModes.TRT;
+using GameModeCollection.GameModes.TRT.Roles;
 
 namespace GameModeCollection.GameModes
 {
@@ -104,6 +105,7 @@ namespace GameModeCollection.GameModes
         protected override void Awake()
         {
             GM_TRT.instance = this;
+            RoleManager.Init();
             base.Awake();
         }
 
@@ -148,8 +150,17 @@ namespace GameModeCollection.GameModes
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1)
                 });
             }
-
         }
+        private void AssignRoles()
+        {
+            List<IRoleHandler> roles = RoleManager.GetRoleLineup(PlayerManager.instance.players.Count());
+            foreach (var role in roles)
+            {
+                GameModeCollection.Log(role.RoleName);
+            }
+        }
+
+
         [UnboundRPC]
         static void RPCA_SetNewColors(int playerID, int colorID)
         {
@@ -267,6 +278,7 @@ namespace GameModeCollection.GameModes
 
             this.RandomizePlayerSkins();
             this.RandomizePlayerFaces();
+            this.AssignRoles();
 
             // TODO: REMOVE THIS
             yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
@@ -308,6 +320,7 @@ namespace GameModeCollection.GameModes
 
             this.RandomizePlayerSkins();
             this.RandomizePlayerFaces();
+            this.AssignRoles();
 
             // TODO: REMOVE THIS
             yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);

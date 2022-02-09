@@ -1,13 +1,29 @@
-﻿using UnityEngine;
+﻿using UnboundLib;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class TraitorRoleHandler : IRoleHandler
+    {
+        public Alignment RoleAlignment => Traitor.RoleAlignment;
+        public string RoleName => Traitor.RoleAppearance.Name;
+        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public int MinNumberOfPlayersForRole => 0;
+        public int MinNumberOfPlayersWithRole => 1;
+        public int MaxNumberOfPlayersWithRole => int.MaxValue;
+        public float Rarity => 0.45f;
+        public string[] RoleIDsToOverwrite => new string[] { };
+        public void AddRoleToPlayer(Player player)
+        {
+            player.gameObject.GetOrAddComponent<Traitor>();
+        }
+    }
     public class Traitor : TRT_Role
     {
         public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Traitor", 'T', GM_TRT.TraitorColor);
+        public static readonly Alignment RoleAlignment = Alignment.Traitor;
 
         public override TRT_Role_Appearance Appearance => Traitor.RoleAppearance;
 
-        public override Alignment Alignment => Alignment.Traitor;
+        public override Alignment Alignment => Traitor.RoleAlignment;
 
         public override int MaxCards => GM_TRT.BaseMaxCards + 1;
 

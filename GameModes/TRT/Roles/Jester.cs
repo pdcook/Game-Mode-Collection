@@ -1,15 +1,28 @@
-﻿using System;
-using UnityEngine;
-
+﻿using UnboundLib;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class JesterRoleHandler : IRoleHandler
+    {
+        public Alignment RoleAlignment => Jester.RoleAlignment;
+        public string RoleName => Jester.RoleAppearance.Name;
+        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public int MinNumberOfPlayersForRole => 5;
+        public int MinNumberOfPlayersWithRole => 0;
+        public int MaxNumberOfPlayersWithRole => 1;
+        public float Rarity => 0.25f;
+        public string[] RoleIDsToOverwrite => new string[] { };
+        public void AddRoleToPlayer(Player player)
+        {
+            player.gameObject.GetOrAddComponent<Jester>();
+        }
+    }
     public class Jester : TRT_Role
     {
         public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Jester", 'J', GM_TRT.JesterColor);
+        public readonly static Alignment RoleAlignment = Alignment.Chaos;
 
         public override TRT_Role_Appearance Appearance => Jester.RoleAppearance;
-
-        public override Alignment Alignment => Alignment.Chaos;
+        public override Alignment Alignment => Jester.RoleAlignment;
 
         public override int MaxCards => GM_TRT.BaseMaxCards;
 

@@ -1,6 +1,22 @@
 ﻿using UnityEngine;
+using UnboundLib;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class GlitchRoleHandler : IRoleHandler
+    {
+        public Alignment RoleAlignment => Glitch.RoleAlignment;
+        public string RoleName => Glitch.RoleAppearance.Name;
+        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public int MinNumberOfPlayersForRole => 5;
+        public int MinNumberOfPlayersWithRole => 0;
+        public int MaxNumberOfPlayersWithRole => 1;
+        public float Rarity => 0.2f;
+        public string[] RoleIDsToOverwrite => new string[] { };
+        public void AddRoleToPlayer(Player player)
+        {
+            player.gameObject.GetOrAddComponent<Glitch>();
+        }
+    }
     public class Glitch : Innocent
     {
         new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Glitch", 'G', GM_TRT.GlitchColor);

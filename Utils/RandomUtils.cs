@@ -1,7 +1,31 @@
-﻿namespace GameModeCollection.Utils
+﻿using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
+using System;
+
+namespace GameModeCollection.Utils
 {
     public static class RandomUtils
     {
+        public static T RandomElementByWeight<T>(this IEnumerable<T> sequence, Func<T, float> weightSelector)
+        {
+            float totalWeight = sequence.Sum(weightSelector);
+            // The weight we are after...
+            float itemWeightIndex = UnityEngine.Random.Range(0f, totalWeight);
+            float currentWeightIndex = 0;
+
+            foreach (var item in from weightedItem in sequence select new { Value = weightedItem, Weight = weightSelector(weightedItem) })
+            {
+                currentWeightIndex += item.Weight;
+
+                // If we've hit or passed the weight we are after for this item then it's the one we want....
+                if (currentWeightIndex >= itemWeightIndex)
+                    return item.Value;
+
+            }
+            return default(T);
+        }
+
         public static UnityEngine.Vector2 ClippedGaussianVector2(float minX, float minY, float maxX, float maxY)
         {
             return new UnityEngine.Vector2(ClippedGaussian(minX, maxX), ClippedGaussian(minY, maxY));

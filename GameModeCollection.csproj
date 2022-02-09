@@ -144,6 +144,11 @@
     <Compile Include="GameModes\GM_HideNSeek.cs" />
     <Compile Include="GameModes\GM_Dodgeball.cs" />
     <Compile Include="GameModes\TRT\ITRT_Role.cs" />
+    <Compile Include="GameModes\TRT\IRoleHandler.cs" />
+    <Compile Include="GameModes\TRT\RoleManager.cs" />
+    <Compile Include="GameModes\TRT\Roles\Killer.cs" />
+    <Compile Include="GameModes\TRT\Roles\Swapper.cs" />
+    <Compile Include="GameModes\TRT\Roles\Jester.cs" />
     <Compile Include="GameModes\TRT\Roles\Zombie.cs" />
     <Compile Include="GameModes\TRT\Roles\Vampire.cs" />
     <Compile Include="GameModes\TRT\Roles\Hypnotist.cs" />
@@ -178,7 +183,7 @@
     <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameModeObjects\CrownHandler.cs" />
-    <Compile Include="Utils\ClippedGaussian.cs" />
+    <Compile Include="Utils\RandomUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".gitignore" />
