@@ -9,9 +9,7 @@ using Photon.Pun;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects;
 using UnboundLib.GameModes;
-using RWF;
 using Sonigon;
-using UnboundLib.Extensions;
 using GameModeCollection.Utils;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
@@ -39,6 +37,8 @@ namespace GameModeCollection.GameModes
     /// - [X] Need to patch cards healing players when taken
     /// - [X] Player skins are randomized each round (sorry)
     /// - [X] Player faces are psuedo-randomized (double sorry)
+    /// - [X] Player nicknames are removed entirely (triple sorry)
+    /// - [X] Players are completely hidden during the skin randomization time
     /// - [ ] Local zoom is ON. optionally (how?) with the dark shader
     /// - [ ] RDM is punished (innocent killing innocent) somehow
     /// - [ ] Clock in upper left corner (with round counter) that counts down. when the timer reaches 0, it turns red, signaling haste mode
@@ -102,6 +102,8 @@ namespace GameModeCollection.GameModes
         internal int pointsPlayedOnCurrentMap = 0;
         internal int roundsPlayed = 0;
 
+        private Dictionary<int, string> RoleIDsToAssign = null;
+
         protected override void Awake()
         {
             GM_TRT.instance = this;
@@ -151,23 +153,117 @@ namespace GameModeCollection.GameModes
                 });
             }
         }
-        private void AssignRoles()
+        [UnboundRPC]
+        public static void RPC_SyncBattleStart(int requestingPlayer, int timeOfBattleStart, Dictionary<int, string> rolesToAssign)
         {
-            List<IRoleHandler> roles = RoleManager.GetRoleLineup(PlayerManager.instance.players.Count());
-            foreach (var role in roles)
+
+            // calculate the time in milliseconds until the battle starts
+            GM_TRT.instance.timeUntilBattleStart = timeOfBattleStart - PhotonNetwork.ServerTimestamp;
+
+            // set the roles to assign
+            GM_TRT.instance.RoleIDsToAssign = rolesToAssign;
+
+            NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPC_SyncBattleStartResponse), requestingPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
+        }
+
+        [UnboundRPC]
+        new public static void RPC_SyncBattleStartResponse(int requestingPlayer, int readyPlayer)
+        {
+            if (PhotonNetwork.LocalPlayer.ActorNumber == requestingPlayer)
             {
-                GameModeCollection.Log(role.RoleName);
+                GM_TRT.instance.RemovePendingRequest(readyPlayer, nameof(GM_TRT.RPC_SyncBattleStart));
             }
         }
 
+        protected override IEnumerator SyncBattleStart()
+        {
+            // replacing original to be able to assign roles here as well
+
+            if (PhotonNetwork.OfflineMode)
+            {
+                List<IRoleHandler> roles = RoleManager.GetRoleLineup(PlayerManager.instance.players.Count());
+                this.RoleIDsToAssign = roles.Select((r,i) => new { r, i }).ToDictionary(r => r.i, r => r.r.RoleID);
+                this.AssignRoles();
+                yield return new WaitForEndOfFrame();
+                yield return new WaitForEndOfFrame();
+                RoleManager.DoRoleDisplay(PlayerManager.instance.players.Find(p => p.data.view.IsMine));
+                yield break;
+            }
+
+            // only the host will communicate when the battle should start
+
+            if (PhotonNetwork.IsMasterClient)
+            {
+                // schedule the battle to start 5 times the maximum client ping + host client's ping from now, with a minimum of 1 second
+                // 5 because the host and slowest client must:
+                // Host 1) send the RPC
+                // Host 2) receive ALL clients' responses
+                // Host 3) retrieve the server time
+                // Client 1) receive the RPC
+                // Client 2) respond to the RPC
+                // Client 3) retrieve the server time
+                // + wiggle room
+
+                // if the host client is the slowest client (very unlikely because of how Photon chooses servers),
+                // then this is overkill - but better safe than sorry
+
+                // this is in milliseconds and can overflow, but luckily all overflows will cancel out when a time difference is calculated
+                int timeOfBattleStart = PhotonNetwork.ServerTimestamp + UnityEngine.Mathf.Clamp(5 * ((int)PhotonNetwork.LocalPlayer.CustomProperties["Ping"] + PhotonNetwork.CurrentRoom.Players.Select(kv => (int)kv.Value.CustomProperties["Ping"]).Max()), 1000, int.MaxValue);
+
+                // get roles to assign
+                List<IRoleHandler> roles = RoleManager.GetRoleLineup(PlayerManager.instance.players.Count());
+                Dictionary<int, string> roleIDsToAssign = roles.Select((r,i) => new { r, i }).ToDictionary(r => r.i, r => r.r.RoleID);
+
+                yield return this.SyncMethod(nameof(GM_TRT.RPC_SyncBattleStart), null, PhotonNetwork.LocalPlayer.ActorNumber, timeOfBattleStart, roleIDsToAssign);
+            }
+
+            yield return new WaitUntil(() => this.timeUntilBattleStart != null && this.RoleIDsToAssign != null);
+
+            yield return new WaitForSecondsRealtime((float)this.timeUntilBattleStart * 0.001f);
+
+            this.AssignRoles();
+
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+
+            RoleManager.DoRoleDisplay(PlayerManager.instance.players.Find(p => p.data.view.IsMine));
+
+            this.timeUntilBattleStart = null;
+            this.RoleIDsToAssign = null;
+        }
+        private void AssignRoles()
+        {
+            foreach (Player player in PlayerManager.instance.players)
+            {
+                GameModeCollection.Log($"PLAYER {player.playerID} | {this.RoleIDsToAssign[player.playerID]}");
+                RoleManager.GetHandler(this.RoleIDsToAssign[player.playerID]).AddRoleToPlayer(player);
+            }
+        }
+        private IEnumerator ClearRoles()
+        {
+            foreach (Player player in PlayerManager.instance.players)
+            {
+                foreach (var role in player.gameObject.GetComponentsInChildren<TRT_Role>())
+                {
+                    UnityEngine.GameObject.Destroy(role);
+                }
+            }
+
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+        }
+        private IEnumerator ClearRolesAndVisuals()
+        {
+            yield return this.ClearRoles();
+            RoleManager.DoRoleDisplay(PlayerManager.instance.players.Find(p => p.data.view.IsMine));
+        }
 
         [UnboundRPC]
         static void RPCA_SetNewColors(int playerID, int colorID)
         {
             Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
 
-            player.AssignColorID(colorID);
-
+            UnboundLib.Extensions.PlayerExtensions.AssignColorID(player, colorID);
         }
 
         private void PlayerCorpse(Player player)
@@ -249,6 +345,10 @@ namespace GameModeCollection.GameModes
 
             MapManager.instance.LoadNextLevel(false, false);
 
+            this.RandomizePlayerSkins();
+            this.RandomizePlayerFaces();
+            yield return this.ClearRolesAndVisuals();
+
             TimeHandler.instance.DoSpeedUp();
 
             yield return new WaitForSecondsRealtime(1f);
@@ -276,10 +376,6 @@ namespace GameModeCollection.GameModes
                 yield return null;
             }
 
-            this.RandomizePlayerSkins();
-            this.RandomizePlayerFaces();
-            this.AssignRoles();
-
             // TODO: REMOVE THIS
             yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
 
@@ -301,7 +397,7 @@ namespace GameModeCollection.GameModes
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
 
             this.ExecuteAfterSeconds(0.5f, () => {
-                UIHandler.instance.HideRoundStartText();
+                RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
             });
         }
 
@@ -317,10 +413,6 @@ namespace GameModeCollection.GameModes
             {
                 yield return null;
             }
-
-            this.RandomizePlayerSkins();
-            this.RandomizePlayerFaces();
-            this.AssignRoles();
 
             // TODO: REMOVE THIS
             yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
@@ -343,7 +435,7 @@ namespace GameModeCollection.GameModes
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
 
             this.ExecuteAfterSeconds(0.5f, () => {
-                UIHandler.instance.HideRoundStartText();
+                RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
             });
         }
         public override IEnumerator RoundTransition(int[] winningTeamIDs)
@@ -367,19 +459,26 @@ namespace GameModeCollection.GameModes
             yield return new WaitForSecondsRealtime(1.3f);
 
             PlayerManager.instance.SetPlayersSimulated(false);
+            PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
             TimeHandler.instance.DoSpeedUp();
 
             yield return this.StartCoroutine(this.WaitForSyncUp());
 
             TimeHandler.instance.DoSlowDown();
             MapManager.instance.CallInNewMapAndMovePlayers(MapManager.instance.currentLevelID);
+
             PlayerManager.instance.RevivePlayers();
+
+            this.RandomizePlayerSkins();
+            this.RandomizePlayerFaces();
+            yield return this.ClearRolesAndVisuals();
 
             yield return new WaitForSecondsRealtime(0.3f);
 
             TimeHandler.instance.DoSpeedUp();
             GameManager.instance.battleOngoing = true;
             this.isTransitioning = false;
+            PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
             //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
 
             this.StartCoroutine(this.DoRoundStart());
@@ -393,18 +492,26 @@ namespace GameModeCollection.GameModes
 
             MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
 
-            yield return new WaitForSecondsRealtime(0.5f);
+            yield return new WaitForSecondsRealtime(1.3f);
+
+            PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
+
             yield return this.WaitForSyncUp();
 
             MapManager.instance.CallInNewMapAndMovePlayers(MapManager.instance.currentLevelID);
 
             PlayerManager.instance.RevivePlayers();
 
+            this.RandomizePlayerSkins();
+            this.RandomizePlayerFaces();
+            yield return this.ClearRolesAndVisuals();
+
             yield return new WaitForSecondsRealtime(0.3f);
 
             TimeHandler.instance.DoSpeedUp();
             GameManager.instance.battleOngoing = true;
             this.isTransitioning = false;
+            PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
             //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
 
             this.StartCoroutine(this.DoPointStart());
@@ -450,6 +557,8 @@ namespace GameModeCollection.GameModes
             {
                 return;
             }
+
+            instance.StartCoroutine(instance.ClearRolesAndVisuals());
 
             GameManager.instance.battleOngoing = false;
             instance.isTransitioning = true;

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using GameModeCollection.Extensions;
 
 namespace GameModeCollection.GameModes.TRT
 {
@@ -17,5 +18,14 @@ namespace GameModeCollection.GameModes.TRT
         public abstract void OnInteractWithCorpse(TRT_Corpse corpse);
         public abstract void OnKilledByPlayer(Player killingPlayer);
         public abstract void OnKilledPlayer(Player killedPlayer);
+
+        protected virtual void Start()
+        {
+            this.GetComponent<CharacterData>()?.SetMaxCards(this.MaxCards);
+        }
+        protected virtual void OnDestroy()
+        {
+            this.GetComponent<CharacterData>()?.SetMaxCards(int.MaxValue);
+        }
     }
 }

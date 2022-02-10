@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
+using TMPro;
+using Photon.Pun;
 
 namespace GameModeCollection.GameModes.TRT
 {
@@ -105,12 +107,62 @@ namespace GameModeCollection.GameModes.TRT
 
             }
 
-            return lineup.Take(N).ToList();
+            // as a failsafe, if this is about to return less than the requested number of roles, pad with the innocent role
+            while (lineup.Count() < N)
+            {
+                lineup.Add(GetHandler(Innocent.RoleAppearance.Name));
+            }
+
+            return lineup.Take(N).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
         }
         public static IRoleHandler DrawRandomRole(List<IRoleHandler> RolesToDrawFrom)
         {
             return RolesToDrawFrom.RandomElementByWeight(r => r.Rarity);
         }
-            
+
+        private static void SetPlayerNameRoleDisplay(Player player, TRT_Role_Appearance role_Appearance, bool hideNickName)
+        {
+            TextMeshProUGUI nameText = player?.GetComponentInChildren<PlayerName>()?.GetComponent<TextMeshProUGUI>();
+            if (nameText is null)
+            {
+                GameModeCollection.LogWarning($"NAME FOR PLAYER {player?.playerID} IS NULL");
+                return;
+            }
+            string nickName = hideNickName ? "" : (player.GetComponent<PhotonView>()?.Owner?.NickName ?? "");
+            if (role_Appearance is null)
+            {
+                nameText.text = nickName;
+                nameText.color = new Color(0.6132f, 0.6132f, 0.6132f, 1f);
+                nameText.fontStyle = FontStyles.Normal;
+            }
+            else
+            {
+                nameText.text = $"[{role_Appearance.Abbr}]{(nickName != "" ? "\n" : "")}{nickName}";
+                nameText.color = role_Appearance.Color;
+                nameText.fontStyle = FontStyles.Bold;
+            }
+        }
+        private static ITRT_Role GetPlayerRole(Player player)
+        {
+            return player.GetComponentInChildren<ITRT_Role>();
+        }
+
+        public static void DoRoleDisplay(Player player, bool hideNickNames = true)
+        {
+            if (player is null) { return; }
+            foreach (Player otherPlayer in PlayerManager.instance.players)
+            {
+                if (otherPlayer.playerID == player.playerID)
+                {
+                    // always show the player their own role
+                    SetPlayerNameRoleDisplay(otherPlayer, GetPlayerRole(otherPlayer)?.Appearance, hideNickNames);
+                }
+                else
+                {
+                    SetPlayerNameRoleDisplay(otherPlayer, GetPlayerRole(player)?.Alignment is null ? null : GetPlayerRole(otherPlayer)?.AppearToAlignment(GetPlayerRole(player).Alignment), hideNickNames);
+                }
+            }
+        }
+
     }
 }

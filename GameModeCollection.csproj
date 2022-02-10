@@ -61,6 +61,10 @@
     <Reference Include="ModdingUtils">
       <HintPath>%(RoundsFolder)\BepInEx\plugins\ModdingUtils.dll</HintPath>
     </Reference>
+    <Reference Include="Photon3Unity3D, Version=4.1.4.8, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\Rounds_Data\Managed\Photon3Unity3D.dll</HintPath>
+    </Reference>
     <Reference Include="PhotonRealtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\PhotonRealtime.dll</HintPath>
     </Reference>
@@ -174,6 +178,7 @@
     <Compile Include="Objects\PlayerDoNotFollow.cs" />
     <Compile Include="Patches\ApplyCardStats.cs" />
     <Compile Include="Patches\CharacterData.cs" />
+    <Compile Include="Patches\CharacterItem.cs" />
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
