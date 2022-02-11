@@ -1,10 +1,12 @@
 ﻿using UnboundLib;
-
+using UnityEngine;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class SwapperRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Swapper.RoleAlignment;
+        public string WinMessage => "THE SWAPPER WINS"; // this shouldn't even be possible
+        public Color WinColor => Swapper.RoleAppearance.Color;
         public string RoleName => Swapper.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;
@@ -23,10 +25,14 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override TRT_Role_Appearance Appearance => Swapper.RoleAppearance;
 
-
         public override void OnKilledByPlayer(Player killingPlayer)
         {
             // do swapper stuff
+        }
+        public override bool WinConditionMet(Player[] playersRemaining)
+        {
+            // the swapper cannot win
+            return false;
         }
     }
 }

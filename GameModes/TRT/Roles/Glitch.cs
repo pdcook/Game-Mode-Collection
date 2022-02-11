@@ -5,6 +5,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
     public class GlitchRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Glitch.RoleAlignment;
+        public string WinMessage => "INNOCENTS WIN";
+        public Color WinColor => Innocent.RoleAppearance.Color;
         public string RoleName => Glitch.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;

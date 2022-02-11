@@ -1,9 +1,13 @@
 ﻿using UnboundLib;
+using System.Linq;
+using UnityEngine;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class JesterRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Jester.RoleAlignment;
+        public string WinMessage => "THE JESTER WINS";
+        public Color WinColor => Jester.RoleAppearance.Color;
         public string RoleName => Jester.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;
@@ -21,9 +25,10 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Jester", 'J', GM_TRT.JesterColor);
         public readonly static Alignment RoleAlignment = Alignment.Chaos;
 
+        private bool hasBeenKilled = false;
+
         public override TRT_Role_Appearance Appearance => Jester.RoleAppearance;
         public override Alignment Alignment => Jester.RoleAlignment;
-
         public override int MaxCards => GM_TRT.BaseMaxCards;
 
         public override int StartingCards => 0;
@@ -78,10 +83,19 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override void OnKilledByPlayer(Player killingPlayer)
         {
             // do jester stuff
+            if (killingPlayer != null)
+            {
+                this.hasBeenKilled = true;
+            }
         }
 
         public override void OnKilledPlayer(Player killedPlayer)
         {
+        }
+
+        public override bool WinConditionMet(Player[] playersRemaining)
+        {
+            return this.hasBeenKilled;
         }
     }
 }

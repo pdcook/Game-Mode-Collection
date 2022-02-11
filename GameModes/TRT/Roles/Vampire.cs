@@ -1,9 +1,12 @@
 ﻿using UnboundLib;
+using UnityEngine;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class VampireRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Vampire.RoleAlignment;
+        public string WinMessage => "TRAITORS WIN";
+        public Color WinColor => Traitor.RoleAppearance.Color;
         public string RoleName => Vampire.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;

@@ -1,15 +1,19 @@
 ﻿using UnboundLib;
+using System.Linq;
+using UnityEngine;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class TraitorRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Traitor.RoleAlignment;
+        public string WinMessage => "TRAITORS WIN";
+        public Color WinColor => Traitor.RoleAppearance.Color;
         public string RoleName => Traitor.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 0;
         public int MinNumberOfPlayersWithRole => 1;
         public int MaxNumberOfPlayersWithRole => int.MaxValue;
-        public float Rarity => 0.45f;
+        public float Rarity => 0.25f;
         public string[] RoleIDsToOverwrite => new string[] { };
         public void AddRoleToPlayer(Player player)
         {
@@ -82,6 +86,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override void OnKilledPlayer(Player killedPlayer)
         {
+        }
+
+        public override bool WinConditionMet(Player[] playersRemaining)
+        {
+            return playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Traitor || a == Alignment.Chaos);
         }
     }
 }

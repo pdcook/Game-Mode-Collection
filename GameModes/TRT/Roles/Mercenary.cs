@@ -1,9 +1,12 @@
 ﻿using UnboundLib;
+using UnityEngine;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class MercenaryRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Mercenary.RoleAlignment;
+        public string WinMessage => "INNOCENTS WIN";
+        public Color WinColor => Innocent.RoleAppearance.Color;
         public string RoleName => Mercenary.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;

@@ -1,18 +1,21 @@
 ﻿using System;
 using UnityEngine;
 using UnboundLib;
+using System.Linq;
 
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class InnocentRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Innocent.RoleAlignment;
+        public string WinMessage => "INNOCENTS WIN";
+        public Color WinColor => Innocent.RoleAppearance.Color;
         public string RoleName => Innocent.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 0;
         public int MinNumberOfPlayersWithRole => 1;
         public int MaxNumberOfPlayersWithRole => int.MaxValue;
-        public float Rarity => 1f;
+        public float Rarity => 0.75f;
         public string[] RoleIDsToOverwrite => new string[] { };
         public void AddRoleToPlayer(Player player)
         {
@@ -26,7 +29,6 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override TRT_Role_Appearance Appearance => Innocent.RoleAppearance;
         public override Alignment Alignment => Innocent.RoleAlignment;
-
         public override int MaxCards => GM_TRT.BaseMaxCards;
 
         public override int StartingCards => 0;
@@ -65,6 +67,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
             {
 
             }
+        }
+
+        public override bool WinConditionMet(Player[] playersRemaining)
+        {
+            return playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Innocent || a == Alignment.Chaos);
         }
     }
 }

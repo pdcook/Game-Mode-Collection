@@ -1,9 +1,12 @@
 ﻿using UnboundLib;
+using UnityEngine;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class ZombieRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Zombie.RoleAlignment;
+        public string WinMessage => "ZOMBIES WIN";
+        public Color WinColor => Zombie.RoleAppearance.Color;
         public string RoleName => Zombie.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;

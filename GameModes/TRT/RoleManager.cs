@@ -57,6 +57,19 @@ namespace GameModeCollection.GameModes.TRT
             return RoleHandlers[ID];
         }
 
+        public static string GetRoleID(ITRT_Role role)
+        {
+            if (Roles.Values.Contains(role.GetType()))
+            {
+                return Roles.First(kv => kv.Value == role.GetType()).Key;
+            }
+            else
+            {
+                GameModeCollection.LogError($"[RoleManager] ROLE \"{role}\" NOT FOUND OR NOT REGISTERED");
+                return null;
+            }
+        }
+
         public static List<IRoleHandler> GetRoleLineup(int N)
         {
             // remove roles for which there are not enough players
@@ -113,6 +126,16 @@ namespace GameModeCollection.GameModes.TRT
                 lineup.Add(GetHandler(Innocent.RoleAppearance.Name));
             }
 
+            // finally, at least 62.5% of the players should be aligned with the innocents, if this requirement is not met, then
+            // replace some of the traitor-aligned roles with innocents
+            while ((float)lineup.Count(r => r.RoleAlignment == Alignment.Innocent)/(float)lineup.Count() < 0.625f)
+            {
+                GameModeCollection.Log("[RoleManager] Not enough innocents. Correcting...");
+                int i = lineup.LastIndexOf(lineup.Last(r => r.RoleAlignment == Alignment.Traitor));
+                if (i == -1) { break; }
+                lineup[i] = DrawRandomRole(RoleHandlers.Values.Where(r => r.RoleAlignment == Alignment.Innocent && r.MinNumberOfPlayersForRole <= N && r.MaxNumberOfPlayersWithRole > lineup.Count(r2 => r2 == r)).ToList());
+            }
+
             return lineup.Take(N).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
         }
         public static IRoleHandler DrawRandomRole(List<IRoleHandler> RolesToDrawFrom)
@@ -142,9 +165,13 @@ namespace GameModeCollection.GameModes.TRT
                 nameText.fontStyle = FontStyles.Bold;
             }
         }
-        private static ITRT_Role GetPlayerRole(Player player)
+        public static ITRT_Role GetPlayerRole(Player player)
         {
             return player.GetComponentInChildren<ITRT_Role>();
+        }
+        public static Alignment? GetPlayerAlignment(Player player)
+        {
+            return player.GetComponentInChildren<ITRT_Role>()?.Alignment;
         }
 
         public static void DoRoleDisplay(Player player, bool hideNickNames = true)
@@ -162,6 +189,25 @@ namespace GameModeCollection.GameModes.TRT
                     SetPlayerNameRoleDisplay(otherPlayer, GetPlayerRole(player)?.Alignment is null ? null : GetPlayerRole(otherPlayer)?.AppearToAlignment(GetPlayerRole(player).Alignment), hideNickNames);
                 }
             }
+        }
+
+        public static string GetWinningRoleID(Player[] playersRemaining)
+        {
+            Player[] winners = PlayerManager.instance.players.Where(p => GetPlayerRole(p)?.WinConditionMet(playersRemaining) ?? false).ToArray();
+            if (winners is null || winners.Count() == 0)
+            {
+                return null;
+            }
+            ITRT_Role[] winningRoles = winners.Select(p => GetPlayerRole(p)).Where(a => a != null).Distinct().ToArray();
+            if (winningRoles is null || winningRoles.Count() == 0)
+            {
+                return null;
+            }
+            if (winningRoles.Select(r => r.Alignment).Distinct().Count() > 1)
+            {
+                GameModeCollection.LogError("[GM_TRT] MULTIPLE ALIGNMENTS HAVE THEIR WIN CONDITIONS SATISFIED");
+            }
+            return GetRoleID(winningRoles.First());
         }
 
     }

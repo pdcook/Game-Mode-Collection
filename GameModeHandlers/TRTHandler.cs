@@ -2,28 +2,39 @@
 using GameModeCollection.GameModes;
 using UnboundLib.GameModes;
 using System.Linq;
+using UnboundLib;
+using RWF;
 
 namespace GameModeCollection.GameModeHandlers
 {
-    public class TRTHandler : RWFGameModeHandler<GM_TRT>
+    public class TRTHandler : GameModeHandler<GM_TRT>
     {
+        public override string Name
+        {
+            get { return TRTHandler.GameModeName; }
+        }
+
         internal const string GameModeName = "Trouble in Rounds Town";
         internal const string GameModeID = "TroubleInRoundsTown";
-        public TRTHandler() : base(
-            name: GameModeName,
-            gameModeId: GameModeID,
-            allowTeams: false,
-            pointsToWinRound: 4,
-            roundsToWinGame: 4,
-            // null values mean RWF's instance values
-            playersRequiredToStartGame: null,
-            maxPlayers: null,
-            maxTeams: null,
-            maxClients: null,
-            description: $"Trouble in ROUNDS Town.")
+        public override GameSettings Settings { get; protected set; }
+
+        public TRTHandler() : base(gameModeId: GameModeID)
         {
-            this.Settings.Add(GameModeCollection.ReviveOnCardAddKey, false); // do not revive players when they get a card
-            this.Settings.Add(GameModeCollection.CreatePlayerCorpsesKey, true); // do not hide players when they die, instead make a corpse
+            this.Settings = new GameSettings()
+            {
+                { "pointsToWinRound", 4},
+                { "roundsToWinGame", 4},
+                { "allowTeams", false },
+                { "playersRequiredToStartGame", UnityEngine.Mathf.Clamp(4, 1, RWFMod.MaxPlayersHardLimit) },
+                { "maxPlayers", UnityEngine.Mathf.Clamp(RWFMod.instance.MaxPlayers, 1, RWFMod.MaxPlayersHardLimit) },
+                { "maxTeams", UnityEngine.Mathf.Clamp(RWFMod.instance.MaxTeams, 1, RWFMod.MaxColorsHardLimit) },
+                { "maxClients", UnityEngine.Mathf.Clamp(RWFMod.instance.MaxClients, 1, RWFMod.MaxPlayersHardLimit) },
+                { "description", "Trouble in ROUNDS Town"},
+                { "descriptionFontSize", 30},
+                { "videoURL", "https://media.giphy.com/media/lcngwaPCkqFbfhzrsH/giphy.mp4"},
+                {GameModeCollection.ReviveOnCardAddKey, false }, // do not revive players when they get a card
+                {GameModeCollection.CreatePlayerCorpsesKey, true } // do not hide players when they die, instead make a corpse
+            };
         }
         public override int[] GetGameWinners()
         {
@@ -50,6 +61,40 @@ namespace GameModeCollection.GameModeHandlers
         public override void SetTeamScore(int teamID, TeamScore score)
         {
             return;
+        }
+
+        public override void SetActive(bool active)
+        {
+            this.GameMode.gameObject.SetActive(active);
+        }
+
+        public override void PlayerJoined(Player player)
+        {
+            this.GameMode.PlayerJoined(player);
+        }
+
+        public override void PlayerDied(Player player, int playersAlive)
+        {
+            this.GameMode.PlayerDied(player, playersAlive);
+        }
+        public override void StartGame()
+        {
+            this.GameMode.StartGame();
+        }
+
+        public override void ResetGame()
+        {
+            this.GameMode.ResetMatch();
+        }
+
+        public override void ChangeSetting(string name, object value)
+        {
+            base.ChangeSetting(name, value);
+
+            if (name == "roundsToWinGame")
+            {
+                UIHandler.instance.InvokeMethod("SetNumberOfRounds", (int)value);
+            }
         }
     }
 }

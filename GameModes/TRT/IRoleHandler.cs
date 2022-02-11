@@ -1,8 +1,11 @@
-﻿namespace GameModeCollection.GameModes.TRT
+﻿using UnityEngine;
+namespace GameModeCollection.GameModes.TRT
 {
     public interface IRoleHandler
     {
         Alignment RoleAlignment { get; }
+        string WinMessage { get; }
+        Color WinColor { get; }
         string RoleName { get; }
         string RoleID { get; }
         int MinNumberOfPlayersForRole { get; }

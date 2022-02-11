@@ -1,10 +1,14 @@
 ﻿using UnboundLib;
+using System.Linq;
+using UnityEngine;
 
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class KillerRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Killer.RoleAlignment;
+        public string WinMessage => "THE KILLER WINS";
+        public Color WinColor => Killer.RoleAppearance.Color;
         public string RoleName => Killer.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;
@@ -59,6 +63,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override void OnKilledPlayer(Player killedPlayer)
         {
+        }
+
+        public override bool WinConditionMet(Player[] playersRemaining)
+        {
+            return playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Killer || a == Alignment.Chaos);
         }
     }
 }

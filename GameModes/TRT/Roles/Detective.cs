@@ -5,6 +5,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
     public class DetectiveRoleHandler : IRoleHandler
     {
         public Alignment RoleAlignment => Detective.RoleAlignment;
+        public string WinMessage => "INNOCENTS WIN";
+        public Color WinColor => Innocent.RoleAppearance.Color;
         public string RoleName => Detective.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 0;

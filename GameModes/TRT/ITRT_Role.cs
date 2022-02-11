@@ -28,7 +28,6 @@ namespace GameModeCollection.GameModes.TRT
     public interface ITRT_Role
     {
         TRT_Role_Appearance Appearance { get; }
-
         Alignment Alignment { get; }
         int MaxCards { get; }
         int StartingCards { get; }
@@ -72,5 +71,8 @@ namespace GameModeCollection.GameModes.TRT
         void OnInteractWithCorpse(TRT_Corpse corpse);
 
         void OnCorpseInteractedWith(Player player);
+
+        bool WinConditionMet(Player[] playersRemaining);
+
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnboundLib;
 using UnboundLib.Networking;
 using Photon.Pun;
@@ -71,7 +72,7 @@ namespace GameModeCollection.GameModes
     /// - Assassin (traitor) [gets a "target" (never detective unless that is the only option) to which they deal double damage, and half damage to all other players. killing the wrong player results in them dealing half damage for the rest of the round]
     /// - Vampire (traitor) [can block while on top of a dead body to eat it (completely destroying the body) and healing 50 HP, though it freezes them in place for a few seconds]
     /// </summary>
-    public class GM_TRT : RWFGameMode
+    public class GM_TRT : MonoBehaviour
     {
         internal static GM_TRT instance;
 
@@ -99,27 +100,39 @@ namespace GameModeCollection.GameModes
         public readonly static Color AssassinColor = new Color32(112, 50, 1, 255);
         public readonly static Color VampireColor = new Color32(45, 45, 45, 255);
 
+        public readonly static Color DullWhite = new Color32(230, 230, 230, 255);
+
         internal int pointsPlayedOnCurrentMap = 0;
         internal int roundsPlayed = 0;
 
+        private new bool isTransitioning = false;
         private Dictionary<int, string> RoleIDsToAssign = null;
+        private new int? timeUntilBattleStart = null;
 
-        protected override void Awake()
+        protected void Awake()
         {
             GM_TRT.instance = this;
             RoleManager.Init();
-            base.Awake();
         }
 
-        protected override void Start()
+        protected void Start()
         {
             // register prefab
             GameObject _ = CardItemPrefabs.CardItem;
             // spawn handler
             _ = CardItemPrefabs.CardItemHandler;
-            base.Start();
+            this.StartCoroutine(this.Init());
         }
-        
+        private IEnumerator Init()
+        {
+            yield return GameModeManager.TriggerHook(GameModeHooks.HookInitStart);
+
+            PlayerManager.instance.SetPlayersSimulated(false);
+            PlayerAssigner.instance.maxPlayers = RWF.RWFMod.instance.MaxPlayers;
+
+            yield return GameModeManager.TriggerHook(GameModeHooks.HookInitEnd);
+        }
+
         public void IdentifyBody(TRT_Corpse corpse, bool detective)
         {
             // ID a body
@@ -167,7 +180,7 @@ namespace GameModeCollection.GameModes
         }
 
         [UnboundRPC]
-        new public static void RPC_SyncBattleStartResponse(int requestingPlayer, int readyPlayer)
+        public static void RPC_SyncBattleStartResponse(int requestingPlayer, int readyPlayer)
         {
             if (PhotonNetwork.LocalPlayer.ActorNumber == requestingPlayer)
             {
@@ -175,7 +188,7 @@ namespace GameModeCollection.GameModes
             }
         }
 
-        protected override IEnumerator SyncBattleStart()
+        protected IEnumerator SyncBattleStart()
         {
             // replacing original to be able to assign roles here as well
 
@@ -285,12 +298,12 @@ namespace GameModeCollection.GameModes
             yield break;
         }
 
-        public override void PlayerJoined(Player player)
+        public void PlayerJoined(Player player)
         {
             // completely replace original, since we don't need teamPoints or teamRounds
         }
 
-        public override void PlayerDied(Player killedPlayer, int teamsAlive)
+        public void PlayerDied(Player killedPlayer, int teamsAlive)
         {
             // completely replace original method
 
@@ -307,24 +320,36 @@ namespace GameModeCollection.GameModes
             this.PlayerCorpse(killedPlayer);
 
             // check win condition
-            bool win = true;
-            string winningGroup = "TRAITORS";
-            if (win)
+            string winningRoleID = RoleManager.GetWinningRoleID(PlayerManager.instance.players.Where(p => !p.data.dead).ToArray());
+
+            if (winningRoleID != null)
             {
+
                 TimeHandler.instance.DoSlowDown();
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_NextRound), winningGroup);
+                    NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_NextRound), winningRoleID);
                 }
             }
         }
 
-        public override void StartGame()
+        public void StartGame()
         {
-            base.StartGame();
+            if (GameManager.instance.isPlaying)
+            {
+                return;
+            }
+
+            foreach (Player player in PlayerManager.instance.players)
+            {
+                this.PlayerJoined(player);
+            }
+
+            GameManager.instance.isPlaying = true;
+            this.StartCoroutine(this.DoStartGame());
         }
 
-        public override IEnumerator DoStartGame()
+        public IEnumerator DoStartGame()
         {
             // completely replace original method
             RWF.CardBarHandlerExtensions.Rebuild(CardBarHandler.instance);
@@ -363,7 +388,7 @@ namespace GameModeCollection.GameModes
             this.StartCoroutine(this.DoRoundStart());
 
         }
-        public override IEnumerator DoRoundStart()
+        public IEnumerator DoRoundStart()
         {
             // completely replace original method
 
@@ -401,7 +426,7 @@ namespace GameModeCollection.GameModes
             });
         }
 
-        public override IEnumerator DoPointStart()
+        public IEnumerator DoPointStart()
         {
             // completely replace original
 
@@ -438,7 +463,7 @@ namespace GameModeCollection.GameModes
                 RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
             });
         }
-        public override IEnumerator RoundTransition(int[] winningTeamIDs)
+        public IEnumerator RoundTransition(string winningRoleID)
         {
             // completely replace original
 
@@ -447,11 +472,12 @@ namespace GameModeCollection.GameModes
 
             if (this.roundsPlayed >= (int)GameModeManager.CurrentHandler.Settings["roundsToWinGame"])
             {
-                this.GameOver(winningTeamIDs);
+                this.GameOver();
                 yield break;
             }
 
-            this.StartCoroutine(PointVisualizer.instance.DoSequence("TRAITORS WIN", TraitorColor));
+            IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+            this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
 
             yield return new WaitForSecondsRealtime(1f);
             MapManager.instance.LoadNextLevel(false, false);
@@ -483,11 +509,13 @@ namespace GameModeCollection.GameModes
 
             this.StartCoroutine(this.DoRoundStart());
         }
-        public override IEnumerator PointTransition(int[] winningTeamIDs)
+        public IEnumerator PointTransition(string winningRoleID)
         {
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
 
-            this.StartCoroutine(PointVisualizer.instance.DoSequence("TRAITORS WIN", TraitorColor));
+            IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+
+            this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
             yield return new WaitForSecondsRealtime(1f);
 
             MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
@@ -516,29 +544,69 @@ namespace GameModeCollection.GameModes
 
             this.StartCoroutine(this.DoPointStart());
         }
+        private void GameOverRematch()
+        {
+            if (PhotonNetwork.OfflineMode)
+            {
+                UIHandler.instance.DisplayScreenTextLoop(DullWhite, "REMATCH?");
+                UIHandler.instance.popUpHandler.StartPicking(PlayerManager.instance.players.First(), this.GetRematchYesNo);
+                MapManager.instance.LoadNextLevel(false, false);
+                return;
+            }
 
-        public override IEnumerator GameOverTransition(int[] winningTeamIDs)
+            if (PhotonNetwork.IsMasterClient)
+            {
+                foreach (var player in PhotonNetwork.CurrentRoom.Players.Values.ToList())
+                {
+                    PhotonNetwork.DestroyPlayerObjects(player);
+                }
+            }
+
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
+
+        private void GetRematchYesNo(PopUpHandler.YesNo yesNo)
+        {
+            if (yesNo == PopUpHandler.YesNo.Yes)
+            {
+                base.StartCoroutine(this.IDoRematch());
+                return;
+            }
+            this.DoRestart();
+        }
+        public IEnumerator GameOverTransition()
         {
             yield return GameModeManager.TriggerHook(GameModeHooks.HookGameEnd);
 
             //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
-            //List<Color> colors = winningTeamIDs.Select(tID => PlayerManager.instance.GetPlayersInTeam(tID).First().GetTeamColors().color).ToList();
             //Color color = AverageColor.Average(colors);
             UIHandler.instance.DisplayScreenText(Color.white, "TROUBLE\nIN\nROUNDS TOWN", 1f);
             yield return new WaitForSecondsRealtime(2f);
-            this.GameOverRematch(winningTeamIDs);
+            this.GameOverRematch();
             yield break;
         }
-        public override void ResetMatch()
+        protected virtual IEnumerator IDoRematch()
+        {
+            yield return null;
+            this.ResetMatch();
+            this.StartCoroutine(this.DoStartGame());
+        }
+
+        private void DoRestart()
+        {
+            GameManager.instance.battleOngoing = false;
+            if (PhotonNetwork.OfflineMode)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+                return;
+            }
+            NetworkConnectionHandler.instance.NetworkRestart();
+        }
+        public void ResetMatch()
         {
             UIHandler.instance.StopScreenTextLoop();
             PlayerManager.instance.InvokeMethod("ResetCharacters");
 
-            foreach (var player in PlayerManager.instance.players)
-            {
-                this.teamPoints[player.teamID] = 0;
-                this.teamRounds[player.teamID] = 0;
-            }
             this.pointsPlayedOnCurrentMap = 0;
             this.roundsPlayed = 0;
 
@@ -547,9 +615,46 @@ namespace GameModeCollection.GameModes
             CardBarHandler.instance.ResetCardBards();
             PointVisualizer.instance.ResetPoints();
         }
+        private void GameOver()
+        {
+            base.StartCoroutine(this.GameOverTransition());
+        }
+        public void RoundOver(string winningRoleID)
+        {
+            this.StartCoroutine(this.RoundTransition(winningRoleID));
+        }
+
+        public void PointOver(string winningRoleID)
+        {
+            this.StartCoroutine(this.PointTransition(winningRoleID));
+        }
 
         [UnboundRPC]
-        public static void RPCA_NextRound(string winningRole)
+        public static void RPC_RequestSync(int requestingPlayer)
+        {
+            NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPC_SyncResponse), requestingPlayer, PhotonNetwork.LocalPlayer.ActorNumber);
+        }
+
+        [UnboundRPC]
+        public static void RPC_SyncResponse(int requestingPlayer, int readyPlayer)
+        {
+            if (PhotonNetwork.LocalPlayer.ActorNumber == requestingPlayer)
+            {
+                GM_TRT.instance.RemovePendingRequest(readyPlayer, nameof(GM_TRT.RPC_RequestSync));
+            }
+        }
+
+        private IEnumerator WaitForSyncUp()
+        {
+            if (PhotonNetwork.OfflineMode)
+            {
+                yield break;
+            }
+            yield return this.SyncMethod(nameof(GM_TRT.RPC_RequestSync), null, PhotonNetwork.LocalPlayer.ActorNumber);
+        }
+
+        [UnboundRPC]
+        public static void RPCA_NextRound(string winningRoleID)
         {
             var instance = GM_TRT.instance;
 
@@ -570,14 +675,14 @@ namespace GameModeCollection.GameModes
 
             if (instance.pointsPlayedOnCurrentMap < (int)GameModeManager.CurrentHandler.Settings["pointsToWinRound"])
             {
-                instance.PointOver(new int[] { });
+                instance.PointOver(winningRoleID);
                 return;
             }
             else
             {
                 instance.pointsPlayedOnCurrentMap = 0;
                 instance.roundsPlayed++;
-                instance.RoundOver(new int[] { });
+                instance.RoundOver(winningRoleID);
             }
 
         }
