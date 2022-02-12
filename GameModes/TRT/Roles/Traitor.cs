@@ -22,7 +22,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Traitor : TRT_Role
     {
-        public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Traitor", 'T', GM_TRT.TraitorColor);
+        public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Traitor, "Traitor", 'T', GM_TRT.TraitorColor);
         public static readonly Alignment RoleAlignment = Alignment.Traitor;
 
         public override TRT_Role_Appearance Appearance => Traitor.RoleAppearance;

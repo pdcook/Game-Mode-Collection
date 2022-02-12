@@ -22,7 +22,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Jester : TRT_Role
     {
-        public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Jester", 'J', GM_TRT.JesterColor);
+        public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Chaos, "Jester", 'J', GM_TRT.JesterColor);
         public readonly static Alignment RoleAlignment = Alignment.Chaos;
 
         private bool hasBeenKilled = false;

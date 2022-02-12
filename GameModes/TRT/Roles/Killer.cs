@@ -23,7 +23,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Killer : TRT_Role
     {
-        public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Killer", 'K', GM_TRT.KillerColor);
+        public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Killer, "Killer", 'K', GM_TRT.KillerColor);
         public readonly static Alignment RoleAlignment = Alignment.Killer;
 
         public override TRT_Role_Appearance Appearance => Killer.RoleAppearance;

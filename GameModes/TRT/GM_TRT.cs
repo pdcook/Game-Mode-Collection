@@ -76,7 +76,7 @@ namespace GameModeCollection.GameModes
     {
         internal static GM_TRT instance;
 
-        private const float PrepPhaseTime = 5f;
+        private const float PrepPhaseTime = 1f;
         private const float TimeBetweenCardDrops = 0.5f;
         private const float CardRandomVelMult = 0.25f;
         private const float CardRandomVelMin = 3f;
@@ -105,9 +105,9 @@ namespace GameModeCollection.GameModes
         internal int pointsPlayedOnCurrentMap = 0;
         internal int roundsPlayed = 0;
 
-        private new bool isTransitioning = false;
+        private bool isTransitioning = false;
         private Dictionary<int, string> RoleIDsToAssign = null;
-        private new int? timeUntilBattleStart = null;
+        private int? timeUntilBattleStart = null;
 
         protected void Awake()
         {
@@ -353,14 +353,14 @@ namespace GameModeCollection.GameModes
         {
             // completely replace original method
             RWF.CardBarHandlerExtensions.Rebuild(CardBarHandler.instance);
-            UIHandler.instance.InvokeMethod("SetNumberOfRounds", (int) GameModeManager.CurrentHandler.Settings["roundsToWinGame"]);
+            //UIHandler.instance.InvokeMethod("SetNumberOfRounds", (int) GameModeManager.CurrentHandler.Settings["roundsToWinGame"]);
             ArtHandler.instance.NextArt();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookGameStart);
 
             GameManager.instance.battleOngoing = false;
 
-            UIHandler.instance.ShowJoinGameText("TROUBLE\nIN\nROUNDS TOWN", PlayerSkinBank.GetPlayerSkinColors(1).winText);
+            UIHandler.instance.ShowJoinGameText("TROUBLE\nIN\nROUNDS TOWN", Color.white);
             yield return new WaitForSecondsRealtime(2f);
             UIHandler.instance.HideJoinGameText();
             yield return this.WaitForSyncUp();
@@ -416,14 +416,10 @@ namespace GameModeCollection.GameModes
             yield return this.SyncBattleStart();
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
-            UIHandler.instance.DisplayRoundStartText("INNOCENT", InnocentColor, MapEmbiggener.OutOfBoundsUtils.GetPoint(new Vector3(0.5f, 0.8f, 0f)));
+            //UIHandler.instance.DisplayRoundStartText("INNOCENT", InnocentColor, new Vector3(0.5f, 0.8f, 0f));
             PlayerManager.instance.SetPlayersSimulated(true);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
-
-            this.ExecuteAfterSeconds(0.5f, () => {
-                RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
-            });
         }
 
         public IEnumerator DoPointStart()
@@ -454,14 +450,11 @@ namespace GameModeCollection.GameModes
             yield return this.SyncBattleStart();
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
-            UIHandler.instance.DisplayRoundStartText("TRAITOR", TraitorColor, MapEmbiggener.OutOfBoundsUtils.GetPoint(new Vector3(0.5f, 0.8f, 0f)));
+            //UIHandler.instance.DisplayRoundStartText("TRAITOR", TraitorColor, new Vector3(0.5f, 0.8f, 0f));
             PlayerManager.instance.SetPlayersSimulated(true);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
 
-            this.ExecuteAfterSeconds(0.5f, () => {
-                RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
-            });
         }
         public IEnumerator RoundTransition(string winningRoleID)
         {

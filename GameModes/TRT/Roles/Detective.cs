@@ -21,12 +21,12 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Detective : Innocent
     {
-        new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Detective", 'D', GM_TRT.DetectiveColor);
+        new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Detective", 'D', GM_TRT.DetectiveColor);
         public override TRT_Role_Appearance Appearance => Detective.RoleAppearance;
 
         public override bool AlertAlignment(Alignment alignment)
         {
-            return true;
+            return false;
         }
 
         public override TRT_Role_Appearance AppearToAlignment(Alignment alignment)

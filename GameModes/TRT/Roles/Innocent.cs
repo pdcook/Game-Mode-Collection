@@ -24,7 +24,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Innocent : TRT_Role
     {
-        public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Innocent", 'I', GM_TRT.InnocentColor);
+        public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Innocent", 'I', GM_TRT.InnocentColor);
         public readonly static Alignment RoleAlignment = Alignment.Innocent;
 
         public override TRT_Role_Appearance Appearance => Innocent.RoleAppearance;

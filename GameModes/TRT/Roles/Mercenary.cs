@@ -21,7 +21,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Mercenary : Innocent
     {
-        new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Mercenary", 'M', GM_TRT.MercenaryColor);
+        new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Mercenary", 'M', GM_TRT.MercenaryColor);
 
         public override TRT_Role_Appearance Appearance => Mercenary.RoleAppearance;
 

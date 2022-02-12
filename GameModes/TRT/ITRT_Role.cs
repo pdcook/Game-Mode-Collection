@@ -10,6 +10,7 @@ namespace GameModeCollection.GameModes.TRT
     }
     public class TRT_Role_Appearance
     {
+        public Alignment Alignment;
         public string Name;
         public char Abbr;
         /// <summary>
@@ -17,8 +18,9 @@ namespace GameModeCollection.GameModes.TRT
         /// </summary>
         public Color Color; 
 
-        public TRT_Role_Appearance(string Name, char Abbr, Color Color)
+        public TRT_Role_Appearance(Alignment Alignment, string Name, char Abbr, Color Color)
         {
+            this.Alignment = Alignment;
             this.Name = Name;
             this.Abbr = Abbr;
             this.Color = Color;

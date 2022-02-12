@@ -45,6 +45,9 @@
     <Reference Include="BepInEx, Version=5.4.11.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(ProfileFolder)\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
+    <Reference Include="BetterChat">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\BetterChat.dll</HintPath>
+    </Reference>
     <Reference Include="CardChoiceSpawnUniqueCardPatch">
       <HintPath>%(RoundsFolder)\BepInEx\plugins\CardChoiceSpawnUniqueCardPatch.dll</HintPath>
     </Reference>
@@ -133,6 +136,7 @@
     <Compile Include="Extensions\GameObject.cs" />
     <Compile Include="Extensions\HealthHandler.cs" />
     <Compile Include="Extensions\MapManager.cs" />
+    <Compile Include="Extensions\PlayerActions.cs" />
     <Compile Include="Extensions\PointVisualizer.cs" />
     <Compile Include="Extensions\RoundCounter.cs" />
     <Compile Include="Extensions\UIHandler.cs" />
@@ -177,11 +181,14 @@
     <Compile Include="Objects\ObjectUIUtils.cs" />
     <Compile Include="Objects\PlayerDoNotFollow.cs" />
     <Compile Include="Patches\ApplyCardStats.cs" />
+    <Compile Include="Patches\BetterChat_ChatMonoGameManager.cs" />
     <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\CharacterItem.cs" />
     <Compile Include="Patches\DamageBox.cs" />
+    <Compile Include="Patches\DevConsole.cs" />
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
+    <Compile Include="Patches\PlayerActions.cs" />
     <Compile Include="Patches\PlayerCollision.cs" />
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />

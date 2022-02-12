@@ -21,7 +21,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Swapper : Jester
     {
-        new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Swapper", 'S', GM_TRT.SwapperColor);
+        new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Chaos, "Swapper", 'S', GM_TRT.SwapperColor);
 
         public override TRT_Role_Appearance Appearance => Swapper.RoleAppearance;
 

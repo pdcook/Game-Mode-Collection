@@ -21,7 +21,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Glitch : Innocent
     {
-        new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Glitch", 'G', GM_TRT.GlitchColor);
+        new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Glitch", 'G', GM_TRT.GlitchColor);
         public override TRT_Role_Appearance Appearance => Glitch.RoleAppearance;
 
         public override Alignment Alignment => Alignment.Innocent;

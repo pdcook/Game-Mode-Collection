@@ -7,11 +7,19 @@ using UnityEngine;
 using System;
 using TMPro;
 using Photon.Pun;
+using GameModeCollection.Extensions;
+using UnboundLib;
+using UnboundLib.Extensions;
+using UnboundLib.Utils;
+using System.Text.RegularExpressions;
 
 namespace GameModeCollection.GameModes.TRT
 {
     public static class RoleManager
     {
+
+        public const string ChatName = "<b>[TRT]</b>";
+
         private static bool inited = false;
         private static Dictionary<string, IRoleHandler> RoleHandlers = new Dictionary<string, IRoleHandler>() { };
         private static Dictionary<string, Type> Roles = new Dictionary<string, Type>() { };
@@ -177,18 +185,91 @@ namespace GameModeCollection.GameModes.TRT
         public static void DoRoleDisplay(Player player, bool hideNickNames = true)
         {
             if (player is null) { return; }
+            ITRT_Role role = GetPlayerRole(player);
             foreach (Player otherPlayer in PlayerManager.instance.players)
             {
                 if (otherPlayer.playerID == player.playerID)
                 {
                     // always show the player their own role
-                    SetPlayerNameRoleDisplay(otherPlayer, GetPlayerRole(otherPlayer)?.Appearance, hideNickNames);
+                    SetPlayerNameRoleDisplay(otherPlayer, role?.Appearance, hideNickNames);
                 }
                 else
                 {
-                    SetPlayerNameRoleDisplay(otherPlayer, GetPlayerRole(player)?.Alignment is null ? null : GetPlayerRole(otherPlayer)?.AppearToAlignment(GetPlayerRole(player).Alignment), hideNickNames);
+                    SetPlayerNameRoleDisplay(otherPlayer, role?.Alignment is null ? null : GetPlayerRole(otherPlayer)?.AppearToAlignment(role.Alignment), hideNickNames);
                 }
             }
+            if (role is null) { return; }
+            UIHandler.instance.DisplayRoundStartText(role.Appearance.Name, role.Appearance.Color, new Vector3(0.5f, 0.8f, 0f));
+            GameModeCollection.instance.ExecuteAfterSeconds(0.5f, () => {
+                RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
+            });
+            string playerRoleName = GetRoleColoredName(role.Appearance);
+            MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(
+                    ChatName,
+                    -1,
+                    $"You are {GetPlayerColorNameAsColoredString(player)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(role.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.");
+            // now do any necessary reporting
+            Dictionary<TRT_Role_Appearance, List<string>> rolesAndNames = new Dictionary<TRT_Role_Appearance, List<string>>();
+            foreach (Player otherPlayer in PlayerManager.instance.players)
+            {
+                if (otherPlayer.playerID == player.playerID) { continue; }
+                if (!(GetPlayerRole(otherPlayer)?.AlertAlignment(role.Alignment) ?? false)) { continue; }
+                TRT_Role_Appearance appearAs = GetPlayerRole(otherPlayer)?.AppearToAlignment(role.Alignment);
+                if (appearAs is null) { continue; }
+
+                //string roleName = GetRoleColoredName(appearAs); 
+                if (!rolesAndNames.ContainsKey(appearAs))
+                {
+                    rolesAndNames[appearAs] = new List<string>() { };
+                }
+
+                rolesAndNames[appearAs].Add(GetPlayerColorNameAsColoredString(otherPlayer));
+            }
+            foreach (TRT_Role_Appearance roleAppearance in rolesAndNames.Keys)
+            {
+                string message = "";
+                if (roleAppearance.Alignment == role.Alignment)
+                {
+                    message += "Fellow ";
+                }
+                message += GetRoleColoredName(roleAppearance);
+                if (rolesAndNames[roleAppearance].Count() != 1) { message += "s"; }
+                message += ": ";
+                string players = string.Join(", ", rolesAndNames[roleAppearance]);
+                int seps = Regex.Matches(players, ", ").Count;
+                if (seps == 1)
+                {
+                    players.Replace(", ", " and ");
+                }
+                else if (seps > 1)
+                {
+                    int last = players.LastIndexOf(", ");
+                    players = players.Remove(last, ", ".Length).Insert(last, ", and ");
+                }
+                message += players + ".";
+
+
+
+                MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(
+                    ChatName,
+                    -1,
+                    message);
+            }
+        }
+
+        public static string GetPlayerColorNameAsColoredString(Player player)
+        {
+            return player is null ? "" : $"<b><color=#{ColorUtility.ToHtmlStringRGB(player.GetTeamColors().color)}>{ExtraPlayerSkins.GetTeamColorName(player.colorID())}</color></b>";
+        }
+
+        public static string GetRoleColoredName(TRT_Role_Appearance roleAppearance)
+        {
+            return roleAppearance is null ? "" : $"<b><color={GetRoleColorHTML(roleAppearance)}>{roleAppearance.Name}</color></b>";
+        }
+
+        public static string GetRoleColorHTML(TRT_Role_Appearance roleAppearance)
+        {
+            return roleAppearance is null ? "white" : "#" + ColorUtility.ToHtmlStringRGB(roleAppearance.Color);
         }
 
         public static string GetWinningRoleID(Player[] playersRemaining)

@@ -33,7 +33,8 @@ namespace GameModeCollection.GameModeHandlers
                 { "descriptionFontSize", 30},
                 { "videoURL", "https://media.giphy.com/media/lcngwaPCkqFbfhzrsH/giphy.mp4"},
                 {GameModeCollection.ReviveOnCardAddKey, false }, // do not revive players when they get a card
-                {GameModeCollection.CreatePlayerCorpsesKey, true } // do not hide players when they die, instead make a corpse
+                {GameModeCollection.CreatePlayerCorpsesKey, true }, // do not hide players when they die, instead make a corpse
+                {GameModeCollection.SeparateChatForDeadPlayersKey, true } // dead players have a separate chat
             };
         }
         public override int[] GetGameWinners()

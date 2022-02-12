@@ -21,7 +21,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Zombie : Traitor
     {
-        new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Zombie", 'Z', GM_TRT.ZombieColor);
+        new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Traitor, "Zombie", 'Z', GM_TRT.ZombieColor);
 
         public override TRT_Role_Appearance Appearance => Zombie.RoleAppearance;
 

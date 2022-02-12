@@ -21,7 +21,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Phantom : Innocent
     {
-        new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance("Phantom", 'P', GM_TRT.PhantomColor);
+        new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Phantom", 'P', GM_TRT.PhantomColor);
 
         public override TRT_Role_Appearance Appearance => Phantom.RoleAppearance;
 

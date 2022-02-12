@@ -24,6 +24,7 @@ namespace GameModeCollection.Extensions
         public static void PlayerCorpse(this HealthHandler instance, bool revive = false)
         {
             if (instance == null) { return; }
+            instance.gameObject?.GetComponent<Holding>()?.holdable?.gameObject?.SetActive(revive);
             instance.gameObject?.transform?.Find("WobbleObjects")?.gameObject?.SetActive(revive);
             instance.gameObject?.transform?.Find("Limbs")?.gameObject?.SetActive(revive);
             TrySetEnabled<GeneralInput>(instance, revive);
