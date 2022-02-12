@@ -2,6 +2,7 @@
 using Photon.Pun;
 namespace GameModeCollection.Patches
 {
+    /*
     [HarmonyPatch(typeof(DevConsole), "RPCA_SendChat")]
     [HarmonyPriority(Priority.First)]
     [HarmonyBefore("com.bosssloth.rounds.BetterChat")]
@@ -17,5 +18,5 @@ namespace GameModeCollection.Patches
             }
             return true;
         }
-    }
+    }*/
 }

@@ -6,6 +6,7 @@ using System.Reflection.Emit;
 using System.Linq;
 using System.Collections.Generic;
 using GameModeCollection.Extensions;
+using GameModeCollection.GameModes.TRT;
 
 namespace GameModeCollection.Patches
 {
@@ -47,6 +48,18 @@ namespace GameModeCollection.Patches
             if (isFullRevive && GameModeCollection.CreatePlayerCorpses)
             {
                 __instance.ReviveCorpse();
+            }
+        }
+        static void Postfix(HealthHandler __instance, bool isFullRevive)
+        {
+            if (isFullRevive)
+            {
+                ((CharacterData)__instance.GetFieldValue("data")).lastDamagedPlayer = null;
+                ((CharacterData)__instance.GetFieldValue("data")).lastSourceOfDamage = null;
+                if (__instance.GetComponent<TRT_Corpse>() != null)
+                {
+                    UnityEngine.GameObject.Destroy(__instance.GetComponent<TRT_Corpse>());
+                }
             }
         }
     }

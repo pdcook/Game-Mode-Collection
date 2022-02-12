@@ -36,7 +36,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override void OnInteractWithCorpse(TRT_Corpse corpse)
         {
-            GM_TRT.instance.IdentifyBody(corpse, true);
+            corpse.SearchBody(this.GetComponent<Player>(), true);
         }
     }
 }

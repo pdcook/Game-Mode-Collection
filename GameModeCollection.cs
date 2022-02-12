@@ -93,6 +93,7 @@ namespace GameModeCollection
         public static string ReviveOnCardAddKey => GetConfigKey("reviveOnCardAdd");
         public static string CreatePlayerCorpsesKey => GetConfigKey("createPlayerCorpses");
         public static string SeparateChatForDeadPlayersKey => GetConfigKey("separateChatForDeadPlayers");
+        public static string UsePlayerColorsInsteadOfNamesInChatKey => GetConfigKey("usePlayerColorsInsteadOfNamesInChat");
 
         public const string SecretDeadPlayerChatKey = "l1KFFV3CkQ#8J#Tm"; // this is such a stupid way of doing this
 
@@ -197,6 +198,25 @@ namespace GameModeCollection
                     return false;
                 }
                 if (GameModeManager.CurrentHandler.Settings.TryGetValue(SeparateChatForDeadPlayersKey, out object sep) && (bool)sep)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+        public static bool UsePlayerColorsInsteadOfNamesInChat
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(UsePlayerColorsInsteadOfNamesInChatKey, out object use) && (bool)use)
                 {
                     return true;
                 }

@@ -14,6 +14,7 @@ using Sonigon;
 using GameModeCollection.Utils;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.GameModeHandlers;
 
 namespace GameModeCollection.GameModes
 {
@@ -49,17 +50,17 @@ namespace GameModeCollection.GameModes
     /// - [ ]   --> until they die and enter spectator mode
     /// - [~] Players can have a max of one card
     /// - [X] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
-    /// - [ ] Dead players have a separate text chat
+    /// - [~] Dead players have a separate text chat
     /// - [ ] Players can discard cards by clicking on the square in the card bar
-    /// - [ ] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
-    /// - [ ] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
-    /// - [ ] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
+    /// - [X] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
+    /// - [X] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
+    /// - [~] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
     /// - [ ] custom maps specifically for this mode, not available in normal rotation - can utilize either custom map objects or spawn points for weapon/item spawns
     /// 
     /// Roles:
     /// - Innocent
     /// - Traitor (red name, sees other traitors' names as red with a "[T]" in front, notified of other traitors and jesters at start of round) [can have two cards instead of one]
-    /// - Detective (blue name visible to everyone with a "[D]" in front)
+    /// - Detective (blue name visible to everyone with a "[D]" in front, spawns with HealingField, or Huge if healing field is unavailable)
     /// Roles for more than four players:
     /// - Jester (own team) (pink name, visible to the traitors only with a "[J]" in front) [deals no damage]
     /// - Glitch (is innocent, but appears as a traitor to the traitors)
@@ -131,12 +132,6 @@ namespace GameModeCollection.GameModes
             PlayerAssigner.instance.maxPlayers = RWF.RWFMod.instance.MaxPlayers;
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitEnd);
-        }
-
-        public void IdentifyBody(TRT_Corpse corpse, bool detective)
-        {
-            // ID a body
-
         }
 
         private void RandomizePlayerSkins()
@@ -281,6 +276,11 @@ namespace GameModeCollection.GameModes
 
         private void PlayerCorpse(Player player)
         {
+            if (player.GetComponent<TRT_Corpse>() != null)
+            {
+                DestroyImmediate(player.GetComponent<TRT_Corpse>());
+            }
+            player.gameObject.AddComponent<TRT_Corpse>();
         }
         private IEnumerator DropCardsOnDeath(Player player, CardInfo[] cardsToDrop)
         {

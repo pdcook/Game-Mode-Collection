@@ -1,4 +1,5 @@
 ﻿using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.GameModeHandlers;
 using GameModeCollection.Utils;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
@@ -17,8 +18,6 @@ namespace GameModeCollection.GameModes.TRT
 {
     public static class RoleManager
     {
-
-        public const string ChatName = "<b>[TRT]</b>";
 
         private static bool inited = false;
         private static Dictionary<string, IRoleHandler> RoleHandlers = new Dictionary<string, IRoleHandler>() { };
@@ -204,10 +203,7 @@ namespace GameModeCollection.GameModes.TRT
                 RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
             });
             string playerRoleName = GetRoleColoredName(role.Appearance);
-            MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(
-                    ChatName,
-                    -1,
-                    $"You are {GetPlayerColorNameAsColoredString(player)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(role.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.");
+            TRTHandler.SendChat(null, $"You are {GetPlayerColorNameAsColoredString(player)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(role.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
             // now do any necessary reporting
             Dictionary<TRT_Role_Appearance, List<string>> rolesAndNames = new Dictionary<TRT_Role_Appearance, List<string>>();
             foreach (Player otherPlayer in PlayerManager.instance.players)
@@ -248,12 +244,7 @@ namespace GameModeCollection.GameModes.TRT
                 }
                 message += players + ".";
 
-
-
-                MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(
-                    ChatName,
-                    -1,
-                    message);
+                TRTHandler.SendChat(null, message, true);
             }
         }
 
