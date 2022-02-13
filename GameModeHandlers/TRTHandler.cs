@@ -90,6 +90,11 @@ namespace GameModeCollection.GameModeHandlers
 
         public override void PlayerDied(Player player, int playersAlive)
         {
+            Player killingPlayer = player.data.lastSourceOfDamage;
+            killingPlayer?.GetComponent<ITRT_Role>()?.OnKilledPlayer(player);
+
+            player.GetComponent<ITRT_Role>()?.OnKilledByPlayer(killingPlayer);
+
             this.GameMode.PlayerDied(player, playersAlive);
         }
         public override void StartGame()
@@ -250,7 +255,7 @@ namespace GameModeCollection.GameModeHandlers
                 }
             }
         }
-        private static string GetPlayerColorNameAsColoredString(Player player)
+        public static string GetPlayerColorNameAsColoredString(Player player)
         {
             return player is null ? "" : $"<b><color=#{ColorUtility.ToHtmlStringRGB(player.GetTeamColors().color)}>{ExtraPlayerSkins.GetTeamColorName(player.colorID())}</color></b>";
         }

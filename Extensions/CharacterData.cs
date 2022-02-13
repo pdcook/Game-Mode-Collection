@@ -6,6 +6,7 @@ namespace GameModeCollection.Extensions
     public class CharacterDataAdditionalData
     {
         public int maxAllowedCards = int.MaxValue;
+        public float TRT_Karma = 1f;
     }
     public static class CharacterDataExtensions
     {
@@ -21,6 +22,14 @@ namespace GameModeCollection.Extensions
         public static bool CanHaveMoreCards(this CharacterData instance)
         {
             return instance.currentCards.Count() < instance.GetData().maxAllowedCards;
+        }
+        public static void TRT_ResetKarma(this CharacterData instance)
+        {
+            instance.GetData().TRT_Karma = 1f;
+        }
+        public static void TRT_ChangeKarma(this CharacterData instance, float amount_to_add, float minimum = 0f)
+        {
+            instance.GetData().TRT_Karma = UnityEngine.Mathf.Clamp(instance.GetData().TRT_Karma + amount_to_add, minimum, 1f);
         }
     }
 }

@@ -3,6 +3,9 @@ using UnityEngine;
 using Photon.Pun;
 using Sonigon;
 using System.Collections;
+using UnboundLib.GameModes;
+using GameModeCollection.GameModeHandlers;
+using GameModeCollection.GameModes.TRT;
 
 namespace GameModeCollection.Objects
 {
@@ -35,6 +38,13 @@ namespace GameModeCollection.Objects
 
         public override void TakeDamage(Vector2 damage, Vector2 damagePosition, Color dmgColor, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true, bool ignoreBlock = false)
         {
+            /// Specifically for TRT
+            if (GameModeManager.CurrentHandlerID == TRTHandler.GameModeID && !(damagingPlayer?.GetComponent<ITRT_Role>()?.CanDealDamage ?? true))
+            {
+                damage = Vector2.zero;
+            }
+            ///
+
             this.Health.TakeDamage(damage, damagingPlayer);
             foreach (PlayerSkinParticle skin in this.GetComponentsInChildren<PlayerSkinParticle>())
             {

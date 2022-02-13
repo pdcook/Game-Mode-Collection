@@ -1,18 +1,55 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 using UnboundLib;
+using UnboundLib.GameModes;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Linq;
 using System.Collections.Generic;
 using GameModeCollection.Extensions;
+using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes.TRT;
+using GameModeCollection.GameModes.TRT.Roles;
 
 namespace GameModeCollection.Patches
 {
     [HarmonyPriority(Priority.First)]
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
-    class HealthHandlerPatchDoDamage
+    class HealthHandler_Patch_DoDamage_TRT_Assassin
+    {
+        // prefix for the assassin role in TRT
+        private static void Prefix(HealthHandler __instance, ref Vector2 damage, Player damagingPlayer = null)
+        {
+            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer?.GetComponent<Assassin>() is null) { return; }
+
+            if (damagingPlayer.GetComponent<Assassin>().Target?.playerID == __instance?.GetComponent<Player>()?.playerID)
+            {
+                damage = Assassin.TargetMultiplier * damage;
+            }
+            else
+            {
+                damage = Assassin.NonTargetMultiplier * damage;
+            }
+        }
+    }
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
+    class HealthHandler_Patch_DoDamage_TRT_NoDamage
+    {
+        // patch for TRT roles that cannot deal damage
+        private static void Prefix(ref Vector2 damage, Player damagingPlayer = null)
+        {
+            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer?.GetComponent<ITRT_Role>() is null) { return; }
+
+            if (!damagingPlayer.GetComponent<ITRT_Role>().CanDealDamage)
+            {
+                damage = Vector2.zero;
+            }
+        }
+    }
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
+    class HealthHandlerPatchDoDamage_Friendly_Self_Enemy_Damage
     {
         // prefix to disable damage for friendly fire and self damage
         private static bool Prefix(HealthHandler __instance, Vector2 damage, Vector2 position, Color blinkColor, GameObject damagingWeapon = null, Player damagingPlayer = null, bool healthRemoval = false, bool lethal = true, bool ignoreBlock = false)

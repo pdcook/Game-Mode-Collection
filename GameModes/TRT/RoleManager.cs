@@ -115,7 +115,8 @@ namespace GameModeCollection.GameModes.TRT
                 while (iter > 0 && lineup.Select(r => r.RoleIDsToOverwrite).SelectMany(o => o).Distinct().Intersect(lineup.Select(h => h.RoleID)).Any())
                 {
                     iter--;
-                    IRoleHandler replacer = lineup.First(r => lineup.Select(h => h.RoleID).Intersect(r.RoleIDsToOverwrite).Any());
+                    IRoleHandler replacer = lineup.FirstOrDefault(r => lineup.Select(h => h.RoleID).Intersect(r.RoleIDsToOverwrite).Any());
+                    if (replacer is null) { break; }
 
                     lineup = lineup.Select(r => replacer.RoleIDsToOverwrite.Contains(r.RoleID) ? replacer : r).ToList();
                 }
@@ -138,7 +139,7 @@ namespace GameModeCollection.GameModes.TRT
             while ((float)lineup.Count(r => r.RoleAlignment == Alignment.Innocent)/(float)lineup.Count() < 0.625f)
             {
                 GameModeCollection.Log("[RoleManager] Not enough innocents. Correcting...");
-                int i = lineup.LastIndexOf(lineup.Last(r => r.RoleAlignment == Alignment.Traitor));
+                int i = lineup.LastIndexOf(lineup.LastOrDefault(r => r.RoleAlignment != Alignment.Innocent));
                 if (i == -1) { break; }
                 lineup[i] = DrawRandomRole(RoleHandlers.Values.Where(r => r.RoleAlignment == Alignment.Innocent && r.MinNumberOfPlayersForRole <= N && r.MaxNumberOfPlayersWithRole > lineup.Count(r2 => r2 == r)).ToList());
             }
@@ -171,6 +172,13 @@ namespace GameModeCollection.GameModes.TRT
                 nameText.color = role_Appearance.Color;
                 nameText.fontStyle = FontStyles.Bold;
             }
+        }
+        public static Alignment? GetPlayerAlignmentAsSeenByOther(Player player, Player other)
+        {
+            ITRT_Role other_role = GetPlayerRole(other);
+            ITRT_Role player_role = GetPlayerRole(player);
+            if (other_role is null || player_role is null) { return null; }
+            return player_role.AppearToAlignment(other_role.Alignment).Alignment;
         }
         public static ITRT_Role GetPlayerRole(Player player)
         {
@@ -263,9 +271,10 @@ namespace GameModeCollection.GameModes.TRT
             return roleAppearance is null ? "white" : "#" + ColorUtility.ToHtmlStringRGB(roleAppearance.Color);
         }
 
-        public static string GetWinningRoleID(Player[] playersRemaining)
+        public static string GetWinningRoleID(Player[] players)
         {
-            Player[] winners = PlayerManager.instance.players.Where(p => GetPlayerRole(p)?.WinConditionMet(playersRemaining) ?? false).ToArray();
+            if (players == null) { return null; }
+            Player[] winners = PlayerManager.instance.players.Where(p => GetPlayerRole(p)?.WinConditionMet(players.Where(p_ => !p_.data.dead).ToArray()) ?? false).ToArray();
             if (winners is null || winners.Count() == 0)
             {
                 return null;
