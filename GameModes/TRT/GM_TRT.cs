@@ -42,7 +42,7 @@ namespace GameModeCollection.GameModes
     /// - [X] Player nicknames are removed entirely (triple sorry)
     /// - [X] Players are completely hidden during the skin randomization time
     /// - [ ] Local zoom is ON. optionally (how?) with the dark shader
-    /// - [ ] RDM is punished (innocent killing innocent) somehow
+    /// - [X] RDM is punished (innocent killing innocent) somehow
     /// - [ ] Clock in upper left corner (with round counter) that counts down. when the timer reaches 0, it turns red, signaling haste mode
     /// - [ ]   --> Figure out what to do for Haste Mode
     /// - [ ] below the clock (also with the round counter) is the player's current role
@@ -64,14 +64,14 @@ namespace GameModeCollection.GameModes
     /// Roles for more than four players:
     /// - [X] Jester (own team) (pink name, visible to the traitors only with a "[J]" in front) [deals no damage]
     /// - [X] Glitch (is innocent, but appears as a traitor to the traitors)
-    /// - [ ] Mercenary (innocent) [can have two cards instead of one]
+    /// - [X] Mercenary (innocent) [can have two cards instead of one]
     /// - [ ] Phantom (innocent) [haunts their killer with a smoke trail in their color. when their killer dies, they revive with 50% health]
     /// - [ ] Killer (own team, can only ever be one at a time, traitors are notified that there is a killer) [has 150% health, starts with a random card (respecting rarity) and can have up to four cards (two more than traitors)]
-    /// - [ ] Hypnotist (traitor) [the first corpse they interact with will respawn as a traitor]
-    /// - [ ] Zombie (has a chance to spawn instead of all traitors) (cannot have ANY cards) [players killed by any zombie will immediately revive as zombies]
+    /// - [X] Hypnotist (traitor) [the first corpse they interact2 with will respawn as a traitor]
+    /// - [X] Zombie (has a chance to spawn instead of all traitors) (cannot have ANY cards) [players killed by any zombie will immediately revive as zombies]
     /// - [ ] Swapper ("innocent") (appears to traitors as a jester) [cannot deal damage, when killed, their attacker dies instead and they instantly respawn with the role of the attacker, when the attacker's body is searched they report as a swapper]
     /// - [X] Assassin (traitor) [gets a "target" (never detective unless that is the only option) to which they deal double damage, and half damage to all other players. killing the wrong player results in them dealing half damage for the rest of the round]
-    /// - [ ] Vampire (traitor) [can block while on top of a dead body to eat it (completely destroying the body) and healing 50 HP, though it freezes them in place for a few seconds]
+    /// - [ ] Vampire (traitor) [can interact2 with a dead body to eat it (completely destroying the body) and healing 50 HP, though it freezes them in place for a few seconds]
     /// </summary>
     public class GM_TRT : MonoBehaviour
     {
@@ -83,6 +83,11 @@ namespace GameModeCollection.GameModes
         private const float CardRandomVelMin = 3f;
         private const float CardAngularVelMult = 10f;
         private const float CardHealth = 100f;
+
+        public const float KarmaPenaltyPerRDM = 0.1f; // you lose 0.1 (10%) karma for each RDM
+        public const float KarmaRewardPerPoint = 0.1f; // you gain 0.1 (10%) karma for each clean point
+        public const float MinimumKarma = 0.1f; // the minimum karma is 0.1 (10%)
+        public const float KarmaFractionForDeath = 0.25f; // if you are dead at the end of a point, you only gain 25% of the 10% you would usuall gain
 
         public const int BaseMaxCards = 1;
         public const float BaseHealth = 100f;
@@ -146,7 +151,7 @@ namespace GameModeCollection.GameModes
         private void RandomizePlayerFaces()
         {
             if (!PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode) { return; }
-            foreach (Player player in PlayerManager.instance.players)
+            PlayerManager.instance.ForEachPlayer(player =>
             {
                 player.data.view.RPC("RPCA_SetFace", RpcTarget.All, new object[]
                 {
@@ -159,7 +164,7 @@ namespace GameModeCollection.GameModes
                     UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.accessories.Count()),
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1)
                 });
-            }
+            });
         }
         [UnboundRPC]
         public static void RPC_SyncBattleStart(int requestingPlayer, int timeOfBattleStart, Dictionary<int, string> rolesToAssign)
@@ -241,29 +246,42 @@ namespace GameModeCollection.GameModes
         }
         private void AssignRoles()
         {
-            foreach (Player player in PlayerManager.instance.players)
+            PlayerManager.instance.ForEachPlayer(player =>
             {
                 GameModeCollection.Log($"PLAYER {player.playerID} | {this.RoleIDsToAssign[player.playerID]}");
                 RoleManager.GetHandler(this.RoleIDsToAssign[player.playerID]).AddRoleToPlayer(player);
-            }
+            });
         }
         private IEnumerator ClearRoles()
         {
-            foreach (Player player in PlayerManager.instance.players)
+            PlayerManager.instance.ForEachPlayer(player =>
             {
                 foreach (var role in player.gameObject.GetComponentsInChildren<TRT_Role>())
                 {
                     UnityEngine.GameObject.Destroy(role);
                 }
-            }
+            });
 
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
         }
         private IEnumerator ClearRolesAndVisuals()
         {
+            // apply karma changes before clearing roles
+            this.UpdateKarma();
+            yield return new WaitForEndOfFrame();
             yield return this.ClearRoles();
-            RoleManager.DoRoleDisplay(PlayerManager.instance.players.Find(p => p.data.view.IsMine));
+            PlayerManager.instance.ForEachPlayer(p => RoleManager.ClearRoleDisplay(p));
+        }
+        private void UpdateKarma()
+        {
+            PlayerManager.instance.ForEachPlayer(player =>
+            {
+                ITRT_Role role = RoleManager.GetPlayerRole(player);
+                if (role is null) { return; }
+                float change = role.KarmaChange == 0f ? (player.data.dead ? 0.25f : 1f) * GM_TRT.KarmaRewardPerPoint : role.KarmaChange;
+                player.data.TRT_ChangeKarma(change, GM_TRT.MinimumKarma);
+            });
         }
 
         [UnboundRPC]
@@ -301,6 +319,9 @@ namespace GameModeCollection.GameModes
         public void PlayerJoined(Player player)
         {
             // completely replace original, since we don't need teamPoints or teamRounds
+
+            // reset Karma
+            player.data.TRT_ResetKarma();
         }
 
         public void PlayerDied(Player killedPlayer, int teamsAlive)
@@ -340,10 +361,7 @@ namespace GameModeCollection.GameModes
                 return;
             }
 
-            foreach (Player player in PlayerManager.instance.players)
-            {
-                this.PlayerJoined(player);
-            }
+            PlayerManager.instance.ForEachPlayer(this.PlayerJoined);
 
             GameManager.instance.isPlaying = true;
             this.StartCoroutine(this.DoStartGame());
@@ -374,6 +392,9 @@ namespace GameModeCollection.GameModes
             this.RandomizePlayerFaces();
             yield return this.ClearRolesAndVisuals();
 
+            // reset karma
+            PlayerManager.instance.ResetKarma();
+
             TimeHandler.instance.DoSpeedUp();
 
             yield return new WaitForSecondsRealtime(1f);
@@ -394,6 +415,9 @@ namespace GameModeCollection.GameModes
 
             // reset players completely
             PlayerManager.instance.InvokeMethod("ResetCharacters");
+
+            // players get karma reset on new round
+            PlayerManager.instance.ResetKarma();
 
             // Wait for MapManager to set all players to playing after map transition
             while (PlayerManager.instance.players.ToList().Any(p => !(bool)p.data.isPlaying))
@@ -599,6 +623,9 @@ namespace GameModeCollection.GameModes
         {
             UIHandler.instance.StopScreenTextLoop();
             PlayerManager.instance.InvokeMethod("ResetCharacters");
+
+            // reset karma
+            PlayerManager.instance.ResetKarma();
 
             this.pointsPlayedOnCurrentMap = 0;
             this.roundsPlayed = 0;

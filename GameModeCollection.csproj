@@ -137,6 +137,7 @@
     <Compile Include="Extensions\HealthHandler.cs" />
     <Compile Include="Extensions\MapManager.cs" />
     <Compile Include="Extensions\PlayerActions.cs" />
+    <Compile Include="Extensions\PlayerManager.cs" />
     <Compile Include="Extensions\PointVisualizer.cs" />
     <Compile Include="Extensions\RoundCounter.cs" />
     <Compile Include="Extensions\UIHandler.cs" />

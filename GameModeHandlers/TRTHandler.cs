@@ -259,12 +259,13 @@ namespace GameModeCollection.GameModeHandlers
         {
             return player is null ? "" : $"<b><color=#{ColorUtility.ToHtmlStringRGB(player.GetTeamColors().color)}>{ExtraPlayerSkins.GetTeamColorName(player.colorID())}</color></b>";
         }
-        public static void TryInspectBody(Player player)
+        // inspect or interact with a body
+        public static void TryInspectBody(Player player, bool interact)
         {
             var nearest = GetNearestVisiblePlayer(player, false, MaxInspectDistance);
             if (nearest != null && nearest.GetComponentInChildren<TRT_Corpse>() != null)
             {
-                player.GetComponentInChildren<ITRT_Role>()?.OnInteractWithCorpse(nearest.GetComponentInChildren<TRT_Corpse>());
+                player.GetComponentInChildren<ITRT_Role>()?.OnInteractWithCorpse(nearest.GetComponentInChildren<TRT_Corpse>(), interact);
             }
         }
         public static void ImWith(Player player)

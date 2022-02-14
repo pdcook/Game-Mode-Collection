@@ -9,6 +9,7 @@ namespace GameModeCollection.Extensions
     public class PlayerActionsAdditionalData
     {
         public PlayerAction trt_inspect_body; // inspect a body if near enough
+        public PlayerAction trt_interact_with_body; // interact with a body if near enough
         public PlayerAction trt_radio_suspect; // reports "<playerColor> is suspicious."
         public PlayerAction trt_radio_imwith; // reports "I'm with <playerColor>."
         public PlayerAction trt_radio_traitor; // reports "<playerColor> is a traitor!"

@@ -25,9 +25,16 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override TRT_Role_Appearance Appearance => Vampire.RoleAppearance;
 
-        public override void OnInteractWithCorpse(TRT_Corpse corpse)
+        public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
         {
-            // do vampire stuff
+            if (interact)
+            {
+                // do vampire stuff
+            }
+            else
+            {
+                corpse.SearchBody(this.GetComponent<Player>(), false);
+            }
         }
     }
 }

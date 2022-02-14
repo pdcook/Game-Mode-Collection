@@ -23,6 +23,10 @@ namespace GameModeCollection.Extensions
         {
             return instance.currentCards.Count() < instance.GetData().maxAllowedCards;
         }
+        public static float TRT_Karma(this CharacterData instance)
+        {
+            return instance.GetData().TRT_Karma; 
+        }
         public static void TRT_ResetKarma(this CharacterData instance)
         {
             instance.GetData().TRT_Karma = 1f;

@@ -37,6 +37,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override bool CanDealDamage => true;
 
+        public override float KarmaChange { get; protected set; } = 0f;
+
         public override bool AlertAlignment(Alignment alignment)
         {
             return false;
@@ -51,7 +53,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
         }
 
-        public override void OnInteractWithCorpse(TRT_Corpse corpse)
+        public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
         {
             corpse.SearchBody(this.GetComponent<Player>(), false);
         }
@@ -63,9 +65,9 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override void OnKilledPlayer(Player killedPlayer)
         {
             // punish RDM
-            if (killedPlayer?.GetComponent<TRT_Role>()?.Alignment == Alignment.Innocent)
+            if (killedPlayer?.GetComponent<TRT_Role>()?.Alignment == this.Alignment && killedPlayer?.playerID != this.GetComponent<Player>()?.playerID)
             {
-
+                KarmaChange -= GM_TRT.KarmaPenaltyPerRDM;
             }
         }
 

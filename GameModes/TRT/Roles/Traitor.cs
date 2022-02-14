@@ -5,11 +5,13 @@ namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class TraitorRoleHandler : IRoleHandler
     {
+        public static string TraitorRoleName => Traitor.RoleAppearance.Name;
+        public static string TraitorRoleID = $"GM_TRT_{TraitorRoleName}";
         public Alignment RoleAlignment => Traitor.RoleAlignment;
         public string WinMessage => "TRAITORS WIN";
         public Color WinColor => Traitor.RoleAppearance.Color;
-        public string RoleName => Traitor.RoleAppearance.Name;
-        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public string RoleName => TraitorRoleName;
+        public string RoleID => TraitorRoleID;
         public int MinNumberOfPlayersForRole => 0;
         public int MinNumberOfPlayersWithRole => 1;
         public int MaxNumberOfPlayersWithRole => int.MaxValue;
@@ -36,6 +38,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override float BaseHealth => GM_TRT.BaseHealth;
 
         public override bool CanDealDamage => true;
+
+        public override float KarmaChange { get; protected set; } = 0f;
 
         public override bool AlertAlignment(Alignment alignment)
         {
@@ -75,7 +79,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
         }
 
-        public override void OnInteractWithCorpse(TRT_Corpse corpse)
+        public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
         {
             corpse.SearchBody(this.GetComponent<Player>(), false);
         }
@@ -86,6 +90,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override void OnKilledPlayer(Player killedPlayer)
         {
+            // punish RDM
+            if (killedPlayer?.GetComponent<TRT_Role>()?.Alignment == this.Alignment)
+            {
+                KarmaChange -= GM_TRT.KarmaPenaltyPerRDM;
+            }
         }
 
         public override bool WinConditionMet(Player[] playersRemaining)

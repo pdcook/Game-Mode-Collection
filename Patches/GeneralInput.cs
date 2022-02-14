@@ -14,7 +14,11 @@ namespace GameModeCollection.Patches
 
             if (__instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_inspect_body.WasPressed)
             {
-                TRTHandler.TryInspectBody(__instance.GetComponent<Player>());
+                TRTHandler.TryInspectBody(__instance.GetComponent<Player>(), false);
+            }
+            if (__instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_interact_with_body.WasPressed)
+            {
+                TRTHandler.TryInspectBody(__instance.GetComponent<Player>(), true);
             }
             if (__instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_radio_imwith.WasPressed)
             {

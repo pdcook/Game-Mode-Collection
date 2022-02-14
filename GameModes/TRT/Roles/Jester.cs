@@ -36,6 +36,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override float BaseHealth => GM_TRT.BaseHealth;
 
         public override bool CanDealDamage => false;
+        public override float KarmaChange { get; protected set; } = 0f;
 
         public override bool AlertAlignment(Alignment alignment)
         {
@@ -75,7 +76,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
         }
 
-        public override void OnInteractWithCorpse(TRT_Corpse corpse)
+        public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
         {
             corpse.SearchBody(this.GetComponent<Player>(), false);
         }
@@ -91,6 +92,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override void OnKilledPlayer(Player killedPlayer)
         {
+            // punish RDM, although this shouldn't be possible since the Jester/Swapper can't deal damage
+            if (killedPlayer?.GetComponent<TRT_Role>()?.Alignment == this.Alignment && killedPlayer?.playerID != this.GetComponent<Player>()?.playerID)
+            {
+                KarmaChange -= GM_TRT.KarmaPenaltyPerRDM;
+            }
         }
 
         public override bool WinConditionMet(Player[] playersRemaining)

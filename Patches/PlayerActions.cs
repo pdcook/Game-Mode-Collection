@@ -17,6 +17,9 @@ namespace GameModeCollection.Patches
             __instance.GetAdditionalData().trt_inspect_body = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Inspect Body (TRT)" });
+            __instance.GetAdditionalData().trt_interact_with_body = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
+                                    BindingFlags.Instance | BindingFlags.InvokeMethod |
+                                    BindingFlags.NonPublic, null, __instance, new object[] { "Interact with Body (TRT)" });
             __instance.GetAdditionalData().trt_radio_imwith = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Radio \"I'm with ___.\" (TRT)" });
@@ -40,6 +43,8 @@ namespace GameModeCollection.Patches
         {
             __result.GetAdditionalData().trt_inspect_body.AddDefaultBinding(InputControlType.RightStickButton);
 
+            __result.GetAdditionalData().trt_interact_with_body.AddDefaultBinding(InputControlType.LeftStickButton);
+
             __result.GetAdditionalData().trt_radio_imwith.AddDefaultBinding(InputControlType.DPadLeft);
 
             __result.GetAdditionalData().trt_radio_suspect.AddDefaultBinding(InputControlType.DPadRight);
@@ -55,8 +60,11 @@ namespace GameModeCollection.Patches
     {
         private static void Postfix(ref PlayerActions __result)
         {
+            __result.GetAdditionalData().trt_inspect_body.AddDefaultBinding(Key.Key5);
             __result.GetAdditionalData().trt_inspect_body.AddDefaultBinding(Key.E);
-            __result.GetAdditionalData().trt_inspect_body.AddDefaultBinding(Key.F);
+
+            __result.GetAdditionalData().trt_interact_with_body.AddDefaultBinding(Key.Tilde);
+            __result.GetAdditionalData().trt_interact_with_body.AddDefaultBinding(Key.F);
 
             __result.GetAdditionalData().trt_radio_imwith.AddDefaultBinding(Key.Key1);
             __result.GetAdditionalData().trt_radio_imwith.AddDefaultBinding(Key.C);

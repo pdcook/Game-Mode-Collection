@@ -150,8 +150,26 @@ namespace GameModeCollection.GameModes.TRT
         {
             return RolesToDrawFrom.RandomElementByWeight(r => r.Rarity);
         }
+        private static string GetReputability(Player player)
+        {
+            switch (player.data.TRT_Karma())
+            {
+                case float k when k >= 0.9f:
+                    return GetColoredString("[Reputable]", new Color32(0, 200, 0, 255));
+                case float k when (k < 0.9f && k >= 0.8f):
+                    return GetColoredString("[Trigger Happy]", new Color32(129, 199, 0, 255));
+                case float k when (k < 0.8f && k >= 0.65f):
+                    return GetColoredString("[Crude]", new Color32(199, 196, 0, 255));
+                case float k when (k < 0.65f && k >= 0.5f):
+                    return GetColoredString("[Dangerous]", new Color32(199, 146, 0, 255));
+                case float k when k < 0.5f:
+                    return GetColoredString("[Liability]", new Color32(200, 0, 0, 255));
+                default:
+                    return "";
+            }
+        }
 
-        private static void SetPlayerNameRoleDisplay(Player player, TRT_Role_Appearance role_Appearance, bool hideNickName)
+        private static void SetPlayerNameRoleDisplay(Player player, TRT_Role_Appearance role_Appearance, bool hideNickName, bool clear = false)
         {
             TextMeshProUGUI nameText = player?.GetComponentInChildren<PlayerName>()?.GetComponent<TextMeshProUGUI>();
             if (nameText is null)
@@ -160,7 +178,12 @@ namespace GameModeCollection.GameModes.TRT
                 return;
             }
             string nickName = hideNickName ? "" : (player.GetComponent<PhotonView>()?.Owner?.NickName ?? "");
-            if (role_Appearance is null)
+            if (!clear)
+            {
+                string reputability = GetReputability(player);
+                if (reputability != "") { nickName = reputability + (nickName == "" ? "" : "\n") + nickName; }
+            }
+            if (clear || role_Appearance is null)
             {
                 nameText.text = nickName;
                 nameText.color = new Color(0.6132f, 0.6132f, 0.6132f, 1f);
@@ -189,6 +212,81 @@ namespace GameModeCollection.GameModes.TRT
             return player.GetComponentInChildren<ITRT_Role>()?.Alignment;
         }
 
+        public static void ClearRoleDisplay(Player player, bool hideNickNames = true)
+        {
+            SetPlayerNameRoleDisplay(player, null, hideNickNames, true); 
+        }
+        /// <summary>
+        /// Do role display from the perspective of the local player for a specific player only
+        /// </summary>
+        /// <param name="specificPlayer"></param>
+        /// <param name="hideNickNames"></param>
+        public static void DoRoleDisplaySpecific(Player specificPlayer, bool hideNickNames = true)
+        {
+            if (specificPlayer is null) { return; }
+            ITRT_Role specificRole = GetPlayerRole(specificPlayer);
+            Player localPlayer = PlayerManager.instance.players.Find(p => p.data.view.IsMine);
+            if (localPlayer.playerID == specificPlayer.playerID)
+            {
+                // always show the player their own role
+                SetPlayerNameRoleDisplay(specificPlayer, specificRole?.Appearance, hideNickNames);
+            }
+            else
+            {
+                ITRT_Role localRole = GetPlayerRole(localPlayer);
+                SetPlayerNameRoleDisplay(specificPlayer, localRole?.Alignment is null ? null : GetPlayerRole(specificPlayer)?.AppearToAlignment(localRole.Alignment), hideNickNames);
+            }
+            if (specificRole is null || !specificPlayer.data.view.IsMine) { return; }
+            // to the specific player ONLY, do new display stuff
+            UIHandler.instance.DisplayRoundStartText(specificRole.Appearance.Name, specificRole.Appearance.Color, new Vector3(0.5f, 0.8f, 0f));
+            GameModeCollection.instance.ExecuteAfterSeconds(0.5f, () => {
+                RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
+            });
+            string playerRoleName = GetRoleColoredName(specificRole.Appearance);
+            TRTHandler.SendChat(null, $"You are {GetPlayerColorNameAsColoredString(specificPlayer)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(specificRole.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
+            // now do any necessary reporting
+            Dictionary<TRT_Role_Appearance, List<string>> rolesAndNames = new Dictionary<TRT_Role_Appearance, List<string>>();
+            foreach (Player otherPlayer in PlayerManager.instance.players)
+            {
+                if (otherPlayer.playerID == specificPlayer.playerID) { continue; }
+                if (!(GetPlayerRole(otherPlayer)?.AlertAlignment(specificRole.Alignment) ?? false)) { continue; }
+                TRT_Role_Appearance appearAs = GetPlayerRole(otherPlayer)?.AppearToAlignment(specificRole.Alignment);
+                if (appearAs is null) { continue; }
+
+                if (!rolesAndNames.ContainsKey(appearAs))
+                {
+                    rolesAndNames[appearAs] = new List<string>() { };
+                }
+
+                rolesAndNames[appearAs].Add(GetPlayerColorNameAsColoredString(otherPlayer));
+            }
+            foreach (TRT_Role_Appearance roleAppearance in rolesAndNames.Keys)
+            {
+                string message = "";
+                if (roleAppearance.Alignment == specificRole.Alignment)
+                {
+                    message += "Fellow ";
+                }
+                message += GetRoleColoredName(roleAppearance);
+                if (rolesAndNames[roleAppearance].Count() != 1) { message += "s"; }
+                message += ": ";
+                string players = string.Join(", ", rolesAndNames[roleAppearance]);
+                int seps = Regex.Matches(players, ", ").Count;
+                if (seps == 1)
+                {
+                    players.Replace(", ", " and ");
+                }
+                else if (seps > 1)
+                {
+                    int last = players.LastIndexOf(", ");
+                    players = players.Remove(last, ", ".Length).Insert(last, ", and ");
+                }
+                message += players + ".";
+
+                TRTHandler.SendChat(null, message, true);
+            }
+
+        }
         public static void DoRoleDisplay(Player player, bool hideNickNames = true)
         {
             if (player is null) { return; }
@@ -221,7 +319,6 @@ namespace GameModeCollection.GameModes.TRT
                 TRT_Role_Appearance appearAs = GetPlayerRole(otherPlayer)?.AppearToAlignment(role.Alignment);
                 if (appearAs is null) { continue; }
 
-                //string roleName = GetRoleColoredName(appearAs); 
                 if (!rolesAndNames.ContainsKey(appearAs))
                 {
                     rolesAndNames[appearAs] = new List<string>() { };
@@ -254,6 +351,12 @@ namespace GameModeCollection.GameModes.TRT
 
                 TRTHandler.SendChat(null, message, true);
             }
+        }
+        public static string GetColoredString(string str, Color color, bool bold = false)
+        {
+            string res = $"<color=#{ColorUtility.ToHtmlStringRGBA(color)}>{str}</color>";
+            if (bold) { res = $"<b>{res}</b>"; }
+            return res;
         }
 
         public static string GetPlayerColorNameAsColoredString(Player player)

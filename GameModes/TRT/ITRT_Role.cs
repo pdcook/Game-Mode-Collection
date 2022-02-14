@@ -37,6 +37,7 @@ namespace GameModeCollection.GameModes.TRT
         // TODO: add a postfix to CharacterStatModifiers.ConfigureMassAndSize to compensate for base health != 100f
         // this way, players can't tell someone is a certain role that has extra health
         bool CanDealDamage { get; }
+        float KarmaChange { get; }
 
         /// <summary>
         /// What role should this role appear as to a given alignment?
@@ -70,7 +71,12 @@ namespace GameModeCollection.GameModes.TRT
         void OnKilledPlayer(Player killedPlayer);
         void OnKilledByPlayer(Player killingPlayer);
 
-        void OnInteractWithCorpse(TRT_Corpse corpse);
+        /// <summary>
+        /// Action ran when a player interacts with or inspects a body
+        /// </summary>
+        /// <param name="corpse">The corpse the player is interacting/inspecting</param>
+        /// <param name="interact">Is the player trying to perform a role-specific action? For example: a vampire eating a body instead of inspecting it.</param>
+        void OnInteractWithCorpse(TRT_Corpse corpse, bool interact);
 
         void OnCorpseInteractedWith(Player player);
 

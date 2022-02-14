@@ -34,7 +34,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             return Detective.RoleAppearance;
         }
 
-        public override void OnInteractWithCorpse(TRT_Corpse corpse)
+        public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
         {
             corpse.SearchBody(this.GetComponent<Player>(), true);
         }

@@ -15,12 +15,24 @@ namespace GameModeCollection.Patches
 {
     [HarmonyPriority(Priority.First)]
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
+    class HealthHandler_Patch_DoDamage_TRT_Karma
+    {
+        // prefix for Karma in TRT 
+        private static void Prefix(HealthHandler __instance, ref Vector2 damage, Player damagingPlayer = null)
+        {
+            if (damagingPlayer?.data is null || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer.data.TRT_Karma() >= 1f || damagingPlayer.playerID == __instance.GetComponent<Player>()?.playerID) { return; }
+
+            damage = damagingPlayer.data.TRT_Karma() * damage;
+        }
+    }
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_Assassin
     {
         // prefix for the assassin role in TRT
         private static void Prefix(HealthHandler __instance, ref Vector2 damage, Player damagingPlayer = null)
         {
-            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer?.GetComponent<Assassin>() is null) { return; }
+            if (damagingPlayer is null || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer?.GetComponent<Assassin>() is null || damagingPlayer.playerID == __instance.GetComponent<Player>()?.playerID) { return; }
 
             if (damagingPlayer.GetComponent<Assassin>().Target?.playerID == __instance?.GetComponent<Player>()?.playerID)
             {
