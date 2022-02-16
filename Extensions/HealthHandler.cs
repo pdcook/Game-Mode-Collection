@@ -40,6 +40,13 @@ namespace GameModeCollection.Extensions
             }
         }
 
+        // overload for reviving with other than full health
+        public static void Revive(this HealthHandler instance, bool isFullRevive = true, float healthPerc = 1f)
+        {
+            instance.Revive(isFullRevive);
+            ((CharacterData)instance.GetFieldValue("data")).health *= healthPerc;
+        }
+
         private class Corpse : PlayerDoNotFollow
         {
             private const float AngularVelMult = 10f;

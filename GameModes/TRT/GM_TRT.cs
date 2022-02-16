@@ -260,6 +260,10 @@ namespace GameModeCollection.GameModes
                 {
                     UnityEngine.GameObject.Destroy(role);
                 }
+                foreach (var phantomHaunt in player.gameObject.GetComponentsInChildren<PhantomHaunt>())
+                {
+                    phantomHaunt?.DestroyNow();
+                }
             });
 
             yield return new WaitForEndOfFrame();
@@ -311,7 +315,7 @@ namespace GameModeCollection.GameModes
                                                     Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f)),
                                                     velocty + UnityEngine.Mathf.Clamp(CardRandomVelMult * velocty.magnitude, CardRandomVelMin, float.MaxValue) * new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)),
                                                     -CardAngularVelMult * velocty.x,
-                                                    CardHealth);
+                                                    CardHealth, true);
             }
             yield break;
         }
@@ -426,7 +430,7 @@ namespace GameModeCollection.GameModes
             }
 
             // TODO: REMOVE THIS
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
+            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f, requireInteract: true);
 
             yield return this.WaitForSyncUp();
 
@@ -460,7 +464,7 @@ namespace GameModeCollection.GameModes
             }
 
             // TODO: REMOVE THIS
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f);
+            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f, requireInteract: true);
 
             //PlayerManager.instance.SetPlayersSimulated(false);
             yield return this.WaitForSyncUp();

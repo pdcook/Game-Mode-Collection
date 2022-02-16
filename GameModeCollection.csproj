@@ -154,6 +154,7 @@
     <Compile Include="GameModes\GM_Dodgeball.cs" />
     <Compile Include="GameModes\TRT\ITRT_Role.cs" />
     <Compile Include="GameModes\TRT\IRoleHandler.cs" />
+    <Compile Include="GameModes\TRT\PhantomHaunt.cs" />
     <Compile Include="GameModes\TRT\RoleManager.cs" />
     <Compile Include="GameModes\TRT\Roles\Killer.cs" />
     <Compile Include="GameModes\TRT\Roles\Swapper.cs" />
@@ -194,6 +195,7 @@
     <Compile Include="Patches\HealthHandler.cs" />
     <Compile Include="Patches\PlayerActions.cs" />
     <Compile Include="Patches\PlayerCollision.cs" />
+    <Compile Include="Patches\PlayerFlyParticle.cs" />
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />
     <Compile Include="Patches\Thruster.cs" />

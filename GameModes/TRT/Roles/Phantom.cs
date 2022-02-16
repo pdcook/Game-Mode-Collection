@@ -1,5 +1,8 @@
 ﻿using UnboundLib;
 using UnityEngine;
+using Photon.Pun;
+using System.Linq;
+using GameModeCollection.GameModeHandlers;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class PhantomRoleHandler : IRoleHandler
@@ -21,13 +24,41 @@ namespace GameModeCollection.GameModes.TRT.Roles
     }
     public class Phantom : Innocent
     {
+        public const float ReviveWithHealthFrac = 0.5f;
+
         new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Phantom", 'P', GM_TRT.PhantomColor);
 
+        public bool CanHaunt { get; private set; } = true;
+
         public override TRT_Role_Appearance Appearance => Phantom.RoleAppearance;
+
+        protected override void Start()
+        {
+            this.CanHaunt = true;
+            base.Start();
+        }
 
         public override void OnKilledByPlayer(Player killingPlayer)
         {
             // do phantom stuff
+            if (this.CanHaunt)
+            {
+                this.CanHaunt = false;
+                if (!this.GetComponent<PhotonView>().IsMine) { return; }
+                this.GetComponent<PhotonView>().RPC(nameof(RPCA_HauntPlayer), RpcTarget.All, killingPlayer.playerID);
+            }
+        }
+        [PunRPC]
+        private void RPCA_HauntPlayer(int hauntedPlayerID)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == hauntedPlayerID);
+            if (player is null) { return; }
+            player.gameObject.AddComponent<PhantomHaunt>().SetPhantomPlayer(this.GetComponent<Player>());
+            // if the local player is the detective, they should be notified that the phantom was killed
+            if (RoleManager.GetPlayerRole(PlayerManager.instance.players.FirstOrDefault(p => p.data.view.IsMine))?.Appearance?.Name == Detective.RoleAppearance.Name)
+            {
+                TRTHandler.SendChat(null, $"The {RoleManager.GetRoleColoredName(this.Appearance)} has been killed!", true);
+            }
         }
     }
 }

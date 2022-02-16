@@ -57,7 +57,7 @@ namespace GameModeCollection.Objects
     [RequireComponent(typeof(CardItemHealth))]
     class CardItem : DamagableNetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
     {
-        internal static IEnumerator MakeCardItem(CardInfo card, Vector3 position, Quaternion rotation, Vector2 velocity = default, float angularVelocity = 0f, float maxHealth = -1f)
+        internal static IEnumerator MakeCardItem(CardInfo card, Vector3 position, Quaternion rotation, Vector2 velocity = default, float angularVelocity = 0f, float maxHealth = -1f, bool requireInteract = true)
         {
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
@@ -67,7 +67,7 @@ namespace GameModeCollection.Objects
                         position,
                         rotation,
                         0,
-                        new object[] { card.cardName, velocity, angularVelocity, maxHealth }
+                        new object[] { card.cardName, velocity, angularVelocity, maxHealth, requireInteract }
                     );
 
                 // create card
@@ -78,6 +78,7 @@ namespace GameModeCollection.Objects
             yield break;
         }
         public bool HasBeenTaken { get; private set; } = false;
+        public bool RequiresInteraction { get; private set; } = false;
         public CardInfo Card { get; private set; }
         public string CardName { get; private set; }
         public GameObject CardObj { get; internal set; } = null;
@@ -95,6 +96,8 @@ namespace GameModeCollection.Objects
             float angularVelocity = (float)data[2];
             // data[3] is the maximum health of the card - if it is -1, then it is unkillable
             float health = (float)data[3];
+            // data[4] is the bool to determine if the card must be interacted with (F or ~ by default) to be picked up
+            this.RequiresInteraction = (bool)data[4];
             this.Health.MaxHealth = health > 0f ? health : float.MaxValue;
             this.Health.Revive();
 
@@ -166,6 +169,10 @@ namespace GameModeCollection.Objects
                 if (this.CanSeePlayer(collider2D.GetComponent<Player>()))
                 {
                     this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true);
+                    if(this.RequiresInteraction && !collider2D.GetComponent<Player>().data.playerActions.Interact().WasPressed)
+                    {
+                        return;
+                    }
                     if (Vector2.Distance(collider2D.GetComponent<Player>().data.playerVel.position, this.transform.position) < CollectionDistance)
                     {
                         this.CheckPlayerCollect(collider2D.GetComponent<Player>());
