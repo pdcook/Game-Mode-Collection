@@ -41,13 +41,13 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             if (interact)
             {
+                // do hypnotist stuff
                 if (!this.CanRevive || corpse.GetComponent<Player>() is null || !this.GetComponent<PhotonView>().IsMine) { return; }
                 this.CanRevive = false;  
                 this.GetComponent<PhotonView>().RPC(nameof(RPCA_HypotistRevive), RpcTarget.All, corpse.GetComponent<Player>().playerID);
             }
             else
             {
-                // do hypnotist stuff
                 corpse.SearchBody(this.GetComponent<Player>(), false);
             }
         }

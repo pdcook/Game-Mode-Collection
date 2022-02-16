@@ -9,16 +9,19 @@ namespace GameModeCollection.GameModes.TRT
     class PhantomHaunt : MonoBehaviour
     {
         public Player PhantomPlayer { get; private set; } = null;
+        private CharacterData HauntedPlayer = null;
         public void SetPhantomPlayer(Player phantom)
         {
             this.PhantomPlayer = phantom;
         }
         void Start()
         {
-
+            this.HauntedPlayer = this.GetComponent<CharacterData>();
         }
-        void OnDisable()
+        void Update()
         {
+            if (!this.HauntedPlayer.dead) { return; }
+
             // when the haunted player dies, revive the phantom
             if (this.PhantomPlayer != null)
             {

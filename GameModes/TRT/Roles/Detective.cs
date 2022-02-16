@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnboundLib;
+using UnboundLib.Utils;
+using System.Linq;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class DetectiveRoleHandler : IRoleHandler
@@ -23,6 +25,17 @@ namespace GameModeCollection.GameModes.TRT.Roles
     {
         new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Detective", 'D', GM_TRT.DetectiveColor);
         public override TRT_Role_Appearance Appearance => Detective.RoleAppearance;
+
+        protected override void Start()
+        {
+            base.Start();
+
+            CardInfo healingField = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("HealingField")).cardInfo;
+
+            // 80% of the time the detective spawns with healing field
+            // 20% of the time they spawn with Golden Gun
+
+        }
 
         public override bool AlertAlignment(Alignment alignment)
         {

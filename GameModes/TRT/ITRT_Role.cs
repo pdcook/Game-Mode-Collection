@@ -32,7 +32,6 @@ namespace GameModeCollection.GameModes.TRT
         TRT_Role_Appearance Appearance { get; }
         Alignment Alignment { get; }
         int MaxCards { get; }
-        int StartingCards { get; }
         float BaseHealth { get; }
         // TODO: add a postfix to CharacterStatModifiers.ConfigureMassAndSize to compensate for base health != 100f
         // this way, players can't tell someone is a certain role that has extra health

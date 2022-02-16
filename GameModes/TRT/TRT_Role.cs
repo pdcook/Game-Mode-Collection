@@ -8,7 +8,6 @@ namespace GameModeCollection.GameModes.TRT
         public abstract TRT_Role_Appearance Appearance { get; }
         public abstract Alignment Alignment { get; }
         public abstract int MaxCards { get; }
-        public abstract int StartingCards { get; }
         public abstract float BaseHealth { get; }
         public abstract bool CanDealDamage { get; }
         public abstract float KarmaChange { get; protected set; }
@@ -22,7 +21,13 @@ namespace GameModeCollection.GameModes.TRT
 
         protected virtual void Start()
         {
-            this.GetComponent<CharacterData>()?.SetMaxCards(this.MaxCards);
+            CharacterData data = this.GetComponent<CharacterData>();
+            if (data != null && !data.dead)
+            {
+                data.SetMaxCards(this.MaxCards);
+                data.maxHealth = this.BaseHealth;
+                data.healthHandler.Revive(true);
+            }
         }
         protected virtual void OnDestroy()
         {

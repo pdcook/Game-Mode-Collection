@@ -186,6 +186,7 @@
     <Compile Include="Patches\BetterChat_ChatMonoGameManager.cs" />
     <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\CharacterItem.cs" />
+    <Compile Include="Patches\CharacterStatModifiers.cs" />
     <Compile Include="Patches\DamagableEvent.cs" />
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Destructible.cs" />

@@ -65,13 +65,13 @@ namespace GameModeCollection.GameModes
     /// - [X] Jester (own team) (pink name, visible to the traitors only with a "[J]" in front) [deals no damage]
     /// - [X] Glitch (is innocent, but appears as a traitor to the traitors)
     /// - [X] Mercenary (innocent) [can have two cards instead of one]
-    /// - [ ] Phantom (innocent) [haunts their killer with a smoke trail in their color. when their killer dies, they revive with 50% health]
+    /// - [X] Phantom (innocent) [haunts their killer with a smoke trail in their color. when their killer dies, they revive with 50% health]
     /// - [ ] Killer (own team, can only ever be one at a time, traitors are notified that there is a killer) [has 150% health, starts with a random card (respecting rarity) and can have up to four cards (two more than traitors)]
     /// - [X] Hypnotist (traitor) [the first corpse they interact2 with will respawn as a traitor]
     /// - [X] Zombie (has a chance to spawn instead of all traitors) (cannot have ANY cards) [players killed by any zombie will immediately revive as zombies]
     /// - [ ] Swapper ("innocent") (appears to traitors as a jester) [cannot deal damage, when killed, their attacker dies instead and they instantly respawn with the role of the attacker, when the attacker's body is searched they report as a swapper]
     /// - [X] Assassin (traitor) [gets a "target" (never detective unless that is the only option) to which they deal double damage, and half damage to all other players. killing the wrong player results in them dealing half damage for the rest of the round]
-    /// - [ ] Vampire (traitor) [can interact2 with a dead body to eat it (completely destroying the body) and healing 50 HP, though it freezes them in place for a few seconds]
+    /// - [X] Vampire (traitor) [can interact2 with a dead body to eat it (completely destroying the body) and healing 50 HP, though it freezes them in place for a few seconds]
     /// </summary>
     public class GM_TRT : MonoBehaviour
     {
@@ -111,6 +111,7 @@ namespace GameModeCollection.GameModes
         internal int pointsPlayedOnCurrentMap = 0;
         internal int roundsPlayed = 0;
 
+        private bool isCheckingWinCondition = false;
         private bool isTransitioning = false;
         private Dictionary<int, string> RoleIDsToAssign = null;
         private int? timeUntilBattleStart = null;
@@ -344,18 +345,25 @@ namespace GameModeCollection.GameModes
             // corpse creation
             this.PlayerCorpse(killedPlayer);
 
-            // check win condition
-            string winningRoleID = RoleManager.GetWinningRoleID(PlayerManager.instance.players.ToArray());
-
-            if (winningRoleID != null)
+            // check win condition after a short delay to allow things like phantom spawning and swapper swapping to happen
+            if (this.isCheckingWinCondition) { return; }
+            this.isCheckingWinCondition = true;
+            this.ExecuteAfterFrames(10, () =>
             {
+                this.isCheckingWinCondition = false;
 
-                TimeHandler.instance.DoSlowDown();
-                if (PhotonNetwork.IsMasterClient)
+                string winningRoleID = RoleManager.GetWinningRoleID(PlayerManager.instance.players.ToArray());
+
+                if (winningRoleID != null)
                 {
-                    NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_NextRound), winningRoleID);
+
+                    TimeHandler.instance.DoSlowDown();
+                    if (PhotonNetwork.IsMasterClient)
+                    {
+                        NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_NextRound), winningRoleID);
+                    }
                 }
-            }
+            });
         }
 
         public void StartGame()

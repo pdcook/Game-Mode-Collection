@@ -31,8 +31,6 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override Alignment Alignment => Innocent.RoleAlignment;
         public override int MaxCards => GM_TRT.BaseMaxCards;
 
-        public override int StartingCards => 0;
-
         public override float BaseHealth => GM_TRT.BaseHealth;
 
         public override bool CanDealDamage => true;

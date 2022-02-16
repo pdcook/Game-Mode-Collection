@@ -32,8 +32,6 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override int MaxCards => GM_TRT.BaseMaxCards + 3;
 
-        public override int StartingCards => 1;
-
         public override float BaseHealth => 1.5f*GM_TRT.BaseHealth;
 
         public override bool CanDealDamage => true;

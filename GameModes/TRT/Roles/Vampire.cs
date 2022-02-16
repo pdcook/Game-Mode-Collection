@@ -18,10 +18,10 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public Color WinColor => Traitor.RoleAppearance.Color;
         public string RoleName => Vampire.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
-        public int MinNumberOfPlayersForRole => 0;//5;
-        public int MinNumberOfPlayersWithRole => 2;//0;
-        public int MaxNumberOfPlayersWithRole => int.MaxValue;//1;
-        public float Rarity => 1f;//0.1f;
+        public int MinNumberOfPlayersForRole => 5;
+        public int MinNumberOfPlayersWithRole => 0;
+        public int MaxNumberOfPlayersWithRole => 1;
+        public float Rarity => 0.1f;
         public string[] RoleIDsToOverwrite => new string[] { };
         public void AddRoleToPlayer(Player player)
         {
