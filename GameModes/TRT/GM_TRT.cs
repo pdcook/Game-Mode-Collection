@@ -42,6 +42,7 @@ namespace GameModeCollection.GameModes
     /// - [X] Player nicknames are removed entirely (triple sorry)
     /// - [X] Players are completely hidden during the skin randomization time
     /// - [ ] Local zoom is ON. optionally (how?) with the dark shader
+    /// - [ ] local zoom scales with bullet speed instead of player size
     /// - [X] RDM is punished (innocent killing innocent) somehow
     /// - [ ] Clock in upper left corner (with round counter) that counts down. when the timer reaches 0, it turns red, signaling haste mode
     /// - [ ]   --> Figure out what to do for Haste Mode
@@ -55,7 +56,10 @@ namespace GameModeCollection.GameModes
     /// - [X] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
     /// - [X] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
     /// - [~] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
-    /// - [ ] custom maps specifically for this mode, not available in normal rotation - can utilize either custom map objects or spawn points for weapon/item spawns
+    /// - [~] custom maps specifically for this mode, not available in normal rotation - can utilize either custom map objects or spawn points for weapon/item spawns
+    /// - [ ] card random spawning
+    /// - [ ] LaTeX document with a short guide to each role
+    /// - [ ] Round summaries in chat
     /// 
     /// Roles:
     /// - [X] Innocent
@@ -66,10 +70,10 @@ namespace GameModeCollection.GameModes
     /// - [X] Glitch (is innocent, but appears as a traitor to the traitors)
     /// - [X] Mercenary (innocent) [can have two cards instead of one]
     /// - [X] Phantom (innocent) [haunts their killer with a smoke trail in their color. when their killer dies, they revive with 50% health]
-    /// - [ ] Killer (own team, can only ever be one at a time, traitors are notified that there is a killer) [has 150% health, starts with a random card (respecting rarity) and can have up to four cards (two more than traitors)]
+    /// - [~] Killer (own team, can only ever be one at a time, traitors are notified that there is a killer) [has 150% health, starts with a random card (respecting rarity) and can have up to four cards (two more than traitors)]
     /// - [X] Hypnotist (traitor) [the first corpse they interact2 with will respawn as a traitor]
     /// - [X] Zombie (has a chance to spawn instead of all traitors) (cannot have ANY cards) [players killed by any zombie will immediately revive as zombies]
-    /// - [ ] Swapper ("innocent") (appears to traitors as a jester) [cannot deal damage, when killed, their attacker dies instead and they instantly respawn with the role of the attacker, when the attacker's body is searched they report as a swapper]
+    /// - [X] Swapper ("innocent") (appears to traitors as a jester) [cannot deal damage, when killed, their attacker dies instead and they instantly respawn with the role of the attacker, when the attacker's body is searched they report as a swapper]
     /// - [X] Assassin (traitor) [gets a "target" (never detective unless that is the only option) to which they deal double damage, and half damage to all other players. killing the wrong player results in them dealing half damage for the rest of the round]
     /// - [X] Vampire (traitor) [can interact2 with a dead body to eat it (completely destroying the body) and healing 50 HP, though it freezes them in place for a few seconds]
     /// </summary>
