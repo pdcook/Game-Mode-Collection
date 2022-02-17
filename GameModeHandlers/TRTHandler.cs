@@ -19,7 +19,7 @@ namespace GameModeCollection.GameModeHandlers
         public const string ChatName = "<b>[TRT]</b>";
         private const float SendFreq = 1f;
         private const float MaxVisibleDistance = 10f;
-        private const float MaxInspectDistance = 5f;
+        public const float MaxInspectDistance = 5f;
 
         public override string Name
         {

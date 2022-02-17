@@ -57,10 +57,12 @@ namespace GameModeCollection.GameModes
     /// - [X] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
     /// - [X] Dead players have a separate text chat
     /// - [ ] Players can discard cards by clicking on the square in the card bar
+    ///     --> Or by pressing Q to discard their most recent card
     /// - [X] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
     /// - [X] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
     /// - [X] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
-    /// - [~] custom maps specifically for this mode, not available in normal rotation - can utilize either custom map objects or spawn points for weapon/item spawns
+    /// - [~] custom maps specifically for this mode, not available in normal rotation
+    ///     --> custom map object mod for card spawn points
     /// - [ ] card random spawning
     /// - [ ] LaTeX document with a short guide to each role
     /// - [ ] Round summaries in chat
@@ -69,6 +71,13 @@ namespace GameModeCollection.GameModes
     /// - [X] Innocent
     /// - [X] Traitor (red name, sees other traitors' names as red with a "[T]" in front, notified of other traitors and jesters at start of round) [can have two cards instead of one]
     /// - [~] Detective (blue name visible to everyone with a "[D]" in front, spawns with HealingField, or Huge if healing field is unavailable)
+    ///     --> likely chance to spawn with Healing Field
+    ///     --> unlikely chance to spawn with Golden Gun
+    ///     [ ] Golden Gun Card
+    ///         --> One time use, once it hits any player, it is destroyed
+    ///         --> If it shoots a traitor/killer, they will die instantly, no phoenix revives either
+    ///         --> If it shoots an innocent, the shooter will die instantly, no phoenix revives
+    ///         --> If it shoots a jester/swapper, BOTH players will be killed instantly, no phoenix revives AND the jester/swapper will NOT win
     /// Roles for more than four players:
     /// - [X] Jester (own team) (pink name, visible to the traitors only with a "[J]" in front) [deals no damage]
     /// - [X] Glitch (is innocent, but appears as a traitor to the traitors)

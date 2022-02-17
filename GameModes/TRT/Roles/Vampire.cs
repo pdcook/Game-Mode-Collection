@@ -9,6 +9,7 @@ using Sonigon.Internal;
 using GameModeCollection.Extensions;
 using System.Reflection;
 using Photon.Pun;
+using GameModeCollection.GameModeHandlers;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class VampireRoleHandler : IRoleHandler
@@ -139,7 +140,17 @@ namespace GameModeCollection.GameModes.TRT.Roles
             }
             else if (this.player.data.playerActions.Interact().IsPressed && this.targetedCorpse != null)
             {
-                this.timeHeld += Time.deltaTime;
+                if (Vector3.Distance(this.transform.position, this.targetedCorpse.transform.position) > TRTHandler.MaxInspectDistance)
+                {
+                    // if the body is too far away, reset progress
+                    this.timeHeld = 0f;
+                    this.targetedCorpse = null;
+                }
+                else
+                {
+                    this.timeHeld += Time.deltaTime;
+                }
+
             }
             else if (this.targetedCorpse is null)
             {
