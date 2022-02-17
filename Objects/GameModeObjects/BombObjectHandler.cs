@@ -1,10 +1,7 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using GameModeCollection.GameModes;
 using MapEmbiggener;
 using Photon.Pun;
-using UnboundLib;
-using UnboundLib.GameModes;
 using UnityEngine;
 
 namespace GameModeCollection.Objects.GameModeObjects
@@ -40,10 +37,44 @@ namespace GameModeCollection.Objects.GameModeObjects
         }
     }
     
-    public class BombObjectHandler : NetworkPhysicsItem<BoxCollider2D,CircleCollider2D>
+    public class BombObjectHandler : NetworkPhysicsItem<BoxCollider2D,BoxCollider2D>
     {
         public static BombObjectHandler instance;
         private bool hidden = true;
+        
+        
+        private const float Bounciness = 0.2f;
+        private const float Friction = 0.8f;
+        private const float Mass = 10000f;
+        private const float MinAngularDrag = 0.1f;
+        private const float MaxAngularDrag = 1f;
+        private const float MinDrag = 0f;
+        private const float MaxDrag = 5f;
+        private const float MaxSpeed = 200f;
+        private const float MaxAngularSpeed = 1000f;
+        private const float PhysicsForceMult = 10f;
+        private const float PlayerPushMult = 200f;
+        private const float PhysicsImpulseMult = 0.0005f;
+
+
+        protected override void Awake()
+        {
+            this.PhysicalProperties = new ItemPhysicalProperties(
+                bounciness: BombObjectHandler.Bounciness,
+                friction: BombObjectHandler.Friction,
+                mass: BombObjectHandler.Mass,
+                minAngularDrag: BombObjectHandler.MinAngularDrag,
+                maxAngularDrag: BombObjectHandler.MaxAngularDrag,
+                minDrag: BombObjectHandler.MinDrag,
+                maxDrag: BombObjectHandler.MaxDrag,
+                maxAngularSpeed: BombObjectHandler.MaxAngularSpeed,
+                maxSpeed: BombObjectHandler.MaxSpeed,
+                forceMult: BombObjectHandler.PhysicsForceMult,
+                impulseMult: BombObjectHandler.PhysicsImpulseMult,
+                playerPushMult: BombObjectHandler.PlayerPushMult
+            );
+            base.Awake();
+        }
 
         protected override void Start()
         {
@@ -66,7 +97,8 @@ namespace GameModeCollection.Objects.GameModeObjects
         public void Spawn()
         {
             this.hidden = false;
-            this.SetPos(new Vector3(0,30,0));
+            
+            this.SetPos(MapManager.instance.GetSpawnPoints()[UnityEngine.Random.Range(0, MapManager.instance.GetSpawnPoints().Length)].localStartPos);
             this.SetVel(Vector2.zero);
             this.SetRot(0f);
             this.SetAngularVel(0f);
@@ -100,10 +132,9 @@ namespace GameModeCollection.Objects.GameModeObjects
                 this.Trig.enabled = true;
                 
                 
-                // if the crown has gone OOB off the bottom of the map OR hasn't been touched in a long enough time, respawn it
+                // if the bomb has gone OOB bounce it back in
                 if (!OutOfBoundsUtils.IsInsideBounds(this.transform.position, out Vector3 normalizedPoint))
                 {
-                    // if it has gone off the sides, have it bounce back in
                     if (normalizedPoint.x <= 0f)
                     {
                         this.Rig.velocity = new Vector2(UnityEngine.Mathf.Abs(this.Rig.velocity.x), this.Rig.velocity.y)*1.5f;
@@ -119,6 +150,17 @@ namespace GameModeCollection.Objects.GameModeObjects
                     else if (normalizedPoint.y >= 1f)
                     {
                         this.Rig.velocity = new Vector2(this.Rig.velocity.x, -UnityEngine.Mathf.Abs(this.Rig.velocity.y))*1.5f;
+                    }
+                }
+                
+                
+                // if a player is near the bomb, make them defuse it
+                foreach (var player in PlayerManager.instance.players)
+                {
+                    if (player.data.dead) { continue; }
+                    if (Vector2.Distance(player.transform.position, this.transform.position) < 1.5f)
+                    {
+                        UnityEngine.Debug.Log("Defusing bomb");
                     }
                 }
             }

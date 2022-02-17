@@ -1,12 +1,6 @@
 ﻿using RWF.GameModes;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnboundLib;
-using UnboundLib.Networking;
-using Photon.Pun;
-using GameModeCollection.Extensions;
 using GameModeCollection.Objects.GameModeObjects;
 
 namespace GameModeCollection.GameModes
@@ -53,6 +47,12 @@ namespace GameModeCollection.GameModes
         public override void PointOver(int winningTeamID)
         {
             base.PointOver(winningTeamID);
+            this.ResetForBattle();
+        }
+
+        public override void RoundOver(int winningTeamID)
+        {
+            base.RoundOver(winningTeamID);
             this.ResetForBattle();
         }
 

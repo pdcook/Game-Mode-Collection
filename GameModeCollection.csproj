@@ -46,7 +46,7 @@
       <HintPath>$(ProfileFolder)\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
     <Reference Include="BetterChat">
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\BetterChat.dll</HintPath>
+      <HintPath>$(ProfileFolder)\BepInEx\plugins\BetterChat.dll</HintPath>
     </Reference>
     <Reference Include="CardChoiceSpawnUniqueCardPatch">
       <HintPath>%(RoundsFolder)\BepInEx\plugins\CardChoiceSpawnUniqueCardPatch.dll</HintPath>
@@ -57,17 +57,17 @@
     </Reference>
     <Reference Include="LocalZoom, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\LocalZoom.dll</HintPath>
+      <HintPath>$(ProfileFolder)\BepInEx\plugins\LocalZoom.dll</HintPath>
     </Reference>
     <Reference Include="MapEmbiggener">
-      <HintPath>%(RoundsFolder)\BepInEx\plugins\MapEmbiggener.dll</HintPath>
+      <HintPath>$(RoundsFolder)\BepInEx\plugins\MapEmbiggener.dll</HintPath>
     </Reference>
     <Reference Include="ModdingUtils">
-      <HintPath>%(RoundsFolder)\BepInEx\plugins\ModdingUtils.dll</HintPath>
+      <HintPath>$(RoundsFolder)\BepInEx\plugins\ModdingUtils.dll</HintPath>
     </Reference>
     <Reference Include="Photon3Unity3D, Version=4.1.4.8, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\Rounds_Data\Managed\Photon3Unity3D.dll</HintPath>
+      <HintPath>$(RoundsFolder)\Rounds_Data\Managed\Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="PhotonRealtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\PhotonRealtime.dll</HintPath>
@@ -77,7 +77,7 @@
     </Reference>
     <Reference Include="RoundsWithFriends, Version=2.1.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
+      <HintPath>$(ProfileFolder)\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
     </Reference>
     <Reference Include="SonigonAudioEngine.Runtime, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -98,7 +98,7 @@
     </Reference>
     <Reference Include="UnityEngine.AnimationModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\Rounds_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+      <HintPath>$(RoundsFolder)\Rounds_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
@@ -204,6 +204,7 @@
     <Compile Include="Utils\RandomUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include=".editorconfig" />
     <Content Include=".gitignore" />
     <Content Include="AssetsEmbedded\.gitkeep" />
     <Content Include="Networking\.gitkeep" />

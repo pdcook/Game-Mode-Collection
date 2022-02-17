@@ -440,8 +440,8 @@ namespace GameModeCollection.GameModes
         {
             cardInfo.allowMultiple = false;
 
-            gun.damage = 0.85f;
-            statModifiers.health = 0.85f;
+            gun.damage = 0.75f;
+            statModifiers.health = 0.75f;
         }
 
         protected override CardInfoStat[] GetStats()

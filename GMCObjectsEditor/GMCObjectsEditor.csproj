@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <ProjectGuid>{3EEE5149-CD15-40BC-925C-DC69F43F80E9}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>GMCObjectsEditor</RootNamespace>
+        <AssemblyName>GMCObjectsEditor</AssemblyName>
+        <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+        <FileAlignment>512</FileAlignment>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>false</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <RoundsFolder>F:\SteamLibrary\steamapps\common\ROUNDS</RoundsFolder>
+        <IndirectBuildTask>true</IndirectBuildTask>
+        <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <Reference Include="BepInEx, Version=5.4.11.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\core\BepInEx.dll</HintPath>
+        </Reference>
+        <Reference Include="MapsExtended, Version=0.9.5.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\plugins\olavim-MapsExtended\MapsExtended.dll</HintPath>
+        </Reference>
+        <Reference Include="MapsExtended.Editor, Version=0.9.5.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\plugins\olavim-MapsExtendedEditor\MapsExtended.Editor.dll</HintPath>
+        </Reference>
+        <Reference Include="System" />
+        <Reference Include="System.Core" />
+        <Reference Include="System.Data" />
+        <Reference Include="System.Xml" />
+        <Reference Include="UnboundLib, Version=2.10.2.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\plugins\willis81808-UnboundLib\UnboundLib.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\SteamLibrary\steamapps\common\ROUNDS\Rounds_Data\Managed\UnityEngine.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+          <HintPath>..\..\..\..\SteamLibrary\steamapps\common\ROUNDS\Rounds_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+    <ItemGroup>
+        <Compile Include="MapObjects.cs" />
+        <Compile Include="Properties\AssemblyInfo.cs" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\GMCObjects.csproj">
+        <Project>{615fd723-e714-4f78-9bae-dc91790f95c0}</Project>
+        <Name>GMCObjects</Name>
+      </ProjectReference>
+      <ProjectReference Include="..\GMCObjects\GMCObjects.csproj">
+        <Project>{615fd723-e714-4f78-9bae-dc91790f95c0}</Project>
+        <Name>GMCObjects</Name>
+      </ProjectReference>
+    </ItemGroup>
+    <ItemGroup>
+      <Content Include="publish.ps1" />
+      <Content Include="ThunderStore\manifest.json" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+         Other similar extension points exist, see Microsoft.Common.targets.
+    <Target Name="BeforeBuild">
+    </Target>
+    <Target Name="AfterBuild">
+    </Target>
+    -->
+
+    <Target Name="ReadPackageVersionFromOutputAssembly" DependsOnTargets="Build" Outputs="$(PackageVersion)">
+        <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+            <Output TaskParameter="Assemblies" ItemName="PackAssembly" />
+        </GetAssemblyIdentity>
+        <PropertyGroup>
+            <PackageVersion>%(PackAssembly.Version)</PackageVersion>
+        </PropertyGroup>
+    </Target>
+
+    <Target Name="PostBuildTaskWin" Condition="'$(OS)' == 'Windows_NT'" DependsOnTargets="Build" AfterTargets="Build">
+        <CallTarget Targets="ReadPackageVersionFromOutputAssembly">
+            <Output TaskParameter="TargetOutputs" PropertyName="PackageVersion" />
+        </CallTarget>
+        <Exec Command="powershell.exe -ExecutionPolicy RemoteSigned -File &quot;$(ProjectDir)publish.ps1&quot; -Version &quot;$(PackageVersion.Remove($(PackageVersion.LastIndexOf('.')), 2))&quot; -Target &quot;$(ConfigurationName)&quot; -TargetPath &quot;$(TargetDir.TrimEnd('\'))&quot; -TargetAssembly &quot;$(TargetFileName)&quot; -RoundsPath &quot;$(RoundsFolder.TrimEnd('\'))&quot; -ProjectPath &quot;$(ProjectDir.TrimEnd('\'))&quot;" />
+    </Target>
+
+</Project>

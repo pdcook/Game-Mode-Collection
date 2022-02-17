@@ -1,0 +1,12 @@
+﻿{
+  "name": "GMCObjectsEditor",
+  "version_number": "#VERSION#",
+  "website_url": "https://github.com/tddebart/GMCObjects",
+  "description": "Adds colored blocks to the mapeditor",
+  "dependencies": [
+    "willis81808-UnboundLib-2.9.0",
+    "olavim-MapsExtended-0.9.4",
+    "olavim-MapsExtendedEditor-0.9.4",
+    "BossSloth-GMCObjects-1.0.0"
+  ]
+}
