@@ -8,48 +8,30 @@ namespace GMCObjects
 {
     public class MapObjects
     {
-        private static readonly Material defaultMaterial = new Material(Shader.Find("Sprites/Default"));
-
-        public static void Deserialize(GameObject target, Color color)
-        {
-            GMCObjects.instance.ExecuteAfterFrames(1, () =>
-            {
-                GameObject.Destroy(target.GetComponent<SpriteMask>());
-                target.GetComponent<SpriteRenderer>().material = defaultMaterial;
-                color.a = 1;
-                target.GetComponent<SpriteRenderer>().color = color;
-            });
-            GMCObjects.instance.ExecuteAfterFrames(5, () =>
-            {
-                GameObject.Destroy(target.GetComponent<SpriteMask>());
-                target.GetComponent<SpriteRenderer>().material = defaultMaterial;
-                color.a = 1;
-                target.GetComponent<SpriteRenderer>().color = color;
-            });
-        }
-
         #region Green
 
-        public class CardSpawnPoint : SpatialMapObject
+        public class CardSpawnPointObject : MapObject
         {
+            public Vector3 position;
         }
 
-        [MapObjectSpec(typeof(CardSpawnPoint))]
+        [MapObjectSpec(typeof(CardSpawnPointObject))]
         public static class CardSpawnPointSpec
         {
-            [MapObjectPrefab] public static GameObject Prefab => MapObjectManager.LoadCustomAsset<GameObject>("Ground");
+            [MapObjectPrefab] public static GameObject Prefab => MapObjectManager.LoadCustomAsset<GameObject>("Spawn Point");
 
             [MapObjectSerializer]
-            public static void Serialize(GameObject instance, CardSpawnPoint target)
+            public static void Serialize(GameObject instance, CardSpawnPointObject target)
             {
-                SpatialSerializer.Serialize(instance, target);
+                target.position = instance.transform.position;
             }
 
             [MapObjectDeserializer]
-            public static void Deserialize(CardSpawnPoint data, GameObject target)
+            public static void Deserialize(CardSpawnPointObject data, GameObject target)
             {
-                SpatialSerializer.Deserialize(data, target);
-                MapObjects.Deserialize(target, Color.green*0.8f);
+                target.transform.position = data.position;
+                GameObject.Destroy(target.GetComponent<SpawnPoint>());
+                target.AddComponent<CardSpawnPoint>();
             }
         }
 

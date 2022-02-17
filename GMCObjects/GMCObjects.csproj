@@ -34,25 +34,24 @@
 
     <PropertyGroup>
         <RoundsFolder>F:\SteamLibrary\steamapps\common\ROUNDS</RoundsFolder>
-        <IndirectBuildTask>true</IndirectBuildTask>
-        <DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+        <ProfileFolder>$(ProfileFolder)</ProfileFolder>
     </PropertyGroup>
     
     <ItemGroup>
         <Reference Include="0Harmony, Version=2.4.2.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\core\0Harmony.dll</HintPath>
+          <HintPath>$(ProfileFolder)\profiles\Default\BepInEx\core\0Harmony.dll</HintPath>
         </Reference>
         <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>$(RoundsFolder)\Rounds_Data\Managed\Assembly-CSharp.dll</HintPath>
         </Reference>
         <Reference Include="BepInEx, Version=5.4.11.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\core\BepInEx.dll</HintPath>
+          <HintPath>$(ProfileFolder)\BepInEx\core\BepInEx.dll</HintPath>
         </Reference>
         <Reference Include="MapsExtended, Version=0.9.5.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\plugins\olavim-MapsExtended\MapsExtended.dll</HintPath>
+          <HintPath>$(ProfileFolder)\BepInEx\plugins\olavim-MapsExtended\MapsExtended.dll</HintPath>
         </Reference>
         <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\plugins\willis81808-MMHook\MMHOOK_Assembly-CSharp.dll</HintPath>
+          <HintPath>$(ProfileFolder)\BepInEx\plugins\willis81808-MMHook\MMHOOK_Assembly-CSharp.dll</HintPath>
         </Reference>
         <Reference Include="PhotonRealtime, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>$(RoundsFolder)\Rounds_Data\Managed\PhotonRealtime.dll</HintPath>
@@ -65,10 +64,7 @@
         <Reference Include="System.Data" />
         <Reference Include="System.Xml" />
         <Reference Include="UnboundLib, Version=2.10.2.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\plugins\willis81808-UnboundLib\UnboundLib.dll</HintPath>
-        </Reference>
-        <Reference Include="UnboundLib, Version=2.7.0.0, Culture=neutral, PublicKeyToken=null">
-          <HintPath>C:\Users\tddeb\AppData\Roaming\r2modmanPlus-local\ROUNDS\profiles\Default\BepInEx\plugins\willis81808-UnboundLib\UnboundLib.dll</HintPath>
+          <HintPath>$(ProfileFolder)\BepInEx\plugins\willis81808-UnboundLib\UnboundLib.dll</HintPath>
         </Reference>
         <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
           <HintPath>$(RoundsFolder)\Rounds_Data\Managed\Unity.TextMeshPro.dll</HintPath>
@@ -102,6 +98,7 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="CardSpawnPoint.cs" />
         <Compile Include="GMCObjects.cs" />
         <Compile Include="MapObjects.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />

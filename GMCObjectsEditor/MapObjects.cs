@@ -2,24 +2,30 @@
 using MapsExt.Editor;
 using MapsExt.Editor.MapObjects;
 using MapsExt.MapObjects;
+using UnboundLib;
 using UnityEngine;
 
 namespace GMCObjectsEditor
 {
-
-    #region Green
-    
-    [EditorMapObjectSpec(typeof(MapObjects.CardSpawnPoint), "Green", "Colored blocks | Static")]
-    public static class EditorGreen
+    [EditorMapObjectSpec(typeof(MapObjects.CardSpawnPointObject), "Card SpawnPoint")]
+    public static class EditorCardSpawnPointSpec
     {
-        [EditorMapObjectPrefab] public static GameObject Prefab => MapObjects.CardSpawnPointSpec.Prefab;
-
+        [EditorMapObjectPrefab] 
+        public static GameObject Prefab => MapObjects.CardSpawnPointSpec.Prefab;
+        
         [EditorMapObjectSerializer]
-        public static SerializerAction<MapObjects.CardSpawnPoint> Serialize => EditorSpatialSerializer.BuildSerializer<MapObjects.CardSpawnPoint>(MapObjects.CardSpawnPointSpec.Serialize);
+        public static void Serialize(GameObject instance, MapObjects.CardSpawnPointObject target)
+        {
+            MapObjects.CardSpawnPointSpec.Serialize(instance, target);
+        }
 
         [EditorMapObjectDeserializer]
-        public static DeserializerAction<MapObjects.CardSpawnPoint> Deserialize => EditorSpatialSerializer.BuildDeserializer<MapObjects.CardSpawnPoint>(MapObjects.CardSpawnPointSpec.Deserialize);
+        public static void Deserialize(MapObjects.CardSpawnPointObject data, GameObject target)
+        {
+            MapObjects.CardSpawnPointSpec.Deserialize(data, target);
+            target.gameObject.GetOrAddComponent<CardSpawnPointVisualizer>();
+            target.gameObject.GetOrAddComponent<SpawnActionHandler>();
+            target.transform.SetAsLastSibling();
+        }
     }
-    
-    #endregion
 }
