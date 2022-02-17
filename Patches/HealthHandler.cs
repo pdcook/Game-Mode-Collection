@@ -48,14 +48,21 @@ namespace GameModeCollection.Patches
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_NoDamage
     {
-        // patch for TRT roles that cannot deal damage
-        private static void Prefix(ref Vector2 damage, Player damagingPlayer = null)
+        // patch for TRT roles that cannot deal damage or take environmental damage
+        private static void Prefix(CharacterData ___data, ref Vector2 damage, Player damagingPlayer = null)
         {
-            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer?.GetComponent<ITRT_Role>() is null) { return; }
+            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
 
-            if (!damagingPlayer.GetComponent<ITRT_Role>().CanDealDamage)
+            if (damagingPlayer is null && !(___data.GetComponent<ITRT_Role>()?.CanDealDamageAndTakeEnvironmentalDamage ?? true))
             {
                 damage = Vector2.zero;
+                return;
+            }
+
+            if (damagingPlayer != null && !(damagingPlayer.GetComponent<ITRT_Role>()?.CanDealDamageAndTakeEnvironmentalDamage ?? true))
+            {
+                damage = Vector2.zero;
+                return;
             }
         }
     }

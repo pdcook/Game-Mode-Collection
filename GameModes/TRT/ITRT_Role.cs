@@ -35,7 +35,7 @@ namespace GameModeCollection.GameModes.TRT
         float BaseHealth { get; }
         // TODO: add a postfix to CharacterStatModifiers.ConfigureMassAndSize to compensate for base health != 100f
         // this way, players can't tell someone is a certain role that has extra health
-        bool CanDealDamage { get; }
+        bool CanDealDamageAndTakeEnvironmentalDamage { get; }
         float KarmaChange { get; }
 
         /// <summary>

@@ -15,7 +15,7 @@ namespace GameModeCollection.Patches
         {
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer?.GetComponent<ITRT_Role>() is null) { return; }
 
-            if (!damagingPlayer.GetComponent<ITRT_Role>().CanDealDamage)
+            if (!damagingPlayer.GetComponent<ITRT_Role>().CanDealDamageAndTakeEnvironmentalDamage)
             {
                 damage = Vector2.zero;
             }

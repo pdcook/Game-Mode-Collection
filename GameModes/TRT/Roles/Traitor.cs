@@ -35,7 +35,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override float BaseHealth => GM_TRT.BaseHealth;
 
-        public override bool CanDealDamage => true;
+        public override bool CanDealDamageAndTakeEnvironmentalDamage => true;
 
         public override float KarmaChange { get; protected set; } = 0f;
 

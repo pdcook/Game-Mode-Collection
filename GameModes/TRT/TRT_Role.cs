@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using GameModeCollection.Extensions;
+using UnboundLib;
 
 namespace GameModeCollection.GameModes.TRT
 {
@@ -9,7 +10,7 @@ namespace GameModeCollection.GameModes.TRT
         public abstract Alignment Alignment { get; }
         public abstract int MaxCards { get; }
         public abstract float BaseHealth { get; }
-        public abstract bool CanDealDamage { get; }
+        public abstract bool CanDealDamageAndTakeEnvironmentalDamage { get; }
         public abstract float KarmaChange { get; protected set; }
         public abstract bool AlertAlignment(Alignment alignment);
         public abstract TRT_Role_Appearance AppearToAlignment(Alignment alignment);
@@ -28,6 +29,11 @@ namespace GameModeCollection.GameModes.TRT
                 data.maxHealth = this.BaseHealth;
                 data.healthHandler.Revive(true);
             }
+            if (data.view.IsMine)
+            {
+                UIHandler.instance.roundCounterSmall.UpdateText(1, this.Appearance.Name.ToUpper(), this.Appearance.Color, 30, Vector3.one);
+            }
+            this.ExecuteAfterFrames(5, BetterChat.BetterChat.EvaluateCanSeeGroup);
         }
         protected virtual void OnDestroy()
         {

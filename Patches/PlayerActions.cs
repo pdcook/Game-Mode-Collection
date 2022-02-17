@@ -73,7 +73,7 @@ namespace GameModeCollection.Patches
             __result.GetAdditionalData().trt_radio_traitor.AddDefaultBinding(Key.R);
             
             __result.GetAdditionalData().trt_radio_suspect.AddDefaultBinding(Key.Key3);
-            __result.GetAdditionalData().trt_radio_suspect.AddDefaultBinding(Key.V);
+            __result.GetAdditionalData().trt_radio_suspect.AddDefaultBinding(Key.G);
 
             __result.GetAdditionalData().trt_radio_innocent.AddDefaultBinding(Key.Key4);
             __result.GetAdditionalData().trt_radio_innocent.AddDefaultBinding(Key.X);

@@ -77,6 +77,20 @@ namespace GameModeCollection.GameModes.TRT
             }
         }
 
+        public static string GetPlayerRoleID(Player player)
+        {
+            ITRT_Role role = GetPlayerRole(player);
+            if (role is null) { return null; }
+            if (Roles.Values.Contains(role.GetType()))
+            {
+                return GetRoleID(role);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public static List<IRoleHandler> GetRoleLineup(int N)
         {
             // remove roles for which there are not enough players
@@ -201,7 +215,7 @@ namespace GameModeCollection.GameModes.TRT
             ITRT_Role other_role = GetPlayerRole(other);
             ITRT_Role player_role = GetPlayerRole(player);
             if (other_role is null || player_role is null) { return null; }
-            return player_role.AppearToAlignment(other_role.Alignment).Alignment;
+            return player_role.AppearToAlignment(other_role.Alignment)?.Alignment;
         }
         public static ITRT_Role GetPlayerRole(Player player)
         {
@@ -285,6 +299,16 @@ namespace GameModeCollection.GameModes.TRT
 
                 TRTHandler.SendChat(null, message, true);
             }
+            // special case for alerting traitors that there is a killer
+            if (specificRole.Alignment == Alignment.Traitor && PlayerManager.instance.players.Any(p => !p.data.dead && GetPlayerAlignment(p) == Alignment.Killer))
+            {
+                TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Killer.RoleAppearance)}.", true);
+            }
+            // special case for alerting traitors that there is a glitch
+            if (specificRole.Alignment == Alignment.Traitor && PlayerManager.instance.players.Any(p => !p.data.dead && GetPlayerRoleID(p) == GlitchRoleHandler.GlitchRoleID))
+            {
+                TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Glitch.RoleAppearance)}.", true);
+            }
 
         }
         public static void DoRoleDisplay(Player player, bool hideNickNames = true)
@@ -350,6 +374,16 @@ namespace GameModeCollection.GameModes.TRT
                 message += players + ".";
 
                 TRTHandler.SendChat(null, message, true);
+            }
+            // special case for alerting traitors that there is a killer
+            if (role.Alignment == Alignment.Traitor && PlayerManager.instance.players.Any(p => !p.data.dead && GetPlayerAlignment(p) == Alignment.Killer))
+            {
+                TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Killer.RoleAppearance)}.", true);
+            }
+            // special case for alerting traitors that there is a glitch
+            if (role.Alignment == Alignment.Traitor && PlayerManager.instance.players.Any(p => !p.data.dead && GetPlayerRoleID(p) == GlitchRoleHandler.GlitchRoleID))
+            {
+                TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Glitch.RoleAppearance)}.", true);
             }
         }
         public static string GetColoredString(string str, Color color, bool bold = false)

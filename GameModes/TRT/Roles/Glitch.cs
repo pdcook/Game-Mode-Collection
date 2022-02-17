@@ -1,14 +1,17 @@
 ﻿using UnityEngine;
 using UnboundLib;
+using System.Linq;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class GlitchRoleHandler : IRoleHandler
     {
+        public static string GlitchRoleName => Glitch.RoleAppearance.Name;
+        public static string GlitchRoleID = $"GM_TRT_{GlitchRoleName}";
         public Alignment RoleAlignment => Glitch.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;
-        public string RoleName => Glitch.RoleAppearance.Name;
-        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public string RoleName => GlitchRoleName;
+        public string RoleID => GlitchRoleID;
         public int MinNumberOfPlayersForRole => 5;
         public int MinNumberOfPlayersWithRole => 0;
         public int MaxNumberOfPlayersWithRole => 1;
@@ -30,7 +33,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override float BaseHealth => GM_TRT.BaseHealth;
 
-        public override bool CanDealDamage => true;
+        public override bool CanDealDamageAndTakeEnvironmentalDamage => true;
 
         public override bool AlertAlignment(Alignment alignment)
         {
@@ -56,7 +59,16 @@ namespace GameModeCollection.GameModes.TRT.Roles
                 case Alignment.Innocent:
                     return null;
                 case Alignment.Traitor:
-                    return Traitor.RoleAppearance;
+                    // appear as a traitor to traitors, or a zombie to zombies
+                    // there should never be traitors and zombies at the same time
+                    if (PlayerManager.instance.players.Any(p => RoleManager.GetPlayerRoleID(p) ==  ZombieRoleHandler.ZombieRoleID))
+                    {
+                        return Zombie.RoleAppearance;
+                    }
+                    else
+                    {
+                        return Traitor.RoleAppearance;
+                    }
                 case Alignment.Chaos:
                     return null;
                 case Alignment.Killer:
@@ -64,6 +76,12 @@ namespace GameModeCollection.GameModes.TRT.Roles
                 default:
                     return null;
             }
+        }
+        void OnDisable()
+        {
+            // when this player dies, the Traitors will regain the ability to see their chat
+            this.ExecuteAfterFrames(5, BetterChat.BetterChat.EvaluateCanSeeGroup);
+
         }
     }
 }

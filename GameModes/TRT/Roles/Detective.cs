@@ -6,11 +6,13 @@ namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class DetectiveRoleHandler : IRoleHandler
     {
+        public static string DetectiveRoleName => Detective.RoleAppearance.Name;
+        public static string DetectiveRoleID = $"GM_TRT_{DetectiveRoleName}";
         public Alignment RoleAlignment => Detective.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;
-        public string RoleName => Detective.RoleAppearance.Name;
-        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public string RoleName => DetectiveRoleName;
+        public string RoleID => DetectiveRoleID;
         public int MinNumberOfPlayersForRole => 0;
         public int MinNumberOfPlayersWithRole => 1;
         public int MaxNumberOfPlayersWithRole => 1;
@@ -30,7 +32,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             base.Start();
 
-            CardInfo healingField = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("HealingField")).cardInfo;
+            CardInfo healingField = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("Healing field")).cardInfo;
 
             // 80% of the time the detective spawns with healing field
             // 20% of the time they spawn with Golden Gun

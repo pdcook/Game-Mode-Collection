@@ -92,10 +92,7 @@ namespace GameModeCollection
         public static string AllowSelfDamageKey => GetConfigKey("allowSelfDamage");
         public static string ReviveOnCardAddKey => GetConfigKey("reviveOnCardAdd");
         public static string CreatePlayerCorpsesKey => GetConfigKey("createPlayerCorpses");
-        public static string SeparateChatForDeadPlayersKey => GetConfigKey("separateChatForDeadPlayers");
         public static string UsePlayerColorsInsteadOfNamesInChatKey => GetConfigKey("usePlayerColorsInsteadOfNamesInChat");
-
-        public const string SecretDeadPlayerChatKey = "l1KFFV3CkQ#8J#Tm"; // this is such a stupid way of doing this
 
         internal static bool EnemyDamageAllowed
         {
@@ -179,25 +176,6 @@ namespace GameModeCollection
                     return false;
                 }
                 if (GameModeManager.CurrentHandler.Settings.TryGetValue(CreatePlayerCorpsesKey, out object create) && (bool)create)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-
-            }
-        }
-        public static bool SeparateChatForDeadPlayers
-        {
-            get
-            {
-                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
-                {
-                    return false;
-                }
-                if (GameModeManager.CurrentHandler.Settings.TryGetValue(SeparateChatForDeadPlayersKey, out object sep) && (bool)sep)
                 {
                     return true;
                 }

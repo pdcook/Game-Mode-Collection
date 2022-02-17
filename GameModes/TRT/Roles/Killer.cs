@@ -1,16 +1,17 @@
 ﻿using UnboundLib;
 using System.Linq;
 using UnityEngine;
-
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class KillerRoleHandler : IRoleHandler
     {
+        public static string KillerRoleName => Killer.RoleAppearance.Name;
+        public static string KillerRoleID = $"GM_TRT_{KillerRoleName}";
         public Alignment RoleAlignment => Killer.RoleAlignment;
         public string WinMessage => "THE KILLER WINS";
         public Color WinColor => Killer.RoleAppearance.Color;
-        public string RoleName => Killer.RoleAppearance.Name;
-        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public string RoleName => KillerRoleName;
+        public string RoleID => KillerRoleID;
         public int MinNumberOfPlayersForRole => 5;
         public int MinNumberOfPlayersWithRole => 0;
         public int MaxNumberOfPlayersWithRole => 1;
@@ -34,7 +35,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override float BaseHealth => 1.5f*GM_TRT.BaseHealth;
 
-        public override bool CanDealDamage => true;
+        public override bool CanDealDamageAndTakeEnvironmentalDamage => true;
 
         public override float KarmaChange { get; protected set; } = 0f;
 

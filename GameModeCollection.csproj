@@ -55,8 +55,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>%(RoundsFolder)\Rounds_Data\Managed\InControl.dll</HintPath>
     </Reference>
-    <Reference Include="LocalZoom">
-      <HintPath>%(RoundsFolder)\BepInEx\plugins\LocalZoom.dll</HintPath>
+    <Reference Include="LocalZoom, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\LocalZoom.dll</HintPath>
     </Reference>
     <Reference Include="MapEmbiggener">
       <HintPath>%(RoundsFolder)\BepInEx\plugins\MapEmbiggener.dll</HintPath>
@@ -183,14 +184,12 @@
     <Compile Include="Objects\ObjectUIUtils.cs" />
     <Compile Include="Objects\PlayerDoNotFollow.cs" />
     <Compile Include="Patches\ApplyCardStats.cs" />
-    <Compile Include="Patches\BetterChat_ChatMonoGameManager.cs" />
     <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\CharacterItem.cs" />
     <Compile Include="Patches\CharacterStatModifiers.cs" />
     <Compile Include="Patches\DamagableEvent.cs" />
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Destructible.cs" />
-    <Compile Include="Patches\DevConsole.cs" />
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\GeneralInput.cs" />
     <Compile Include="Patches\HealthHandler.cs" />

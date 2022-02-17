@@ -1,4 +1,4 @@
-﻿using RWF.GameModes;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +15,8 @@ using GameModeCollection.Utils;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
 using GameModeCollection.GameModeHandlers;
+using BetterChat;
+using LocalZoom;
 
 namespace GameModeCollection.GameModes
 {
@@ -41,21 +43,23 @@ namespace GameModeCollection.GameModes
     /// - [X] Player faces are psuedo-randomized (double sorry)
     /// - [X] Player nicknames are removed entirely (triple sorry)
     /// - [X] Players are completely hidden during the skin randomization time
-    /// - [ ] Local zoom is ON. optionally (how?) with the dark shader
-    /// - [ ] local zoom scales with bullet speed instead of player size
+    /// - [X] Local zoom is ON. optionally (by host settings in mod options) with the dark shader
+    /// - [X] local zoom scales with bullet speed instead of player size
     /// - [X] RDM is punished (innocent killing innocent) somehow
-    /// - [ ] Clock in upper left corner (with round counter) that counts down. when the timer reaches 0, it turns red, signaling haste mode
-    /// - [ ]   --> Figure out what to do for Haste Mode
-    /// - [ ] below the clock (also with the round counter) is the player's current role
+    /// - [X] Clock in upper left corner (with round counter) that counts down.
+    ///         --> Haste mode:
+    ///         --> The timer starts at some initial value (5 mins?), counting down
+    ///         --> For each death, of any kind, time is added to the clock (30 seconds?)
+    /// - [X] below the clock (also with the round counter) is the player's current role
     /// - [X] Each client sees ONLY their own card bar
     /// - [ ]   --> until they die and enter spectator mode
-    /// - [~] Players can have a max of one card
+    /// - [X] Players can have a max of one card
     /// - [X] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
-    /// - [~] Dead players have a separate text chat
+    /// - [X] Dead players have a separate text chat
     /// - [ ] Players can discard cards by clicking on the square in the card bar
     /// - [X] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
     /// - [X] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
-    /// - [~] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
+    /// - [X] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
     /// - [~] custom maps specifically for this mode, not available in normal rotation - can utilize either custom map objects or spawn points for weapon/item spawns
     /// - [ ] card random spawning
     /// - [ ] LaTeX document with a short guide to each role
@@ -70,7 +74,7 @@ namespace GameModeCollection.GameModes
     /// - [X] Glitch (is innocent, but appears as a traitor to the traitors)
     /// - [X] Mercenary (innocent) [can have two cards instead of one]
     /// - [X] Phantom (innocent) [haunts their killer with a smoke trail in their color. when their killer dies, they revive with 50% health]
-    /// - [~] Killer (own team, can only ever be one at a time, traitors are notified that there is a killer) [has 150% health, starts with a random card (respecting rarity) and can have up to four cards (two more than traitors)]
+    /// - [X] Killer (own team, can only ever be one at a time, traitors are notified that there is a killer) [has 150% health and can have up to four cards (two more than traitors)]
     /// - [X] Hypnotist (traitor) [the first corpse they interact2 with will respawn as a traitor]
     /// - [X] Zombie (has a chance to spawn instead of all traitors) (cannot have ANY cards) [players killed by any zombie will immediately revive as zombies]
     /// - [X] Swapper ("innocent") (appears to traitors as a jester) [cannot deal damage, when killed, their attacker dies instead and they instantly respawn with the role of the attacker, when the attacker's body is searched they report as a swapper]
@@ -81,7 +85,11 @@ namespace GameModeCollection.GameModes
     {
         internal static GM_TRT instance;
 
-        private const float PrepPhaseTime = 1f;
+        private const float RoundTime = 30f; // default 300f
+        private const float PrepPhaseTime = 1f; // default 30f
+        private const float HasteModeAddPerDeath = 30f; // default 30f
+        private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
+
         private const float TimeBetweenCardDrops = 0.5f;
         private const float CardRandomVelMult = 0.25f;
         private const float CardRandomVelMin = 3f;
@@ -111,6 +119,9 @@ namespace GameModeCollection.GameModes
         public readonly static Color VampireColor = new Color32(45, 45, 45, 255);
 
         public readonly static Color DullWhite = new Color32(230, 230, 230, 255);
+        public readonly static Color WarningColor = new Color32(230, 0, 0, 255);
+
+        private readonly Dictionary<int, int> roundCounterValues = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 } };
 
         internal int pointsPlayedOnCurrentMap = 0;
         internal int roundsPlayed = 0;
@@ -119,6 +130,12 @@ namespace GameModeCollection.GameModes
         private bool isTransitioning = false;
         private Dictionary<int, string> RoleIDsToAssign = null;
         private int? timeUntilBattleStart = null;
+
+        private bool battleOngoing = false;
+        private bool prebattle = false;
+
+        private float clocktime = RoundTime;
+        private float syncCounter = -1f;
 
         protected void Awake()
         {
@@ -140,6 +157,11 @@ namespace GameModeCollection.GameModes
 
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerAssigner.instance.maxPlayers = RWF.RWFMod.instance.MaxPlayers;
+
+            LocalZoom.LocalZoom.scaleCamWithBulletSpeed = true;
+            LocalZoom.LocalZoom.SetEnableCameraSetting(true);
+            TRTHandler.InitChatGroups();
+            BetterChat.BetterChat.SetDeadChat(true);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitEnd);
         }
@@ -246,6 +268,8 @@ namespace GameModeCollection.GameModes
 
             RoleManager.DoRoleDisplay(PlayerManager.instance.players.Find(p => p.data.view.IsMine));
 
+            yield return new WaitForEndOfFrame();
+
             this.timeUntilBattleStart = null;
             this.RoleIDsToAssign = null;
         }
@@ -318,7 +342,7 @@ namespace GameModeCollection.GameModes
                 yield return CardItem.MakeCardItem(card,
                                                     player.data.playerVel.position,
                                                     Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f)),
-                                                    velocty + UnityEngine.Mathf.Clamp(CardRandomVelMult * velocty.magnitude, CardRandomVelMin, float.MaxValue) * new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)),
+                                                    velocty + UnityEngine.Mathf.Clamp(CardRandomVelMult * velocty.magnitude, CardRandomVelMin, float.MaxValue) * new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)),
                                                     -CardAngularVelMult * velocty.x,
                                                     CardHealth, true);
             }
@@ -327,15 +351,14 @@ namespace GameModeCollection.GameModes
 
         public void PlayerJoined(Player player)
         {
-            // completely replace original, since we don't need teamPoints or teamRounds
-
             // reset Karma
             player.data.TRT_ResetKarma();
         }
 
         public void PlayerDied(Player killedPlayer, int teamsAlive)
         {
-            // completely replace original method
+            // every time a player dies, time is added to the clock
+            this.clocktime += HasteModeAddPerDeath;
 
             // handle TRT corpse creation, dropping cards, check win conditions
 
@@ -379,6 +402,8 @@ namespace GameModeCollection.GameModes
 
             PlayerManager.instance.ForEachPlayer(this.PlayerJoined);
 
+            BetterChat.BetterChat.SetDeadChat(true);
+
             GameManager.instance.isPlaying = true;
             this.StartCoroutine(this.DoStartGame());
         }
@@ -387,7 +412,10 @@ namespace GameModeCollection.GameModes
         {
             // completely replace original method
             RWF.CardBarHandlerExtensions.Rebuild(CardBarHandler.instance);
-            //UIHandler.instance.InvokeMethod("SetNumberOfRounds", (int) GameModeManager.CurrentHandler.Settings["roundsToWinGame"]);
+
+            // set the roundcounter number of rounds to 1 only so that the round counter is there
+            UIHandler.instance.InvokeMethod("SetNumberOfRounds", 1);
+
             ArtHandler.instance.NextArt();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookGameStart);
@@ -419,7 +447,7 @@ namespace GameModeCollection.GameModes
             TimeHandler.instance.DoSpeedUp();
             TimeHandler.instance.StartGame();
             GameManager.instance.battleOngoing = true;
-            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
 
             this.StartCoroutine(this.DoRoundStart());
@@ -449,11 +477,18 @@ namespace GameModeCollection.GameModes
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundStart);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointStart);
 
+            this.clocktime = PrepPhaseTime;
+            this.prebattle = true;
+
             var sounds = GameObject.Find("/SonigonSoundEventPool");
 
             yield return new WaitForSecondsRealtime(PrepPhaseTime);
 
             yield return this.SyncBattleStart();
+
+            this.clocktime = RoundTime;
+            this.prebattle = false;
+            this.battleOngoing = true;
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             //UIHandler.instance.DisplayRoundStartText("INNOCENT", InnocentColor, new Vector3(0.5f, 0.8f, 0f));
@@ -483,11 +518,18 @@ namespace GameModeCollection.GameModes
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointStart);
 
+            this.clocktime = PrepPhaseTime;
+            this.prebattle = true;
+
             var sounds = GameObject.Find("/SonigonSoundEventPool");
 
             yield return new WaitForSecondsRealtime(PrepPhaseTime);
 
             yield return this.SyncBattleStart();
+
+            this.clocktime = RoundTime;
+            this.prebattle = false;
+            this.battleOngoing = true;
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             //UIHandler.instance.DisplayRoundStartText("TRAITOR", TraitorColor, new Vector3(0.5f, 0.8f, 0f));
@@ -499,6 +541,9 @@ namespace GameModeCollection.GameModes
         public IEnumerator RoundTransition(string winningRoleID)
         {
             // completely replace original
+            this.battleOngoing = false;
+            this.prebattle = false;
+            this.clocktime = 0f;
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundEnd);
@@ -509,8 +554,15 @@ namespace GameModeCollection.GameModes
                 yield break;
             }
 
-            IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
-            this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+            if (winningRoleID is null)
+            {
+                this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
+            }
+            else
+            {
+                IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+                this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+            }
 
             yield return new WaitForSecondsRealtime(1f);
             MapManager.instance.LoadNextLevel(false, false);
@@ -538,17 +590,28 @@ namespace GameModeCollection.GameModes
             GameManager.instance.battleOngoing = true;
             this.isTransitioning = false;
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
-            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
 
             this.StartCoroutine(this.DoRoundStart());
         }
         public IEnumerator PointTransition(string winningRoleID)
         {
+            this.battleOngoing = false;
+            this.prebattle = false;
+            this.clocktime = 0f;
+
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
 
-            IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+            if (winningRoleID is null)
+            {
+                this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
+            }
+            else
+            {
+                IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+                this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+            }
 
-            this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
             yield return new WaitForSecondsRealtime(1f);
 
             MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
@@ -573,7 +636,7 @@ namespace GameModeCollection.GameModes
             GameManager.instance.battleOngoing = true;
             this.isTransitioning = false;
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
-            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
 
             this.StartCoroutine(this.DoPointStart());
         }
@@ -611,7 +674,7 @@ namespace GameModeCollection.GameModes
         {
             yield return GameModeManager.TriggerHook(GameModeHooks.HookGameEnd);
 
-            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
             //Color color = AverageColor.Average(colors);
             UIHandler.instance.DisplayScreenText(Color.white, "TROUBLE\nIN\nROUNDS TOWN", 1f);
             yield return new WaitForSecondsRealtime(2f);
@@ -647,7 +710,7 @@ namespace GameModeCollection.GameModes
             this.roundsPlayed = 0;
 
             this.isTransitioning = false;
-            //UIHandler.instance.ShowRoundCounterSmall(this.teamPoints, this.teamRounds);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
             CardBarHandler.instance.ResetCardBards();
             PointVisualizer.instance.ResetPoints();
         }
@@ -721,6 +784,83 @@ namespace GameModeCollection.GameModes
                 instance.RoundOver(winningRoleID);
             }
 
+        }
+
+        string GetClockString(float time_in_seconds)
+        {
+            return TimeSpan.FromSeconds(time_in_seconds).ToString(@"mm\:ss");
+        }
+
+        void Update()
+        {
+            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
+
+            this.syncCounter -= Time.unscaledDeltaTime;
+
+            if (this.syncCounter <= 0f && PhotonNetwork.IsMasterClient)
+            {
+                this.syncCounter = SyncClockEvery;
+                NetworkingManager.RPC_Others(typeof(GM_TRT), nameof(RPCO_SetClockTime), this.clocktime);
+            }
+
+            if (!this.prebattle && !this.battleOngoing)
+            {
+                UIHandler.instance.roundCounterSmall.ClearTexts();
+                this.clocktime = 0f;
+                return;
+            }
+
+            this.clocktime -= TimeHandler.deltaTime;
+            this.clocktime = UnityEngine.Mathf.Clamp(this.clocktime, 0f, float.PositiveInfinity);
+
+            Color timeColor = this.prebattle ? DullWhite : (this.clocktime < HasteModeAddPerDeath ? WarningColor : DullWhite);
+
+            UIHandler.instance.roundCounterSmall.UpdateText(0, GetClockString(clocktime), timeColor, 30, Vector3.one);
+
+            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient)
+            {
+                // short delay to allow things like phantom spawning and swapper swapping to happen
+                if (this.isCheckingWinCondition) { return; }
+                this.isCheckingWinCondition = true;
+                this.ExecuteAfterFrames(10, () =>
+                {
+                    this.isCheckingWinCondition = false;
+
+                    // out of time
+
+                    string[] roleIDsAlive = PlayerManager.instance.players.Where(p => !p.data.dead).Select(p => RoleManager.GetPlayerRoleID(p)).ToArray();
+
+                    // if there is a Killer still alive then the round does not end until they either die or win
+                    if (roleIDsAlive.Any(rID => rID == KillerRoleHandler.KillerRoleID))
+                    {
+                        return;
+                    }
+
+                    string winningRoleID = null;
+
+                    // if there is no Killer and there are any innocents left, they win
+                    if (PlayerManager.instance.players.Any(p => !p.data.dead && RoleManager.GetPlayerAlignment(p) == Alignment.Innocent))
+                    {
+                        winningRoleID = InnocentRoleHandler.InnocentRoleID;
+                    }
+
+                    // if none of the above, (this shouldn't be a valid game state) then it's a draw
+                    NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_DoSlowDown));
+                    NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_NextRound), winningRoleID);
+                });
+
+            }
+        }
+        [UnboundRPC]
+        private static void RPCA_DoSlowDown()
+        {
+            TimeHandler.instance.DoSlowDown();
+        }
+
+        [UnboundRPC]
+        private static void RPCO_SetClockTime(float time)
+        {
+            GM_TRT.instance.clocktime = time;
         }
     }
 }

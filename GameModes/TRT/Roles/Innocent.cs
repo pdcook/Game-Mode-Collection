@@ -7,11 +7,13 @@ namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class InnocentRoleHandler : IRoleHandler
     {
+        public static string InnocentRoleName => Innocent.RoleAppearance.Name;
+        public static string InnocentRoleID = $"GM_TRT_{InnocentRoleName}";
         public Alignment RoleAlignment => Innocent.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;
-        public string RoleName => Innocent.RoleAppearance.Name;
-        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public string RoleName => InnocentRoleName;
+        public string RoleID => InnocentRoleID;
         public int MinNumberOfPlayersForRole => 0;
         public int MinNumberOfPlayersWithRole => 1;
         public int MaxNumberOfPlayersWithRole => int.MaxValue;
@@ -33,7 +35,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override float BaseHealth => GM_TRT.BaseHealth;
 
-        public override bool CanDealDamage => true;
+        public override bool CanDealDamageAndTakeEnvironmentalDamage => true;
 
         public override float KarmaChange { get; protected set; } = 0f;
 

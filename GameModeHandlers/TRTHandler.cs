@@ -1,16 +1,16 @@
-﻿using RWF.GameModes;
-using GameModeCollection.GameModes;
+﻿using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
-using UnboundLib.GameModes;
-using System.Linq;
-using UnboundLib;
+using Photon.Pun;
 using RWF;
 using System.Collections.Generic;
-using UnityEngine;
-using UnboundLib.Utils;
+using System.Linq;
+using UnboundLib;
 using UnboundLib.Extensions;
-using Photon.Pun;
+using UnboundLib.GameModes;
+using UnboundLib.Networking;
+using UnboundLib.Utils;
+using UnityEngine;
 
 namespace GameModeCollection.GameModeHandlers
 {
@@ -48,7 +48,6 @@ namespace GameModeCollection.GameModeHandlers
                 { "videoURL", "https://media.giphy.com/media/lcngwaPCkqFbfhzrsH/giphy.mp4"},
                 {GameModeCollection.ReviveOnCardAddKey, false }, // do not revive players when they get a card
                 {GameModeCollection.CreatePlayerCorpsesKey, true }, // do not hide players when they die, instead make a corpse
-                {GameModeCollection.SeparateChatForDeadPlayersKey, true } // dead players have a separate chat
             };
         }
         public override int[] GetGameWinners()
@@ -230,29 +229,73 @@ namespace GameModeCollection.GameModeHandlers
             SendChat(null, message, alreadyInvestigated);
 
         }
+
+        private static bool CanReceiveTraitorChat(int senderID, int receiverID)
+        {
+            Player sender = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == senderID);
+            Player receiver = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == receiverID);
+            if (sender is null || receiver is null) { return false; }
+            if (sender.data.dead) { return false; } // dead players cannot send messages in traitor chat
+            if (RoleManager.GetPlayerAlignment(receiver) != Alignment.Traitor) { return false; } // dead OR alive players that are not traitors cannot see traitor chat (because they could be revived)
+            if (PlayerManager.instance.players.Any(p => !p.data.dead && RoleManager.GetPlayerRoleID(p) == GlitchRoleHandler.GlitchRoleID)) { return false; } // if there are any glitches alive, the traitor chat does not work
+            if (RoleManager.GetPlayerAlignment(sender) == Alignment.Traitor || RoleManager.GetPlayerAlignment(sender) == Alignment.Chaos) { return true; } // traitors, jesters, and swappers can send messages to the traitor chat
+            return false; // default is no.
+        }
+        private static bool CanSeeTraitorGroup(int playerID)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
+            if (player is null) { return false; }
+            // if the player is a jester or swapper, they can always see the traitor group
+            if (RoleManager.GetPlayerAlignment(player) == Alignment.Chaos) { return true; }
+            // if there is a Glitch, then traitors cannot see the group until the glitch is killed
+            if (PlayerManager.instance.players.Any(p => !p.data.dead && RoleManager.GetPlayerRoleID(p) == GlitchRoleHandler.GlitchRoleID)) { return false; }
+            // only traitors can see the traitor group
+            if (RoleManager.GetPlayerAlignment(player) == Alignment.Traitor) { return true; }
+            return false; // default no.
+
+        }
+
+        public static void InitChatGroups()
+        {
+            BetterChat.BetterChat.GroupSettings TraitorChatGroup = new BetterChat.BetterChat.GroupSettings(CanReceiveTraitorChat, KeyCode.V, canSeeGroup: CanSeeTraitorGroup);
+            BetterChat.BetterChat.CreateGroup("Traitors", TraitorChatGroup);
+        }
+
         public static void SendChat(Player player, string message, bool local = false)
         {
             if (player is null)
             {
                 if (local)
                 {
-                    MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(ChatName, -1, message);
+                    MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(">>> ", null, ChatName, -1, message, "");
                 }
                 else
                 {
-                    MenuControllerHandler.instance.GetComponent<PhotonView>().RPC("RPCA_CreateMessage", RpcTarget.All, ChatName, -1, message);
+                    NetworkingManager.RPC(typeof(TRTHandler), nameof(RPCA_TRT_CreateMessage), -1, message);
                 }
             }
             else
             {
                 if (local)
                 {
-                    MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(ExtraPlayerSkins.GetTeamColorName(player.colorID()), player.colorID(), message);
+                    MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(">>> ", null, ExtraPlayerSkins.GetTeamColorName(player.colorID()), player.colorID(), message);
                 }
                 else
                 {
-                    MenuControllerHandler.instance.GetComponent<PhotonView>().RPC("RPCA_CreateMessage", RpcTarget.All, ExtraPlayerSkins.GetTeamColorName(player.colorID()), player.colorID(), message);
+                    NetworkingManager.RPC(typeof(TRTHandler), nameof(RPCA_TRT_CreateMessage), player.colorID(), message);
                 }
+            }
+        }
+        [UnboundRPC]
+        private static void RPCA_TRT_CreateMessage(int senderColorID, string message)
+        {
+            if (senderColorID >= 0)
+            {
+                MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage("@", null, ExtraPlayerSkins.GetTeamColorName(senderColorID), senderColorID, message);
+            }
+            else
+            {
+                MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage("", null, ChatName, -1, message, "");
             }
         }
         public static string GetPlayerColorNameAsColoredString(Player player)

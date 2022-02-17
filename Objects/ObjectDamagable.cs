@@ -39,7 +39,7 @@ namespace GameModeCollection.Objects
         public override void TakeDamage(Vector2 damage, Vector2 damagePosition, Color dmgColor, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true, bool ignoreBlock = false)
         {
             /// Specifically for TRT
-            if (GameModeManager.CurrentHandlerID == TRTHandler.GameModeID && !(damagingPlayer?.GetComponent<ITRT_Role>()?.CanDealDamage ?? true))
+            if (GameModeManager.CurrentHandlerID == TRTHandler.GameModeID && !(damagingPlayer?.GetComponent<ITRT_Role>()?.CanDealDamageAndTakeEnvironmentalDamage ?? true))
             {
                 damage = Vector2.zero;
             }

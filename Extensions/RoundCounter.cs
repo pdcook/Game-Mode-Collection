@@ -66,7 +66,7 @@ namespace GameModeCollection.Extensions
             Transform teamText = instance.PointInfoHolder().Find($"P{teamID}-Text");
             if (teamText == null) 
             {
-                teamText = new GameObject($"P{teamID}-Clock", typeof(TextMeshProUGUI)).transform;
+                teamText = new GameObject($"P{teamID}-Text", typeof(TextMeshProUGUI)).transform;
                 teamText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
                 teamText.GetComponent<TextMeshProUGUI>().fontSize = 10f;
                 teamText.GetComponent<TextMeshProUGUI>().color = PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
@@ -84,6 +84,7 @@ namespace GameModeCollection.Extensions
             Color color = colorToSet ?? PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
 
             GameObject teamClock = instance.TeamClock(teamID).gameObject;
+            teamClock.SetActive(true);
 
             perc = UnityEngine.Mathf.Clamp01(perc);
 
@@ -96,8 +97,12 @@ namespace GameModeCollection.Extensions
                 teamClock.transform.localScale = scale.Value;
             }
         }
+        public static void RemoveClock(this RoundCounter instance, int teamID)
+        {
+            instance.TeamClock(teamID).gameObject.SetActive(false);
+        }
 
-        public static void UpdateText(this RoundCounter instance, int teamID, string text, Color? colorToSet = null)
+        public static void UpdateText(this RoundCounter instance, int teamID, string text, Color? colorToSet = null, float? fontSize = null, Vector3? scale = null)
         {
             Color color = colorToSet ?? PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
 
@@ -105,6 +110,8 @@ namespace GameModeCollection.Extensions
             TextMeshProUGUI tmpro = teamText.GetComponent<TextMeshProUGUI>();
             tmpro.text = text;
             tmpro.color = color;
+            if (fontSize != null) { tmpro.fontSize = (float)fontSize; }
+            if (scale != null) { tmpro.gameObject.transform.localScale = (Vector3)scale; }
         }
         public static void ClearTexts(this RoundCounter instance)
         {

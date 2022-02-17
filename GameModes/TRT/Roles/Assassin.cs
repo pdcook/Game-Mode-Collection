@@ -32,6 +32,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public bool FailedContract { get; private set; } = false;
         private bool HasBeenTold = false;
 
+        private float timeUntilCheck = 1f;
+
         new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Traitor, "Assassin", 'A', GM_TRT.AssassinColor);
 
         public override TRT_Role_Appearance Appearance => Assassin.RoleAppearance;
@@ -52,10 +54,10 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
             if (!this.FailedContract)
             {
-                List<Player> possibleTargets = PlayerManager.instance.players.Where(p => !p.data.dead && CanBeTarget(p) && RoleManager.GetPlayerRole(p)?.Appearance?.Name != Detective.RoleAppearance.Name).ToList();
+                List<Player> possibleTargets = PlayerManager.instance.players.Where(p => !p.data.dead && CanBeTarget(p) && RoleManager.GetPlayerRoleID(p) != DetectiveRoleHandler.DetectiveRoleID).ToList();
                 if (possibleTargets.Count() == 0)
                 {
-                    target = PlayerManager.instance.players.Find(p => !p.data.dead && RoleManager.GetPlayerRole(p)?.Appearance?.Name == Detective.RoleAppearance.Name);
+                    target = PlayerManager.instance.players.Find(p => !p.data.dead && RoleManager.GetPlayerRoleID(p) == DetectiveRoleHandler.DetectiveRoleID);
                 }
                 else
                 {
@@ -87,6 +89,20 @@ namespace GameModeCollection.GameModes.TRT.Roles
             base.Start();
 
             this.ExecuteAfterFrames(2, () => this.SetNewTarget());
+        }
+
+        void Update()
+        {
+            // if the target dies of means other than the assassin's, then get a new target - no penalty
+            if (this.timeUntilCheck <= 0f)
+            {
+                this.timeUntilCheck = 1f;
+                if (this.Target != null && this.Target.data.dead)
+                {
+                    this.SetNewTarget();
+                }
+            }
+            this.timeUntilCheck -= Time.deltaTime;
         }
 
         public override void OnKilledPlayer(Player killedPlayer)

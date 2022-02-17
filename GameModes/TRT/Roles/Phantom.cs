@@ -40,6 +40,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override void OnKilledByPlayer(Player killingPlayer)
         {
+            if (killingPlayer is null || killingPlayer.playerID == this.GetComponent<Player>()?.playerID) { return; }
             // do phantom stuff
             if (this.CanHaunt)
             {
