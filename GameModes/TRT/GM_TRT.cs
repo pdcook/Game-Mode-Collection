@@ -36,7 +36,7 @@ namespace GameModeCollection.GameModes
     /// - [X] There are no game winners / losers. the game is 4 maps with 4 battles each, the game ends after all 16 have been played
     /// 
     /// - [X] Each client flips over cards ONLY they walk near, and they stay flipped (large circular trigger collider)
-    /// - [X] Cards can be collected by walking near them (smaller box trigger collider just barely larger than card's box collider)
+    /// - [X] Cards can be collected by walking near them and clicking interact (F by default) (smaller box trigger collider just barely larger than card's box collider)
     /// - [X] Cards have health (possibly proportional to their card health stat) and can be shot and permanently destroyed
     /// - [X] Need to patch cards healing players when taken
     /// - [X] Player skins are randomized each round (sorry)
@@ -62,7 +62,7 @@ namespace GameModeCollection.GameModes
     /// - [X] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
     /// - [X] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
     /// - [~] custom maps specifically for this mode, not available in normal rotation
-    ///     --> custom map object mod for card spawn points
+    ///   [X] --> custom map object mod for card spawn points
     /// - [ ] card random spawning
     /// - [ ] LaTeX document with a short guide to each role
     /// - [ ] Round summaries in chat
@@ -439,7 +439,8 @@ namespace GameModeCollection.GameModes
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
 
-            MapManager.instance.LoadNextLevel(false, false);
+            //MapManager.instance.LoadNextLevel(false, false);
+            TRTMapManager.LoadNextTRTLevel(false, false);
 
             this.RandomizePlayerSkins();
             this.RandomizePlayerFaces();
@@ -574,7 +575,8 @@ namespace GameModeCollection.GameModes
             }
 
             yield return new WaitForSecondsRealtime(1f);
-            MapManager.instance.LoadNextLevel(false, false);
+            //MapManager.instance.LoadNextLevel(false, false);
+            TRTMapManager.LoadNextTRTLevel(false, false);
 
             yield return new WaitForSecondsRealtime(1.3f);
 
@@ -623,7 +625,8 @@ namespace GameModeCollection.GameModes
 
             yield return new WaitForSecondsRealtime(1f);
 
-            MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
+            //MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
+            TRTMapManager.LoadTRTLevelFromID(TRTMapManager.CurrentLevel, false, false);
 
             yield return new WaitForSecondsRealtime(1.3f);
 
@@ -655,7 +658,8 @@ namespace GameModeCollection.GameModes
             {
                 UIHandler.instance.DisplayScreenTextLoop(DullWhite, "REMATCH?");
                 UIHandler.instance.popUpHandler.StartPicking(PlayerManager.instance.players.First(), this.GetRematchYesNo);
-                MapManager.instance.LoadNextLevel(false, false);
+                //MapManager.instance.LoadNextLevel(false, false);
+                TRTMapManager.LoadNextTRTLevel(false, false);
                 return;
             }
 
