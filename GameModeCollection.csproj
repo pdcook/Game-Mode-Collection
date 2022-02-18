@@ -62,6 +62,9 @@
     <Reference Include="MapEmbiggener">
       <HintPath>$(RoundsFolder)\BepInEx\plugins\MapEmbiggener.dll</HintPath>
     </Reference>
+    <Reference Include="MapsExtended">
+      <HintPath>$(RoundsFolder)\BepInEx\plugins\MapsExtended.dll</HintPath>
+    </Reference>
     <Reference Include="ModdingUtils">
       <HintPath>$(RoundsFolder)\BepInEx\plugins\ModdingUtils.dll</HintPath>
     </Reference>
@@ -144,6 +147,8 @@
     <Compile Include="Extensions\UIHandler.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
+    <Compile Include="GameModes\TRT\TRTCardManager.cs" />
+    <Compile Include="GameModes\TRT\TRTMapManager.cs" />
     <Compile Include="GameModeHandlers\TRTHandler.cs" />
     <Compile Include="GameModeHandlers\CrownControlHandlers.cs" />
     <Compile Include="GameModeHandlers\HideNSeekHandlers.cs" />
@@ -193,6 +198,7 @@
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\GeneralInput.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
+    <Compile Include="Patches\MapManager.cs" />
     <Compile Include="Patches\PlayerActions.cs" />
     <Compile Include="Patches\PlayerCollision.cs" />
     <Compile Include="Patches\PlayerFlyParticle.cs" />
@@ -215,7 +221,12 @@
     <Content Include="publish.ps1" />
     <Content Include="ThunderStore\icon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="GMCObjects\GMCObjects.csproj">
+      <Project>{1d1ad7d6-e593-4272-9a16-9b03cfbbd1a0}</Project>
+      <Name>GMCObjects</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.

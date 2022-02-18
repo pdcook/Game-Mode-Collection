@@ -11,11 +11,13 @@ using UnboundLib.GameModes;
 using UnboundLib.Networking;
 using UnboundLib.Utils;
 using UnityEngine;
+using MapsExt;
 
 namespace GameModeCollection.GameModeHandlers
 {
     public class TRTHandler : GameModeHandler<GM_TRT>
     {
+
         public const string ChatName = "<b>[TRT]</b>";
         private const float SendFreq = 1f;
         private const float MaxVisibleDistance = 10f;
@@ -278,7 +280,7 @@ namespace GameModeCollection.GameModeHandlers
             {
                 if (local)
                 {
-                    MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(">>> ", null, ExtraPlayerSkins.GetTeamColorName(player.colorID()), player.colorID(), message);
+                    MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(">>> ", null, ExtraPlayerSkins.GetTeamColorName(player.colorID()), player.colorID(), message, "");
                 }
                 else
                 {
