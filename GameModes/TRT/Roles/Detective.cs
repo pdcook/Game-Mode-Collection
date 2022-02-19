@@ -27,6 +27,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     {
         new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Detective", 'D', GM_TRT.DetectiveColor);
         public override TRT_Role_Appearance Appearance => Detective.RoleAppearance;
+        public override int MaxCards => GM_TRT.BaseMaxCards + 1;
 
         protected override void Start()
         {

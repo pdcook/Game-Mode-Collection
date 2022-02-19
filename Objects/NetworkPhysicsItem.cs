@@ -32,6 +32,7 @@ namespace GameModeCollection.Objects
 		private const float DefaultThrusterDurationMult = 1f;
 		private const bool DefaultIgnoreBackgroundObjects = true;
 		private const bool DefaultPlayerCanStandOn = false;
+		private const bool DefaultVisibleThroughShader = true;
 
 		public readonly float Bounciness;
 		public readonly float Friction;
@@ -52,6 +53,7 @@ namespace GameModeCollection.Objects
 		public readonly float ThrusterDurationMult;
 		public readonly bool IgnoreBackgroundObjects;
 		public readonly bool PlayerCanStandOn;
+		public readonly bool VisibleThroughShader;
 		public float MaxSpeedSqr => this.MaxSpeed * this.MaxSpeed;
 
 		public ItemPhysicalProperties(
@@ -72,7 +74,8 @@ namespace GameModeCollection.Objects
 			float collisionDamageThreshold = DefaultPhysicsCollisionDamageThreshold,
 			float thrusterDurationMult = DefaultThrusterDurationMult,
 			bool ignoreBackgroundObjects = DefaultIgnoreBackgroundObjects,
-			bool playerCanStandOn = DefaultPlayerCanStandOn)
+			bool playerCanStandOn = DefaultPlayerCanStandOn,
+			bool visibleThroughShader = DefaultVisibleThroughShader)
 		{
 			this.Bounciness = bounciness;
 			this.Friction = friction;
@@ -92,6 +95,7 @@ namespace GameModeCollection.Objects
 			this.ThrusterDurationMult = thrusterDurationMult;
 			this.IgnoreBackgroundObjects = ignoreBackgroundObjects;
 			this.PlayerCanStandOn = playerCanStandOn;
+			this.VisibleThroughShader = visibleThroughShader;
 		}
 
 	}
@@ -286,6 +290,15 @@ namespace GameModeCollection.Objects
 			this.gameObject.layer = PhysicsItem.ColliderLayer;
 
 			if (this.View != null && this.View.ObservedComponents != null) { this.View.ObservedComponents.Add(this); }
+
+			try
+            {
+                if (!this.PhysicalProperties.VisibleThroughShader)
+                {
+                    LocalZoom.LocalZoom.MakeObjectHidden(this);
+                }
+            }
+            catch { }
 
 		}
 		public virtual void SetPos(Vector3 position)

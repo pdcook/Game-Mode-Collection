@@ -252,10 +252,10 @@ namespace GameModeCollection.GameModes.TRT
             }
             if (specificRole is null || !specificPlayer.data.view.IsMine) { return; }
             // to the specific player ONLY, do new display stuff
-            UIHandler.instance.DisplayRoundStartText(specificRole.Appearance.Name, specificRole.Appearance.Color, new Vector3(0.5f, 0.8f, 0f));
-            GameModeCollection.instance.ExecuteAfterSeconds(0.5f, () => {
-                RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
-            });
+            //UIHandler.instance.DisplayRoundStartText(specificRole.Appearance.Name, specificRole.Appearance.Color, new Vector3(0.5f, 0.8f, 0f));
+            //GameModeCollection.instance.ExecuteAfterSeconds(0.5f, () => {
+            //    RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
+            //});
             string playerRoleName = GetRoleColoredName(specificRole.Appearance);
             TRTHandler.SendChat(null, $"You are {GetPlayerColorNameAsColoredString(specificPlayer)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(specificRole.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
             // now do any necessary reporting
@@ -328,10 +328,10 @@ namespace GameModeCollection.GameModes.TRT
                 }
             }
             if (role is null) { return; }
-            UIHandler.instance.DisplayRoundStartText(role.Appearance.Name, role.Appearance.Color, new Vector3(0.5f, 0.8f, 0f));
-            GameModeCollection.instance.ExecuteAfterSeconds(0.5f, () => {
-                RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
-            });
+            //UIHandler.instance.DisplayRoundStartText(role.Appearance.Name, role.Appearance.Color, new Vector3(0.5f, 0.8f, 0f));
+            //GameModeCollection.instance.ExecuteAfterSeconds(0.5f, () => {
+            //    RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
+            //});
             string playerRoleName = GetRoleColoredName(role.Appearance);
             TRTHandler.SendChat(null, $"You are {GetPlayerColorNameAsColoredString(player)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(role.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
             // now do any necessary reporting

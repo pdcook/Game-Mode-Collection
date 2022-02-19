@@ -11,6 +11,7 @@ using GameModeCollection.Extensions;
 using HarmonyLib;
 using TMPro;
 using Sonigon;
+using MapEmbiggener;
 
 namespace GameModeCollection.Objects
 {
@@ -110,16 +111,16 @@ namespace GameModeCollection.Objects
             GameModeCollection.Log($"Instantiated {this.CardName} item");
 
             this.gameObject.SetActive(true);
-
         }
         protected override void Awake()
         {
-            this.PhysicalProperties = new ItemPhysicalProperties(   mass: 20000f,
+            this.PhysicalProperties = new ItemPhysicalProperties(mass: 60000f,
+                                                                    playerPushMult: 12000f,
                                                                     playerDamageMult: 0f,
                                                                     collisionDamageThreshold: float.MaxValue,
-                                                                    friction: 0.5f,
+                                                                    friction: 0.9f,
                                                                     impulseMult: 0.1f,
-                                                                    forceMult: 2f);
+                                                                    forceMult: 2f, visibleThroughShader: false);
 
             base.Awake();
         }
@@ -202,14 +203,37 @@ namespace GameModeCollection.Objects
             else if (!player.data.CanHaveMoreCards()) { return; }
             else if (!ModdingUtils.Utils.Cards.instance.PlayerIsAllowedCard(player, this.Card)) { return; }
 
+            // final check: is the player trying to collect multiple cards at once?
+            // if so, fail to collect any of them
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, CollectionDistance);
+            if (colliders.Where(c => c?.GetComponentInParent<CardItem>() != null).Count() > 1) { return; }
+
+
+            // if so, only allow them to interact with the card closest to them
+            /*
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, CollectionDistance);
+            Collider2D closest = null;
+            float dist = float.PositiveInfinity;
+            foreach (Collider2D collider in colliders.Where(c => c?.GetComponentInParent<CardItem>() != null))
+            {
+                if (Vector2.Distance(collider.transform.position, player.transform.position) < dist)
+                {
+                    closest = collider;
+                }
+            }
+            if (closest is null || closest.GetComponentInParent<CardItem>() != this) { return; }
+            */
+
             this.View.RPC(nameof(RPCA_AddCardToPlayer), RpcTarget.All, player.playerID);
             CardItemHandler.ClientsideAddToCardBar(player.playerID, this.Card);
         }
         [PunRPC]
         private void RPCA_AddCardToPlayer(int playerID)
         {
+            Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
+            if (!player.data.CanHaveMoreCards()) { return; }
             this.HasBeenTaken = true;
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(PlayerManager.instance.players.Find(p => p.playerID == playerID), this.Card, false, "", 0, 0, false);
+            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, this.Card, false, "", 0, 0, false);
             this.RPCA_DestroyCardItem();
         }
 
@@ -258,10 +282,14 @@ namespace GameModeCollection.Objects
     [RequireComponent(typeof(Rigidbody2D))]
     class CardItemHandler : MonoBehaviour
     {
+        private const float CheckOOBEvery = 1f;
+
         public static readonly Vector3 PositionToCheck = new Vector3(100000f, 100000f, 0f);
         public static CardItemHandler Instance { get; private set; } = null;
         private CircleCollider2D Trigger => this.gameObject.GetComponent<CircleCollider2D>();
         private Rigidbody2D Rig => this.gameObject.GetComponent<Rigidbody2D>();
+
+        private float CheckOOBTimer = 0f;
 
         public void DestroyAllCardItems()
         {
@@ -291,6 +319,21 @@ namespace GameModeCollection.Objects
             this.Trigger.radius = 1f;
             this.Rig.position = PositionToCheck;
             this.Rig.velocity = Vector2.zero;
+
+            this.CheckOOBTimer -= Time.deltaTime;
+            if (this.CheckOOBTimer < 0f)
+            {
+                this.CheckOOBTimer = CheckOOBEvery;
+                foreach (Transform child in this.transform)
+                {
+                    Vector3 point = OutOfBoundsUtils.InverseGetPoint(child.position);
+                    if (point.x <= 0f || point.x >= 1f || point.y <= 0f)
+                    {
+                        Destroy(child.gameObject);
+                    }
+                }
+            }
+
         }
         void OnTriggerEnter2D(Collider2D collider)
         {
@@ -305,6 +348,14 @@ namespace GameModeCollection.Objects
                     cardItem.CardObj.transform.SetParent(cardItem.transform, false);
                     cardItem.CardObj.transform.localPosition = Vector3.zero;
                     cardItem.CardObj.PauseAllAnimators();
+                    if (!cardItem.PhysicalProperties.VisibleThroughShader)
+                    {
+                        try
+                        {
+                            LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform);
+                        }
+                        catch { }
+                    }
                     collider.enabled = false;
                 }
                 else

@@ -19,6 +19,10 @@ namespace GameModeCollection.Extensions
         {
             instance.GetData().maxAllowedCards = max;
         }
+        public static int MaxCards(this CharacterData instance)
+        {
+            return instance.GetData().maxAllowedCards;
+        }
         public static bool CanHaveMoreCards(this CharacterData instance)
         {
             return instance.currentCards.Count() < instance.GetData().maxAllowedCards;

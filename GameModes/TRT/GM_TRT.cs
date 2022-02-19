@@ -94,8 +94,8 @@ namespace GameModeCollection.GameModes
     {
         internal static GM_TRT instance;
 
-        private const float RoundTime = 30f; // default 300f
-        private const float PrepPhaseTime = 1f; // default 30f
+        private const float RoundTime = 300f; // default 300f
+        private const float PrepPhaseTime = 3f; // default 30f
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 
@@ -146,6 +146,28 @@ namespace GameModeCollection.GameModes
         private float clocktime = RoundTime;
         private float syncCounter = -1f;
 
+        private void SetAllPlayersFOV()
+        {
+            PlayerManager.instance.ForEachPlayer(player =>
+            {
+                if (player.GetComponentInChildren<ViewSphere>(true) != null)
+                {
+                    player.GetComponentInChildren<ViewSphere>(true).fov = 361f;
+                    player.GetComponentInChildren<ViewSphere>(true).viewDistance = 1000f;
+                }
+            });
+        }
+        private void HideAllPlayerFaces()
+        {
+            PlayerManager.instance.ForEachPlayer(player =>
+            {
+                foreach (CharacterItem item in player.GetComponentsInChildren<CharacterItem>(true))
+                {
+                    LocalZoom.LocalZoom.MakeObjectHidden(item);
+                }
+            });
+        }
+
         protected void Awake()
         {
             GM_TRT.instance = this;
@@ -168,6 +190,7 @@ namespace GameModeCollection.GameModes
             PlayerAssigner.instance.maxPlayers = RWF.RWFMod.instance.MaxPlayers;
 
             LocalZoom.LocalZoom.scaleCamWithBulletSpeed = true;
+            LocalZoom.LocalZoom.SetEnableShaderSetting(true);
             LocalZoom.LocalZoom.SetEnableCameraSetting(true);
             TRTHandler.InitChatGroups();
             BetterChat.BetterChat.SetDeadChat(true);
@@ -362,6 +385,10 @@ namespace GameModeCollection.GameModes
         {
             // reset Karma
             player.data.TRT_ResetKarma();
+
+            // set localzoom shader settings
+            this.SetAllPlayersFOV();
+            this.HideAllPlayerFaces();
         }
 
         public void PlayerDied(Player killedPlayer, int teamsAlive)
@@ -375,11 +402,16 @@ namespace GameModeCollection.GameModes
             GameModeCollection.Log($"Player {killedPlayer.playerID} dropping cards...");
 
             CardInfo[] cardsToDrop = killedPlayer.data.currentCards.ToArray();
-            killedPlayer.data.currentCards.Clear();
+            killedPlayer.InvokeMethod("FullReset");
             this.StartCoroutine(this.DropCardsOnDeath(killedPlayer, cardsToDrop));
 
             // corpse creation
             this.PlayerCorpse(killedPlayer);
+            
+            if (killedPlayer.data.view.IsMine)
+            {
+                UIHandler.instance.roundCounterSmall.UpdateText(1, "ONGOING", DullWhite, 30, Vector3.one);
+            }
 
             // check win condition after a short delay to allow things like phantom spawning and swapper swapping to happen
             if (this.isCheckingWinCondition) { return; }
@@ -393,7 +425,6 @@ namespace GameModeCollection.GameModes
                 if (winningRoleID != null)
                 {
 
-                    TimeHandler.instance.DoSlowDown();
                     if (PhotonNetwork.IsMasterClient)
                     {
                         NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_NextRound), winningRoleID);
@@ -436,6 +467,9 @@ namespace GameModeCollection.GameModes
             UIHandler.instance.HideJoinGameText();
             yield return this.WaitForSyncUp();
 
+            this.SetAllPlayersFOV();
+            this.HideAllPlayerFaces();
+
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
 
@@ -470,6 +504,9 @@ namespace GameModeCollection.GameModes
             // reset players completely
             PlayerManager.instance.InvokeMethod("ResetCharacters");
 
+            this.SetAllPlayersFOV();
+            this.HideAllPlayerFaces();
+
             // players get karma reset on new round
             PlayerManager.instance.ResetKarma();
 
@@ -479,8 +516,10 @@ namespace GameModeCollection.GameModes
                 yield return null;
             }
 
-            // TODO: REMOVE THIS
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f, requireInteract: true);
+            this.SetAllPlayersFOV();
+            this.HideAllPlayerFaces();
+
+            yield return TRTCardManager.SpawnCards(2 * PlayerManager.instance.players.Count(), CardHealth, true);
 
             yield return this.WaitForSyncUp();
 
@@ -491,6 +530,8 @@ namespace GameModeCollection.GameModes
             this.prebattle = true;
 
             var sounds = GameObject.Find("/SonigonSoundEventPool");
+
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one);
 
             yield return new WaitForSecondsRealtime(PrepPhaseTime);
 
@@ -514,14 +555,19 @@ namespace GameModeCollection.GameModes
             // reset players completely
             PlayerManager.instance.InvokeMethod("ResetCharacters");
 
+            this.SetAllPlayersFOV();
+            this.HideAllPlayerFaces();
+
             // Wait for MapManager to set all players to playing after map transition
             while (PlayerManager.instance.players.ToList().Any(p => !(bool)p.data.isPlaying))
             {
                 yield return null;
             }
 
-            // TODO: REMOVE THIS
-            yield return CardItem.MakeCardItem(CardChoice.instance.cards.GetRandom<CardInfo>(), Vector3.zero, Quaternion.identity, maxHealth: 100f, requireInteract: true);
+            this.SetAllPlayersFOV();
+            this.HideAllPlayerFaces();
+
+            yield return TRTCardManager.SpawnCards(2 * PlayerManager.instance.players.Count(), CardHealth, true);
 
             //PlayerManager.instance.SetPlayersSimulated(false);
             yield return this.WaitForSyncUp();
@@ -532,6 +578,8 @@ namespace GameModeCollection.GameModes
             this.prebattle = true;
 
             var sounds = GameObject.Find("/SonigonSoundEventPool");
+
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one);
 
             yield return new WaitForSecondsRealtime(PrepPhaseTime);
 
@@ -733,11 +781,13 @@ namespace GameModeCollection.GameModes
         }
         public void RoundOver(string winningRoleID)
         {
+            TRTCardManager.RemoveAllCardItems();
             this.StartCoroutine(this.RoundTransition(winningRoleID));
         }
 
         public void PointOver(string winningRoleID)
         {
+            TRTCardManager.RemoveAllCardItems();
             this.StartCoroutine(this.PointTransition(winningRoleID));
         }
 
@@ -768,6 +818,8 @@ namespace GameModeCollection.GameModes
         [UnboundRPC]
         public static void RPCA_NextRound(string winningRoleID)
         {
+            TimeHandler.instance.DoSlowDown();
+
             var instance = GM_TRT.instance;
 
             if (instance.isTransitioning)
@@ -783,7 +835,6 @@ namespace GameModeCollection.GameModes
             PlayerManager.instance.SetPlayersSimulated(false);
 
             instance.pointsPlayedOnCurrentMap++;
-
 
             if (instance.pointsPlayedOnCurrentMap < (int)GameModeManager.CurrentHandler.Settings["pointsToWinRound"])
             {
@@ -830,7 +881,7 @@ namespace GameModeCollection.GameModes
 
             UIHandler.instance.roundCounterSmall.UpdateText(0, GetClockString(clocktime), timeColor, 30, Vector3.one);
 
-            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient)
+            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.battleOngoing)
             {
                 // short delay to allow things like phantom spawning and swapper swapping to happen
                 if (this.isCheckingWinCondition) { return; }
