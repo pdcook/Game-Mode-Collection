@@ -84,6 +84,7 @@ namespace GameModeCollection.Objects
         public string CardName { get; private set; }
         public GameObject CardObj { get; internal set; } = null;
         public const float CollectionDistance = 2f;
+        public bool CardBackVisibleThroughShader = false;
 
         public override void OnPhotonInstantiate(PhotonMessageInfo info)
         {
@@ -120,7 +121,7 @@ namespace GameModeCollection.Objects
                                                                     collisionDamageThreshold: float.MaxValue,
                                                                     friction: 0.9f,
                                                                     impulseMult: 0.1f,
-                                                                    forceMult: 2f, visibleThroughShader: false);
+                                                                    forceMult: 2f, visibleThroughShader: true);
 
             base.Awake();
         }
@@ -140,23 +141,27 @@ namespace GameModeCollection.Objects
         protected internal override void OnTriggerEnter2D(Collider2D collider2D)
         {
             if (collider2D?.GetComponent<Player>() != null
-                && (collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false)
                 && !collider2D.GetComponent<Player>().data.dead
                 && this.CanSeePlayer(collider2D.GetComponent<Player>()))
             {
-                this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true);
-                this.CardObj?.PlayAllAnimators();
+                this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true,(collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false));
+                if ((collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false))
+                {
+                    this.CardObj?.PlayAllAnimators();
+                }
             }
             base.OnTriggerEnter2D(collider2D);
         }
         protected internal override void OnTriggerExit2D(Collider2D collider2D)
         {
             if (collider2D?.GetComponent<Player>() != null
-                && (collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false)
                 && !collider2D.GetComponent<Player>().data.dead)
             {
-                this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(false);
-                this.CardObj?.PauseAllAnimators();
+                this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(false,(collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false));
+                if ((collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false))
+                {
+                    this.CardObj?.PauseAllAnimators();
+                }
             }
             base.OnTriggerExit2D(collider2D);
         }
@@ -169,12 +174,11 @@ namespace GameModeCollection.Objects
             {
                 if (this.CanSeePlayer(collider2D.GetComponent<Player>()))
                 {
-                    this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true);
-                    if(this.RequiresInteraction && !collider2D.GetComponent<Player>().data.playerActions.Interact().WasPressed)
+                    this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true,(collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false));
+                    if (this.RequiresInteraction && !collider2D.GetComponent<Player>().data.playerActions.Interact().WasPressed)
                     {
-                        return;
                     }
-                    if (Vector2.Distance(collider2D.GetComponent<Player>().data.playerVel.position, this.transform.position) < CollectionDistance)
+                    else if (Vector2.Distance(collider2D.GetComponent<Player>().data.playerVel.position, this.transform.position) < CollectionDistance)
                     {
                         this.CheckPlayerCollect(collider2D.GetComponent<Player>());
                     }
@@ -206,7 +210,13 @@ namespace GameModeCollection.Objects
             // final check: is the player trying to collect multiple cards at once?
             // if so, fail to collect any of them
             Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, CollectionDistance);
-            if (colliders.Where(c => c?.GetComponentInParent<CardItem>() != null).Count() > 1) { return; }
+            if (colliders.Where(c => c?.GetComponentInParent<CardItem>() != null).Count() > 1)
+            {
+                if (colliders.Select(c => c.GetComponentInParent<CardItem>()).Where(c => c != null && Vector2.Distance(player.transform.position, c.transform.position) < CollectionDistance).Distinct().Count() > 1)
+                {
+                    return;
+                }
+            }
 
 
             // if so, only allow them to interact with the card closest to them
@@ -348,15 +358,11 @@ namespace GameModeCollection.Objects
                     cardItem.CardObj.transform.SetParent(cardItem.transform, false);
                     cardItem.CardObj.transform.localPosition = Vector3.zero;
                     cardItem.CardObj.PauseAllAnimators();
-                    if (!cardItem.PhysicalProperties.VisibleThroughShader)
-                    {
-                        try
-                        {
-                            LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform);
-                        }
-                        catch { }
-                    }
                     collider.enabled = false;
+                    if (!cardItem.CardBackVisibleThroughShader)
+                    {
+                        LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform.Find("CardBase(Clone)/Canvas/Back"));
+                    }
                 }
                 else
                 {

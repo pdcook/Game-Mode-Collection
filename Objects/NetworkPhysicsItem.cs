@@ -291,14 +291,10 @@ namespace GameModeCollection.Objects
 
 			if (this.View != null && this.View.ObservedComponents != null) { this.View.ObservedComponents.Add(this); }
 
-			try
+            if (!this.PhysicalProperties.VisibleThroughShader)
             {
-                if (!this.PhysicalProperties.VisibleThroughShader)
-                {
-                    LocalZoom.LocalZoom.MakeObjectHidden(this);
-                }
+                LocalZoom.LocalZoom.MakeObjectHidden(this);
             }
-            catch { }
 
 		}
 		public virtual void SetPos(Vector3 position)

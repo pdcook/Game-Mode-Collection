@@ -136,6 +136,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\CardVisuals.cs" />
     <Compile Include="Extensions\CharacterData.cs" />
     <Compile Include="Extensions\GameObject.cs" />
     <Compile Include="Extensions\HealthHandler.cs" />
@@ -198,6 +199,7 @@
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\GeneralInput.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
+    <Compile Include="Patches\MapsExtended_UpdateMapFiles.cs" />
     <Compile Include="Patches\PlayerActions.cs" />
     <Compile Include="Patches\PlayerCollision.cs" />
     <Compile Include="Patches\PlayerFlyParticle.cs" />
