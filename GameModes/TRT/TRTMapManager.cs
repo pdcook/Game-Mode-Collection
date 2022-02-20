@@ -34,6 +34,23 @@ namespace GameModeCollection.GameModes.TRT
             View.RPC("RPCA_LoadLevel", RpcTarget.All, $"MapsExtended:{TRTMapManager.CurrentLevel}");
             NetworkingManager.RPC(typeof(TRTMapManager), nameof(RPCA_SetCurrentLevel), TRTMapManager.CurrentLevel);
         }
+        public static void ReLoadTRTLevel(bool callInImmediately = false, bool forceLoad = false)
+        {
+            if (TRTMapManager.Maps == null || TRTMapManager.Maps.Count == 0)
+            {
+                MapManager.instance.LoadNextLevel(callInImmediately, forceLoad);
+                return;
+            }
+
+            if (!forceLoad && !PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode)
+            {
+                return;
+            }
+
+            View.RPC("RPCA_SetCallInNextMap", RpcTarget.All, callInImmediately);
+            View.RPC("RPCA_LoadLevel", RpcTarget.All, $"MapsExtended:{TRTMapManager.CurrentLevel}");
+            NetworkingManager.RPC(typeof(TRTMapManager), nameof(RPCA_SetCurrentLevel), TRTMapManager.CurrentLevel);
+        }
         public static void LoadTRTLevelFromID(string ID, bool onlyMaster = false, bool callInImmediately = false)
         {
             if (!TRTMapManager.Maps.Select(m => m.id).Contains(ID))

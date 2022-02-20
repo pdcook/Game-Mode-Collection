@@ -95,7 +95,7 @@ namespace GameModeCollection.GameModes
         internal static GM_TRT instance;
 
         private const float RoundTime = 300f; // default 300f
-        private const float PrepPhaseTime = 3f; // default 30f
+        private const float PrepPhaseTime = 30f; // default 30f
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 
@@ -319,7 +319,7 @@ namespace GameModeCollection.GameModes
         {
             PlayerManager.instance.ForEachPlayer(player =>
             {
-                GameModeCollection.Log($"PLAYER {player.playerID} | {this.RoleIDsToAssign[player.playerID]}");
+                //GameModeCollection.Log($"PLAYER {player.playerID} | {this.RoleIDsToAssign[player.playerID]}");
                 RoleManager.GetHandler(this.RoleIDsToAssign[player.playerID]).AddRoleToPlayer(player);
             });
         }
@@ -412,7 +412,7 @@ namespace GameModeCollection.GameModes
         public void PlayerDied(Player killedPlayer, int teamsAlive)
         {
             // every time a player dies, time is added to the clock
-            this.clocktime += HasteModeAddPerDeath;
+            this.clocktime += HasteModeAddPerDeath / PlayerManager.instance.players.Select(p => p.data.view.ControllerActorNr).Distinct().Count();
 
             // handle TRT corpse creation, dropping cards, check win conditions
 
@@ -694,7 +694,8 @@ namespace GameModeCollection.GameModes
 
             yield return new WaitForSecondsRealtime(1f);
             //MapManager.instance.LoadNextLevel(false, false);
-            TRTMapManager.LoadNextTRTLevel(false, false);
+            //TRTMapManager.LoadNextTRTLevel(false, false);
+            TRTMapManager.ReLoadTRTLevel(false, false);
 
             yield return new WaitForSecondsRealtime(1.3f);
 

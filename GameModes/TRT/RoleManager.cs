@@ -150,13 +150,14 @@ namespace GameModeCollection.GameModes.TRT
 
             // finally, at least 62.5% of the players should be aligned with the innocents, if this requirement is not met, then
             // replace some of the traitor-aligned roles with innocents
+            /*
             while ((float)lineup.Count(r => r.RoleAlignment == Alignment.Innocent)/(float)lineup.Count() < 0.625f)
             {
                 GameModeCollection.Log("[RoleManager] Not enough innocents. Correcting...");
                 int i = lineup.LastIndexOf(lineup.LastOrDefault(r => r.RoleAlignment != Alignment.Innocent));
                 if (i == -1) { break; }
                 lineup[i] = DrawRandomRole(RoleHandlers.Values.Where(r => r.RoleAlignment == Alignment.Innocent && r.MinNumberOfPlayersForRole <= N && r.MaxNumberOfPlayersWithRole > lineup.Count(r2 => r2 == r)).ToList());
-            }
+            }*/
 
             return lineup.Take(N).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
         }
