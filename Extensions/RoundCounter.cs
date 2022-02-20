@@ -15,7 +15,8 @@ namespace GameModeCollection.Extensions
     public static class RoundCounterExtensions
     {
 
-        private static readonly Vector3 offset = new Vector3(2f, 0f, 0f);
+        private static readonly Vector3 horizOffset = new Vector3(40f, 0f, 0f);
+        private static readonly Vector3 vertOffset = new Vector3(0f, -28.835f, 0f);
 
         private static readonly ConditionalWeakTable<RoundCounter, RoundCounterAdditionalData> additionalData = new ConditionalWeakTable<RoundCounter, RoundCounterAdditionalData>();
         public static RoundCounterAdditionalData GetData(this RoundCounter instance)
@@ -57,8 +58,7 @@ namespace GameModeCollection.Extensions
                 teamClock.gameObject.SetActive(true);
             }
             teamClock.transform.localScale = 1 / 8f * Vector3.one;
-            float deltaY = instance.p1Parent.parent.Find("P2").position.y - instance.p1Parent.parent.Find("P1").position.y;
-            teamClock.transform.position = instance.p1Parent.GetChild(instance.p1Parent.childCount - 1).position + offset + new Vector3(0f, teamID * deltaY, 0f);
+            teamClock.transform.localPosition = horizOffset + teamID * vertOffset;
             return teamClock;
         }
         public static Transform TeamText(this RoundCounter instance, int teamID)
@@ -74,8 +74,7 @@ namespace GameModeCollection.Extensions
                 teamText.SetSiblingIndex(teamID);
             }
             teamText.transform.localScale = 1 / 8f * Vector3.one;
-            float deltaY = instance.p1Parent.parent.Find("P2").position.y - instance.p1Parent.parent.Find("P1").position.y;
-            teamText.transform.position = instance.p1Parent.GetChild(instance.p1Parent.childCount - 1).position + offset + new Vector3(0f, teamID * deltaY, 0f);
+            teamText.transform.localPosition = horizOffset + teamID * vertOffset;
             return teamText;
         }
 

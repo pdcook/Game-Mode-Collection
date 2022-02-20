@@ -361,7 +361,7 @@ namespace GameModeCollection.Objects
                     collider.enabled = false;
                     if (!cardItem.CardBackVisibleThroughShader)
                     {
-                        LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform.Find("CardBase(Clone)/Canvas/Back"));
+                        this.ExecuteAfterFrames(2, () => LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform.Find("CardBase(Clone)/Canvas/Back")));
                     }
                 }
                 else

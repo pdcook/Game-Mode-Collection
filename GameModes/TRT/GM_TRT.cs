@@ -99,6 +99,8 @@ namespace GameModeCollection.GameModes
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 
+        private const float DefaultZoom = 40f;
+
         private const float TimeBetweenCardDrops = 0.5f;
         private const float CardRandomVelMult = 0.25f;
         private const float CardRandomVelMin = 3f;
@@ -189,11 +191,14 @@ namespace GameModeCollection.GameModes
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerAssigner.instance.maxPlayers = RWF.RWFMod.instance.MaxPlayers;
 
+            LocalZoom.MyCameraController.allowZoomIn = true;
+            LocalZoom.MyCameraController.defaultZoomLevel = DefaultZoom;
             LocalZoom.LocalZoom.scaleCamWithBulletSpeed = true;
             LocalZoom.LocalZoom.SetEnableShaderSetting(true);
             LocalZoom.LocalZoom.SetEnableCameraSetting(true);
             TRTHandler.InitChatGroups();
             BetterChat.BetterChat.SetDeadChat(true);
+            BetterChat.BetterChat.UsePlayerColors = true;
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitEnd);
         }
@@ -443,6 +448,7 @@ namespace GameModeCollection.GameModes
             PlayerManager.instance.ForEachPlayer(this.PlayerJoined);
 
             BetterChat.BetterChat.SetDeadChat(true);
+            BetterChat.BetterChat.UsePlayerColors = true;
 
             GameManager.instance.isPlaying = true;
             this.StartCoroutine(this.DoStartGame());
@@ -459,6 +465,9 @@ namespace GameModeCollection.GameModes
             ArtHandler.instance.NextArt();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookGameStart);
+
+            LocalZoom.MyCameraController.defaultZoomLevel = DefaultZoom;
+            LocalZoom.MyCameraController.allowZoomIn = true;
 
             GameManager.instance.battleOngoing = false;
 
@@ -598,7 +607,6 @@ namespace GameModeCollection.GameModes
         }
         public IEnumerator RoundTransition(string winningRoleID)
         {
-            // completely replace original
             this.battleOngoing = false;
             this.prebattle = false;
             this.clocktime = 0f;
@@ -672,6 +680,53 @@ namespace GameModeCollection.GameModes
             }
 
             yield return new WaitForSecondsRealtime(1f);
+            //MapManager.instance.LoadNextLevel(false, false);
+            TRTMapManager.LoadNextTRTLevel(false, false);
+
+            yield return new WaitForSecondsRealtime(1.3f);
+
+            PlayerManager.instance.SetPlayersSimulated(false);
+            PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
+            TimeHandler.instance.DoSpeedUp();
+
+            yield return this.StartCoroutine(this.WaitForSyncUp());
+
+            TimeHandler.instance.DoSlowDown();
+            MapManager.instance.CallInNewMapAndMovePlayers(MapManager.instance.currentLevelID);
+
+            PlayerManager.instance.RevivePlayers();
+
+            this.RandomizePlayerSkins();
+            this.RandomizePlayerFaces();
+            yield return this.ClearRolesAndVisuals();
+
+            yield return new WaitForSecondsRealtime(0.3f);
+
+            TimeHandler.instance.DoSpeedUp();
+            GameManager.instance.battleOngoing = true;
+            this.isTransitioning = false;
+            PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
+
+            this.StartCoroutine(this.DoPointStart());
+            /*
+            this.battleOngoing = false;
+            this.prebattle = false;
+            this.clocktime = 0f;
+
+            yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
+
+            if (winningRoleID is null)
+            {
+                this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
+            }
+            else
+            {
+                IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+                this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+            }
+
+            yield return new WaitForSecondsRealtime(1f);
 
             //MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
             TRTMapManager.LoadTRTLevelFromID(TRTMapManager.CurrentLevel, false, false);
@@ -699,6 +754,7 @@ namespace GameModeCollection.GameModes
             RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
 
             this.StartCoroutine(this.DoPointStart());
+            */
         }
         private void GameOverRematch()
         {
