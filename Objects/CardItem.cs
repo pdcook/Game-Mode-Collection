@@ -109,6 +109,9 @@ namespace GameModeCollection.Objects
 
             this.gameObject.transform.SetParent(CardItemPrefabs.CardItemHandler.transform);
 
+            this.SetAngularVel(angularVelocity);
+            this.SetVel(velocty);
+
             GameModeCollection.Log($"Instantiated {this.CardName} item");
 
             this.gameObject.SetActive(true);
@@ -293,6 +296,7 @@ namespace GameModeCollection.Objects
     class CardItemHandler : MonoBehaviour
     {
         private const float CheckOOBEvery = 1f;
+        private const float CheckDiscardEvery = 0.5f;
 
         public static readonly Vector3 PositionToCheck = new Vector3(100000f, 100000f, 0f);
         public static CardItemHandler Instance { get; private set; } = null;
@@ -300,6 +304,10 @@ namespace GameModeCollection.Objects
         private Rigidbody2D Rig => this.gameObject.GetComponent<Rigidbody2D>();
 
         private float CheckOOBTimer = 0f;
+        private float CheckDiscardTimer = 0f;
+
+        public bool CanDiscard { get; private set; } = false;
+        public Action<Player, CardInfo> PlayerDiscardAction = (p, c) => { };
 
         public void DestroyAllCardItems()
         {
@@ -307,6 +315,11 @@ namespace GameModeCollection.Objects
             {
                 Destroy(this.transform.GetChild(i).gameObject);
             }
+        }
+
+        public void SetCanDiscard(bool canDiscard)
+        {
+            this.CanDiscard = canDiscard;
         }
 
         void Awake()
@@ -343,7 +356,19 @@ namespace GameModeCollection.Objects
                     }
                 }
             }
-
+        }
+        void LateUpdate()
+        {
+            if (!this.CanDiscard) { return; }
+            this.CheckDiscardTimer -= Time.deltaTime;
+            if (this.CheckDiscardTimer > 0f) { return; }
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.data.view.IsMine && p.data.currentCards.Count() > 0 && p.data.playerActions.Discard());
+            if (player is null) { return; }
+            this.CheckDiscardTimer = CheckDiscardEvery;
+            int idx = player.data.currentCards.Count() - 1;
+            CardInfo card = player.data.currentCards[idx];
+            ModdingUtils.Utils.Cards.instance.RemoveCardFromPlayer(player, idx);
+            this.PlayerDiscardAction?.Invoke(player, card);
         }
         void OnTriggerEnter2D(Collider2D collider)
         {
@@ -361,7 +386,7 @@ namespace GameModeCollection.Objects
                     collider.enabled = false;
                     if (!cardItem.CardBackVisibleThroughShader)
                     {
-                        this.ExecuteAfterFrames(2, () => LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform.Find("CardBase(Clone)/Canvas/Back")));
+                        LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform.Find("CardBase(Clone)/Canvas/Back"));
                     }
                 }
                 else

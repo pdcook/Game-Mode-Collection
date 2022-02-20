@@ -14,6 +14,7 @@ namespace GameModeCollection.Extensions
         public PlayerAction trt_radio_imwith; // reports "I'm with <playerColor>."
         public PlayerAction trt_radio_traitor; // reports "<playerColor> is a traitor!"
         public PlayerAction trt_radio_innocent; // reports "<playerColor> is innocent."
+        public PlayerAction discard_last_card; // discards the player's last card
     }
     public static class PlayerActionsExtension
     {
@@ -35,5 +36,6 @@ namespace GameModeCollection.Extensions
         }
 
         public static PlayerAction Interact(this PlayerActions playerActions) => playerActions.GetAdditionalData().interact;
+        public static bool Discard(this PlayerActions playerActions) => playerActions.GetAdditionalData().discard_last_card.WasPressed;
     }
 }

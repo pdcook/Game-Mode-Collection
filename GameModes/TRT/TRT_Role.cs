@@ -37,7 +37,7 @@ namespace GameModeCollection.GameModes.TRT
         }
         protected virtual void OnDestroy()
         {
-            this.GetComponent<CharacterData>()?.SetMaxCards(int.MaxValue);
+            this.GetComponent<CharacterData>()?.SetMaxCards(GM_TRT.BaseMaxCards);
         }
     }
 }

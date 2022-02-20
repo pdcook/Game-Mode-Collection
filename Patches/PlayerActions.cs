@@ -32,7 +32,9 @@ namespace GameModeCollection.Patches
             __instance.GetAdditionalData().trt_radio_innocent = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Radio \"___ is innocent.\" (TRT)" });
-
+            __instance.GetAdditionalData().discard_last_card = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
+                                    BindingFlags.Instance | BindingFlags.InvokeMethod |
+                                    BindingFlags.NonPublic, null, __instance, new object[] { "Drop Last Card" });
         }
     }
     // postfix PlayerActions to add controller controls
@@ -52,6 +54,8 @@ namespace GameModeCollection.Patches
             __result.GetAdditionalData().trt_radio_traitor.AddDefaultBinding(InputControlType.DPadUp);
 
             __result.GetAdditionalData().trt_radio_innocent.AddDefaultBinding(InputControlType.DPadDown);
+
+            __result.GetAdditionalData().discard_last_card.AddDefaultBinding(InputControlType.Action4);
         }
     }
     // postfix PlayerActions to add keyboard controls
@@ -63,7 +67,7 @@ namespace GameModeCollection.Patches
             __result.GetAdditionalData().trt_inspect_body.AddDefaultBinding(Key.Key5);
             __result.GetAdditionalData().trt_inspect_body.AddDefaultBinding(Key.E);
 
-            __result.GetAdditionalData().interact.AddDefaultBinding(Key.Tilde);
+            __result.GetAdditionalData().interact.AddDefaultBinding(Key.Backquote);
             __result.GetAdditionalData().interact.AddDefaultBinding(Key.F);
 
             __result.GetAdditionalData().trt_radio_imwith.AddDefaultBinding(Key.Key1);
@@ -77,6 +81,9 @@ namespace GameModeCollection.Patches
 
             __result.GetAdditionalData().trt_radio_innocent.AddDefaultBinding(Key.Key4);
             __result.GetAdditionalData().trt_radio_innocent.AddDefaultBinding(Key.X);
+
+            __result.GetAdditionalData().discard_last_card.AddDefaultBinding(Key.Q);
+            __result.GetAdditionalData().discard_last_card.AddDefaultBinding(Key.Z);
         }
     }
 }

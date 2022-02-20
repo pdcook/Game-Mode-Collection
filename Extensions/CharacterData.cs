@@ -1,11 +1,12 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Linq;
+using GameModeCollection.GameModes;
 
 namespace GameModeCollection.Extensions
 {
     public class CharacterDataAdditionalData
     {
-        public int maxAllowedCards = int.MaxValue;
+        public int maxAllowedCards = GM_TRT.BaseMaxCards;
         public float TRT_Karma = 1f;
     }
     public static class CharacterDataExtensions

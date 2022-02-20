@@ -56,14 +56,14 @@ namespace GameModeCollection.GameModes
     /// - [X] Players can have a max of one card
     /// - [X] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
     /// - [X] Dead players have a separate text chat
-    /// - [ ] Players can discard cards by clicking on the square in the card bar
+    /// - [?] Players can discard cards by clicking on the square in the card bar
     ///     --> Or by pressing Q to discard their most recent card
     /// - [X] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
     /// - [X] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
     /// - [X] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
-    /// - [~] custom maps specifically for this mode, not available in normal rotation
+    /// - [X] custom maps specifically for this mode, not available in normal rotation
     ///   [X] --> custom map object mod for card spawn points
-    /// - [ ] card random spawning
+    /// - [X] card random spawning
     /// - [ ] LaTeX document with a short guide to each role
     /// - [ ] Round summaries in chat
     /// 
@@ -187,6 +187,11 @@ namespace GameModeCollection.GameModes
         private IEnumerator Init()
         {
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitStart);
+
+            // TODO: either scrap this or handle the corner-case where players can heal by discarding a card
+            //CardItemHandler.Instance.SetCanDiscard(true);
+            //CardItemHandler.Instance.PlayerDiscardAction += DropCard;
+
 
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerAssigner.instance.maxPlayers = RWF.RWFMod.instance.MaxPlayers;
@@ -370,18 +375,26 @@ namespace GameModeCollection.GameModes
             }
             player.gameObject.AddComponent<TRT_Corpse>();
         }
+        internal void DropCard(Player player, CardInfo card)
+        {
+            this.StartCoroutine(this.PlayerDropCard(player, card));
+        }
+        private IEnumerator PlayerDropCard(Player player, CardInfo card)
+        {
+            Vector2 velocty = (Vector2)player.data.playerVel.GetFieldValue("velocity");
+            yield return CardItem.MakeCardItem(card,
+                                                player.data.playerVel.position,
+                                                Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f)),
+                                                velocty + UnityEngine.Mathf.Clamp(CardRandomVelMult * velocty.magnitude, CardRandomVelMin, float.MaxValue) * new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)),
+                                                -CardAngularVelMult * velocty.x,
+                                                CardHealth, requireInteract: true);
+        }
         private IEnumerator DropCardsOnDeath(Player player, CardInfo[] cardsToDrop)
         {
             foreach (CardInfo card in cardsToDrop)
             {
                 yield return new WaitForSecondsRealtime(TimeBetweenCardDrops);
-                Vector2 velocty = (Vector2)player.data.playerVel.GetFieldValue("velocity");
-                yield return CardItem.MakeCardItem(card,
-                                                    player.data.playerVel.position,
-                                                    Quaternion.Euler(0f, 0f, UnityEngine.Random.Range(0f, 360f)),
-                                                    velocty + UnityEngine.Mathf.Clamp(CardRandomVelMult * velocty.magnitude, CardRandomVelMin, float.MaxValue) * new Vector2(UnityEngine.Random.Range(-1f, 1f), UnityEngine.Random.Range(-1f, 1f)),
-                                                    -CardAngularVelMult * velocty.x,
-                                                    CardHealth, true);
+                yield return this.PlayerDropCard(player, card);
             }
             yield break;
         }
