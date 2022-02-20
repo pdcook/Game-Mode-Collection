@@ -18,7 +18,6 @@ namespace GameModeCollection.GameModes.TRT
 {
     public static class RoleManager
     {
-
         private static bool inited = false;
         private static Dictionary<string, IRoleHandler> RoleHandlers = new Dictionary<string, IRoleHandler>() { };
         private static Dictionary<string, Type> Roles = new Dictionary<string, Type>() { };
@@ -93,71 +92,86 @@ namespace GameModeCollection.GameModes.TRT
 
         public static List<IRoleHandler> GetRoleLineup(int N)
         {
+            /*
+             * Outline of the method:
+             * 
+             * - get a list of all possible roles (since some roles require a minimum number of players before they will spawn)
+             * - populate the initial lineup with 25% traitor, 12.5% detective (rounded up)
+             * - then iterate through the lineup as it stands and randomly see if the role should be replaced
+             * ---> if the replacement would change the alignment of the role, check to see if it would make it so that the percentage of innocents would fall below the required level
+             * - finally, do any overwriting necessary (e.g. zombies overwrite all traitors)
+             */
+
+
             // remove roles for which there are not enough players
             List<IRoleHandler> possibleRoles = RoleHandlers.Values.Where(r => r.MinNumberOfPlayersForRole <= N).ToList();
 
-            // start with the roles that must be present in the lineup
-            List<IRoleHandler> lineup = new List<IRoleHandler>() { };
+            // get roles that can replace other alignments
+            List<IRoleHandler> innocentReplace = possibleRoles.Where(r => r.AlignmentToReplace == Alignment.Innocent).ToList();
+            List<IRoleHandler> traitorReplace = possibleRoles.Where(r => r.AlignmentToReplace == Alignment.Traitor).ToList();
 
-            foreach (IRoleHandler roleHandler in possibleRoles.Where(r => r.MinNumberOfPlayersWithRole > 0))
+            // start with the roles that must be present in the lineup
+            List<IRoleHandler> lineup = Enumerable.Repeat(GetHandler(InnocentRoleHandler.InnocentRoleID), N).ToList();
+            int nT = UnityEngine.Mathf.CeilToInt(N * TraitorRoleHandler.TraitorRarity);
+            int nD = UnityEngine.Mathf.CeilToInt(N * DetectiveRoleHandler.DetectiveRarity);
+            for (int i = 0; i < nT+nD; i++)
             {
-                for (int _ = 0; _ < roleHandler.MinNumberOfPlayersWithRole; _++)
+                if (i < nT)
                 {
-                    lineup.Add(roleHandler);
+                    lineup[i] = GetHandler(TraitorRoleHandler.TraitorRoleID);
+                }
+                else
+                {
+                    lineup[i] = GetHandler(DetectiveRoleHandler.DetectiveRoleID);
+                }
+            }
+            // innocent, detective, and traitor do not have maximum amounts, nor can they replace other roles
+            // so there is no need to update possibleRoles here
+
+            // see if other roles will replace any
+            for (int j = 0; j < innocentReplace.Count(); j++)
+            {
+                if ((lineup.Count(r => r.RoleAlignment == Alignment.Innocent)-1) / lineup.Count() < InnocentRoleHandler.MinimumPercInnocent)
+                {
+                    break;
+                }
+                if (UnityEngine.Random.Range(0f, 1f) < innocentReplace[j].Rarity)
+                {
+                    int i = lineup.IndexOf(GetHandler(InnocentRoleHandler.InnocentRoleID));
+                    if (i != -1)
+                    {
+                        lineup[i] = innocentReplace[j];
+                    }
+                }
+            }
+            for (int j = 0; j < traitorReplace.Count(); j++)
+            {
+                if (UnityEngine.Random.Range(0f, 1f) < traitorReplace[j].Rarity)
+                {
+                    int i = lineup.IndexOf(GetHandler(TraitorRoleHandler.TraitorRoleID));
+                    if (i != -1)
+                    {
+                        lineup[i] = traitorReplace[j];
+                    }
                 }
             }
 
-            int outerIter = 100;
-            while (outerIter > 0)
+            // finally, perform any overwriting
+            int iter = 100;
+            while (iter > 0 && lineup.Select(r => r.RoleIDsToOverwrite).SelectMany(o => o).Distinct().Intersect(lineup.Select(h => h.RoleID)).Any())
             {
-                outerIter--;
+                iter--;
+                IRoleHandler replacer = lineup.FirstOrDefault(r => lineup.Select(h => h.RoleID).Intersect(r.RoleIDsToOverwrite).Any());
+                if (replacer is null) { break; }
 
-                // now select random roles to fill the rest out
-                int remaining = lineup.Count();
-                for (int _ = 0; _ < N - remaining; _++)
-                {
-                    // remove roles where the max has been reached
-                    possibleRoles = possibleRoles.Where(r => r.MaxNumberOfPlayersWithRole > lineup.Where(h => h.RoleID == r.RoleID).Count()).ToList();
-
-                    if (possibleRoles.Count() == 0) { break; }
-
-                    lineup.Add(DrawRandomRole(possibleRoles));
-                }
-
-                // finally, perform any overwriting
-                int iter = 100;
-                while (iter > 0 && lineup.Select(r => r.RoleIDsToOverwrite).SelectMany(o => o).Distinct().Intersect(lineup.Select(h => h.RoleID)).Any())
-                {
-                    iter--;
-                    IRoleHandler replacer = lineup.FirstOrDefault(r => lineup.Select(h => h.RoleID).Intersect(r.RoleIDsToOverwrite).Any());
-                    if (replacer is null) { break; }
-
-                    lineup = lineup.Select(r => replacer.RoleIDsToOverwrite.Contains(r.RoleID) ? replacer : r).ToList();
-                }
-
-                // remove anything over the max (which could've occurred due to overwriting), and loop around if there's not enough roles yet
-                lineup = lineup.Where(r => r.MaxNumberOfPlayersWithRole >= lineup.Where(h => h.RoleID == r.RoleID).Count()).ToList();
-
-                if (lineup.Count() >= N) { break; }
-
+                lineup = lineup.Select(r => replacer.RoleIDsToOverwrite.Contains(r.RoleID) ? replacer : r).ToList();
             }
 
             // as a failsafe, if this is about to return less than the requested number of roles, pad with the innocent role
             while (lineup.Count() < N)
             {
-                lineup.Add(GetHandler(Innocent.RoleAppearance.Name));
+                lineup.Add(GetHandler(InnocentRoleHandler.InnocentRoleID));
             }
-
-            // finally, at least 62.5% of the players should be aligned with the innocents, if this requirement is not met, then
-            // replace some of the traitor-aligned roles with innocents
-            /*
-            while ((float)lineup.Count(r => r.RoleAlignment == Alignment.Innocent)/(float)lineup.Count() < 0.625f)
-            {
-                GameModeCollection.Log("[RoleManager] Not enough innocents. Correcting...");
-                int i = lineup.LastIndexOf(lineup.LastOrDefault(r => r.RoleAlignment != Alignment.Innocent));
-                if (i == -1) { break; }
-                lineup[i] = DrawRandomRole(RoleHandlers.Values.Where(r => r.RoleAlignment == Alignment.Innocent && r.MinNumberOfPlayersForRole <= N && r.MaxNumberOfPlayersWithRole > lineup.Count(r2 => r2 == r)).ToList());
-            }*/
 
             return lineup.Take(N).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
         }
@@ -306,10 +320,11 @@ namespace GameModeCollection.GameModes.TRT
                 TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Killer.RoleAppearance)}.", true);
             }
             // special case for alerting traitors that there is a glitch
+            /*
             if (specificRole.Alignment == Alignment.Traitor && PlayerManager.instance.players.Any(p => !p.data.dead && GetPlayerRoleID(p) == GlitchRoleHandler.GlitchRoleID))
             {
                 TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Glitch.RoleAppearance)}.", true);
-            }
+            }*/
 
         }
         public static void DoRoleDisplay(Player player, bool hideNickNames = true)
@@ -382,10 +397,11 @@ namespace GameModeCollection.GameModes.TRT
                 TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Killer.RoleAppearance)}.", true);
             }
             // special case for alerting traitors that there is a glitch
+            /*
             if (role.Alignment == Alignment.Traitor && PlayerManager.instance.players.Any(p => !p.data.dead && GetPlayerRoleID(p) == GlitchRoleHandler.GlitchRoleID))
             {
                 TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Glitch.RoleAppearance)}.", true);
-            }
+            }*/
         }
         public static string GetColoredString(string str, Color color, bool bold = false)
         {

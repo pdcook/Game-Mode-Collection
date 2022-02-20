@@ -9,10 +9,12 @@ namespace GameModeCollection.GameModes.TRT
         string RoleName { get; }
         string RoleID { get; }
         int MinNumberOfPlayersForRole { get; }
-        int MinNumberOfPlayersWithRole { get; }
-        int MaxNumberOfPlayersWithRole { get; }
+        /// <summary>
+        /// percentage chance of the role to spawn in a round
+        /// </summary>
         float Rarity { get; }
         string[] RoleIDsToOverwrite { get; }
+        Alignment? AlignmentToReplace { get; }
         void AddRoleToPlayer(Player player);
     }
 }

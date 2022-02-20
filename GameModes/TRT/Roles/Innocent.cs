@@ -9,16 +9,17 @@ namespace GameModeCollection.GameModes.TRT.Roles
     {
         public static string InnocentRoleName => Innocent.RoleAppearance.Name;
         public static string InnocentRoleID = $"GM_TRT_{InnocentRoleName}";
+        public const float MinimumPercInnocent = 0.625f;
         public Alignment RoleAlignment => Innocent.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;
         public string RoleName => InnocentRoleName;
         public string RoleID => InnocentRoleID;
         public int MinNumberOfPlayersForRole => 0;
-        public int MinNumberOfPlayersWithRole => 1;
-        public int MaxNumberOfPlayersWithRole => int.MaxValue;
-        public float Rarity => 0.75f;
+        public float Rarity => 1f; // rarity is meaningless for the innocent role
         public string[] RoleIDsToOverwrite => new string[] { };
+        public Alignment? AlignmentToReplace => null; // this is meaningless for Innocent
+
         public void AddRoleToPlayer(Player player)
         {
             player.gameObject.GetOrAddComponent<Innocent>();

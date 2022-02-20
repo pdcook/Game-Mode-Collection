@@ -107,7 +107,7 @@ namespace GameModeCollection.GameModes
         private const float CardAngularVelMult = 10f;
         private const float CardHealth = 100f;
 
-        public const float KarmaPenaltyPerRDM = 0.1f; // you lose 0.1 (10%) karma for each RDM
+        public const float KarmaPenaltyPerRDM = 0.2f; // you lose 0.2 (20%) karma for each RDM
         public const float KarmaRewardPerPoint = 0.1f; // you gain 0.1 (10%) karma for each clean point
         public const float MinimumKarma = 0.1f; // the minimum karma is 0.1 (10%)
         public const float KarmaFractionForDeath = 0.25f; // if you are dead at the end of a point, you only gain 25% of the 10% you would usuall gain
@@ -319,7 +319,7 @@ namespace GameModeCollection.GameModes
         {
             PlayerManager.instance.ForEachPlayer(player =>
             {
-                //GameModeCollection.Log($"PLAYER {player.playerID} | {this.RoleIDsToAssign[player.playerID]}");
+                if (PhotonNetwork.IsMasterClient) { GameModeCollection.Log($"PLAYER {player.playerID} | {this.RoleIDsToAssign[player.playerID]}"); }
                 RoleManager.GetHandler(this.RoleIDsToAssign[player.playerID]).AddRoleToPlayer(player);
             });
         }

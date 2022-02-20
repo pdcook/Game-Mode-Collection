@@ -14,10 +14,9 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public string RoleName => ZombieRoleName;
         public string RoleID => ZombieRoleID;
         public int MinNumberOfPlayersForRole => 5;
-        public int MinNumberOfPlayersWithRole => 0;
-        public int MaxNumberOfPlayersWithRole => 2;
-        public float Rarity => 0.01f;
+        public float Rarity => 0.1f;
         public string[] RoleIDsToOverwrite => new string[] { "GM_TRT_Traitor", "GM_TRT_Vampire", "GM_TRT_Hypnotist", "GM_TRT_Assassin" };
+        public Alignment? AlignmentToReplace => Alignment.Traitor;
         public void AddRoleToPlayer(Player player)
         {
             player.gameObject.GetOrAddComponent<Zombie>();

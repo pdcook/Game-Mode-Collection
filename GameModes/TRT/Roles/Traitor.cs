@@ -7,6 +7,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     {
         public static string TraitorRoleName => Traitor.RoleAppearance.Name;
         public static string TraitorRoleID = $"GM_TRT_{TraitorRoleName}";
+        public const float TraitorRarity = 0.25f;
         public Alignment RoleAlignment => Traitor.RoleAlignment;
         public string WinMessage => "TRAITORS WIN";
         public Color WinColor => Traitor.RoleAppearance.Color;
@@ -15,8 +16,9 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public int MinNumberOfPlayersForRole => 0;
         public int MinNumberOfPlayersWithRole => 1;
         public int MaxNumberOfPlayersWithRole => int.MaxValue;
-        public float Rarity => 0.25f;
+        public float Rarity => TraitorRarity; // rarity is meaningless for Traitor
         public string[] RoleIDsToOverwrite => new string[] { };
+        public Alignment? AlignmentToReplace => null; // this is meaningless for Traitor
         public void AddRoleToPlayer(Player player)
         {
             player.gameObject.GetOrAddComponent<Traitor>();

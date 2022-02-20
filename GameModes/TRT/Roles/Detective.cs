@@ -8,16 +8,16 @@ namespace GameModeCollection.GameModes.TRT.Roles
     {
         public static string DetectiveRoleName => Detective.RoleAppearance.Name;
         public static string DetectiveRoleID = $"GM_TRT_{DetectiveRoleName}";
+        public const float DetectiveRarity = 0.125f;
         public Alignment RoleAlignment => Detective.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;
         public string RoleName => DetectiveRoleName;
         public string RoleID => DetectiveRoleID;
         public int MinNumberOfPlayersForRole => 0;
-        public int MinNumberOfPlayersWithRole => 1;
-        public int MaxNumberOfPlayersWithRole => 1;
-        public float Rarity => 1f;
+        public float Rarity => DetectiveRarity; // rarity is meaningless for Detective
         public string[] RoleIDsToOverwrite => new string[] { };
+        public Alignment? AlignmentToReplace => null; // this is meaningless for Detective
         public void AddRoleToPlayer(Player player)
         {
             player.gameObject.GetOrAddComponent<Detective>();

@@ -11,10 +11,9 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public string RoleName => Jester.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;
-        public int MinNumberOfPlayersWithRole => 0;
-        public int MaxNumberOfPlayersWithRole => 1;
         public float Rarity => 0.25f;
         public string[] RoleIDsToOverwrite => new string[] { };
+        public Alignment? AlignmentToReplace => Alignment.Innocent;
         public void AddRoleToPlayer(Player player)
         {
             player.gameObject.GetOrAddComponent<Jester>();

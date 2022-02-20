@@ -12,10 +12,9 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public string RoleName => Hypnotist.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
         public int MinNumberOfPlayersForRole => 5;
-        public int MinNumberOfPlayersWithRole => 0;
-        public int MaxNumberOfPlayersWithRole => 1;
-        public float Rarity => 0.15f;
+        public float Rarity => 0.2f;
         public string[] RoleIDsToOverwrite => new string[] { };
+        public Alignment? AlignmentToReplace => Alignment.Traitor;
         public void AddRoleToPlayer(Player player)
         {
             player.gameObject.GetOrAddComponent<Hypnotist>();
