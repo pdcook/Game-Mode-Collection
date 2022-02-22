@@ -105,7 +105,7 @@ namespace GameModeCollection.GameModes
         private const float CardRandomVelMult = 0.25f;
         private const float CardRandomVelMin = 3f;
         private const float CardAngularVelMult = 10f;
-        private const float CardHealth = 100f;
+        private const float CardHealth = -1f;
 
         public const float KarmaPenaltyPerRDM = 0.2f; // you lose 0.2 (20%) karma for each RDM
         public const float KarmaRewardPerPoint = 0.1f; // you gain 0.1 (10%) karma for each clean point
@@ -186,11 +186,12 @@ namespace GameModeCollection.GameModes
         }
         private IEnumerator Init()
         {
+
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitStart);
 
             // TODO: either scrap this or handle the corner-case where players can heal by discarding a card
-            //CardItemHandler.Instance.SetCanDiscard(true);
-            //CardItemHandler.Instance.PlayerDiscardAction += DropCard;
+            CardItemHandler.Instance.SetCanDiscard(true);
+            CardItemHandler.Instance.PlayerDiscardAction += DropCard;
 
 
             PlayerManager.instance.SetPlayersSimulated(false);

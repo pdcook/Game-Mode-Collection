@@ -46,6 +46,13 @@ namespace GameModeCollection.GameModes.TRT.Roles
                     return null;
             }
         }
+        protected override void Start()
+        {
+            base.Start();
+
+            // zombies cannot have cards
+            this.GetComponent<Player>()?.InvokeMethod("FullReset");
+        }
         public override void OnKilledPlayer(Player killedPlayer)
         {
             // do zombie stuff

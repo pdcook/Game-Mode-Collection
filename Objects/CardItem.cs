@@ -12,6 +12,7 @@ using HarmonyLib;
 using TMPro;
 using Sonigon;
 using MapEmbiggener;
+using UnboundLib.Networking;
 
 namespace GameModeCollection.Objects
 {
@@ -102,6 +103,7 @@ namespace GameModeCollection.Objects
             this.RequiresInteraction = (bool)data[4];
             this.Health.MaxHealth = health > 0f ? health : float.MaxValue;
             this.Health.Revive();
+            if (health <= 0f) { this.Health.SetInvulnerableFor(float.PositiveInfinity); }
 
             this.Card = CardManager.GetCardInfoWithName(this.CardName);
 
@@ -362,13 +364,36 @@ namespace GameModeCollection.Objects
             if (!this.CanDiscard) { return; }
             this.CheckDiscardTimer -= Time.deltaTime;
             if (this.CheckDiscardTimer > 0f) { return; }
-            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.data.view.IsMine && p.data.currentCards.Count() > 0 && p.data.playerActions.Discard());
+            foreach (Player player in PlayerManager.instance.players.Where(p => p.data.view.IsMine && p.data.currentCards.Count() > 0))
+            {
+                if (!player.data.playerActions.Discard()) { continue; }
+                this.CheckDiscardTimer = CheckDiscardEvery;
+                NetworkingManager.RPC(typeof(CardItemHandler), nameof(RPCA_PlayerDiscard), player.playerID);
+            }
+        }
+        [UnboundRPC]
+        private static void RPCA_PlayerDiscard(int playerID)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
-            this.CheckDiscardTimer = CheckDiscardEvery;
             int idx = player.data.currentCards.Count() - 1;
             CardInfo card = player.data.currentCards[idx];
-            ModdingUtils.Utils.Cards.instance.RemoveCardFromPlayer(player, idx);
-            this.PlayerDiscardAction?.Invoke(player, card);
+
+            CardInfo[] cardsToKeep = player.data.currentCards.Take(player.data.currentCards.Count() - 1).ToArray();
+            ModdingUtils.Utils.Cards.instance.RemoveAllCardsFromPlayer(player);
+            ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar();
+            CardItemHandler.Instance.StartCoroutine(CardItemHandler.Instance.RestoreCardsWhenReady(player, cardsToKeep));
+            CardItemHandler.Instance.PlayerDiscardAction?.Invoke(player, card);
+        }
+        IEnumerator RestoreCardsWhenReady(Player player, CardInfo[] cardsToKeep)
+        {
+            yield return new WaitUntil(() => player.data.currentCards.Count() == 0);
+            ModdingUtils.Utils.Cards.instance.AddCardsToPlayer(player, cardsToKeep, true, null, null, null, false);
+            if (!player.data.view.IsMine) { yield break; }
+            foreach (CardInfo card in cardsToKeep)
+            {
+                CardItemHandler.ClientsideAddToCardBar(player.playerID, card);
+            }
         }
         void OnTriggerEnter2D(Collider2D collider)
         {
@@ -387,6 +412,10 @@ namespace GameModeCollection.Objects
                     if (!cardItem.CardBackVisibleThroughShader)
                     {
                         LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform.Find("CardBase(Clone)/Canvas/Back"));
+                        foreach (var part in cardItem.CardObj.GetComponentsInChildren<GeneralParticleSystem>(true))
+                        {
+                            part.enabled = false;
+                        }
                     }
                 }
                 else

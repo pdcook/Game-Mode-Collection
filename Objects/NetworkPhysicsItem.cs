@@ -533,27 +533,27 @@ namespace GameModeCollection.Objects
 		}
 		void OnCollisionEnter2D(Collision2D collision2D)
 		{
-			if (!this.Col.isTrigger) { this.Item.OnCollisionEnter2D(collision2D); }
+			if (!this.Col.isTrigger) { this.Item?.OnCollisionEnter2D(collision2D); }
 		}
 		void OnCollisionExit2D(Collision2D collision2D)
 		{
-			if (!this.Col.isTrigger) { this.Item.OnCollisionExit2D(collision2D); }
+			if (!this.Col.isTrigger) { this.Item?.OnCollisionExit2D(collision2D); }
 		}
 		void OnCollisionStay2D(Collision2D collision2D)
 		{
-			if (!this.Col.isTrigger) { this.Item.OnCollisionStay2D(collision2D); }
+			if (!this.Col.isTrigger) { this.Item?.OnCollisionStay2D(collision2D); }
 		}
 		void OnTriggerEnter2D(Collider2D collider2D)
 		{
-			if (this.Col.isTrigger) { this.Item.OnTriggerEnter2D(collider2D); }
+			if (this.Col.isTrigger) { this.Item?.OnTriggerEnter2D(collider2D); }
 		}
 		void OnTriggerExit2D(Collider2D collider2D)
 		{
-			if (this.Col.isTrigger) { this.Item.OnTriggerExit2D(collider2D); }
+			if (this.Col.isTrigger) { this.Item?.OnTriggerExit2D(collider2D); }
 		}
 		void OnTriggerStay2D(Collider2D collider2D)
 		{
-			if (this.Col.isTrigger) { this.Item.OnTriggerStay2D(collider2D); }
+			if (this.Col.isTrigger) { this.Item?.OnTriggerStay2D(collider2D); }
 		}
 	}
 }
