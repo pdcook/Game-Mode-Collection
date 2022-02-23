@@ -522,7 +522,7 @@ namespace GameModeCollection.GameModes
         }
         public IEnumerator DoRoundStart()
         {
-            // completely replace original method
+            PlayerManager.instance.SetPlayersInvulnerable(true);
 
             // reset players completely
             PlayerManager.instance.InvokeMethod("ResetCharacters");
@@ -546,6 +546,9 @@ namespace GameModeCollection.GameModes
 
             yield return this.WaitForSyncUp();
 
+            PlayerManager.instance.SetPlayersSimulated(true);
+            PlayerManager.instance.SetPlayersInvulnerable(true);
+
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundStart);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointStart);
 
@@ -566,14 +569,14 @@ namespace GameModeCollection.GameModes
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             //UIHandler.instance.DisplayRoundStartText("INNOCENT", InnocentColor, new Vector3(0.5f, 0.8f, 0f));
-            PlayerManager.instance.SetPlayersSimulated(true);
+            PlayerManager.instance.SetPlayersInvulnerable(false);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
         }
 
         public IEnumerator DoPointStart()
         {
-            // completely replace original
+            PlayerManager.instance.SetPlayersInvulnerable(true);
 
             // reset players completely
             PlayerManager.instance.InvokeMethod("ResetCharacters");
@@ -594,6 +597,8 @@ namespace GameModeCollection.GameModes
 
             //PlayerManager.instance.SetPlayersSimulated(false);
             yield return this.WaitForSyncUp();
+            PlayerManager.instance.SetPlayersSimulated(true);
+            PlayerManager.instance.SetPlayersInvulnerable(true);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointStart);
 
@@ -614,7 +619,7 @@ namespace GameModeCollection.GameModes
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             //UIHandler.instance.DisplayRoundStartText("TRAITOR", TraitorColor, new Vector3(0.5f, 0.8f, 0f));
-            PlayerManager.instance.SetPlayersSimulated(true);
+            PlayerManager.instance.SetPlayersInvulnerable(false);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
 

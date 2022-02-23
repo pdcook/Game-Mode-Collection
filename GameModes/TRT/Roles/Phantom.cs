@@ -7,13 +7,15 @@ namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class PhantomRoleHandler : IRoleHandler
     {
+        public static string PhantomRoleName => Phantom.RoleAppearance.Name;
+        public static string PhantomRoleID = $"GM_TRT_{PhantomRoleName}";
         public Alignment RoleAlignment => Phantom.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;
         public string RoleName => Phantom.RoleAppearance.Name;
-        public string RoleID => $"GM_TRT_{this.RoleName}";
-        public int MinNumberOfPlayersForRole => 5;
-        public float Rarity => 0.25f;
+        public string RoleID => PhantomRoleID;
+        public int MinNumberOfPlayersForRole => 0;//5;
+        public float Rarity => 1f;//0.25f;
         public string[] RoleIDsToOverwrite => new string[] { };
         public Alignment? AlignmentToReplace => Alignment.Innocent;
         public void AddRoleToPlayer(Player player)
@@ -28,12 +30,14 @@ namespace GameModeCollection.GameModes.TRT.Roles
         new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Phantom", 'P', GM_TRT.PhantomColor);
 
         public bool CanHaunt { get; private set; } = true;
+        public bool IsHaunting { get; internal set; } = false;
 
         public override TRT_Role_Appearance Appearance => Phantom.RoleAppearance;
 
         protected override void Start()
         {
             this.CanHaunt = true;
+            this.IsHaunting = false;
             base.Start();
         }
 
@@ -44,6 +48,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             if (this.CanHaunt)
             {
                 this.CanHaunt = false;
+                this.IsHaunting = true;
                 if (!this.GetComponent<PhotonView>().IsMine) { return; }
                 this.GetComponent<PhotonView>().RPC(nameof(RPCA_HauntPlayer), RpcTarget.All, killingPlayer.playerID);
             }
@@ -53,7 +58,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == hauntedPlayerID);
             if (player is null) { return; }
-            player.gameObject.AddComponent<PhantomHaunt>().SetPhantomPlayer(this.GetComponent<Player>());
+            player.gameObject.AddComponent<PhantomHaunt>().SetPhantomPlayer(this);
             // if the local player is the detective, they should be notified that the phantom was killed
             if (RoleManager.GetPlayerRole(PlayerManager.instance.players.FirstOrDefault(p => p.data.view.IsMine))?.Appearance?.Name == Detective.RoleAppearance.Name)
             {

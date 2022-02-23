@@ -42,6 +42,12 @@ namespace GameModeCollection.GameModes.TRT.Roles
             {
                 // do hypnotist stuff
                 if (!this.CanRevive || corpse.GetComponent<Player>() is null || !this.GetComponent<PhotonView>().IsMine) { return; }
+                // cannot revive phantoms that have yet to respawn
+                if (RoleManager.GetPlayerRoleID(corpse.Player) == PhantomRoleHandler.PhantomRoleID && ((Phantom)RoleManager.GetPlayerRole(corpse.Player)).IsHaunting)
+                {
+                    TRTHandler.SendChat(null, $"You cannot revive a corpse of a {RoleManager.GetRoleColoredName(Phantom.RoleAppearance)} that is currently haunting someone." , true);
+                    return;
+                }
                 this.CanRevive = false;  
                 this.GetComponent<PhotonView>().RPC(nameof(RPCA_HypotistRevive), RpcTarget.All, corpse.GetComponent<Player>().playerID);
             }

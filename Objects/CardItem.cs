@@ -380,7 +380,7 @@ namespace GameModeCollection.Objects
             CardInfo card = player.data.currentCards[idx];
 
             CardInfo[] cardsToKeep = player.data.currentCards.Take(player.data.currentCards.Count() - 1).ToArray();
-            ModdingUtils.Utils.Cards.instance.RemoveAllCardsFromPlayer(player);
+            ModdingUtils.Utils.Cards.instance.RemoveAllCardsFromPlayer(player, false);
             ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar();
             CardItemHandler.Instance.StartCoroutine(CardItemHandler.Instance.RestoreCardsWhenReady(player, cardsToKeep));
             CardItemHandler.Instance.PlayerDiscardAction?.Invoke(player, card);

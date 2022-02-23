@@ -1,10 +1,29 @@
 ﻿using UnityEngine;
 using UnboundLib;
 using GameModeCollection.Objects;
+using System.Runtime.CompilerServices;
 namespace GameModeCollection.Extensions
 {
+    public class HealthHandlerAdditionalData
+    {
+        public bool invulnerable = false;
+    }
     static class HealthHandlerExtensions
     {
+        private static readonly ConditionalWeakTable<HealthHandler, HealthHandlerAdditionalData> additionalData = new ConditionalWeakTable<HealthHandler, HealthHandlerAdditionalData>();
+        public static HealthHandlerAdditionalData GetData(this HealthHandler instance)
+        {
+            return additionalData.GetOrCreateValue(instance);
+        }
+        public static void SetInvulnerable(this HealthHandler instance, bool invulnerable)
+        {
+            instance.GetData().invulnerable = invulnerable;
+        }
+        public static bool Invulnerable(this HealthHandler instance)
+        {
+            return instance.GetData().invulnerable;
+        }
+
         static private void TrySetEnabled<TComponent>(Component obj, bool enabled) where TComponent : Behaviour
         {
             if (obj != null && obj.GetComponent<TComponent>() != null)

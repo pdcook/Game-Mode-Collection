@@ -2,6 +2,8 @@
 using UnityEngine;
 using Photon.Pun;
 using GameModeCollection.GameModeHandlers;
+using System.Collections;
+using System.Collections.Generic;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class ZombieRoleHandler : IRoleHandler
@@ -30,6 +32,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override TRT_Role_Appearance Appearance => Zombie.RoleAppearance;
 
+        private List<int> playerIDsKilled = new List<int>() { };
+
         public override TRT_Role_Appearance AppearToAlignment(Alignment alignment)
         {
             switch (alignment)
@@ -50,15 +54,22 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             base.Start();
 
+            this.playerIDsKilled = new List<int>() { };
+
             // zombies cannot have cards
             this.GetComponent<Player>()?.InvokeMethod("FullReset");
         }
         public override void OnKilledPlayer(Player killedPlayer)
         {
             // do zombie stuff
-            if (this.GetComponent<PhotonView>().IsMine && RoleManager.GetPlayerAlignment(killedPlayer) != this.Alignment && killedPlayer?.playerID != this.GetComponent<Player>().playerID)
+            if (this.GetComponent<PhotonView>().IsMine && RoleManager.GetPlayerAlignment(killedPlayer) != this.Alignment && killedPlayer?.playerID != this.GetComponent<Player>().playerID && !this.playerIDsKilled.Contains(killedPlayer.playerID))
             {
-                this.GetComponent<PhotonView>().RPC(nameof(RPCA_ZombieInfect), RpcTarget.All, killedPlayer.playerID);
+                // if this was the phantom and they can still haunt, don't revive them as a zombie
+                if (RoleManager.GetPlayerRoleID(killedPlayer) != PhantomRoleHandler.PhantomRoleID || !(((Phantom)RoleManager.GetPlayerRole(killedPlayer)).CanHaunt || ((Phantom)RoleManager.GetPlayerRole(killedPlayer)).IsHaunting))
+                {
+                    this.playerIDsKilled.Add(killedPlayer.playerID);
+                    this.GetComponent<PhotonView>().RPC(nameof(RPCA_ZombieInfect), RpcTarget.All, killedPlayer.playerID);
+                }
             }
 
             base.OnKilledPlayer(killedPlayer);
@@ -68,20 +79,26 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
             if (player is null) { return; }
+            this.StartCoroutine(this.IDoZombieInfect(player));
+        }
+        private IEnumerator IDoZombieInfect(Player player)
+        {
+            yield return new WaitUntil(() => player.data.dead);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
             player.data.healthHandler.Revive(true);
             foreach (var role in player.gameObject.GetComponentsInChildren<TRT_Role>())
             {
                 UnityEngine.GameObject.Destroy(role);
             }
-            this.ExecuteAfterFrames(2, () =>
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            RoleManager.GetHandler(ZombieRoleHandler.ZombieRoleID).AddRoleToPlayer(player);
+            RoleManager.DoRoleDisplaySpecific(player);
+            if (player.data.view.IsMine)
             {
-                RoleManager.GetHandler(ZombieRoleHandler.ZombieRoleID).AddRoleToPlayer(player);
-                RoleManager.DoRoleDisplaySpecific(player);
-                if (player.data.view.IsMine)
-                {
-                    TRTHandler.SendChat(null, $"You've been infected by a {RoleManager.GetRoleColoredName(Zombie.RoleAppearance)}!" , true);
-                }
-            });
+                TRTHandler.SendChat(null, $"You've been infected by a {RoleManager.GetRoleColoredName(Zombie.RoleAppearance)}!" , true);
+            }
         }
     }
 }

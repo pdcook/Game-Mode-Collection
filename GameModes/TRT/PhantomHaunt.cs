@@ -11,11 +11,13 @@ namespace GameModeCollection.GameModes.TRT
     class PhantomHaunt : MonoBehaviour
     {
         public Player PhantomPlayer { get; private set; } = null;
+        public Phantom Phantom { get; private set; } = null;
         private CharacterData HauntedPlayer = null;
         private Vector3 RespawnPos { get; set; } = Vector3.zero;
-        public void SetPhantomPlayer(Player phantom)
+        public void SetPhantomPlayer(Phantom phantom)
         {
-            this.PhantomPlayer = phantom;
+            this.Phantom = phantom;
+            this.PhantomPlayer = phantom.GetComponent<Player>();
         }
         void Start()
         {
@@ -36,6 +38,7 @@ namespace GameModeCollection.GameModes.TRT
                 this.PhantomPlayer.GetComponent<PlayerCollision>().IgnoreWallForFrames(2);
                 this.PhantomPlayer.transform.position = this.RespawnPos;
                 this.PhantomPlayer.data.healthHandler.Revive(true, Phantom.ReviveWithHealthFrac);
+                this.Phantom.IsHaunting = false;
                 // if the local player is the detective, they should be notified that the phantom was revived
                 if (RoleManager.GetPlayerRoleID(PlayerManager.instance.players.FirstOrDefault(p => p.data.view.IsMine)) == DetectiveRoleHandler.DetectiveRoleID)
                 {

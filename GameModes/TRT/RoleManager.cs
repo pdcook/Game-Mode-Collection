@@ -107,12 +107,20 @@ namespace GameModeCollection.GameModes.TRT
             List<IRoleHandler> possibleRoles = RoleHandlers.Values.Where(r => r.MinNumberOfPlayersForRole <= N).ToList();
 
             // get roles that can replace other alignments
-            List<IRoleHandler> innocentReplace = possibleRoles.Where(r => r.AlignmentToReplace == Alignment.Innocent).ToList();
-            List<IRoleHandler> traitorReplace = possibleRoles.Where(r => r.AlignmentToReplace == Alignment.Traitor).ToList();
+            List<IRoleHandler> innocentReplace = possibleRoles.Where(r => r.AlignmentToReplace == Alignment.Innocent).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
+            List<IRoleHandler> traitorReplace = possibleRoles.Where(r => r.AlignmentToReplace == Alignment.Traitor).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
 
             // start with the roles that must be present in the lineup
             List<IRoleHandler> lineup = Enumerable.Repeat(GetHandler(InnocentRoleHandler.InnocentRoleID), N).ToList();
-            int nT = UnityEngine.Mathf.CeilToInt(N * TraitorRoleHandler.TraitorRarity);
+            int nT;
+            if (UnityEngine.Random.Range(0f,1f) < 0.5f)
+            {
+                nT = UnityEngine.Mathf.CeilToInt(N * TraitorRoleHandler.TraitorRarity);
+            }
+            else
+            {
+                nT = UnityEngine.Mathf.Clamp(UnityEngine.Mathf.FloorToInt(N * TraitorRoleHandler.TraitorRarity), 1, int.MaxValue);
+            }
             int nD = UnityEngine.Mathf.CeilToInt(N * DetectiveRoleHandler.DetectiveRarity);
             for (int i = 0; i < nT+nD; i++)
             {
@@ -131,9 +139,9 @@ namespace GameModeCollection.GameModes.TRT
             // see if other roles will replace any
             for (int j = 0; j < innocentReplace.Count(); j++)
             {
-                if ((lineup.Count(r => r.RoleAlignment == Alignment.Innocent)-1) / lineup.Count() < InnocentRoleHandler.MinimumPercInnocent)
+                if (innocentReplace[j].RoleAlignment != Alignment.Innocent && ((float)lineup.Count(r => r.RoleAlignment == Alignment.Innocent)-1f) / (float)lineup.Count() < InnocentRoleHandler.MinimumPercInnocent)
                 {
-                    break;
+                    continue;
                 }
                 if (UnityEngine.Random.Range(0f, 1f) < innocentReplace[j].Rarity)
                 {

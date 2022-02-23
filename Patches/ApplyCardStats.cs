@@ -25,8 +25,10 @@ namespace GameModeCollection.Patches
             else
             {
                 // compensate for health and respawns change immediately
-                ((Player)instance.GetFieldValue("playerToUpgrade")).GetComponent<CharacterData>().health *= ((CharacterStatModifiers)instance.GetFieldValue("myPlayerStats")).health;
-                ((Player)instance.GetFieldValue("playerToUpgrade")).GetComponent<CharacterData>().stats.remainingRespawns += ((CharacterStatModifiers)instance.GetFieldValue("myPlayerStats")).respawns;
+                CharacterStatModifiers myPlayerStats = ((CharacterStatModifiers)instance.GetFieldValue("myPlayerStats"));
+                if (myPlayerStats is null) { return; }
+                ((Player)instance.GetFieldValue("playerToUpgrade")).GetComponent<CharacterData>().health *= myPlayerStats.health;
+                ((Player)instance.GetFieldValue("playerToUpgrade")).GetComponent<CharacterData>().stats.remainingRespawns += myPlayerStats.respawns;
                 return;
             }
 

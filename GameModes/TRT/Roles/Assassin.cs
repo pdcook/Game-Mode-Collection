@@ -37,6 +37,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override TRT_Role_Appearance Appearance => Assassin.RoleAppearance;
 
+        private List<int> playerIDsKilled = new List<int>() { };
+
         bool CanBeTarget(Player player)
         {
             Alignment? appearsAs = RoleManager.GetPlayerAlignmentAsSeenByOther(player, this.GetComponent<Player>());
@@ -56,22 +58,24 @@ namespace GameModeCollection.GameModes.TRT.Roles
                 List<Player> possibleTargets = PlayerManager.instance.players.Where(p => !p.data.dead && CanBeTarget(p) && RoleManager.GetPlayerRoleID(p) != DetectiveRoleHandler.DetectiveRoleID).ToList();
                 if (possibleTargets.Count() == 0)
                 {
-                    target = PlayerManager.instance.players.Find(p => !p.data.dead && RoleManager.GetPlayerRoleID(p) == DetectiveRoleHandler.DetectiveRoleID);
+                    target = PlayerManager.instance.players.FirstOrDefault(p => !p.data.dead && RoleManager.GetPlayerRoleID(p) == DetectiveRoleHandler.DetectiveRoleID);
                 }
                 else
                 {
                     target = possibleTargets.OrderBy(_ => UnityEngine.Random.Range(0f, 1f)).First();
                 }
             }
-            if (target == null && !this.HasBeenTold)
+            else if (this.FailedContract && !this.HasBeenTold)
             {
                 this.HasBeenTold = true;
                 TRTHandler.SendChat(null, $"{RoleManager.GetRoleColoredName(this.Appearance)}, you have failed your contract.", true);
             }
-            else if (target != null)
+
+            if (target != null)
             {
                 TRTHandler.SendChat(null, $"{RoleManager.GetRoleColoredName(this.Appearance)}, your target is {TRTHandler.GetPlayerColorNameAsColoredString(target)}.", true);
             }
+
             this.GetComponent<PhotonView>().RPC(nameof(RPCA_SetNewTarget), RpcTarget.All, target?.playerID);
         }
         [PunRPC]
@@ -84,6 +88,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             this.FailedContract = false;
             this.HasBeenTold = false;
+            this.playerIDsKilled = new List<int>() { };
 
             base.Start();
 
@@ -106,12 +111,20 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override void OnKilledPlayer(Player killedPlayer)
         {
-            // do assassin stuff
-            if (killedPlayer.playerID != this.Target?.playerID)
+            // for some dumb reason, OnKilledPlayer is called twice or more every time...
+            if (this.GetComponent<PhotonView>().IsMine && !this.playerIDsKilled.Contains(killedPlayer.playerID))
             {
-                this.FailedContract = true;
+                this.playerIDsKilled.Add(killedPlayer.playerID);
+
+                // do assassin stuff
+                if (killedPlayer.playerID != this.Target?.playerID)
+                {
+                    this.FailedContract = true;
+                }
+                this.SetNewTarget();
             }
-            this.SetNewTarget();
+
+            base.OnKilledPlayer(killedPlayer);
         }
     }
 }

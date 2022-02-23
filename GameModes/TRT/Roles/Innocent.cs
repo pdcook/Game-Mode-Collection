@@ -9,7 +9,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
     {
         public static string InnocentRoleName => Innocent.RoleAppearance.Name;
         public static string InnocentRoleID = $"GM_TRT_{InnocentRoleName}";
-        public const float MinimumPercInnocent = 0.625f;
+        public const float MinimumPercInnocent = 0.5f;
         public Alignment RoleAlignment => Innocent.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;

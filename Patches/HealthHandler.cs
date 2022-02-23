@@ -71,8 +71,12 @@ namespace GameModeCollection.Patches
     class HealthHandlerPatchDoDamage_Friendly_Self_Enemy_Damage
     {
         // prefix to disable damage for friendly fire and self damage
+        // as well as handle invulnerability
         private static bool Prefix(HealthHandler __instance, Vector2 damage, Vector2 position, Color blinkColor, GameObject damagingWeapon = null, Player damagingPlayer = null, bool healthRemoval = false, bool lethal = true, bool ignoreBlock = false)
         {
+
+            if (__instance.Invulnerable()) { return false; }
+
             Player ownPlayer = __instance.GetComponent<Player>();
             if (damagingPlayer != null && ownPlayer != null)
             {
