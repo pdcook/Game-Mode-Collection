@@ -15,7 +15,7 @@ namespace GameModeCollection.Extensions
     public static class RoundCounterExtensions
     {
 
-        private static readonly Vector3 horizOffset = new Vector3(40f, 0f, 0f);
+        private static readonly Vector3 horizOffset = new Vector3(0f, 0f, 0f);
         private static readonly Vector3 vertOffset = new Vector3(0f, -28.835f, 0f);
 
         private static readonly ConditionalWeakTable<RoundCounter, RoundCounterAdditionalData> additionalData = new ConditionalWeakTable<RoundCounter, RoundCounterAdditionalData>();
@@ -32,8 +32,16 @@ namespace GameModeCollection.Extensions
                 pointInfoHolder = new GameObject("PointInfoHolder").transform;
                 pointInfoHolder.SetParent(instance.p1Parent.parent.parent);
                 pointInfoHolder.position = instance.p1Parent.position;
+                pointInfoHolder.localPosition = new Vector3(40f, pointInfoHolder.localPosition.y, 0f);
+                pointInfoHolder.localScale = Vector3.one;
+                var background = new GameObject("Background", typeof(UnityEngine.UI.Image), typeof(SizeFitter)).transform;
+                background.SetParent(pointInfoHolder);
+                background.SetAsFirstSibling();
+                background.GetComponent<UnityEngine.UI.Image>().color = Color.clear;
+                background.localScale = Vector3.one;
             }
-            pointInfoHolder.localScale = Vector3.one;
+            pointInfoHolder.GetComponentInChildren<SizeFitter>().CheckForChanges();
+            pointInfoHolder.Find("Background").SetAsFirstSibling();
             return pointInfoHolder;
         }
         public static Transform TeamClock(this RoundCounter instance, int teamID)
@@ -44,7 +52,7 @@ namespace GameModeCollection.Extensions
                 teamClock = GameObject.Instantiate(PointVisualizer.instance.transform.GetChild(1).Find("Orange").gameObject, instance.PointInfoHolder()).transform;
                 teamClock.name = $"P{teamID}-Clock";
                 teamClock.SetParent(instance.PointInfoHolder());
-                teamClock.SetSiblingIndex(teamID);
+                teamClock.SetSiblingIndex(teamID + 1);
                 teamClock.transform.Find("Fill").localRotation = Quaternion.Euler(new Vector3(0f, 0f, 180f));
                 teamClock.transform.Find("Fill").GetComponent<ProceduralImage>().color = PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
                 teamClock.transform.Find("Border").GetComponent<ProceduralImage>().color = PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
@@ -71,7 +79,7 @@ namespace GameModeCollection.Extensions
                 teamText.GetComponent<TextMeshProUGUI>().fontSize = 10f;
                 teamText.GetComponent<TextMeshProUGUI>().color = PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
                 teamText.SetParent(instance.PointInfoHolder());
-                teamText.SetSiblingIndex(teamID);
+                teamText.SetSiblingIndex(teamID + 1);
             }
             teamText.transform.localScale = 1 / 8f * Vector3.one;
             teamText.transform.localPosition = horizOffset + teamID * vertOffset;
@@ -101,7 +109,7 @@ namespace GameModeCollection.Extensions
             instance.TeamClock(teamID).gameObject.SetActive(false);
         }
 
-        public static void UpdateText(this RoundCounter instance, int teamID, string text, Color? colorToSet = null, float? fontSize = null, Vector3? scale = null)
+        public static void UpdateText(this RoundCounter instance, int teamID, string text, Color? colorToSet = null, float? fontSize = null, Vector3? scale = null, Color? backgroundColorToSet = null)
         {
             Color color = colorToSet ?? PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
 
@@ -111,6 +119,10 @@ namespace GameModeCollection.Extensions
             tmpro.color = color;
             if (fontSize != null) { tmpro.fontSize = (float)fontSize; }
             if (scale != null) { tmpro.gameObject.transform.localScale = (Vector3)scale; }
+            if (backgroundColorToSet != null)
+            {
+                instance.PointInfoHolder().Find("Background").GetComponent<UnityEngine.UI.Image>().color = (Color)backgroundColorToSet;
+            }
         }
         public static void ClearTexts(this RoundCounter instance)
         {
@@ -119,6 +131,40 @@ namespace GameModeCollection.Extensions
                 UnityEngine.GameObject.DestroyImmediate(text.gameObject);
             }
             instance.GetData().teamTexts.Clear();
+        }
+        class SizeFitter : MonoBehaviour
+        {
+            public void CheckForChanges()
+            {
+                TextMeshProUGUI[] children = transform.parent.GetComponentsInChildren<TextMeshProUGUI>();
+
+                float min_x, max_x, min_y, max_y;
+                min_x = max_x = transform.localPosition.x;
+                min_y = max_y = transform.localPosition.y;
+
+                foreach (RectTransform child in children.Select(c => c.rectTransform))
+                {
+                    Vector2 scale = child.sizeDelta;
+                    float temp_min_x, temp_max_x, temp_min_y, temp_max_y;
+
+                    temp_min_x = child.localPosition.x - (scale.x / 2);
+                    temp_max_x = child.localPosition.x + (scale.x / 2);
+                    temp_min_y = child.localPosition.y - (scale.y / 2);
+                    temp_max_y = child.localPosition.y + (scale.y / 2);
+
+                    if (temp_min_x < min_x)
+                        min_x = temp_min_x;
+                    if (temp_max_x > max_x)
+                        max_x = temp_max_x;
+
+                    if (temp_min_y < min_y)
+                        min_y = temp_min_y;
+                    if (temp_max_y > max_y)
+                        max_y = temp_max_y;
+                }
+                GetComponent<RectTransform>().sizeDelta = new Vector2(max_x - min_x, max_y - min_y);
+                this.transform.localPosition = horizOffset + vertOffset * (this.transform.parent.childCount-2) / 2f;
+            }
         }
     }
 }

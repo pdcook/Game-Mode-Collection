@@ -31,7 +31,7 @@ namespace GameModeCollection.GameModes.TRT
             }
             if (data.view.IsMine)
             {
-                UIHandler.instance.roundCounterSmall.UpdateText(1, this.Appearance.Name.ToUpper(), this.Appearance.Color, 30, Vector3.one);
+                UIHandler.instance.roundCounterSmall.UpdateText(1, this.Appearance.Name.ToUpper(), this.Appearance.Color, 30, Vector3.one, GM_TRT.DisplayBackgroundColor);
             }
             this.ExecuteAfterFrames(5, BetterChat.BetterChat.EvaluateCanSeeGroup);
         }

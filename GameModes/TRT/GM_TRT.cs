@@ -131,6 +131,7 @@ namespace GameModeCollection.GameModes
 
         public readonly static Color DullWhite = new Color32(230, 230, 230, 255);
         public readonly static Color WarningColor = new Color32(230, 0, 0, 255);
+        public readonly static Color DisplayBackgroundColor = new Color32(0, 0, 0, 150);
 
         private readonly Dictionary<int, int> roundCounterValues = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 } };
 
@@ -429,7 +430,7 @@ namespace GameModeCollection.GameModes
             
             if (killedPlayer.data.view.IsMine)
             {
-                UIHandler.instance.roundCounterSmall.UpdateText(1, "ONGOING", DullWhite, 30, Vector3.one);
+                UIHandler.instance.roundCounterSmall.UpdateText(1, "ONGOING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
             }
 
             // check win condition after a short delay to allow things like phantom spawning and swapper swapping to happen
@@ -557,7 +558,7 @@ namespace GameModeCollection.GameModes
 
             var sounds = GameObject.Find("/SonigonSoundEventPool");
 
-            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one);
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
 
             yield return new WaitForSecondsRealtime(PrepPhaseTime);
 
@@ -607,7 +608,7 @@ namespace GameModeCollection.GameModes
 
             var sounds = GameObject.Find("/SonigonSoundEventPool");
 
-            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one);
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
 
             yield return new WaitForSecondsRealtime(PrepPhaseTime);
 
@@ -955,7 +956,7 @@ namespace GameModeCollection.GameModes
 
             Color timeColor = this.prebattle ? DullWhite : (this.clocktime < HasteModeAddPerDeath ? WarningColor : DullWhite);
 
-            UIHandler.instance.roundCounterSmall.UpdateText(0, GetClockString(clocktime), timeColor, 30, Vector3.one);
+            UIHandler.instance.roundCounterSmall.UpdateText(0, GetClockString(clocktime), timeColor, 30, Vector3.one, DisplayBackgroundColor);
 
             if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.battleOngoing)
             {

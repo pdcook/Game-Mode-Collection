@@ -10,7 +10,7 @@ namespace GameModeCollection.Patches
     {
         private static void Postfix(GeneralInput __instance)
         {
-            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || !__instance.GetComponent<CharacterData>().view.IsMine) { return; }
+            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || !__instance.GetComponent<CharacterData>().view.IsMine || BetterChat.BetterChat.isLockingInput) { return; }
 
             if (__instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_inspect_body.WasPressed)
             {
