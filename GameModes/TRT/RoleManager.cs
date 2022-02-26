@@ -206,8 +206,10 @@ namespace GameModeCollection.GameModes.TRT
             }
         }
 
-        private static void SetPlayerNameRoleDisplay(Player player, TRT_Role_Appearance role_Appearance, bool hideNickName, bool clear = false)
+        private static void SetPlayerNameRoleDisplay(Player player, TRT_Role_Appearance role_Appearance, bool hideNickName, bool clear = false, Color? backgroundColor = null)
         {
+            Color backgroundColor_ = backgroundColor ?? (clear ? Color.clear : GM_TRT.NameBackgroundColor);
+
             TextMeshProUGUI nameText = player?.GetComponentInChildren<PlayerName>()?.GetComponent<TextMeshProUGUI>();
             if (nameText is null)
             {
@@ -232,6 +234,7 @@ namespace GameModeCollection.GameModes.TRT
                 nameText.color = role_Appearance.Color;
                 nameText.fontStyle = FontStyles.Bold;
             }
+            player.data.SetNameBackground(backgroundColor_);
         }
         public static Alignment? GetPlayerAlignmentAsSeenByOther(Player player, Player other)
         {

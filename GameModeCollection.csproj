@@ -178,6 +178,7 @@
     <Compile Include="GameModes\TRT\Roles\Traitor.cs" />
     <Compile Include="GameModes\TRT\TRT_Corpse.cs" />
     <Compile Include="GameModes\TRT\TRT_Role.cs" />
+    <Compile Include="GameModes\TRT\TRT_Shop.cs" />
     <Compile Include="Objects\CardItem.cs" />
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />

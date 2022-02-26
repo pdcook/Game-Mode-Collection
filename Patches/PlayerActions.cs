@@ -32,6 +32,9 @@ namespace GameModeCollection.Patches
             __instance.GetAdditionalData().trt_radio_innocent = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Radio \"___ is innocent.\" (TRT)" });
+            __instance.GetAdditionalData().trt_shop = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
+                                    BindingFlags.Instance | BindingFlags.InvokeMethod |
+                                    BindingFlags.NonPublic, null, __instance, new object[] { "Open Shop (TRT)" });
             __instance.GetAdditionalData().discard_last_card = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Drop Last Card" });
@@ -54,6 +57,10 @@ namespace GameModeCollection.Patches
             __result.GetAdditionalData().trt_radio_traitor.AddDefaultBinding(InputControlType.DPadUp);
 
             __result.GetAdditionalData().trt_radio_innocent.AddDefaultBinding(InputControlType.DPadDown);
+
+            __result.Fire.RemoveBinding(new DeviceBindingSource(InputControlType.Action3));
+
+            __result.GetAdditionalData().trt_shop.AddDefaultBinding(InputControlType.Action3);
 
             __result.GetAdditionalData().discard_last_card.AddDefaultBinding(InputControlType.Action4);
         }
@@ -84,6 +91,9 @@ namespace GameModeCollection.Patches
 
             __result.GetAdditionalData().discard_last_card.AddDefaultBinding(Key.Q);
             __result.GetAdditionalData().discard_last_card.AddDefaultBinding(Key.Z);
+
+            __result.GetAdditionalData().trt_shop.AddDefaultBinding(Key.B);
+            __result.GetAdditionalData().trt_shop.AddDefaultBinding(Key.Key6);
         }
     }
 }

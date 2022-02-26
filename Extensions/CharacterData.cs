@@ -1,6 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Linq;
 using GameModeCollection.GameModes;
+using UnityEngine;
+using TMPro;
+using UnboundLib;
 
 namespace GameModeCollection.Extensions
 {
@@ -39,6 +42,40 @@ namespace GameModeCollection.Extensions
         public static void TRT_ChangeKarma(this CharacterData instance, float amount_to_add, float minimum = 0f)
         {
             instance.GetData().TRT_Karma = UnityEngine.Mathf.Clamp(instance.GetData().TRT_Karma + amount_to_add, minimum, 1f);
+        }
+
+        public static void SetNameBackground(this CharacterData instance, Color color)
+        {
+            TextMeshProUGUI nameText = instance?.GetComponentInChildren<PlayerName>()?.GetComponent<TextMeshProUGUI>();
+            if (nameText is null)
+            {
+                GameModeCollection.LogWarning($"NAME FOR PLAYER {instance?.player?.playerID} IS NULL");
+                return;
+            }
+            Transform background = nameText.transform.parent.Find("Background");
+            if (background is null)
+            {
+                background = new GameObject("Background", typeof(UnityEngine.UI.Image), typeof(PlayerNameSizeFitter)).transform;
+                background.SetParent(nameText.transform.parent);
+                background.SetAsFirstSibling();
+                background.localPosition = Vector3.zero;
+                background.localScale = Vector3.one;
+            }
+            background.GetComponent<UnityEngine.UI.Image>().color = color;
+            background.GetComponent<PlayerNameSizeFitter>().CheckForChanges();
+
+        }
+        class PlayerNameSizeFitter : MonoBehaviour
+        {
+            public const float pad = 50f;
+            public void CheckForChanges()
+            {
+                TextMeshProUGUI nameText = transform.parent.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>();
+                if (nameText is null) { return; }
+                nameText.ForceMeshUpdate();
+                GetComponent<RectTransform>().sizeDelta = nameText.textBounds.size + pad * Vector3.one;
+                this.transform.localPosition = nameText.transform.localPosition + nameText.textBounds.center;
+            }
         }
     }
 }

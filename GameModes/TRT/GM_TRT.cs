@@ -17,6 +17,7 @@ using GameModeCollection.GameModes.TRT.Roles;
 using GameModeCollection.GameModeHandlers;
 using BetterChat;
 using LocalZoom;
+using System.Collections.ObjectModel;
 
 namespace GameModeCollection.GameModes
 {
@@ -66,6 +67,12 @@ namespace GameModeCollection.GameModes
     /// - [X] card random spawning
     /// - [ ] LaTeX document with a short guide to each role
     /// - [ ] Round summaries in chat
+    /// - [ ] T and D shops...
+    /// - [ ] Custom cards specifically for certain roles
+    ///     - [ ] Explosive + one time massive damage card for Traitors + Mercenary (not Zombies)
+    ///     - [ ] Instakill + multi-use short-range (like a knife - think short-range overpower?) for Traitors + Mercenary (not Zombies)
+    ///     - [ ] Golden Gun for Detectives + Mercenary
+    ///     - [ ] Radar for Traitors + Detectives + Mercenary (not zombies)
     /// 
     /// Roles:
     /// - [X] Innocent
@@ -132,8 +139,9 @@ namespace GameModeCollection.GameModes
         public readonly static Color DullWhite = new Color32(230, 230, 230, 255);
         public readonly static Color WarningColor = new Color32(230, 0, 0, 255);
         public readonly static Color DisplayBackgroundColor = new Color32(0, 0, 0, 150);
+        public readonly static Color NameBackgroundColor = new Color32(0, 0, 0, 200);
 
-        private readonly Dictionary<int, int> roundCounterValues = new Dictionary<int, int>() { { 0, 0 }, { 1, 0 } };
+        private readonly ReadOnlyDictionary<int, int> roundCounterValues = new ReadOnlyDictionary<int, int>(new Dictionary<int, int>() { { 0, 0 }, { 1, 0 } }) { };
 
         internal int pointsPlayedOnCurrentMap = 0;
         internal int roundsPlayed = 0;
@@ -170,6 +178,15 @@ namespace GameModeCollection.GameModes
                 }
             });
         }
+        private void RegisterAllWobbleObjects()
+        {
+            PlayerManager.instance.ForEachPlayer(player =>
+            {
+                if (player?.GetComponentInChildren<PlayerWobblePosition>() is null) { return; }
+                LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages.AddRange(player.GetComponentInChildren<PlayerWobblePosition>().GetComponentsInChildren<UnityEngine.UI.Image>(true));
+                LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages = LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages.Distinct().ToList();
+            });
+        }
 
         protected void Awake()
         {
@@ -190,10 +207,8 @@ namespace GameModeCollection.GameModes
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitStart);
 
-            // TODO: either scrap this or handle the corner-case where players can heal by discarding a card
             CardItemHandler.Instance.SetCanDiscard(true);
             CardItemHandler.Instance.PlayerDiscardAction += DropCard;
-
 
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerAssigner.instance.maxPlayers = RWF.RWFMod.instance.MaxPlayers;
@@ -201,6 +216,7 @@ namespace GameModeCollection.GameModes
             LocalZoom.MyCameraController.allowZoomIn = true;
             LocalZoom.MyCameraController.defaultZoomLevel = DefaultZoom;
             LocalZoom.LocalZoom.scaleCamWithBulletSpeed = true;
+            LocalZoom.LocalZoom.enableLoSNamePlates = true;
             LocalZoom.LocalZoom.SetEnableShaderSetting(true);
             LocalZoom.LocalZoom.SetEnableCameraSetting(true);
             TRTHandler.InitChatGroups();
@@ -409,6 +425,7 @@ namespace GameModeCollection.GameModes
             // set localzoom shader settings
             this.SetAllPlayersFOV();
             this.HideAllPlayerFaces();
+            this.RegisterAllWobbleObjects();
         }
 
         public void PlayerDied(Player killedPlayer, int teamsAlive)
@@ -493,6 +510,7 @@ namespace GameModeCollection.GameModes
 
             this.SetAllPlayersFOV();
             this.HideAllPlayerFaces();
+            this.RegisterAllWobbleObjects();
 
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
@@ -515,7 +533,7 @@ namespace GameModeCollection.GameModes
             TimeHandler.instance.DoSpeedUp();
             TimeHandler.instance.StartGame();
             GameManager.instance.battleOngoing = true;
-            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value), this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value));
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
 
             this.StartCoroutine(this.DoRoundStart());
@@ -530,6 +548,7 @@ namespace GameModeCollection.GameModes
 
             this.SetAllPlayersFOV();
             this.HideAllPlayerFaces();
+            this.RegisterAllWobbleObjects();
 
             // players get karma reset on new round
             PlayerManager.instance.ResetKarma();
@@ -542,6 +561,7 @@ namespace GameModeCollection.GameModes
 
             this.SetAllPlayersFOV();
             this.HideAllPlayerFaces();
+            this.RegisterAllWobbleObjects();
 
             yield return TRTCardManager.SpawnCards(2 * PlayerManager.instance.players.Count(), CardHealth, true);
 
@@ -571,6 +591,7 @@ namespace GameModeCollection.GameModes
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             //UIHandler.instance.DisplayRoundStartText("INNOCENT", InnocentColor, new Vector3(0.5f, 0.8f, 0f));
             PlayerManager.instance.SetPlayersInvulnerable(false);
+            PlayerManager.instance.RevivePlayers();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
         }
@@ -584,6 +605,7 @@ namespace GameModeCollection.GameModes
 
             this.SetAllPlayersFOV();
             this.HideAllPlayerFaces();
+            this.RegisterAllWobbleObjects();
 
             // Wait for MapManager to set all players to playing after map transition
             while (PlayerManager.instance.players.ToList().Any(p => !(bool)p.data.isPlaying))
@@ -593,6 +615,7 @@ namespace GameModeCollection.GameModes
 
             this.SetAllPlayersFOV();
             this.HideAllPlayerFaces();
+            this.RegisterAllWobbleObjects();
 
             yield return TRTCardManager.SpawnCards(2 * PlayerManager.instance.players.Count(), CardHealth, true);
 
@@ -621,6 +644,7 @@ namespace GameModeCollection.GameModes
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             //UIHandler.instance.DisplayRoundStartText("TRAITOR", TraitorColor, new Vector3(0.5f, 0.8f, 0f));
             PlayerManager.instance.SetPlayersInvulnerable(false);
+            PlayerManager.instance.RevivePlayers();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
 
@@ -677,7 +701,7 @@ namespace GameModeCollection.GameModes
             GameManager.instance.battleOngoing = true;
             this.isTransitioning = false;
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
-            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value), this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value));
 
             this.StartCoroutine(this.DoRoundStart());
         }
@@ -727,7 +751,7 @@ namespace GameModeCollection.GameModes
             GameManager.instance.battleOngoing = true;
             this.isTransitioning = false;
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
-            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value), this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value));
 
             this.StartCoroutine(this.DoPointStart());
             /*
@@ -812,7 +836,7 @@ namespace GameModeCollection.GameModes
         {
             yield return GameModeManager.TriggerHook(GameModeHooks.HookGameEnd);
 
-            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value), this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value));
             //Color color = AverageColor.Average(colors);
             UIHandler.instance.DisplayScreenText(Color.white, "TROUBLE\nIN\nROUNDS TOWN", 1f);
             yield return new WaitForSecondsRealtime(2f);
@@ -848,7 +872,7 @@ namespace GameModeCollection.GameModes
             this.roundsPlayed = 0;
 
             this.isTransitioning = false;
-            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
+            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value), this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value));
             CardBarHandler.instance.ResetCardBards();
             PointVisualizer.instance.ResetPoints();
         }
