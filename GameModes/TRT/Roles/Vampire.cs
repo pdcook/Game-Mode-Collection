@@ -122,7 +122,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
             this.sinceLastPress += Time.deltaTime;
 
-            if (this.player.data.playerActions.Interact().WasPressed)
+            if (this.player.data.playerActions.InteractWasPressed())
             {
                 if (this.sinceLastPress < InteractRepeatDelay && this.vampireEffects.AbilityReady)
                 {
@@ -132,12 +132,12 @@ namespace GameModeCollection.GameModes.TRT.Roles
                 this.timeHeld = 0f;
             }
 
-            if (this.player.data.playerActions.Interact().WasReleased)
+            if (this.player.data.playerActions.InteractWasReleased())
             {
                 this.timeHeld = 0f;
                 this.targetedCorpse = null;
             }
-            else if (this.player.data.playerActions.Interact().IsPressed && this.targetedCorpse != null)
+            else if (this.player.data.playerActions.InteractIsPressed() && this.targetedCorpse != null)
             {
                 if (Vector3.Distance(this.transform.position, this.targetedCorpse.transform.position) > TRTHandler.MaxInspectDistance)
                 {

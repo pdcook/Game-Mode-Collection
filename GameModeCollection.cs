@@ -8,6 +8,7 @@ using TMPro;
 using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
+using GameModeCollection.GameModes.TRT.Cards;
 using UnboundLib.Cards;
 using UnboundLib.Utils;
 using System.IO;
@@ -78,6 +79,7 @@ namespace GameModeCollection
             GameModeManager.AddHandler<GM_Dodgeball>(DodgeballHandler.GameModeID, new DodgeballHandler());
             GameModeManager.AddHandler<GM_Dodgeball>(TeamDodgeballHandler.GameModeID, new TeamDodgeballHandler());
             GameModeManager.AddHandler<GM_TRT>(TRTHandler.GameModeID, new TRTHandler());
+            //CustomCard.BuildCard<C4Card>(C4Card.Callback);
             
             CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
             GameModeManager.AddHandler<GM_HideNSeek>(HideNSeekHandler.GameModeID, new HideNSeekHandler());

@@ -180,7 +180,7 @@ namespace GameModeCollection.Objects
                 if (this.CanSeePlayer(collider2D.GetComponent<Player>()))
                 {
                     this.CardObj?.GetComponentInChildren<CardVisuals>()?.ChangeSelected(true,(collider2D?.GetComponent<Player>()?.data?.view?.IsMine ?? false));
-                    if (this.RequiresInteraction && !collider2D.GetComponent<Player>().data.playerActions.Interact().WasPressed)
+                    if (this.RequiresInteraction && !collider2D.GetComponent<Player>().data.playerActions.InteractWasPressed())
                     {
                     }
                     else if (Vector2.Distance(collider2D.GetComponent<Player>().data.playerVel.position, this.transform.position) < CollectionDistance)

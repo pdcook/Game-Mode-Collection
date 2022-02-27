@@ -148,6 +148,9 @@
     <Compile Include="Extensions\UIHandler.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
+    <Compile Include="GameModes\TRT\Cards\C4.cs" />
+    <Compile Include="GameModes\TRT\Cards\CardCategories.cs" />
+    <Compile Include="GameModes\TRT\Cards\TRTCardSlotText.cs" />
     <Compile Include="GameModes\TRT\TRTCardManager.cs" />
     <Compile Include="GameModes\TRT\TRTMapManager.cs" />
     <Compile Include="GameModeHandlers\TRTHandler.cs" />
@@ -190,6 +193,7 @@
     <Compile Include="Objects\ObjectParticleSkin.cs" />
     <Compile Include="Objects\ObjectUIUtils.cs" />
     <Compile Include="Objects\PlayerDoNotFollow.cs" />
+    <Compile Include="Objects\GameModeObjects\TRT\C4.cs" />
     <Compile Include="Patches\ApplyCardStats.cs" />
     <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\CharacterItem.cs" />
