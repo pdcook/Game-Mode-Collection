@@ -2,6 +2,10 @@
 using UnboundLib;
 using UnboundLib.Utils;
 using System.Linq;
+using Photon.Pun;
+using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.Objects;
+using UnboundLib.Networking;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class DetectiveRoleHandler : IRoleHandler
@@ -33,11 +37,28 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             base.Start();
 
-            CardInfo healingField = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("Healing field")).cardInfo;
+            //CardInfo healingField = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("Healing field")).cardInfo;
 
             // 80% of the time the detective spawns with healing field
             // 20% of the time they spawn with Golden Gun
 
+            // FOR NOW: the detective has a 80% chance of spawning with a health station
+            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false) && UnityEngine.Random.Range(0f, 1f) < 0.8f)
+            {
+                NetworkingManager.RPC(typeof(Detective), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID);
+            }
+
+        }
+        [UnboundRPC]
+        private static void RPCA_AddCardToPlayer(int playerID)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
+            if (player is null) { return; }
+            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, HealthStationCard.Card, addToCardBar: false);
+            if (player.data.view.IsMine)
+            {
+                CardItemHandler.ClientsideAddToCardBar(player.playerID, HealthStationCard.Card);
+            }
         }
 
         public override bool AlertAlignment(Alignment alignment)

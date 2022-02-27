@@ -38,32 +38,32 @@ namespace GameModeCollection.GameModes.TRT.Cards
             string extraText = "";
             foreach (CardCategory cardCategory in card.categories)
             {
-                if (cardCategory == CardCategories.TRT_Slot_0)
+                if (cardCategory == TRTCardCategories.TRT_Slot_0)
                 {
                     extraText = "Slot 0";
                     break;
                 }
-                if (cardCategory == CardCategories.TRT_Slot_1)
+                if (cardCategory == TRTCardCategories.TRT_Slot_1)
                 {
                     extraText = "Slot 1";
                     break;
                 }
-                if (cardCategory == CardCategories.TRT_Slot_2)
+                if (cardCategory == TRTCardCategories.TRT_Slot_2)
                 {
                     extraText = "Slot 2";
                     break;
                 }
-                if (cardCategory == CardCategories.TRT_Slot_3)
+                if (cardCategory == TRTCardCategories.TRT_Slot_3)
                 {
                     extraText = "Slot 3";
                     break;
                 }
-                if (cardCategory == CardCategories.TRT_Slot_4)
+                if (cardCategory == TRTCardCategories.TRT_Slot_4)
                 {
                     extraText = "Slot 4";
                     break;
                 }
-                if (cardCategory == CardCategories.TRT_Slot_5)
+                if (cardCategory == TRTCardCategories.TRT_Slot_5)
                 {
                     extraText = "Slot 5";
                     break;

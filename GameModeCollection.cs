@@ -74,12 +74,17 @@ namespace GameModeCollection
             // add GUI to modoptions menu
             //Unbound.RegisterMenu(ModName, () => { }, GUI, null, false);
 
+            // register callback to enable vanilla cards in TRT
+            Unbound.AddAllCardsCallback(TRTCardManager.SetTRTEnabled);
+
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());
             GameModeManager.AddHandler<GM_CrownControl>(TeamCrownControlHandler.GameModeID, new TeamCrownControlHandler());
             GameModeManager.AddHandler<GM_Dodgeball>(DodgeballHandler.GameModeID, new DodgeballHandler());
             GameModeManager.AddHandler<GM_Dodgeball>(TeamDodgeballHandler.GameModeID, new TeamDodgeballHandler());
             GameModeManager.AddHandler<GM_TRT>(TRTHandler.GameModeID, new TRTHandler());
             //CustomCard.BuildCard<C4Card>(C4Card.Callback);
+            CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
+            CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
             
             CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
             GameModeManager.AddHandler<GM_HideNSeek>(HideNSeekHandler.GameModeID, new HideNSeekHandler());

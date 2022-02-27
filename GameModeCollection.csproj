@@ -148,8 +148,10 @@
     <Compile Include="Extensions\UIHandler.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
+    <Compile Include="GameModes\TRT\Cards\DeathStation.cs" />
+    <Compile Include="GameModes\TRT\Cards\HealthStation.cs" />
     <Compile Include="GameModes\TRT\Cards\C4.cs" />
-    <Compile Include="GameModes\TRT\Cards\CardCategories.cs" />
+    <Compile Include="GameModes\TRT\Cards\TRTCardCategories.cs" />
     <Compile Include="GameModes\TRT\Cards\TRTCardSlotText.cs" />
     <Compile Include="GameModes\TRT\TRTCardManager.cs" />
     <Compile Include="GameModes\TRT\TRTMapManager.cs" />
@@ -186,6 +188,8 @@
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
     <Compile Include="Objects\GameModeObjects\DeathObjectHandler.cs" />
+    <Compile Include="Objects\GameModeObjects\TRT\DeathStation.cs" />
+    <Compile Include="Objects\GameModeObjects\TRT\HealthStation.cs" />
     <Compile Include="Objects\IgnoreBackgroundObjects.cs" />
     <Compile Include="Objects\NetworkPhysicsItem.cs" />
     <Compile Include="Objects\ObjectDamagable.cs" />

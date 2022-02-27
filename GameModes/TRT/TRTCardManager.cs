@@ -10,6 +10,9 @@ using Photon.Pun;
 using MapEmbiggener;
 using GameModeCollection.Utils;
 using System.Collections;
+using GameModeCollection.GameModes.TRT.Cards;
+using CardChoiceSpawnUniqueCardPatch.CustomCategories;
+using UnboundLib.Cards;
 namespace GameModeCollection.GameModes.TRT
 {
     public static class TRTCardManager
@@ -22,6 +25,21 @@ namespace GameModeCollection.GameModes.TRT
         private const float Eps = 1.5f;
         private const float Range = 2f;
         private const float MaxDistanceAway = 10f;
+
+        internal static void SetTRTEnabled(CardInfo[] cards)
+        {
+            // all default cards (except a few) are allowed
+            foreach (CardInfo card in cards.Where(c => c.GetComponent<CustomCard>() is null))
+            {
+                if (card.name.Equals("Healing field")) { continue; }
+                card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Enabled }).ToArray();
+            }
+        }
+
+        private static bool CardIsTRTAllowed(CardInfo c, Player p, Gun g, GunAmmo ga, CharacterData d, HealthHandler h, Gravity gr, Block b, CharacterStatModifiers s)
+        {
+            return c.categories.Contains(TRTCardCategories.TRT_Enabled);
+        }
 
         public static IEnumerator SpawnCards(int N, float health, bool requireInteract)
         {
@@ -37,7 +55,7 @@ namespace GameModeCollection.GameModes.TRT
             for (int i = 0; i < N; i++)
             {
                 int j = Mod(i, spawnPoints.Count());
-                yield return CardItem.MakeCardItem(((GameObject)CardChoice.instance.InvokeMethod("GetRanomCard")).GetComponent<CardInfo>(), GetNearbyValidPosition(spawnPoints[j]), Quaternion.identity, maxHealth: health, requireInteract: requireInteract);
+                yield return CardItem.MakeCardItem(ModdingUtils.Utils.Cards.instance.GetRandomCardWithCondition(null, null, null, null, null, null, null, null, CardIsTRTAllowed), GetNearbyValidPosition(spawnPoints[j]), Quaternion.identity, maxHealth: health, requireInteract: requireInteract);
             }
         }
         public static void RemoveAllCardItems()

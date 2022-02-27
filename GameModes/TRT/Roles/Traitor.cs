@@ -1,6 +1,10 @@
 ﻿using UnboundLib;
 using System.Linq;
 using UnityEngine;
+using Photon.Pun;
+using GameModeCollection.Objects;
+using GameModeCollection.GameModes.TRT.Cards;
+using UnboundLib.Networking;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class TraitorRoleHandler : IRoleHandler
@@ -72,6 +76,28 @@ namespace GameModeCollection.GameModes.TRT.Roles
                     return null;
                 default:
                     return null;
+            }
+        }
+
+        protected override void Start()
+        {
+            base.Start();
+            // FOR NOW: the traitor has a 40% chance of spawning with a death station
+            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false) && UnityEngine.Random.Range(0f, 1f) < 0.4f)
+            {
+                NetworkingManager.RPC(typeof(Traitor), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID);
+            }
+
+        }
+        [UnboundRPC]
+        private static void RPCA_AddCardToPlayer(int playerID)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
+            if (player is null) { return; }
+            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, DeathStationCard.Card, addToCardBar: false);
+            if (player.data.view.IsMine)
+            {
+                CardItemHandler.ClientsideAddToCardBar(player.playerID, DeathStationCard.Card);
             }
         }
 

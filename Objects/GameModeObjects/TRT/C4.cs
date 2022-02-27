@@ -120,6 +120,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			this.Clock.transform.localScale = new Vector3(0.5f, 1f, 1f);
 			this.GetComponentInChildren<PlayerSkinParticle>().transform.localPosition = Vector3.zero;
 
+			this.GetComponentInChildren<PlayerSkinParticle>().gameObject.SetActive(false);
+
 			base.Start();
 
 			this.Trig.radius = C4Handler.TriggerRadius;
@@ -138,7 +140,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				this.gameObject.SetActive(true);
             }
 			this.Renderer.color = new Color32 (100, 100, 100, 255);
-			this.Renderer.enabled = false;
+			//this.Renderer.enabled = false;
 		}
 
 		protected internal override void OnTriggerEnter2D(Collider2D collider2D)

@@ -9,6 +9,7 @@ using UnboundLib.Networking;
 using Photon.Pun;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects;
+using GameModeCollection.Objects.GameModeObjects.TRT;
 using UnboundLib.GameModes;
 using Sonigon;
 using GameModeCollection.Utils;
@@ -196,8 +197,10 @@ namespace GameModeCollection.GameModes
 
         protected void Start()
         {
-            // register prefab
+            // register prefabs
             GameObject _ = CardItemPrefabs.CardItem;
+            _ = HealthStationPrefab.HealthStation;
+            _ = DeathStationPrefab.DeathStation;
             // spawn handler
             _ = CardItemPrefabs.CardItemHandler;
             this.StartCoroutine(this.Init());

@@ -1,7 +1,7 @@
 ﻿using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 namespace GameModeCollection.GameModes.TRT.Cards
 {
-    public static class CardCategories
+    public static class TRTCardCategories
     {
         public readonly static CardCategory TRT_Traitor = CustomCardCategories.instance.CardCategory("TRT_Traitor");
         public readonly static CardCategory TRT_Detective = CustomCardCategories.instance.CardCategory("TRT_Detective");
@@ -11,5 +11,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public readonly static CardCategory TRT_Slot_3 = CustomCardCategories.instance.CardCategory("TRT_Slot_3");
         public readonly static CardCategory TRT_Slot_4 = CustomCardCategories.instance.CardCategory("TRT_Slot_4");
         public readonly static CardCategory TRT_Slot_5 = CustomCardCategories.instance.CardCategory("TRT_Slot_5");
+        public readonly static CardCategory TRT_IgnoreCardLimit = CustomCardCategories.instance.CardCategory("TRT_IgnoreCardLimit");
+        public readonly static CardCategory TRT_Enabled = CustomCardCategories.instance.CardCategory("TRT_Enabled");
     }
 }
