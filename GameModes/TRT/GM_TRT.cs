@@ -58,7 +58,7 @@ namespace GameModeCollection.GameModes
     /// - [X] Players can have a max of one card
     /// - [X] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
     /// - [X] Dead players have a separate text chat
-    /// - [?] Players can discard cards by clicking on the square in the card bar
+    /// - [X] Players can discard cards by clicking on the square in the card bar
     ///     --> Or by pressing Q to discard their most recent card
     /// - [X] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
     /// - [X] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
@@ -74,6 +74,7 @@ namespace GameModeCollection.GameModes
     ///     - [ ] Instakill + multi-use short-range (like a knife - think short-range overpower?) for Traitors + Mercenary (not Zombies)
     ///     - [ ] Golden Gun for Detectives + Mercenary
     ///     - [ ] Radar for Traitors + Detectives + Mercenary (not zombies)
+    ///     - [ ] Claw (same as knife) for zombies to infect others
     /// 
     /// Roles:
     /// - [X] Innocent

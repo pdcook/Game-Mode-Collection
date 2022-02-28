@@ -53,7 +53,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	}
 	public class DeathStationHandler : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
 	{
-		private const float TriggerRadius = 1.5f;
+		private const float TriggerRadius = 2f;
 
 		public bool IsPrefab { get; internal set; } = false;
 

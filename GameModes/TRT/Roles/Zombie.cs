@@ -58,6 +58,10 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
             // zombies cannot have cards
             this.GetComponent<Player>()?.InvokeMethod("FullReset");
+            if (this.GetComponent<PhotonView>().IsMine)
+            {
+                ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar();
+            }
         }
         public override void OnKilledPlayer(Player killedPlayer)
         {
