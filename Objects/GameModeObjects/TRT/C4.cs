@@ -215,7 +215,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				this.blink *= -1;
             }
 
-			this.Renderer.color = this.blink > 0 ? Color.red : Color.black;
+			this.Renderer.color = this.blink > 0 ? Color.red : Color.clear;
 
 			//Clock.text = GetClockString(this.Time);
 			//SetClockPositionAndRotation();

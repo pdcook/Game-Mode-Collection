@@ -92,7 +92,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         void Update()
         {
-            if (this.Player is null) { return; }
+            if (this.Player is null || !this.Player.data.view.IsMine) { return; }
             if (!HasPlaced && this.Player.data.playerActions.ItemWasPressed(0))
             {
                 GameModeCollection.Log("PLACE C4");
