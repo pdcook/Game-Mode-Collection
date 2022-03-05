@@ -1,4 +1,5 @@
 ﻿using BepInEx;
+using BepInEx.Configuration;
 using HarmonyLib;
 using UnboundLib;
 using UnityEngine;
@@ -9,11 +10,13 @@ using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.GameModes.TRT.Controllers;
 using UnboundLib.Cards;
 using UnboundLib.Utils;
 using System.IO;
 using System.Linq;
 using Jotunn.Utils;
+using MapEmbiggener.Controllers;
 
 namespace GameModeCollection
 {
@@ -31,6 +34,8 @@ namespace GameModeCollection
         private const string ModName = "Game Mode Collection";
         public const string Version = "0.0.0";
         private static string CompatibilityModName => ModName.Replace(" ", "");
+
+        internal static ConfigEntry<float> TRTDefaultMapScale;
 
         public static GameModeCollection instance;
 
@@ -68,6 +73,8 @@ namespace GameModeCollection
             
             harmony = new Harmony(ModId);
             harmony.PatchAll();
+
+            TRTDefaultMapScale = Config.Bind(CompatibilityModName + "_TRT", "TRT Default Map Scale", 1f);
         }
         private void Start()
         {
@@ -89,7 +96,7 @@ namespace GameModeCollection
             Unbound.RegisterCredits(ModName, new string[] { "Pykess (Crown Control, Trouble In Rounds Town, Dodgeball, Physics Items)", "BossSloth (Hide & Seek, Bomb Defusal)" }, new string[] { "github", "Support Pykess", "Support BossSloth" }, new string[] { "https://github.com/pdcook/Game-Mode-Collection", "https://ko-fi.com/pykess", "https://www.buymeacoffee.com/BossSloth" });
 
             // add GUI to modoptions menu
-            //Unbound.RegisterMenu(ModName, () => { }, GUI, null, false);
+            Unbound.RegisterMenu(ModName, () => { }, GUI, null, false);
 
             // register callback to enable vanilla cards in TRT
             Unbound.AddAllCardsCallback(TRTCardManager.SetTRTEnabled);
@@ -100,6 +107,8 @@ namespace GameModeCollection
             GameModeManager.AddHandler<GM_Dodgeball>(DodgeballHandler.GameModeID, new DodgeballHandler());
             GameModeManager.AddHandler<GM_Dodgeball>(TeamDodgeballHandler.GameModeID, new TeamDodgeballHandler());
             GameModeManager.AddHandler<GM_TRT>(TRTHandler.GameModeID, new TRTHandler());
+            ControllerManager.AddMapController(TRTMapController.ControllerID, new TRTMapController());
+            ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
             CustomCard.BuildCard<C4Card>(C4Card.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
@@ -240,6 +249,8 @@ namespace GameModeCollection
         {
             MenuHandler.CreateText(ModName, menu, out TextMeshProUGUI _, 60);
             MenuHandler.CreateText(" ", menu, out TextMeshProUGUI _, 30);
+            GameObject TRTMenu = MenuHandler.CreateMenu("TROUBLE IN ROUNDS TOWN", () => { }, menu, 60, true, true, menu.transform.parent.gameObject);
+            TRTHandler.TRTMenu(TRTMenu);
         }
     }
 }

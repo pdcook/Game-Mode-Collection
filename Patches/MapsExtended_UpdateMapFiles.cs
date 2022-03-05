@@ -13,7 +13,7 @@ namespace GameModeCollection.Patches
         static void Postfix(MapsExtended __instance)
         {
             string[] files = Directory.GetFiles(Paths.PluginPath, "*.trtmap", SearchOption.AllDirectories);
-            TRTMapManager.Maps = files.Select(f => (MapsExt.CustomMap)typeof(MapsExt.MapsExtended).GetMethod("LoadMapData", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Invoke(obj: null, parameters: new object[] { f })).ToList();
+            TRTMapManager.MapDict = files.ToDictionary(f => f, f => (MapsExt.CustomMap)typeof(MapsExt.MapsExtended).GetMethod("LoadMapData", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic).Invoke(obj: null, parameters: new object[] { f }));
             MapsExt.MapsExtended.instance.maps.AddRange(TRTMapManager.Maps);
             GameModeCollection.Log($"Loaded {TRTMapManager.Maps.Count()} TRT maps.");
         }

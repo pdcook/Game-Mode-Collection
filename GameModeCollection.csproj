@@ -153,6 +153,8 @@
     <Compile Include="GameModes\TRT\Cards\C4.cs" />
     <Compile Include="GameModes\TRT\Cards\TRTCardCategories.cs" />
     <Compile Include="GameModes\TRT\Cards\TRTCardSlotText.cs" />
+    <Compile Include="GameModes\TRT\Controllers\TRTBoundsController.cs" />
+    <Compile Include="GameModes\TRT\Controllers\TRTMapController.cs" />
     <Compile Include="GameModes\TRT\TRTCardManager.cs" />
     <Compile Include="GameModes\TRT\TRTMapManager.cs" />
     <Compile Include="GameModeHandlers\TRTHandler.cs" />

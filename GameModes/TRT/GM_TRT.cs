@@ -19,6 +19,8 @@ using GameModeCollection.GameModeHandlers;
 using BetterChat;
 using LocalZoom;
 using System.Collections.ObjectModel;
+using GameModeCollection.GameModes.TRT.Controllers;
+using MapEmbiggener.Controllers;
 
 namespace GameModeCollection.GameModes
 {
@@ -232,6 +234,9 @@ namespace GameModeCollection.GameModes
             TRTHandler.InitChatGroups();
             BetterChat.BetterChat.SetDeadChat(true);
             BetterChat.BetterChat.UsePlayerColors = true;
+
+            ControllerManager.SetMapController(TRTMapController.ControllerID);
+            ControllerManager.SetBoundsController(TRTBoundsController.ControllerID);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitEnd);
         }
@@ -491,6 +496,8 @@ namespace GameModeCollection.GameModes
 
             BetterChat.BetterChat.SetDeadChat(true);
             BetterChat.BetterChat.UsePlayerColors = true;
+            ControllerManager.SetMapController(TRTMapController.ControllerID);
+            ControllerManager.SetBoundsController(TRTBoundsController.ControllerID);
 
             GameManager.instance.isPlaying = true;
             this.StartCoroutine(this.DoStartGame());
@@ -526,7 +533,7 @@ namespace GameModeCollection.GameModes
             PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
 
             //MapManager.instance.LoadNextLevel(false, false);
-            TRTMapManager.LoadNextTRTLevel(false, false);
+            yield return TRTMapManager.LoadNextTRTLevel(false, false);
 
             this.RandomizePlayerSkins();
             this.RandomizePlayerFaces();
@@ -686,7 +693,7 @@ namespace GameModeCollection.GameModes
 
             yield return new WaitForSecondsRealtime(1f);
             //MapManager.instance.LoadNextLevel(false, false);
-            TRTMapManager.LoadNextTRTLevel(false, false);
+            yield return TRTMapManager.LoadNextTRTLevel(false, false);
 
             yield return new WaitForSecondsRealtime(1.3f);
 
@@ -736,7 +743,7 @@ namespace GameModeCollection.GameModes
             yield return new WaitForSecondsRealtime(1f);
             //MapManager.instance.LoadNextLevel(false, false);
             //TRTMapManager.LoadNextTRTLevel(false, false);
-            TRTMapManager.ReLoadTRTLevel(false, false);
+            yield return TRTMapManager.ReLoadTRTLevel(false, false);
 
             yield return new WaitForSecondsRealtime(1.3f);
 
@@ -784,7 +791,7 @@ namespace GameModeCollection.GameModes
             yield return new WaitForSecondsRealtime(1f);
 
             //MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
-            TRTMapManager.LoadTRTLevelFromID(TRTMapManager.CurrentLevel, false, false);
+            yield return TRTMapManager.LoadTRTLevelFromID(TRTMapManager.CurrentLevel, false, false);
 
             yield return new WaitForSecondsRealtime(1.3f);
 
@@ -818,7 +825,7 @@ namespace GameModeCollection.GameModes
                 UIHandler.instance.DisplayScreenTextLoop(DullWhite, "REMATCH?");
                 UIHandler.instance.popUpHandler.StartPicking(PlayerManager.instance.players.First(), this.GetRematchYesNo);
                 //MapManager.instance.LoadNextLevel(false, false);
-                TRTMapManager.LoadNextTRTLevel(false, false);
+                this.StartCoroutine(TRTMapManager.LoadNextTRTLevel(false, false));
                 return;
             }
 

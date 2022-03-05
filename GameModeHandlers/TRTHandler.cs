@@ -1,6 +1,7 @@
 ﻿using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.GameModes.TRT.Controllers;
 using Photon.Pun;
 using RWF;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ using UnboundLib.Networking;
 using UnboundLib.Utils;
 using UnityEngine;
 using MapsExt;
+using UnboundLib.Utils.UI;
+using TMPro;
 
 namespace GameModeCollection.GameModeHandlers
 {
@@ -51,6 +54,13 @@ namespace GameModeCollection.GameModeHandlers
                 {GameModeCollection.ReviveOnCardAddKey, false }, // do not revive players when they get a card
                 {GameModeCollection.CreatePlayerCorpsesKey, true }, // do not hide players when they die, instead make a corpse
             };
+        }
+        internal static void TRTMenu(GameObject menu)
+        {
+            MenuHandler.CreateText("TROUBLE IN ROUNDS TOWN OPTIONS", menu, out TextMeshProUGUI _, 50);
+            MenuHandler.CreateText(" ", menu, out TextMeshProUGUI _, 30);
+            MenuHandler.CreateSlider("Default map scale", menu, 30, GameModeCollection.TRTDefaultMapScale.Value, 5f, 1f, (val) => { GameModeCollection.TRTDefaultMapScale.Value = val; } , out var _, true);
+
         }
         public override int[] GetGameWinners()
         {
