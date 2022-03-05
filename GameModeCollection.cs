@@ -13,6 +13,7 @@ using UnboundLib.Cards;
 using UnboundLib.Utils;
 using System.IO;
 using System.Linq;
+using Jotunn.Utils;
 
 namespace GameModeCollection
 {
@@ -32,6 +33,8 @@ namespace GameModeCollection
         private static string CompatibilityModName => ModName.Replace(" ", "");
 
         public static GameModeCollection instance;
+
+        internal static AssetBundle TRT_Assets;
 
         private Harmony harmony;
 
@@ -68,6 +71,20 @@ namespace GameModeCollection
         }
         private void Start()
         {
+
+            try
+            {
+                TRT_Assets = AssetUtils.LoadAssetBundleFromResources("trt_assets", typeof(GameModeCollection).Assembly);
+                if (TRT_Assets == null)
+                {
+                    LogError("TRT Assets failed to load.");
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
             // add credits
             Unbound.RegisterCredits(ModName, new string[] { "Pykess (Crown Control, Trouble In Rounds Town, Dodgeball, Physics Items)", "BossSloth (Hide & Seek, Bomb Defusal)" }, new string[] { "github", "Support Pykess", "Support BossSloth" }, new string[] { "https://github.com/pdcook/Game-Mode-Collection", "https://ko-fi.com/pykess", "https://www.buymeacoffee.com/BossSloth" });
 
@@ -77,15 +94,17 @@ namespace GameModeCollection
             // register callback to enable vanilla cards in TRT
             Unbound.AddAllCardsCallback(TRTCardManager.SetTRTEnabled);
 
+            // Pykess game mode stuff
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());
             GameModeManager.AddHandler<GM_CrownControl>(TeamCrownControlHandler.GameModeID, new TeamCrownControlHandler());
             GameModeManager.AddHandler<GM_Dodgeball>(DodgeballHandler.GameModeID, new DodgeballHandler());
             GameModeManager.AddHandler<GM_Dodgeball>(TeamDodgeballHandler.GameModeID, new TeamDodgeballHandler());
             GameModeManager.AddHandler<GM_TRT>(TRTHandler.GameModeID, new TRTHandler());
-            //CustomCard.BuildCard<C4Card>(C4Card.Callback);
+            CustomCard.BuildCard<C4Card>(C4Card.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
-            
+           
+            // BossSloth game mode stuff
             CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
             GameModeManager.AddHandler<GM_HideNSeek>(HideNSeekHandler.GameModeID, new HideNSeekHandler());
             GameModeManager.AddHandler<GM_BombDefusal>(BombDefusalHandler.GameModeID, new BombDefusalHandler());

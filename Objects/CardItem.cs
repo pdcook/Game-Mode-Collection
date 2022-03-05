@@ -105,7 +105,7 @@ namespace GameModeCollection.Objects
             this.Health.Revive();
             if (health <= 0f) { this.Health.SetInvulnerableFor(float.PositiveInfinity); }
 
-            this.Card = CardManager.GetCardInfoWithName(this.CardName);
+            this.Card = ModdingUtils.Utils.Cards.instance.GetCardWithName(this.CardName);
 
             this.gameObject.name = $"{this.CardName} Item";
 
@@ -411,7 +411,11 @@ namespace GameModeCollection.Objects
                     collider.enabled = false;
                     if (!cardItem.CardBackVisibleThroughShader)
                     {
-                        LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform.Find("CardBase(Clone)/Canvas/Back"));
+                        try
+                        {
+                            LocalZoom.LocalZoom.MakeObjectHidden(cardItem.CardObj.transform.Find("CardBase(Clone)/Canvas/Back"));
+                        }
+                        catch { }
                         foreach (var part in cardItem.CardObj.GetComponentsInChildren<GeneralParticleSystem>(true))
                         {
                             part.enabled = false;

@@ -83,7 +83,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             base.Start();
             // FOR NOW: the traitor has a 40% chance of spawning with a death station
-            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false) && UnityEngine.Random.Range(0f, 1f) < 0.4f)
+            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false))// && UnityEngine.Random.Range(0f, 1f) < 0.4f)
             {
                 NetworkingManager.RPC(typeof(Traitor), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID);
             }
@@ -95,9 +95,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, DeathStationCard.Card, addToCardBar: false);
+            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, C4Card.Card, addToCardBar: false);
             if (player.data.view.IsMine)
             {
                 CardItemHandler.ClientsideAddToCardBar(player.playerID, DeathStationCard.Card);
+                CardItemHandler.ClientsideAddToCardBar(player.playerID, C4Card.Card);
             }
         }
 

@@ -23,6 +23,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
     }
     public class C4Card : CustomCard
     {
+        internal static CardInfo Card = null;
         /*
          * TRT traitor shop card that allows the player to drop c4 when they press [interact]
          * the c4 will detonate after a set period of time, dealing massive damage
@@ -76,6 +77,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
         internal static void Callback(CardInfo card)
         {
             card.gameObject.AddComponent<TRTCardSlotText>();
+            C4Card.Card = card;
+            ModdingUtils.Utils.Cards.instance.AddHiddenCard(card);
         }
     }
     internal class A_C4 : MonoBehaviour

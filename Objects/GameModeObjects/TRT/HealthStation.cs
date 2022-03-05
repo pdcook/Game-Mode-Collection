@@ -16,14 +16,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
 	public static class HealthStationPrefab
 	{
-		private readonly static PlayerSkin DefaultHealthStationSkinColors = new PlayerSkin()
-		{
-			winText = Color.white,
-			color = Color.green,
-			backgroundColor = Color.black,
-			particleEffect = Color.gray
-        };
-
 		private static GameObject _HealthStation = null;
 
 		public static GameObject HealthStation
@@ -33,8 +25,10 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				if (HealthStationPrefab._HealthStation == null)
 				{
 
-					GameObject healthStation = new GameObject("HealthStationPrefab", typeof(PhotonView), typeof(HealthStationHandler));
-					ObjectParticleSkin.AddObjectParticleSkin(healthStation.transform, Sprites.Box, DefaultHealthStationSkinColors);
+					GameObject healthStation = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_HealthStation"));
+					healthStation.AddComponent<PhotonView>();
+					healthStation.AddComponent<HealthStationHandler>();
+					healthStation.name = "HealthStationPrefab";
 
 					healthStation.GetComponent<HealthStationHandler>().IsPrefab = true;
 
@@ -57,16 +51,19 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 		public bool IsPrefab { get; internal set; } = false;
 
-		internal SpriteRenderer Renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
+		internal SpriteRenderer Renderer => this.transform.GetChild(0).GetComponent<SpriteRenderer>();
 		public float Health { get; private set; } = 0f;
 		public float MaxHealth { get; private set; } = 1f;
 
-		public static readonly Color FullColor = new Color32(0, 200, 0, 255);
-		public static readonly Color EmptyColor = new Color32(100, 100, 100, 255);
+		public static readonly Color FullColor = Color.green;
+		public static readonly Color EmptyColor = Color.clear;
 
 		private const float AmountToHeal = 10f;
 		private const float Delay = 0.4f;
 		private float TimeUntilNextLocalHeal = 10f;
+
+		private float CheckOOBTimer = 0f;
+		private const float CheckOOBEvery = 1f;
 
 		public override void OnPhotonInstantiate(PhotonMessageInfo info)
 		{
@@ -114,9 +111,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		}
 		protected override void Start()
 		{
-			this.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
-			this.GetComponentInChildren<PlayerSkinParticle>(true).transform.localPosition = Vector3.zero;
-			this.GetComponentInChildren<PlayerSkinParticle>(true).gameObject.SetActive(false);
 
 			base.Start();
 
@@ -135,8 +129,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				this.Rig.isKinematic = false;
 				this.gameObject.SetActive(true);
             }
-			this.Renderer.color = new Color32 (100, 100, 100, 255);
-			//this.Renderer.enabled = false;
 		}
 
  		protected internal override void OnTriggerStay2D(Collider2D collider2D)
@@ -184,7 +176,18 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 			this.Renderer.color = Color.Lerp(EmptyColor, FullColor, this.Health / this.MaxHealth);
 
-        }
+			base.Update();
+			this.CheckOOBTimer -= Time.deltaTime;
+			if (this.CheckOOBTimer < 0f)
+			{
+				this.CheckOOBTimer = CheckOOBEvery;
+                Vector3 point = OutOfBoundsUtils.InverseGetPoint(this.Rig.position);
+                if (point.x <= 0f || point.x >= 1f || point.y <= 0f)
+                {
+                    Destroy(this.gameObject);
+                }
+			}
+		}
         private const string SyncedHealthKey = "HealthStation_Health";
 
 		protected override void SetDataToSync()

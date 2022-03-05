@@ -4,6 +4,7 @@ using Photon.Pun;
 using GameModeCollection.GameModeHandlers;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class ZombieRoleHandler : IRoleHandler
@@ -56,7 +57,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
             this.playerIDsKilled = new List<int>() { };
 
-            // zombies cannot have cards
+            // zombies cannot have cards, for now
             this.GetComponent<Player>()?.InvokeMethod("FullReset");
             if (this.GetComponent<PhotonView>().IsMine)
             {
@@ -90,19 +91,26 @@ namespace GameModeCollection.GameModes.TRT.Roles
             yield return new WaitUntil(() => player.data.dead);
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
-            player.data.healthHandler.Revive(true);
             foreach (var role in player.gameObject.GetComponentsInChildren<TRT_Role>())
             {
                 UnityEngine.GameObject.Destroy(role);
             }
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
+            this.GetComponent<PhotonView>().RPC(nameof(RPCA_ReviveZombie), RpcTarget.All, player.playerID);
             RoleManager.GetHandler(ZombieRoleHandler.ZombieRoleID).AddRoleToPlayer(player);
             RoleManager.DoRoleDisplaySpecific(player);
             if (player.data.view.IsMine)
             {
-                TRTHandler.SendChat(null, $"You've been infected by a {RoleManager.GetRoleColoredName(Zombie.RoleAppearance)}!" , true);
+                TRTHandler.SendChat(null, $"You've been infected by a {RoleManager.GetRoleColoredName(Zombie.RoleAppearance)}!", true);
             }
+        }
+        [PunRPC]
+        void RPCA_ReviveZombie(int playerID)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
+            if (player is null) { return; }
+            player.data.healthHandler.Revive(true);
         }
     }
 }

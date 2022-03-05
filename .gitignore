@@ -7,6 +7,10 @@
 *.dll
 *.manifest
 
+**/Temp/
+**/Library/
+*.meta
+
 /node_modules/
 
 /packages/

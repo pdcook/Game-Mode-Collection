@@ -15,14 +15,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
 	public static class C4Prefab
 	{
-		private readonly static PlayerSkin DefaultC4SkinColors = new PlayerSkin()
-		{
-			winText = Color.white,
-			color = new Color32(100, 100, 100, 255),
-			backgroundColor = Color.black,
-			particleEffect = Color.gray
-        };
-
 		private static GameObject _C4 = null;
 
 		public static GameObject C4
@@ -32,8 +24,12 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				if (C4Prefab._C4 == null)
 				{
 
-					GameObject c4 = new GameObject("C4Prefab", typeof(PhotonView), typeof(C4Handler));
-					ObjectParticleSkin.AddObjectParticleSkin(c4.transform, Sprites.Box, DefaultC4SkinColors);
+					GameObject c4 = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_C4"));
+					c4.AddComponent<PhotonView>();
+					c4.AddComponent<C4Handler>();
+					c4.name = "C4Prefab";
+
+					/*
 					GameObject Clock = new GameObject("C4 Clock",typeof(TextMeshPro));
 					Clock.GetComponent<TextMeshPro>().color = Color.red;
 					Clock.transform.SetParent(c4.transform);
@@ -41,7 +37,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 					Clock.transform.localScale = Vector3.one;
 					Clock.GetComponent<TextMeshPro>().enabled = false;
 					Clock.GetComponent<TextMeshPro>().alignment = TextAlignmentOptions.Center;
-					Clock.GetComponent<TextMeshPro>().fontSize = 10;
+					Clock.GetComponent<TextMeshPro>().fontSize = 10;*/
 
 					c4.GetComponent<C4Handler>().IsPrefab = true;
 
@@ -64,12 +60,11 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 		public bool IsPrefab { get; internal set; } = false;
 
-		internal SpriteRenderer Renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
 		public float Time { get; private set; } = float.MaxValue;
 		public int PlacerID { get; private set; } = -1;
 
-		private TextMeshPro Clock => this.GetComponentInChildren<TextMeshPro>();
-
+		//private TextMeshPro Clock => this.GetComponentInChildren<TextMeshPro>();
+		internal SpriteRenderer Renderer => this.transform.GetChild(0).GetComponent<SpriteRenderer>();
 		public override void OnPhotonInstantiate(PhotonMessageInfo info)
 		{
 			object[] data = info.photonView.InstantiationData;
@@ -116,11 +111,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		}
 		protected override void Start()
 		{
-			this.transform.localScale = new Vector3(1f, 0.5f, 1f);
-			this.Clock.transform.localScale = new Vector3(0.5f, 1f, 1f);
-			this.GetComponentInChildren<PlayerSkinParticle>().transform.localPosition = Vector3.zero;
-
-			this.GetComponentInChildren<PlayerSkinParticle>().gameObject.SetActive(false);
+			//this.Clock.transform.localScale = new Vector3(0.5f, 1f, 1f);
 
 			base.Start();
 
@@ -139,10 +130,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				this.Rig.isKinematic = false;
 				this.gameObject.SetActive(true);
             }
-			this.Renderer.color = new Color32 (100, 100, 100, 255);
-			//this.Renderer.enabled = false;
 		}
-
+		/*
 		protected internal override void OnTriggerEnter2D(Collider2D collider2D)
 		{
 			Player player = collider2D?.GetComponent<Player>();
@@ -180,6 +169,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			}
             base.OnTriggerExit2D(collider2D);
         }
+		*/
         private bool CanSeePlayer(Player player)
 		{
 			RaycastHit2D[] array = Physics2D.RaycastAll(this.transform.position, (player.data.playerVel.position - (Vector2)this.transform.position).normalized, Vector2.Distance(this.transform.position, player.data.playerVel.position), PlayerManager.instance.canSeePlayerMask);
@@ -196,6 +186,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			}
 			return true;
 		}
+		/*
 		string GetClockString(float time_in_seconds)
 		{
 			if (time_in_seconds < 10f)
@@ -207,21 +198,34 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				return "";
             }
 			return TimeSpan.FromSeconds(time_in_seconds).ToString(@"mm\:ss");
-		}
+		}*/
+		private const float BlinkEvery = 1f;
+		private float BlinkTimer = BlinkEvery;
+		private int blink = 1;
 		protected override void Update()
         {
 			this.Time -= TimeHandler.deltaTime;
 
             base.Update();
 
-			Clock.text = GetClockString(this.Time);
-			SetClockPositionAndRotation();
+			this.BlinkTimer -= TimeHandler.deltaTime;
+			if (this.BlinkTimer < 0f)
+            {
+				this.BlinkTimer = BlinkEvery;
+				this.blink *= -1;
+            }
+
+			this.Renderer.color = this.blink > 0 ? Color.red : Color.black;
+
+			//Clock.text = GetClockString(this.Time);
+			//SetClockPositionAndRotation();
         }
+		/*
 		void SetClockPositionAndRotation()
         {
 			this.Clock.transform.position = this.transform.position + 2f * Vector3.up;
 			this.Clock.transform.rotation = Quaternion.identity;
-        }
+        }*/
 
         private const string SyncedTimeKey = "C4_Time";
 

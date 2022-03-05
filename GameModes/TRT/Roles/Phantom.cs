@@ -14,8 +14,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public Color WinColor => Innocent.RoleAppearance.Color;
         public string RoleName => Phantom.RoleAppearance.Name;
         public string RoleID => PhantomRoleID;
-        public int MinNumberOfPlayersForRole => 0;//5;
-        public float Rarity => 1f;//0.25f;
+        public int MinNumberOfPlayersForRole => 5;
+        public float Rarity => 0.25f;
         public string[] RoleIDsToOverwrite => new string[] { };
         public Alignment? AlignmentToReplace => Alignment.Innocent;
         public void AddRoleToPlayer(Player player)

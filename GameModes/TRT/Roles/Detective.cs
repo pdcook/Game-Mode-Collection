@@ -43,7 +43,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             // 20% of the time they spawn with Golden Gun
 
             // FOR NOW: the detective has a 80% chance of spawning with a health station
-            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false) && UnityEngine.Random.Range(0f, 1f) < 0.8f)
+            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false) )//&& UnityEngine.Random.Range(0f, 1f) < 0.8f)
             {
                 NetworkingManager.RPC(typeof(Detective), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID);
             }

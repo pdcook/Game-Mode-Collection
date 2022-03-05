@@ -66,15 +66,20 @@ namespace GameModeCollection.GameModes
     /// - [X] custom maps specifically for this mode, not available in normal rotation
     ///   [X] --> custom map object mod for card spawn points
     /// - [X] card random spawning
+    /// - [ ] Low karma punishment: slaying. the player is killed AFTER the round starts and is forced to sit out the round
     /// - [ ] LaTeX document with a short guide to each role
     /// - [ ] Round summaries in chat
     /// - [ ] T and D shops...
     /// - [ ] Custom cards specifically for certain roles
-    ///     - [ ] Explosive + one time massive damage card for Traitors + Mercenary (not Zombies)
-    ///     - [ ] Instakill + multi-use short-range (like a knife - think short-range overpower?) for Traitors + Mercenary (not Zombies)
-    ///     - [ ] Golden Gun for Detectives + Mercenary
-    ///     - [ ] Radar for Traitors + Detectives + Mercenary (not zombies)
-    ///     - [ ] Claw (same as knife) for zombies to infect others
+    ///     - [ ] (T) Explosive
+    ///     - [ ] (T) Knife
+    ///     - [ ] (D) Golden Gun
+    ///     - [ ] (T + D) Radar
+    ///     - [ ] (D) Health Station
+    ///     - [ ] (T) Death Station
+    ///     - [ ] (Z) Claw (same as knife) for zombies to infect others
+    ///     - [ ] (D) Diffuser
+    ///     - [ ] (T + D) Body Armor
     /// 
     /// Roles:
     /// - [X] Innocent
@@ -202,6 +207,7 @@ namespace GameModeCollection.GameModes
             GameObject _ = CardItemPrefabs.CardItem;
             _ = HealthStationPrefab.HealthStation;
             _ = DeathStationPrefab.DeathStation;
+            _ = C4Prefab.C4;
             // spawn handler
             _ = CardItemPrefabs.CardItemHandler;
             this.StartCoroutine(this.Init());
@@ -455,7 +461,7 @@ namespace GameModeCollection.GameModes
             }
 
             // check win condition after a short delay to allow things like phantom spawning and swapper swapping to happen
-            if (this.isCheckingWinCondition) { return; }
+            if (this.isCheckingWinCondition || !PhotonNetwork.IsMasterClient) { return; }
             this.isCheckingWinCondition = true;
             this.ExecuteAfterFrames(10, () =>
             {

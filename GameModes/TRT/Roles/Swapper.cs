@@ -3,6 +3,7 @@ using UnityEngine;
 using Photon.Pun;
 using System.Linq;
 using GameModeCollection.GameModeHandlers;
+using System.Collections;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class SwapperRoleHandler : IRoleHandler
@@ -27,12 +28,22 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override TRT_Role_Appearance Appearance => Swapper.RoleAppearance;
 
+        public bool HasSwapped { get; private set; } = false;
+
+        protected override void Start()
+        {
+            this.HasSwapped = false;
+
+            base.Start();
+        }
+
         public override void OnKilledByPlayer(Player killingPlayer)
         {
-            if (killingPlayer?.playerID == this.GetComponent<Player>().playerID)
+            if (this.HasSwapped || killingPlayer?.playerID == this.GetComponent<Player>().playerID)
             {
                 return;
             }
+            this.HasSwapped = true;
             // get role of killing player
             ITRT_Role killingRole = RoleManager.GetPlayerRole(killingPlayer);
             if (killingRole is null) { return; }
@@ -55,6 +66,15 @@ namespace GameModeCollection.GameModes.TRT.Roles
             string roleID = RoleManager.GetRoleID(killingPlayerRole);
             IRoleHandler roleHandler = RoleManager.GetHandler(roleID);
 
+            GameModeCollection.instance.StartCoroutine(this.IDoSwap(killingPlayer, roleHandler, killingPlayerRole));
+
+        }
+        IEnumerator IDoSwap(Player killingPlayer, IRoleHandler roleHandler, ITRT_Role killingPlayerRole)
+        {
+            yield return new WaitUntil(() => this.GetComponent<CharacterData>().dead);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+
             // the swapper now assumes the role of the killing player
             roleHandler.AddRoleToPlayer(this.GetComponent<Player>());
 
@@ -72,12 +92,12 @@ namespace GameModeCollection.GameModes.TRT.Roles
             RoleManager.GetHandler(RoleManager.GetRoleID(this)).AddRoleToPlayer(killingPlayer);
 
             // finally, the swapper is revived and this role is removed
-            this.GetComponent<HealthHandler>().Revive(true);
 
             Player player = this.GetComponent<Player>();
 
             GameModeCollection.instance.ExecuteAfterFrames(2, () =>
             {
+                player.GetComponent<HealthHandler>().Revive(true);
                 RoleManager.DoRoleDisplaySpecific(player);
                 if (player.data.view.IsMine)
                 {
@@ -86,6 +106,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             });
 
             Destroy(this);
+
         }
     }
 }

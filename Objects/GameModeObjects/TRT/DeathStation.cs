@@ -16,14 +16,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
 	public static class DeathStationPrefab
 	{
-		private readonly static PlayerSkin DefaultDeathStationSkinColors = new PlayerSkin()
-		{
-			winText = Color.white,
-			color = Color.green,
-			backgroundColor = Color.black,
-			particleEffect = Color.gray
-        };
-
 		private static GameObject _DeathStation = null;
 
 		public static GameObject DeathStation
@@ -33,17 +25,19 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				if (DeathStationPrefab._DeathStation == null)
 				{
 
-					GameObject healthStation = new GameObject("DeathStationPrefab", typeof(PhotonView), typeof(DeathStationHandler));
-					ObjectParticleSkin.AddObjectParticleSkin(healthStation.transform, Sprites.Box, DefaultDeathStationSkinColors);
+					GameObject deathStation = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_HealthStation"));
+					deathStation.AddComponent<PhotonView>();
+					deathStation.AddComponent<DeathStationHandler>();
+					deathStation.name = "DeathStationPrefab";
 
-					healthStation.GetComponent<DeathStationHandler>().IsPrefab = true;
+					deathStation.GetComponent<DeathStationHandler>().IsPrefab = true;
 
 					GameModeCollection.Log("DeathStation Prefab Instantiated");
-					UnityEngine.GameObject.DontDestroyOnLoad(healthStation);
+					UnityEngine.GameObject.DontDestroyOnLoad(deathStation);
 
-					PhotonNetwork.PrefabPool.RegisterPrefab(healthStation.name, healthStation);
+					PhotonNetwork.PrefabPool.RegisterPrefab(deathStation.name, deathStation);
 
-					DeathStationPrefab._DeathStation = healthStation;
+					DeathStationPrefab._DeathStation = deathStation;
 				}
 				return DeathStationPrefab._DeathStation;
 			}
@@ -57,9 +51,13 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 		public bool IsPrefab { get; internal set; } = false;
 
-		internal SpriteRenderer Renderer => this.gameObject.GetComponentInChildren<SpriteRenderer>();
+		internal SpriteRenderer Renderer => this.transform.GetChild(0).GetComponent<SpriteRenderer>();
+
+		public bool HasKilledPlayer { get; private set; } = false;
 
 		public Player Placer { get; private set; } = null;
+		private float CheckOOBTimer = 0f;
+		private const float CheckOOBEvery = 1f;
 
 		public override void OnPhotonInstantiate(PhotonMessageInfo info)
 		{
@@ -106,10 +104,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		}
 		protected override void Start()
 		{
-			this.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
-			this.GetComponentInChildren<PlayerSkinParticle>(true).transform.localPosition = Vector3.zero;
-			this.GetComponentInChildren<PlayerSkinParticle>(true).gameObject.SetActive(false);
-
 			base.Start();
 
 			this.Trig.radius = DeathStationHandler.TriggerRadius;
@@ -127,8 +121,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				this.Rig.isKinematic = false;
 				this.gameObject.SetActive(true);
             }
-			this.Renderer.color = HealthStationHandler.FullColor;
-			//this.Renderer.enabled = false;
+			this.Renderer.color = this.HasKilledPlayer ? Color.red : HealthStationHandler.FullColor;
 		}
 
  		protected internal override void OnTriggerStay2D(Collider2D collider2D)
@@ -137,10 +130,16 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             if (player != null && player.data.view.IsMine && this.CanSeePlayer(player) && player.data.playerActions.InteractIsPressed())
             {
 				player.data.view.RPC("RPCA_Die", RpcTarget.All, Vector2.up);
+				this.View.RPC(nameof(RPCA_SetKilledPlayer), RpcTarget.All, true);
 
 			}
 			base.OnTriggerStay2D(collider2D);
 		}
+		[PunRPC]
+		private void RPCA_SetKilledPlayer(bool killedPlayer)
+        {
+			this.HasKilledPlayer = killedPlayer;
+        }
         private bool CanSeePlayer(Player player)
 		{
 			RaycastHit2D[] array = Physics2D.RaycastAll(this.transform.position, (player.data.playerVel.position - (Vector2)this.transform.position).normalized, Vector2.Distance(this.transform.position, player.data.playerVel.position), PlayerManager.instance.canSeePlayerMask);
@@ -158,11 +157,29 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			return true;
 		}
 
-		protected override void SetDataToSync()
+        protected override void Update()
+        {
+			this.Renderer.color = this.HasKilledPlayer ? Color.red : HealthStationHandler.FullColor;
+            base.Update();
+			this.CheckOOBTimer -= Time.deltaTime;
+			if (this.CheckOOBTimer < 0f)
+			{
+				this.CheckOOBTimer = CheckOOBEvery;
+                Vector3 point = OutOfBoundsUtils.InverseGetPoint(this.Rig.position);
+                if (point.x <= 0f || point.x >= 1f || point.y <= 0f)
+                {
+                    Destroy(this.gameObject);
+                }
+			}
+		}
+
+        protected override void SetDataToSync()
 		{
+			this.SetSyncedInt("TRT_DeathStation_HasKilled", this.HasKilledPlayer ? 1 : 0);
 		}
 		protected override void ReadSyncedData()
 		{
+			this.HasKilledPlayer = this.GetSyncedInt("TRT_DeathStation_HasKilled") == 1;
 		}
         protected override bool SyncDataNow()
         {

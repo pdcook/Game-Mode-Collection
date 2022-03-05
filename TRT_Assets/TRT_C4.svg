@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 67.733332 67.733335"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="TRT_C4.svg"
+   inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="11.859035"
+     inkscape:cx="181.33854"
+     inkscape:cy="164.89538"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer2"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-paths="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-global="true" />
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient3513"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#c0c0c0;stop-opacity:1;"
+         offset="0"
+         id="stop3511" />
+    </linearGradient>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     sodipodi:insensitive="true"
+     style="display:inline">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:0.215111;stroke-linejoin:round"
+       id="rect7209"
+       width="49.551651"
+       height="4.698586"
+       x="8.2887316"
+       y="49.322277"
+       ry="0"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#364332;fill-opacity:1;stroke-width:0.209945;stroke-linejoin:round"
+       id="rect930"
+       width="57.383114"
+       height="10.619891"
+       x="4.2836537"
+       y="41.051682"
+       ry="4.0050778"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#364332;fill-opacity:1;stroke-width:0.209945;stroke-linejoin:round"
+       id="rect930-1"
+       width="57.383114"
+       height="10.619891"
+       x="4.2836537"
+       y="52.729908"
+       ry="4.0050778"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:0.266616;stroke-linejoin:round"
+       id="rect7466"
+       width="44.021358"
+       height="5.8055849"
+       x="3.2141709"
+       y="41.729752"
+       ry="1.4219904"
+       transform="matrix(1,0,0.17364818,0.98480775,0,0)"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#370000;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 53.926123,43.917159 c 11.732951,-5.464201 13.264714,1.756657 6.402512,2.069208"
+       id="path8612-8"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#181d18;fill-opacity:1;stroke:none;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect11049-2"
+       width="3.1234972"
+       height="2.4987984"
+       x="57.900612"
+       y="44.678879"
+       ry="0.78087443"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#333333;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 53.367188,45.290716 c 9.869863,0.06625 12.961174,8.581489 7.026283,11.492907"
+       id="path8612"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#181d18;fill-opacity:1;stroke:none;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect11049"
+       width="3.1234972"
+       height="2.4987984"
+       x="57.885105"
+       y="55.46439"
+       ry="0.78087443"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="light"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke-width:0.264583;stroke-linejoin:round"
+       id="path7867"
+       cx="52.628887"
+       cy="42.595322"
+       r="0.75725019"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4Light.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>
