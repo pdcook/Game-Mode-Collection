@@ -5,6 +5,7 @@ using GameModeCollection.Objects.GameModeObjects.TRT;
 using UnboundLib.Networking;
 using UnboundLib;
 using System.Linq;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -59,7 +60,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Rare;
+            return CardInfo.Rarity.Uncommon;
         }
 
         protected override CardInfoStat[] GetStats()
@@ -104,16 +105,9 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 GameModeCollection.Log("PLACE DeathStation");
                 this.HasPlaced = true;
                 this.StartCoroutine(DeathStationHandler.AskHostToMakeDeathStation(this.Player.playerID, this.Player.transform.position, this.Player.transform.rotation));
-                NetworkingManager.RPC(typeof(A_DeathStation), nameof(RPCA_RemoveCardFromPlayer), this.Player.playerID);
+                CardUtils.Call_RemoveCardFromPlayer_ClientsideCardBar(this.Player, DeathStationCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);
                 Destroy(this.gameObject);
             }
-        }
-        [UnboundRPC]
-        private static void RPCA_RemoveCardFromPlayer(int playerID)
-        {
-            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
-            if (player is null) { return; }
-            ModdingUtils.Utils.Cards.instance.RemoveCardFromPlayer(player, DeathStationCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest, false);
         }
     }
 }

@@ -10,9 +10,27 @@ using GameModeCollection.Extensions;
 using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.GameModes.TRT.Cards;
 
 namespace GameModeCollection.Patches
-{
+{   
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
+    class HealthHandler_Patch_DoDamage_TRT_Golden_Deagle
+    {
+        // prefix for Golden Deagle in TRT 
+        private static void Prefix(HealthHandler __instance, ref Vector2 damage, Player damagingPlayer = null)
+        {
+            if (damagingPlayer?.data is null || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
+
+            if (damagingPlayer.data.currentCards.Any(c => c.cardName == GoldenDeagleCard.CardName))
+            {
+                damage = 0.001f * damage.normalized;
+            }
+
+        }
+    }
+
     [HarmonyPriority(Priority.First)]
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_Karma

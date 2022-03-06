@@ -148,6 +148,8 @@
     <Compile Include="Extensions\UIHandler.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
+    <Compile Include="GameModes\TRT\Cards\GoldenGun.cs" />
+    <Compile Include="GameModes\TRT\Cards\BodyArmor.cs" />
     <Compile Include="GameModes\TRT\Cards\Knife.cs" />
     <Compile Include="GameModes\TRT\Cards\DeathStation.cs" />
     <Compile Include="GameModes\TRT\Cards\HealthStation.cs" />
@@ -220,6 +222,7 @@
     <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameModeObjects\CrownHandler.cs" />
+    <Compile Include="Utils\CardUtils.cs" />
     <Compile Include="Utils\RandomUtils.cs" />
   </ItemGroup>
   <ItemGroup>

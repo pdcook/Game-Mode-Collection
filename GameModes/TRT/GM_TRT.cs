@@ -1,26 +1,25 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnboundLib;
-using UnboundLib.Networking;
-using Photon.Pun;
-using GameModeCollection.Extensions;
+﻿using GameModeCollection.Extensions;
+using GameModeCollection.GameModeHandlers;
+using GameModeCollection.GameModes.TRT;
+using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.GameModes.TRT.Controllers;
+using GameModeCollection.GameModes.TRT.Roles;
 using GameModeCollection.Objects;
 using GameModeCollection.Objects.GameModeObjects.TRT;
-using UnboundLib.GameModes;
-using Sonigon;
 using GameModeCollection.Utils;
-using GameModeCollection.GameModes.TRT;
-using GameModeCollection.GameModes.TRT.Roles;
-using GameModeCollection.GameModeHandlers;
-using BetterChat;
-using LocalZoom;
-using System.Collections.ObjectModel;
-using GameModeCollection.GameModes.TRT.Controllers;
 using MapEmbiggener.Controllers;
+using Photon.Pun;
+using Sonigon;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using UnboundLib;
+using UnboundLib.GameModes;
+using UnboundLib.Networking;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace GameModeCollection.GameModes
 {
@@ -73,27 +72,24 @@ namespace GameModeCollection.GameModes
     /// - [ ] Round summaries in chat
     /// - [ ] T and D shops...
     /// - [ ] Custom cards specifically for certain roles
-    ///     - [~] (T) C4
+    ///     - [~] (T) C4 - TODO: beeping, explosion, sound
     ///     - [~] (T) Knife - TODO: knife asset to replace gun
-    ///     - [ ] (D) Golden Gun - change layer and color of gun handle/barrel to gold
+    ///     - [X] (D) Golden Gun - change layer and color of gun handle/barrel to gold
+    ///         --> One time use, once it hits any player, it is destroyed
+    ///         --> If it shoots a traitor/killer, they will die instantly, no phoenix revives either
+    ///         --> If it shoots an innocent, the shooter will die instantly, no phoenix revives
+    ///         --> If it shoots a jester/swapper, BOTH players will be killed instantly, no phoenix revives AND the jester/swapper will NOT win
     ///     - [ ] (T + D) Radar
-    ///     - [~] (D) Health Station
-    ///     - [~] (T) Death Station
+    ///     - [~] (D) Health Station - TODO: gmod sound effect
+    ///     - [X] (T) Death Station
     ///     - [ ] (Z) Claw (same as knife) for zombies to infect others
     ///     - [ ] (D) Diffuser
-    ///     - [ ] (T + D) Body Armor
+    ///     - [X] (T + D) Body Armor
     /// 
     /// Roles:
     /// - [X] Innocent
     /// - [X] Traitor (red name, sees other traitors' names as red with a "[T]" in front, notified of other traitors and jesters at start of round) [can have two cards instead of one]
     /// - [~] Detective (blue name visible to everyone with a "[D]" in front, spawns with HealingField, or Huge if healing field is unavailable)
-    ///     --> likely chance to spawn with Healing Field
-    ///     --> unlikely chance to spawn with Golden Gun
-    ///     [ ] Golden Gun Card
-    ///         --> One time use, once it hits any player, it is destroyed
-    ///         --> If it shoots a traitor/killer, they will die instantly, no phoenix revives either
-    ///         --> If it shoots an innocent, the shooter will die instantly, no phoenix revives
-    ///         --> If it shoots a jester/swapper, BOTH players will be killed instantly, no phoenix revives AND the jester/swapper will NOT win
     /// Roles for more than four players:
     /// - [X] Jester (own team) (pink name, visible to the traitors only with a "[J]" in front) [deals no damage]
     /// - [X] Glitch (is innocent, but appears as a traitor to the traitors)
@@ -172,7 +168,7 @@ namespace GameModeCollection.GameModes
             {
                 if (player.GetComponentInChildren<ViewSphere>(true) != null)
                 {
-                    player.GetComponentInChildren<ViewSphere>(true).fov = 90f;// 361f;
+                    player.GetComponentInChildren<ViewSphere>(true).fov = 361f;
                     player.GetComponentInChildren<ViewSphere>(true).viewDistance = 1000f;
                 }
             });
@@ -424,7 +420,7 @@ namespace GameModeCollection.GameModes
         }
         private IEnumerator DropCardsOnDeath(Player player, CardInfo[] cardsToDrop)
         {
-            foreach (CardInfo card in cardsToDrop)
+            foreach (CardInfo card in cardsToDrop.Where(c => !c.categories.Contains(TRTCardCategories.TRT_DoNotDropOnDeath)))
             {
                 yield return new WaitForSecondsRealtime(TimeBetweenCardDrops);
                 yield return this.PlayerDropCard(player, card);

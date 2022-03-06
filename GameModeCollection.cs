@@ -111,8 +111,9 @@ namespace GameModeCollection
             ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
             CustomCard.BuildCard<C4Card>(C4Card.Callback);
             CustomCard.BuildCard<KnifeCard>(KnifeCard.Callback);
-            CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
+            CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
+            CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
            
             // BossSloth game mode stuff
             CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });

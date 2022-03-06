@@ -5,6 +5,7 @@ using System.Collections;
 using System.Linq;
 using UnboundLib;
 using UnboundLib.Networking;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -137,7 +138,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             Player stabbedPlayer = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == stabbedPlayerID);
             if (stabbedPlayer is null || stabbingPlayer is null) { return; }
             stabbedPlayer.data.healthHandler.DoDamage(10000f * Vector2.up, stabbedPlayer.transform.position, Color.white, null, stabbingPlayer, false, true, true);
-            ModdingUtils.Utils.Cards.instance.RemoveCardFromPlayer(stabbingPlayer, KnifeCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest, false);
+            CardUtils.RemoveCardFromPlayer_ClientsideCardBar(stabbingPlayer, KnifeCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);
         }
         static IEnumerator IMakeGunKnife(int playerID)
         {

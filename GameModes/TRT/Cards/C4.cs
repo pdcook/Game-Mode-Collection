@@ -5,6 +5,7 @@ using GameModeCollection.Objects.GameModeObjects.TRT;
 using UnboundLib.Networking;
 using UnboundLib;
 using System.Linq;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -101,18 +102,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 GameModeCollection.Log("PLACE C4");
                 this.HasPlaced = true;
                 this.StartCoroutine(C4Handler.AskHostToMakeC4(this.Player.playerID, 100f, this.Player.transform.position, this.Player.transform.rotation));
-                NetworkingManager.RPC(typeof(A_C4), nameof(RPCA_RemoveCardFromPlayer), this.Player.playerID);
+                CardUtils.Call_RemoveCardFromPlayer_ClientsideCardBar(this.Player, C4Card.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);
                 Destroy(this.gameObject);
             }
         }
-        [UnboundRPC]
-        private static void RPCA_RemoveCardFromPlayer(int playerID)
-        {
-            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
-            if (player is null) { return; }
-            ModdingUtils.Utils.Cards.instance.RemoveCardFromPlayer(player, C4Card.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest, false);
-        }
-
     }
 }
 

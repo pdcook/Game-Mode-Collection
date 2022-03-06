@@ -4,6 +4,14 @@ namespace GameModeCollection.Extensions
 {
     static class PlayerManagerExtensions
     {
+        public static Player GetPlayerWithID(this PlayerManager instance, int playerID)
+        {
+            return instance.players.FirstOrDefault(p => p.playerID == playerID);
+        }
+        public static Player GetLocalPlayer(this PlayerManager instance)
+        {
+            return instance.players.FirstOrDefault(p => p.data.view.IsMine);
+        }
         public static void SetPlayersInvulnerable(this PlayerManager instance, bool invulnerable)
         {
             foreach (Player player in instance.players)
