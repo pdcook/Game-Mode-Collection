@@ -32,6 +32,7 @@ namespace GameModeCollection.GameModes.TRT
             foreach (CardInfo card in cards.Where(c => c.GetComponent<CustomCard>() is null))
             {
                 if (card.name.Equals("Healing field")) { continue; }
+                if (card.name.Equals("Phoenix")) { continue; }
                 card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Enabled }).ToArray();
             }
         }

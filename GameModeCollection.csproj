@@ -148,6 +148,7 @@
     <Compile Include="Extensions\UIHandler.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
+    <Compile Include="GameModes\TRT\Cards\Knife.cs" />
     <Compile Include="GameModes\TRT\Cards\DeathStation.cs" />
     <Compile Include="GameModes\TRT\Cards\HealthStation.cs" />
     <Compile Include="GameModes\TRT\Cards\C4.cs" />

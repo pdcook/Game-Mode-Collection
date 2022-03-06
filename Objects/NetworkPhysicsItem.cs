@@ -236,6 +236,7 @@ namespace GameModeCollection.Objects
 		protected float SinceDealDamage { get; private set; } = 100f;
 
         private List<ItemSyncPackage> syncPackages = new List<ItemSyncPackage>();
+		private bool wasVisibleLastFrame = false;
 
 		public Rigidbody2D Rig => this.GetComponent<Rigidbody2D>();
 		public TCollider Col => this.transform?.Find("Collider")?.GetComponent<TCollider>();
@@ -420,6 +421,43 @@ namespace GameModeCollection.Objects
 
 		protected virtual void Update()
 		{
+			if (!this.PhysicalProperties.VisibleThroughShader)
+            {
+				// check if the renderers should be enabled (since the object's own collider will hide them)
+
+				/// the following requirements must be met (in order of least to most computationally intensive):
+				/// - the local player has a viewsphere component (LocalZoom)
+				/// - the local player is within the viewdistance of this object
+				/// - the object is within the FOV of the player's viewsphere
+				/// - the player must have LoS of this object
+
+				bool isVisible = false;
+
+                Player player = PlayerManager.instance.players.FirstOrDefault(p => p.data.view.IsMine);
+
+				if (player != null && player.transform.Find("ViewSphere")?.GetComponent<ViewSphere>() != null)
+                {
+					// the player exists and has a viewsphere
+					ViewSphere viewSphere = player.transform.Find("ViewSphere").GetComponent<ViewSphere>();
+					if (Vector2.Distance(this.Rig.position, player.transform.position) <= viewSphere.viewDistance && Vector2.Angle(viewSphere.transform.up, this.Rig.position - (Vector2)player.transform.position) <= viewSphere.fov / 2f)
+                    {
+						// the player is within range and this object is in the view cone
+						isVisible = this.CanSeePlayer(player);
+                    }
+                }
+
+				// update the stencil if the visibility has changed
+				if (this.wasVisibleLastFrame != isVisible)
+                {
+                    foreach (Renderer renderer in this.GetComponentsInChildren<Renderer>(true))
+                    {
+                        renderer.material.SetFloat("_StencilComp", isVisible ? 8 : 3);
+                    }
+                }
+
+				this.wasVisibleLastFrame = isVisible;
+			}
+
 			this.SinceDealDamage += TimeHandler.deltaTime;
 			// syncing
 			if (this.syncPackages.Count > 0)
@@ -456,6 +494,23 @@ namespace GameModeCollection.Objects
 				}
 			}
 		}
+		protected virtual bool CanSeePlayer(Player player)
+		{
+			RaycastHit2D[] array = Physics2D.RaycastAll(this.transform.position, (player.data.playerVel.position - (Vector2)this.transform.position).normalized, Vector2.Distance(this.transform.position, player.data.playerVel.position), PlayerManager.instance.canSeePlayerMask);
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (array[i].transform
+					&& !array[i].transform.root.GetComponent<SpawnedAttack>()
+					&& !array[i].transform.root.GetComponent<Player>()
+					&& !array[i].transform.root.GetComponentInChildren<PhysicsItem>()
+					)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
 		protected abstract void SetDataToSync();
 		protected abstract void ReadSyncedData();
 		protected abstract bool SyncDataNow();

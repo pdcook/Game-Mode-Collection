@@ -107,7 +107,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			base.Start();
 
 			this.Trig.radius = DeathStationHandler.TriggerRadius;
-			this.Col.size = new Vector2(1f, 1f);
+			this.Col.size = new Vector2(2.2f, 1.2f);
 			this.Col.edgeRadius = 0.1f;
 
 			if (this.IsPrefab)
@@ -140,23 +140,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
         {
 			this.HasKilledPlayer = killedPlayer;
         }
-        private bool CanSeePlayer(Player player)
-		{
-			RaycastHit2D[] array = Physics2D.RaycastAll(this.transform.position, (player.data.playerVel.position - (Vector2)this.transform.position).normalized, Vector2.Distance(this.transform.position, player.data.playerVel.position), PlayerManager.instance.canSeePlayerMask);
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (array[i].transform
-					&& !array[i].transform.root.GetComponent<SpawnedAttack>()
-					&& !array[i].transform.root.GetComponent<Player>()
-					&& !array[i].transform.root.GetComponent<DeathStationHandler>()
-					)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-
         protected override void Update()
         {
 			this.Renderer.color = this.HasKilledPlayer ? Color.red : HealthStationHandler.FullColor;

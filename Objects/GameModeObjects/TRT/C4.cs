@@ -116,7 +116,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			base.Start();
 
 			this.Trig.radius = C4Handler.TriggerRadius;
-			this.Col.size = new Vector2(0.7f, 0.7f);
+			this.Col.size = new Vector2(2f, 0.65f);
 			this.Col.edgeRadius = 0.1f;
 
 			if (this.IsPrefab)
@@ -170,22 +170,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             base.OnTriggerExit2D(collider2D);
         }
 		*/
-        private bool CanSeePlayer(Player player)
-		{
-			RaycastHit2D[] array = Physics2D.RaycastAll(this.transform.position, (player.data.playerVel.position - (Vector2)this.transform.position).normalized, Vector2.Distance(this.transform.position, player.data.playerVel.position), PlayerManager.instance.canSeePlayerMask);
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (array[i].transform
-					&& !array[i].transform.root.GetComponent<SpawnedAttack>()
-					&& !array[i].transform.root.GetComponent<Player>()
-					&& !array[i].transform.root.GetComponent<C4Handler>()
-					)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
 		/*
 		string GetClockString(float time_in_seconds)
 		{

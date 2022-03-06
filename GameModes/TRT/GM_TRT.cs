@@ -73,12 +73,12 @@ namespace GameModeCollection.GameModes
     /// - [ ] Round summaries in chat
     /// - [ ] T and D shops...
     /// - [ ] Custom cards specifically for certain roles
-    ///     - [ ] (T) Explosive
-    ///     - [ ] (T) Knife
-    ///     - [ ] (D) Golden Gun
+    ///     - [~] (T) C4
+    ///     - [~] (T) Knife - TODO: knife asset to replace gun
+    ///     - [ ] (D) Golden Gun - change layer and color of gun handle/barrel to gold
     ///     - [ ] (T + D) Radar
-    ///     - [ ] (D) Health Station
-    ///     - [ ] (T) Death Station
+    ///     - [~] (D) Health Station
+    ///     - [~] (T) Death Station
     ///     - [ ] (Z) Claw (same as knife) for zombies to infect others
     ///     - [ ] (D) Diffuser
     ///     - [ ] (T + D) Body Armor
@@ -172,7 +172,7 @@ namespace GameModeCollection.GameModes
             {
                 if (player.GetComponentInChildren<ViewSphere>(true) != null)
                 {
-                    player.GetComponentInChildren<ViewSphere>(true).fov = 361f;
+                    player.GetComponentInChildren<ViewSphere>(true).fov = 90f;// 361f;
                     player.GetComponentInChildren<ViewSphere>(true).viewDistance = 1000f;
                 }
             });

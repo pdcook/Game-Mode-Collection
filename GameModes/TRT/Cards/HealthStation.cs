@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
-    static class HealthStationPrefab
+    static class A_HealthStationPrefab
     {
         private static GameObject _HealthStation = null;
         public static GameObject HealthStation
@@ -34,7 +34,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Slot_1, TRTCardCategories.TRT_IgnoreCardLimit };
-            statModifiers.AddObjectToPlayer = HealthStationPrefab.HealthStation;
+            statModifiers.AddObjectToPlayer = A_HealthStationPrefab.HealthStation;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {

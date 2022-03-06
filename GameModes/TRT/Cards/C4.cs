@@ -2,10 +2,13 @@
 using UnityEngine;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects.GameModeObjects.TRT;
+using UnboundLib.Networking;
+using UnboundLib;
+using System.Linq;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
-    static class C4Prefab
+    static class A_C4Prefab
     {
         private static GameObject _C4 = null;
         public static GameObject C4
@@ -32,7 +35,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_0 };
-            statModifiers.AddObjectToPlayer = C4Prefab.C4;
+            statModifiers.AddObjectToPlayer = A_C4Prefab.C4;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -98,8 +101,18 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 GameModeCollection.Log("PLACE C4");
                 this.HasPlaced = true;
                 this.StartCoroutine(C4Handler.AskHostToMakeC4(this.Player.playerID, 100f, this.Player.transform.position, this.Player.transform.rotation));
+                NetworkingManager.RPC(typeof(A_C4), nameof(RPCA_RemoveCardFromPlayer), this.Player.playerID);
+                Destroy(this.gameObject);
             }
         }
+        [UnboundRPC]
+        private static void RPCA_RemoveCardFromPlayer(int playerID)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
+            if (player is null) { return; }
+            ModdingUtils.Utils.Cards.instance.RemoveCardFromPlayer(player, C4Card.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest, false);
+        }
+
     }
 }
 

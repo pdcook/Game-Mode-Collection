@@ -110,6 +110,7 @@ namespace GameModeCollection
             ControllerManager.AddMapController(TRTMapController.ControllerID, new TRTMapController());
             ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
             CustomCard.BuildCard<C4Card>(C4Card.Callback);
+            CustomCard.BuildCard<KnifeCard>(KnifeCard.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
            

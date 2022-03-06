@@ -115,7 +115,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			base.Start();
 
 			this.Trig.radius = HealthStationHandler.TriggerRadius;
-			this.Col.size = new Vector2(1f, 1f);
+			this.Col.size = new Vector2(2.2f, 1.2f);
 			this.Col.edgeRadius = 0.1f;
 
 			if (this.IsPrefab)
@@ -152,27 +152,9 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			player.data.healthHandler.Heal(AmountToHeal);
 			this.Health -= AmountToHeal;
         }
-        private bool CanSeePlayer(Player player)
-		{
-			RaycastHit2D[] array = Physics2D.RaycastAll(this.transform.position, (player.data.playerVel.position - (Vector2)this.transform.position).normalized, Vector2.Distance(this.transform.position, player.data.playerVel.position), PlayerManager.instance.canSeePlayerMask);
-			for (int i = 0; i < array.Length; i++)
-			{
-				if (array[i].transform
-					&& !array[i].transform.root.GetComponent<SpawnedAttack>()
-					&& !array[i].transform.root.GetComponent<Player>()
-					&& !array[i].transform.root.GetComponent<HealthStationHandler>()
-					)
-				{
-					return false;
-				}
-			}
-			return true;
-		}
-		protected override void Update()
+        protected override void Update()
         {
 			this.TimeUntilNextLocalHeal = Mathf.Clamp(this.TimeUntilNextLocalHeal - TimeHandler.deltaTime, 0f, float.MaxValue);
-
-            base.Update();
 
 			this.Renderer.color = Color.Lerp(EmptyColor, FullColor, this.Health / this.MaxHealth);
 
@@ -203,5 +185,5 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
         {
 			return true;
         }
-    }
+	}
 }

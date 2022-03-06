@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
-    static class DeathStationPrefab
+    static class A_DeathStationPrefab
     {
         private static GameObject _DeathStation = null;
         public static GameObject DeathStation
@@ -34,7 +34,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Slot_1, TRTCardCategories.TRT_IgnoreCardLimit };
-            statModifiers.AddObjectToPlayer = DeathStationPrefab.DeathStation;
+            statModifiers.AddObjectToPlayer = A_DeathStationPrefab.DeathStation;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
