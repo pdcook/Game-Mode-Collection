@@ -51,7 +51,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             GameObject _ = A_RadarPrefabs.RadarPoint;
 
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_DoNotDropOnDeath };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_DoNotDropOnDeath, TRTCardCategories.TRT_IgnoreCardLimit };
 
             statModifiers.AddObjectToPlayer = A_RadarPrefabs.Radar;
         }
@@ -123,12 +123,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         void DoScan()
         {
-            foreach (GameObject obj in this.RadarPoints)
-            {
-                if (obj is null) { continue; }
-                Destroy(obj);
-            }
-            this.RadarPoints.Clear();
+            this.DestroyAllPoints();
             PlayerManager.instance.ForEachAlivePlayer(player =>
             {
                 if (player.playerID == this.Player.playerID) { return; }
@@ -140,6 +135,19 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 this.RadarPoints.Add(RadarPoint);
 
             });
+        }
+        void OnDestroy()
+        {
+            this.DestroyAllPoints();
+        }
+        void DestroyAllPoints()
+        {
+            foreach (GameObject obj in this.RadarPoints)
+            {
+                if (obj is null) { continue; }
+                Destroy(obj);
+            }
+            this.RadarPoints.Clear();
         }
     }
     class RadarPoint : MonoBehaviour

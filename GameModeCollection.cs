@@ -93,7 +93,7 @@ namespace GameModeCollection
             }
 
             // add credits
-            Unbound.RegisterCredits(ModName, new string[] { "Pykess (Crown Control, Trouble In Rounds Town, Dodgeball, Physics Items)", "BossSloth (Hide & Seek, Bomb Defusal)" }, new string[] { "github", "Support Pykess", "Support BossSloth" }, new string[] { "https://github.com/pdcook/Game-Mode-Collection", "https://ko-fi.com/pykess", "https://www.buymeacoffee.com/BossSloth" });
+            Unbound.RegisterCredits(ModName, new string[] { "Pykess (Crown Control, Trouble In Rounds Town, Dodgeball, Physics Items, MapEmbiggener)", "BossSloth (Hide & Seek, LocalZoom, MapEmbiggener)", " ", "Special Thanks To", "Willuwontu (TRT shop, sound effects, TRT Map)","TheCoconutDream (TRT Card Art)","LMS (TRT Maps)", "Ascyst (TRT Maps)" }, new string[] { "github", "Support Pykess", "Support BossSloth" }, new string[] { "https://github.com/pdcook/Game-Mode-Collection", "https://ko-fi.com/pykess", "https://www.buymeacoffee.com/BossSloth" });
 
             // add GUI to modoptions menu
             Unbound.RegisterMenu(ModName, () => { }, GUI, null, false);

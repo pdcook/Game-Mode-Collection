@@ -67,7 +67,8 @@ namespace GameModeCollection.GameModes
     /// - [X] custom maps specifically for this mode, not available in normal rotation
     ///   [X] --> custom map object mod for card spawn points
     /// - [X] card random spawning
-    /// - [ ] Low karma punishment: slaying. the player is killed AFTER the round starts and is forced to sit out the round
+    /// - [ ] Remove screenshake entirely, or make it dependent on distance (if possible)
+    /// - [ ] Low karma punishment: slaying. the player is killed AFTER the next round starts and is forced to sit out the round
     /// - [ ] LaTeX document with a short guide to each role
     /// - [ ] Round summaries in chat
     /// - [ ] T and D shops...
@@ -79,7 +80,7 @@ namespace GameModeCollection.GameModes
     ///         --> If it shoots a traitor/killer, they will die instantly, no phoenix revives either
     ///         --> If it shoots an innocent, the shooter will die instantly, no phoenix revives
     ///         --> If it shoots a jester/swapper, BOTH players will be killed instantly, no phoenix revives AND the jester/swapper will NOT win
-    ///     - [ ] (T + D) Radar
+    ///     - [X] (T + D) Radar
     ///     - [~] (D) Health Station - TODO: gmod sound effect
     ///     - [X] (T) Death Station
     ///     - [ ] (Z) Claw (same as knife) for zombies to infect others
