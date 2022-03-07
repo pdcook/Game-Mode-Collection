@@ -72,7 +72,7 @@ namespace GameModeCollection.GameModes
     /// - [ ] Round summaries in chat
     /// - [ ] T and D shops...
     /// - [ ] Custom cards specifically for certain roles
-    ///     - [~] (T) C4 - TODO: beeping, explosion, sound
+    ///     - [~] (T) C4 - TODO: beeping, explosion, sound, diffusal
     ///     - [~] (T) Knife - TODO: knife asset to replace gun
     ///     - [X] (D) Golden Gun - change layer and color of gun handle/barrel to gold
     ///         --> One time use, once it hits any player, it is destroyed
@@ -107,7 +107,7 @@ namespace GameModeCollection.GameModes
         internal static GM_TRT instance;
 
         private const float RoundTime = 300f; // default 300f
-        private const float PrepPhaseTime = 30f; // default 30f
+        private const float PrepPhaseTime = 1f;//30f; // default 30f
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 

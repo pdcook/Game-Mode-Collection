@@ -56,10 +56,12 @@ namespace GameModeCollection.GameModes.TRT.Roles
             if (player is null) { return; }
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, HealthStationCard.Card, addToCardBar: false);
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, GoldenDeagleCard.Card, addToCardBar: false);
+            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, RadarCard.Card, addToCardBar: false);
             if (player.data.view.IsMine)
             {
                 CardItemHandler.ClientsideAddToCardBar(player.playerID, HealthStationCard.Card);
                 CardItemHandler.ClientsideAddToCardBar(player.playerID, GoldenDeagleCard.Card);
+                CardItemHandler.ClientsideAddToCardBar(player.playerID, RadarCard.Card);
             }
         }
 
