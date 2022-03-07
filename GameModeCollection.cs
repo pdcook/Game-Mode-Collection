@@ -17,15 +17,18 @@ using System.IO;
 using System.Linq;
 using Jotunn.Utils;
 using MapEmbiggener.Controllers;
+using On;
 
 namespace GameModeCollection
 {
     [BepInDependency("com.willis.rounds.unbound", BepInDependency.DependencyFlags.HardDependency)] // necessary for most modding stuff here
-    [BepInDependency("io.olavim.rounds.rwf", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("io.olavim.rounds.rwf", BepInDependency.DependencyFlags.HardDependency)] // specifically, requires RWEMF
     [BepInDependency("pykess.rounds.plugins.mapembiggener", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.bosssloth.rounds.LocalZoom", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.bosssloth.rounds.BetterChat", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("io.olavim.rounds.mapsextended", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("pykess.rounds.plugins.gununblockablepatch", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("pykess.rounds.plugins.demonicpactpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ModId, ModName, Version)]
     [BepInProcess("Rounds.exe")]
     public class GameModeCollection : BaseUnityPlugin
@@ -75,6 +78,24 @@ namespace GameModeCollection
             harmony.PatchAll();
 
             TRTDefaultMapScale = Config.Bind(CompatibilityModName + "_TRT", "TRT Default Map Scale", 1f);
+
+            On.MainMenuHandler.Awake += (orig, self) =>
+            {
+                this.ExecuteAfterFrames(10, () =>
+                {
+                    // custom face items for TRT
+                    GameObject TRT_Detective_Hat = GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Detective_Hat");
+                    TRT_Detective_Hat.GetComponent<SpriteRenderer>().sortingLayerID = SortingLayer.NameToID("MostFront");
+                    TRT_Detective_Hat.GetComponent<SpriteRenderer>().sortingOrder = 0;
+                    CharacterItem characterItem = TRT_Detective_Hat.AddComponent<CharacterItem>();
+                    characterItem.itemType = CharacterItemType.Detail;
+                    characterItem.scale = 1.2f;
+                    characterItem.moveHealthBarUp = 1f;
+                    CharacterCreatorItemLoader.instance.UpdateItems(CharacterItemType.Detail, CharacterCreatorItemLoader.instance.accessories.Concat(new CharacterItem[] { characterItem }).ToArray());
+                });
+
+                orig(self);
+            };
         }
         private void Start()
         {
@@ -115,6 +136,7 @@ namespace GameModeCollection
             CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
+
            
             // BossSloth game mode stuff
             CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
@@ -135,6 +157,7 @@ namespace GameModeCollection
         public static string ReviveOnCardAddKey => GetConfigKey("reviveOnCardAdd");
         public static string CreatePlayerCorpsesKey => GetConfigKey("createPlayerCorpses");
         public static string UsePlayerColorsInsteadOfNamesInChatKey => GetConfigKey("usePlayerColorsInsteadOfNamesInChat");
+        public static string IgnoreGameFeelKey => GetConfigKey("ignoreGameFeel");
 
         internal static bool EnemyDamageAllowed
         {
@@ -237,6 +260,25 @@ namespace GameModeCollection
                     return false;
                 }
                 if (GameModeManager.CurrentHandler.Settings.TryGetValue(UsePlayerColorsInsteadOfNamesInChatKey, out object use) && (bool)use)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+        public static bool IgnoreGameFeel
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(IgnoreGameFeelKey, out object ignore) && (bool)ignore)
                 {
                     return true;
                 }

@@ -65,7 +65,7 @@
     <path
        id="path4697-7"
        style="color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3.93982;stroke-linejoin:round;-inkscape-stroke:none"
-       d="m 512,502.89062 c -11.05954,-6e-4 -21.66554,4.39118 -29.48633,12.21094 L -51.203125,1048.8184 v 538.916 H 1075.1973 v -538.916 L 541.48828,515.10156 C 533.66749,507.2818 523.05958,502.89006 512,502.89062 Z"
+       d="m 512,502.89062 c -11.05954,-6e-4 -21.66554,4.39118 -29.48633,12.21094 L -51.203125,1048.8184 v 634.916 H 1075.1973 v -634.916 L 541.48828,515.10156 C 533.66749,507.2818 523.05958,502.89006 512,502.89062 Z"
        transform="scale(0.26458333)"
        sodipodi:nodetypes="cccccccc"
        inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Radar_Arrow_Background.png"

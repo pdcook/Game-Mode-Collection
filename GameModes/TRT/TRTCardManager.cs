@@ -33,6 +33,10 @@ namespace GameModeCollection.GameModes.TRT
             {
                 if (card.name.Equals("Healing field")) { continue; }
                 if (card.name.Equals("Phoenix")) { continue; }
+                if (card.name.Equals("Tank")) { continue; }
+                if (card.name.Equals("HUGE")) { continue; }
+                if (card.name.Equals("Decay")) { continue; }
+                if (card.name.Equals("Pristine perseverence")) { continue; }
                 card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Enabled }).ToArray();
             }
         }

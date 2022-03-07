@@ -12,6 +12,7 @@ namespace GameModeCollection.Extensions
     {
         public int maxAllowedCards = GM_TRT.BaseMaxCards;
         public float TRT_Karma = 1f;
+        public PlayerFace CurrentFace;
     }
     public static class CharacterDataExtensions
     {
@@ -19,6 +20,14 @@ namespace GameModeCollection.Extensions
         public static CharacterDataAdditionalData GetData(this CharacterData instance)
         {
             return additionalData.GetOrCreateValue(instance);
+        }
+        public static void SetCurrentFace(this CharacterData instance, PlayerFace face)
+        {
+            instance.GetData().CurrentFace = face;
+        }
+        public static PlayerFace GetCurrentFace(this CharacterData instance)
+        {
+            return instance.GetData().CurrentFace ?? new PlayerFace() { eyeID = 0, detail2ID = 0, detail2Offset = Vector2.zero, detailID = 0, detailOffset = Vector2.zero, mouthID = 0, eyeOffset = Vector2.zero, mouthOffset = Vector2.zero };
         }
         public static void SetMaxCards(this CharacterData instance, int max)
         {

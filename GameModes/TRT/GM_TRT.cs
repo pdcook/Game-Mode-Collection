@@ -542,6 +542,7 @@ namespace GameModeCollection.GameModes
             TimeHandler.instance.DoSpeedUp();
 
             yield return new WaitForSecondsRealtime(1f);
+            this.HideAllPlayerFaces();
             yield return this.WaitForSyncUp();
             MapManager.instance.CallInNewMapAndMovePlayers(MapManager.instance.currentLevelID);
             TimeHandler.instance.DoSpeedUp();
@@ -597,6 +598,7 @@ namespace GameModeCollection.GameModes
             yield return new WaitForSecondsRealtime(PrepPhaseTime);
 
             yield return this.SyncBattleStart();
+            this.HideAllPlayerFaces();
 
             this.clocktime = RoundTime;
             this.prebattle = false;
@@ -650,6 +652,7 @@ namespace GameModeCollection.GameModes
             yield return new WaitForSecondsRealtime(PrepPhaseTime);
 
             yield return this.SyncBattleStart();
+            this.HideAllPlayerFaces();
 
             this.clocktime = RoundTime;
             this.prebattle = false;
@@ -710,6 +713,7 @@ namespace GameModeCollection.GameModes
             yield return this.ClearRolesAndVisuals();
 
             yield return new WaitForSecondsRealtime(0.3f);
+            this.HideAllPlayerFaces();
 
             TimeHandler.instance.DoSpeedUp();
             GameManager.instance.battleOngoing = true;
@@ -760,6 +764,7 @@ namespace GameModeCollection.GameModes
             yield return this.ClearRolesAndVisuals();
 
             yield return new WaitForSecondsRealtime(0.3f);
+            this.HideAllPlayerFaces();
 
             TimeHandler.instance.DoSpeedUp();
             GameManager.instance.battleOngoing = true;
@@ -805,6 +810,7 @@ namespace GameModeCollection.GameModes
             yield return this.ClearRolesAndVisuals();
 
             yield return new WaitForSecondsRealtime(0.3f);
+            this.HideAllPlayerFaces();
 
             TimeHandler.instance.DoSpeedUp();
             GameManager.instance.battleOngoing = true;

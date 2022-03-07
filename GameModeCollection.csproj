@@ -65,6 +65,10 @@
     <Reference Include="MapsExtended">
       <HintPath>$(RoundsFolder)\BepInEx\plugins\MapsExtended.dll</HintPath>
     </Reference>
+    <Reference Include="MMHOOK_Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\MMHOOK_Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="ModdingUtils">
       <HintPath>$(RoundsFolder)\BepInEx\plugins\ModdingUtils.dll</HintPath>
     </Reference>
@@ -137,6 +141,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\CardVisuals.cs" />
+    <Compile Include="Extensions\CharacterCreatorItemLoader.cs" />
     <Compile Include="Extensions\CharacterData.cs" />
     <Compile Include="Extensions\GameObject.cs" />
     <Compile Include="Extensions\HealthHandler.cs" />
@@ -205,6 +210,7 @@
     <Compile Include="Objects\PlayerDoNotFollow.cs" />
     <Compile Include="Objects\GameModeObjects\TRT\C4.cs" />
     <Compile Include="Patches\ApplyCardStats.cs" />
+    <Compile Include="Patches\CharacterCreatorItemEquipper.cs" />
     <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\CharacterItem.cs" />
     <Compile Include="Patches\CharacterStatModifiers.cs" />
@@ -212,6 +218,7 @@
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Destructible.cs" />
     <Compile Include="Patches\Explosion.cs" />
+    <Compile Include="Patches\GamefeelManager.cs" />
     <Compile Include="Patches\GeneralInput.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
     <Compile Include="Patches\MapsExtended_UpdateMapFiles.cs" />

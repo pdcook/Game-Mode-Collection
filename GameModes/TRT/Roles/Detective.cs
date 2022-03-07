@@ -5,6 +5,7 @@ using System.Linq;
 using Photon.Pun;
 using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.Objects;
+using GameModeCollection.Extensions;
 using UnboundLib.Networking;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
@@ -46,6 +47,23 @@ namespace GameModeCollection.GameModes.TRT.Roles
             if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false) )//&& UnityEngine.Random.Range(0f, 1f) < 0.8f)
             {
                 NetworkingManager.RPC(typeof(Detective), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID);
+            }
+
+            // detective gets a fancy hat
+            if (this.GetComponent<Player>()?.data?.view?.IsMine ?? false)
+            {
+                PlayerFace currentFace = this.GetComponent<CharacterData>().GetCurrentFace();
+                this.GetComponent<PhotonView>().RPC("RPCA_SetFace", RpcTarget.All, new object[]
+                {
+                    currentFace.eyeID,
+                    currentFace.eyeOffset,
+                    currentFace.mouthID,
+                    currentFace.mouthOffset,
+                    currentFace.detailID,
+                    currentFace.detailOffset,
+                    CharacterCreatorItemLoader.instance.GetItemIDByName("TRT_Detective_Hat", CharacterItemType.Detail),
+                    Vector2.zero
+                });
             }
 
         }

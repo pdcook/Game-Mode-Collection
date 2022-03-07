@@ -1,0 +1,765 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1000"
+   height="1000"
+   viewBox="0 0 264.58333 264.58334"
+   version="1.1"
+   id="svg10103"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="TRT_Detective_Hat.svg"
+   inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview10105"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     inkscape:zoom="0.77682379"
+     inkscape:cx="521.9974"
+     inkscape:cy="500.11341"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer4"
+     inkscape:snap-intersection-paths="false"
+     inkscape:object-paths="false"
+     inkscape:snap-smooth-nodes="false"
+     inkscape:snap-midpoints="false"
+     inkscape:object-nodes="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-bbox="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-nodes="false"
+     inkscape:snap-others="false">
+    <sodipodi:guide
+       position="132.29167,264.58333"
+       orientation="-1,0"
+       id="guide40071"
+       inkscape:label=""
+       inkscape:locked="true"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="0,132.29167"
+       orientation="0,1"
+       id="guide40091"
+       inkscape:label=""
+       inkscape:locked="true"
+       inkscape:color="rgb(0,0,255)" />
+  </sodipodi:namedview>
+  <defs
+     id="defs10100">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern36496"
+       id="pattern38056"
+       patternTransform="matrix(0.21634287,0.0579689,-0.0579689,0.21634287,43.237044,76.916441)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern36496"
+       id="pattern38054"
+       patternTransform="matrix(0.05863349,0.21882317,-0.21882317,0.05863349,43.237044,76.916441)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern36496"
+       id="pattern38052"
+       patternTransform="matrix(0.13618072,0.03648951,-0.03648951,0.13618072,43.237044,76.916441)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern36496"
+       id="pattern38050"
+       patternTransform="matrix(0.2043284,0.11796906,-0.11796906,0.2043284,43.237044,76.916441)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern36496"
+       id="pattern38048"
+       patternTransform="matrix(0.25484911,0.02484197,-0.02484197,0.25484911,43.237044,76.916441)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern36496"
+       id="pattern36661"
+       patternTransform="matrix(0.08553289,0.3277746,-0.3277746,0.08553289,43.237044,76.916441)" />
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#pattern36496"
+       id="pattern36522"
+       patternTransform="matrix(0.18656997,0.24030556,-0.24030556,0.18656997,43.237044,76.916441)" />
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="62.807497"
+       height="62.807497"
+       patternTransform="translate(43.237047,76.916443)"
+       id="pattern33220">
+      <path
+         id="rect27862-5-2"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 0,41.871666 c 2.7547124,-6.97861 2.7547162,-13.957221 0,-20.935835 6.9786066,2.754712 13.957217,2.754716 20.935831,0 -2.754712,6.978607 -2.754716,13.957217 0,20.935835 C 13.957224,39.116953 6.9786141,39.11695 0,41.871666 Z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="rect27862-5-2-9"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935831,62.807497 c 2.754712,-6.978607 2.754716,-13.957217 0,-20.935831 6.978607,2.754712 13.957217,2.754716 20.935835,0 -2.754716,6.978606 -2.75472,13.957213 0,20.935831 -6.97861,-2.754712 -13.957221,-2.754716 -20.935835,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="rect27862-5-2-9-1"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935831,20.935831 c 2.754712,-6.978607 2.754716,-13.9572169 0,-20.935831 6.978607,2.7547124 13.957217,2.7547162 20.935835,0 -2.754716,6.9786066 -2.75472,13.957217 0,20.935831 -6.97861,-2.754712 -13.957221,-2.754712 -20.935835,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="rect27862-5-2-9-1-3"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 41.871666,41.871666 c 2.754709,-6.97861 2.754712,-13.957221 0,-20.935835 6.978606,2.754712 13.957213,2.754716 20.935831,0 -2.754712,6.978607 -2.754716,13.957217 0,20.935835 -6.978607,-2.754713 -13.957217,-2.754716 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871666"
+       height="41.871662"
+       patternTransform="translate(43.237047,76.916443)"
+       id="pattern33559">
+      <path
+         id="path33331"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 0,41.871662 c 2.7547124,-6.978606 2.7547162,-13.957221 0,-20.935831 6.9786066,2.754709 13.957217,2.754712 20.935831,0 -2.754712,6.978607 -2.754716,13.957213 0,20.935831 C 13.957224,39.11695 6.9786141,39.11695 0,41.871662 Z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path33335"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935831,20.935831 c 2.754712,-6.97861 2.754716,-13.9572169 0,-20.935831 6.978607,2.7547124 13.957217,2.7547162 20.935835,0 -2.754716,6.9786066 -2.75472,13.957217 0,20.935831 -6.97861,-2.754712 -13.957221,-2.754712 -20.935835,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871666"
+       height="41.871662"
+       patternTransform="translate(43.237047,76.916443)"
+       id="pattern33559-5">
+      <path
+         id="path33331-8"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 0,41.871662 c 2.7547124,-6.978606 2.7547162,-13.957221 0,-20.935831 6.9786066,2.754709 13.957217,2.754712 20.935831,0 -2.754712,6.978607 -2.754716,13.957213 0,20.935831 C 13.957224,39.11695 6.9786141,39.11695 0,41.871662 Z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path33335-6"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935831,20.935831 c 2.754712,-6.97861 2.754716,-13.9572169 0,-20.935831 6.978607,2.7547124 13.957217,2.7547162 20.935835,0 -2.754716,6.9786066 -2.75472,13.957217 0,20.935831 -6.97861,-2.754712 -13.957221,-2.754712 -20.935835,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern36496">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect33563" />
+      <path
+         id="path35108"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path35108-3"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern36496-0">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect33563-0" />
+      <path
+         id="path35108-5"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path35108-3-8"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern36496-06">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect33563-2" />
+      <path
+         id="path35108-2"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path35108-3-82"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern36496-8">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect33563-4" />
+      <path
+         id="path35108-7"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path35108-3-824"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern38409">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect38403" />
+      <path
+         id="path38405"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path38407"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern38418">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect38412" />
+      <path
+         id="path38414"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path38416"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern36496-08">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect33563-24" />
+      <path
+         id="path35108-74"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path35108-3-3"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern38527">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect38521" />
+      <path
+         id="path38523"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path38525"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern36496-9">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect33563-42" />
+      <path
+         id="path35108-1"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path35108-3-2"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern36496-88">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect33563-03" />
+      <path
+         id="path35108-9"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path35108-3-89"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern40174">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect40168" />
+      <path
+         id="path40170"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path40172"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern40183">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect40177" />
+      <path
+         id="path40179"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path40181"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern40192">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect40186" />
+      <path
+         id="path40188"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path40190"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern40201">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect40195" />
+      <path
+         id="path40197"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path40199"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern40210">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect40204" />
+      <path
+         id="path40206"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path40208"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+    <pattern
+       patternUnits="userSpaceOnUse"
+       width="41.871665"
+       height="41.871661"
+       patternTransform="translate(43.237044,76.916441)"
+       id="pattern40219">
+      <rect
+         style="fill:none;stroke:none"
+         width="41.871666"
+         height="41.871662"
+         x="0"
+         y="0"
+         id="rect40213" />
+      <path
+         id="path40215"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="M 2.1857666e-6,41.87166 C 1.5979902,35.24148 1.3646875,28.333135 2.1857666e-6,20.935833 6.9617029,22.416939 13.940151,22.404799 20.935833,20.935833 c -1.52166,6.832108 -1.425857,13.799327 0,20.935827 -6.975704,-1.475335 -13.954314,-1.474734 -20.9358308142334,0 z"
+         sodipodi:nodetypes="ccccc" />
+      <path
+         id="path40217"
+         style="display:inline;fill:#47290a;stroke:none;stroke-width:1.51316;stroke-linejoin:round;stroke-opacity:1"
+         d="m 20.935833,20.935829 c 1.597988,-6.63018 1.364686,-13.5385248 0,-20.9358274375008 C 27.897534,1.4811077 34.875982,1.4689679 41.871664,1.5624992e-6 40.350004,6.8321099 40.445807,13.799329 41.871664,20.935829 c -6.975704,-1.475335 -13.954314,-1.474734 -20.935831,0 z"
+         sodipodi:nodetypes="ccccc" />
+    </pattern>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline" />
+  <g
+     inkscape:groupmode="layer"
+     id="layer4"
+     inkscape:label="Band"
+     style="display:inline">
+    <g
+       id="g40154"
+       transform="matrix(0.81,0,0,0.81,36.178644,-32.849212)">
+      <path
+         style="font-variation-settings:normal;display:inline;opacity:1;fill:#785836;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         d="m 141.79985,64.088867 c 17.20028,-13.291231 36.29713,-6.051504 2.52832,5.662851"
+         id="path20452"
+         sodipodi:nodetypes="cc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:#785836;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 139.29296,156.20776 c -1.28388,-1.34223 194.31888,150.45904 56.14346,1.90993"
+         id="path10738"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;fill:url(#pattern38052);fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 141.79985,64.088867 c 17.20028,-13.291231 36.29713,-6.051504 2.52832,5.662851"
+         id="path20452-6"
+         sodipodi:nodetypes="cc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:#785836;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 61.511768,126.59826 c -16.938905,2.68432 -133.546693,19.96493 53.005832,28.76033"
+         id="path22366"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:url(#pattern38054);fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 139.29296,156.20776 c -1.28388,-1.34223 194.31888,150.45904 56.14346,1.90993"
+         id="path10738-3"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:url(#pattern38050);fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 61.511769,126.59826 c -16.938905,2.68432 -133.546693,19.96493 53.005831,28.76033"
+         id="path22366-8"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:#000000;fill-opacity:0.462617;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 139.29296,156.20776 c -1.28388,-1.34223 194.31888,150.45904 56.14346,1.90993"
+         id="path10738-3-1"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:#000000;fill-opacity:0.357477;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 61.51177,126.59826 c -16.93891,2.68432 -133.546695,19.96493 53.00583,28.76033"
+         id="path22366-8-2"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:#785836;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 195.63731,158.08987 C 156.50327,-23.212893 58.525811,126.29775 61.712662,126.57045 c 6.196225,12.69342 21.293663,20.59709 52.819238,28.7515 22.56523,1.0639 49.30637,1.99688 81.10541,2.76792"
+         id="path22364-9"
+         sodipodi:nodetypes="cccc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:url(#pattern36661);fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 195.43642,158.11769 C 156.30238,-23.185077 58.324917,126.32557 61.511768,126.59826 c 6.196225,12.69343 21.293663,20.5971 52.819242,28.75151 22.56523,1.0639 49.30637,1.99688 81.10541,2.76792"
+         id="path22364"
+         sodipodi:nodetypes="cccc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="display:inline;fill:#000000;fill-opacity:0.102804;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 195.63731,158.08988 C 156.50328,-23.212888 58.525811,126.29776 61.712662,126.57045 c 6.196225,12.69343 21.293663,20.5971 52.819238,28.75151 22.56523,1.0639 49.30638,1.99688 81.10541,2.76792"
+         id="path22364-4"
+         sodipodi:nodetypes="cccc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;opacity:1;fill:#785836;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         d="M 126.27553,69.292218 C 98.143054,63.078057 106.18221,31.735195 129.58705,62.857633"
+         id="path18490"
+         sodipodi:nodetypes="cc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;fill:url(#pattern38056);fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="M 126.27553,69.292218 C 98.14305,63.078057 106.18221,31.735195 129.58705,62.857633"
+         id="path18490-6"
+         sodipodi:nodetypes="cc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;opacity:1;fill:#785836;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+         d="m 126.27553,69.292218 c 0,0 0.94584,-8.003472 7.02828,-7.33665 5.55313,0.608796 10.45976,0.639918 11.02436,7.79615"
+         id="path17592"
+         sodipodi:nodetypes="csc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;fill:url(#pattern38048);fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 126.27553,69.292218 c 0,0 0.94584,-8.003472 7.02828,-7.33665 5.55313,0.608796 10.45976,0.639918 11.02436,7.79615"
+         id="path17592-9"
+         sodipodi:nodetypes="csc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;fill:#000000;fill-opacity:0.275701;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 141.79985,64.088867 c 17.20028,-13.291231 36.29713,-6.051504 2.52832,5.662851"
+         id="path20452-6-2"
+         sodipodi:nodetypes="cc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;fill:#000000;fill-opacity:0.275701;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="M 126.27553,69.292218 C 98.14305,63.078057 106.18221,31.735195 129.58705,62.857633"
+         id="path18490-6-2"
+         sodipodi:nodetypes="cc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;fill:#000000;fill-opacity:0.275701;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 126.27553,69.292218 c 0,0 0.94584,-8.003472 7.02828,-7.33665 5.55313,0.608796 10.45976,0.639918 11.02436,7.79615"
+         id="path17592-9-4"
+         sodipodi:nodetypes="csc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 127.53019,65.332829 c -11.30279,-4.394766 -16.47544,-12.609617 0,0"
+         id="path18490-5"
+         sodipodi:nodetypes="cc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         style="font-variation-settings:normal;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 143.61509,66.516489 c 10.73576,-6.291444 17.78327,-6.401814 0,0"
+         id="path18490-5-5"
+         sodipodi:nodetypes="cc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         id="path14345-7-9"
+         style="font-variation-settings:normal;display:inline;fill:#785836;fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 144.39249,69.773434 c -6.00312,-1.780892 -12.14398,-1.808597 -18.22194,-0.541669 3.58994,31.409975 -3.51054,56.581565 -12.01552,86.072445 8.03171,0.37868 16.59247,0.74077 25.58328,1.09933 8.36623,-29.47641 8.20534,-55.24718 4.65418,-86.630106 z"
+         sodipodi:nodetypes="ccccc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         id="path14345-7"
+         style="font-variation-settings:normal;fill:url(#pattern36522);fill-opacity:1;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 144.39249,69.773434 c -6.00312,-1.780892 -12.14398,-1.808597 -18.22194,-0.541669 3.58994,31.409975 -3.51054,56.581565 -12.01552,86.072445 8.03171,0.37868 16.59247,0.74077 25.58328,1.09933 8.36623,-29.47641 8.20534,-55.24718 4.65418,-86.630106 z"
+         sodipodi:nodetypes="ccccc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+      <path
+         id="path14345-7-3"
+         style="font-variation-settings:normal;display:inline;fill:#000000;fill-opacity:0.275701;stroke:#000000;stroke-width:2.64583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+         d="m 144.39249,69.773434 c -6.00312,-1.780892 -12.14398,-1.808597 -18.22194,-0.541669 3.58994,31.409965 -3.51054,56.581555 -12.01552,86.072435 8.03171,0.37868 16.59247,0.74077 25.58328,1.09933 8.36623,-29.47641 8.20534,-55.24718 4.65418,-86.630096 z"
+         sodipodi:nodetypes="ccccc"
+         inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_Detective_Hat.png"
+         inkscape:export-xdpi="96"
+         inkscape:export-ydpi="96" />
+    </g>
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer5"
+     inkscape:label="Pattern"
+     sodipodi:insensitive="true"
+     style="display:none">
+    <rect
+       style="display:inline;fill:none;stroke:none"
+       width="62.807495"
+       height="62.807495"
+       x="43.237045"
+       y="76.916443"
+       id="rect33226"
+       transform="scale(0.26458333)" />
+    <rect
+       style="fill:url(#pattern36496);stroke:none"
+       transform="scale(0.26458333)"
+       width="41.871666"
+       height="41.871662"
+       x="43.237045"
+       y="76.916443"
+       id="rect36501" />
+  </g>
+</svg>
