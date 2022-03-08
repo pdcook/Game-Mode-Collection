@@ -13,6 +13,7 @@ using TMPro;
 using Sonigon;
 using MapEmbiggener;
 using UnboundLib.Networking;
+using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 
 namespace GameModeCollection.Objects
 {
@@ -59,6 +60,9 @@ namespace GameModeCollection.Objects
     [RequireComponent(typeof(CardItemHealth))]
     class CardItem : DamagableNetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
     {
+
+        public static readonly CardCategory IgnoreMaxCardsCategory = CustomCardCategories.instance.CardCategory("CardItem_IgnoreMaxCards");
+
         internal static IEnumerator MakeCardItem(CardInfo card, Vector3 position, Quaternion rotation, Vector2 velocity = default, float angularVelocity = 0f, float maxHealth = -1f, bool requireInteract = true)
         {
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
@@ -209,7 +213,7 @@ namespace GameModeCollection.Objects
         {
             if (this.HasBeenTaken) { return; }
             else if (player.data.dead) { return; }
-            else if (!player.data.CanHaveMoreCards()) { return; }
+            else if (!player.data.CanHaveMoreCards() && !this.Card.categories.Contains(CardItem.IgnoreMaxCardsCategory)) { return; }
             else if (!ModdingUtils.Utils.Cards.instance.PlayerIsAllowedCard(player, this.Card)) { return; }
 
             // final check: is the player trying to collect multiple cards at once?
@@ -222,22 +226,6 @@ namespace GameModeCollection.Objects
                     return;
                 }
             }
-
-
-            // if so, only allow them to interact with the card closest to them
-            /*
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, CollectionDistance);
-            Collider2D closest = null;
-            float dist = float.PositiveInfinity;
-            foreach (Collider2D collider in colliders.Where(c => c?.GetComponentInParent<CardItem>() != null))
-            {
-                if (Vector2.Distance(collider.transform.position, player.transform.position) < dist)
-                {
-                    closest = collider;
-                }
-            }
-            if (closest is null || closest.GetComponentInParent<CardItem>() != this) { return; }
-            */
 
             this.View.RPC(nameof(RPCA_AddCardToPlayer), RpcTarget.All, player.playerID);
             CardItemHandler.ClientsideAddToCardBar(player.playerID, this.Card);

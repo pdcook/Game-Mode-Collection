@@ -107,7 +107,7 @@ namespace GameModeCollection.GameModes
         internal static GM_TRT instance;
 
         private const float RoundTime = 300f; // default 300f
-        private const float PrepPhaseTime = 1f;//30f; // default 30f
+        private const float PrepPhaseTime = 30f; // default 30f
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 
@@ -594,7 +594,7 @@ namespace GameModeCollection.GameModes
 
             UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
 
-            yield return new WaitForSecondsRealtime(PrepPhaseTime);
+            yield return new WaitWhile(() => this.prebattle);
 
             yield return this.SyncBattleStart();
             this.HideAllPlayerFaces();
@@ -648,7 +648,7 @@ namespace GameModeCollection.GameModes
 
             UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
 
-            yield return new WaitForSecondsRealtime(PrepPhaseTime);
+            yield return new WaitWhile(() => this.prebattle);
 
             yield return this.SyncBattleStart();
             this.HideAllPlayerFaces();
@@ -1001,6 +1001,12 @@ namespace GameModeCollection.GameModes
 
             UIHandler.instance.roundCounterSmall.UpdateText(0, GetClockString(clocktime), timeColor, 30, Vector3.one, DisplayBackgroundColor);
 
+            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.prebattle)
+            {
+                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetPreBattle), false);
+                return;
+            }
+
             if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.battleOngoing)
             {
                 // short delay to allow things like phantom spawning and swapper swapping to happen
@@ -1045,6 +1051,11 @@ namespace GameModeCollection.GameModes
         private static void RPCO_SetClockTime(float time)
         {
             GM_TRT.instance.clocktime = time;
+        }
+        [UnboundRPC]
+        private static void RPCA_SetPreBattle(bool prebattle)
+        {
+            GM_TRT.instance.prebattle = prebattle;
         }
     }
 }

@@ -134,6 +134,7 @@ namespace GameModeCollection
             CustomCard.BuildCard<C4Card>(C4Card.Callback);
             CustomCard.BuildCard<KnifeCard>(KnifeCard.Callback);
             CustomCard.BuildCard<RadarCard>(RadarCard.Callback);
+            CustomCard.BuildCard<DefuserCard>(DefuserCard.Callback);
             CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);

@@ -48,7 +48,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	public class DeathStationHandler : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
 	{
 		private const float TriggerRadius = 2f;
-
+        public override bool RemoveOnPointEnd { get => true; protected set => base.RemoveOnPointEnd = value; }
 		public bool IsPrefab { get; internal set; } = false;
 
 		internal SpriteRenderer Renderer => this.transform.GetChild(0).GetComponent<SpriteRenderer>();

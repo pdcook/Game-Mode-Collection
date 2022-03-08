@@ -1,4 +1,4 @@
-﻿using GameModeCollection.GameModes;
+﻿using GameModeCollection.GameModes.TRT.Cards;
 using MapEmbiggener;
 using Photon.Pun;
 using System.Collections;
@@ -10,6 +10,9 @@ using UnityEngine;
 using TMPro;
 using System;
 using UnboundLib.Networking;
+using GameModeCollection.Extensions;
+using UnboundLib.Utils;
+using UnityEngine.UI.ProceduralImage;
 
 namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
@@ -56,14 +59,24 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	}
 	public class C4Handler : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
 	{
-		private const float TriggerRadius = 1.5f;
+		public static readonly Color StartDefuseColor = new Color32(230, 0, 0, 255);
+		public static readonly Color FinishDefuseColor = new Color32(0, 230, 0, 255);
 
-		public bool IsPrefab { get; internal set; } = false;
+		private const float TriggerRadius = 1.5f;
+        public override bool RemoveOnPointEnd { get => true; protected set => base.RemoveOnPointEnd = value; }
+        public bool IsPrefab { get; internal set; } = false;
+
+		public bool IsDefusing { get; private set; } = false;
+		public float TimeToDefuse { get; private set; } = 10f; // will depend on how long the C4's detonation timer was set for
+		public float DefuseProgress => this.TimeDefused / this.TimeToDefuse;
+		private float TimeDefused = 0f;
 
 		public float Time { get; private set; } = float.MaxValue;
 		public int PlacerID { get; private set; } = -1;
 
-		//private TextMeshPro Clock => this.GetComponentInChildren<TextMeshPro>();
+		private GameObject DefusalTimerObject;
+		private DefusalTimerEffect DefusalTimerEffect;
+
 		internal SpriteRenderer Renderer => this.transform.GetChild(0).GetComponent<SpriteRenderer>();
 		public override void OnPhotonInstantiate(PhotonMessageInfo info)
 		{
@@ -111,8 +124,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		}
 		protected override void Start()
 		{
-			//this.Clock.transform.localScale = new Vector3(0.5f, 1f, 1f);
-
 			base.Start();
 
 			this.Trig.radius = C4Handler.TriggerRadius;
@@ -130,65 +141,53 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				this.Rig.isKinematic = false;
 				this.gameObject.SetActive(true);
             }
-		}
-		/*
-		protected internal override void OnTriggerEnter2D(Collider2D collider2D)
-		{
-			Player player = collider2D?.GetComponent<Player>();
-			if (player != null && player.data.view.IsMine && this.CanSeePlayer(player))
+
+			// ring for defusal progress
+
+			var abyssalCard = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("AbyssalCountdown")).cardInfo;
+			var statMods = abyssalCard.gameObject.GetComponentInChildren<CharacterStatModifiers>();
+			var abyssalObj = statMods.AddObjectToPlayer;
+
+			this.DefusalTimerObject = Instantiate(abyssalObj, this.transform);
+			this.DefusalTimerObject.name = "A_TRT_VampireEffects";
+			this.DefusalTimerObject.transform.localPosition = Vector3.zero;
+
+			AbyssalCountdown abyssal = this.DefusalTimerObject.GetComponent<AbyssalCountdown>();
+
+			this.DefusalTimerEffect = this.DefusalTimerObject.AddComponent<DefusalTimerEffect>();
+			this.DefusalTimerEffect.outerRing = abyssal.outerRing;
+			this.DefusalTimerEffect.fill = abyssal.fill;
+			this.DefusalTimerEffect.rotator = abyssal.rotator;
+			this.DefusalTimerEffect.still = abyssal.still;
+
+			UnityEngine.GameObject.Destroy(abyssal);
+
+			foreach (Transform child in this.DefusalTimerObject.transform)
 			{
-				// display time
-				Clock.enabled = true;
+				if (child.name != "Canvas")
+				{
+					Destroy(child.gameObject);
+				}
 			}
-			else if (player != null)
-            {
-				Clock.enabled = false;
-            }
-			base.OnTriggerEnter2D(collider2D);
+
+			this.DefusalTimerEffect.outerRing.color = StartDefuseColor;
+			this.DefusalTimerEffect.fill.color = new Color(StartDefuseColor.r, StartDefuseColor.g, StartDefuseColor.b, 0.1f);
+			this.DefusalTimerEffect.rotator.gameObject.GetComponentInChildren<ProceduralImage>().color = this.DefusalTimerEffect.outerRing.color;
+			this.DefusalTimerEffect.still.gameObject.GetComponentInChildren<ProceduralImage>().color = this.DefusalTimerEffect.outerRing.color;
+			this.DefusalTimerObject.transform.Find("Canvas/Size/BackRing").GetComponent<ProceduralImage>().color = Color.clear;
+
 		}
- 		protected internal override void OnTriggerStay2D(Collider2D collider2D)
-		{
-			Player player = collider2D?.GetComponent<Player>();
-			if (player != null && player.data.view.IsMine && this.CanSeePlayer(player))
-			{
-				// display time
-				Clock.enabled = true;
-			}
-			else if (player != null)
-            {
-				Clock.enabled = false;
-            }
-			base.OnTriggerStay2D(collider2D);
-		}
-       protected internal override void OnTriggerExit2D(Collider2D collider2D)
-        {
-			Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == collider2D?.GetComponent<Player>()?.playerID);
-			if (player != null && player.data.view.IsMine)
-			{
-				Clock.enabled = false;
-			}
-            base.OnTriggerExit2D(collider2D);
-        }
-		*/
-		/*
-		string GetClockString(float time_in_seconds)
-		{
-			if (time_in_seconds < 10f)
-            {
-				return "XX:XX";
-            }
-			if (time_in_seconds > 6000f)
-            {
-				return "";
-            }
-			return TimeSpan.FromSeconds(time_in_seconds).ToString(@"mm\:ss");
-		}*/
 		private const float BlinkEvery = 1f;
 		private float BlinkTimer = BlinkEvery;
 		private int blink = 1;
 		protected override void Update()
         {
 			this.Time -= TimeHandler.deltaTime;
+
+			if (this.IsDefusing) { this.TimeDefused += TimeHandler.deltaTime; }
+            else { this.TimeDefused = 0f; }
+
+			this.DefusalTimerEffect.DefuseProgress(this.DefuseProgress);
 
             base.Update();
 
@@ -200,16 +199,35 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             }
 
 			this.Renderer.color = this.blink > 0 ? Color.red : Color.clear;
-
-			//Clock.text = GetClockString(this.Time);
-			//SetClockPositionAndRotation();
         }
-		/*
-		void SetClockPositionAndRotation()
+        protected internal override void OnTriggerStay2D(Collider2D collider2D)
         {
-			this.Clock.transform.position = this.transform.position + 2f * Vector3.up;
-			this.Clock.transform.rotation = Quaternion.identity;
-        }*/
+			if (collider2D?.GetComponent<Player>() != null
+				&& (collider2D.GetComponent<Player>()?.data?.view?.IsMine ?? false)
+				&& !collider2D.GetComponent<Player>().data.dead)
+			{
+				if ( collider2D.GetComponent<Player>().data.currentCards.Select(c => c.cardName).Contains(DefuserCard.CardName)
+					&& collider2D.GetComponent<Player>().data.playerActions.ItemIsPressed(3))
+				{
+					this.IsDefusing = true;
+				}
+				else
+                {
+					this.IsDefusing = false;
+                }
+			}
+			base.OnTriggerStay2D(collider2D);
+        }
+        protected internal override void OnTriggerExit2D(Collider2D collider2D)
+        {
+			if (collider2D?.GetComponent<Player>() != null
+				&& (collider2D.GetComponent<Player>()?.data?.view?.IsMine ?? false)
+				&& !collider2D.GetComponent<Player>().data.dead)
+			{
+                this.IsDefusing = false;
+			}
+            base.OnTriggerExit2D(collider2D);
+        }
 
         private const string SyncedTimeKey = "C4_Time";
 
@@ -227,4 +245,40 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			return true;
         }
     }
+	class DefusalTimerEffect : MonoBehaviour
+    {
+		public float counter;
+
+		public ProceduralImage outerRing;
+		public ProceduralImage backRing;
+
+		public ProceduralImage fill;
+
+		public Transform rotator;
+
+		public Transform still;
+
+		void Start()
+        {
+            this.transform.localScale = 0.5f * Vector3.one;
+            this.counter = 1f;
+            this.backRing = this.outerRing.transform.parent.GetChild(0).gameObject.GetComponent<ProceduralImage>();
+            this.backRing.type = UnityEngine.UI.Image.Type.Filled;
+            this.rotator.gameObject.SetActive(false);
+            this.still.gameObject.SetActive(false);
+            this.fill.gameObject.SetActive(false);
+            this.outerRing.gameObject.SetActive(true);
+            this.backRing.gameObject.SetActive(false);
+
+			this.outerRing.fillAmount = 0f;
+            this.outerRing.BorderWidth = 20f;
+            this.backRing.BorderWidth = 20f;
+            this.backRing.fillAmount = 0f;
+		}
+		public void DefuseProgress(float progress)
+		{
+			this.outerRing.fillAmount = UnityEngine.Mathf.Clamp01(progress);
+			this.outerRing.color = Color.Lerp(C4Handler.StartDefuseColor, C4Handler.FinishDefuseColor, UnityEngine.Mathf.Clamp01(progress));
+		}
+	}
 }

@@ -103,7 +103,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if (this.Player is null || !this.Player.data.view.IsMine) { return; }
             if (!HasPlaced && this.Player.data.playerActions.ItemWasPressed(0))
             {
-                GameModeCollection.Log("PLACE C4");
                 this.HasPlaced = true;
                 this.StartCoroutine(C4Handler.AskHostToMakeC4(this.Player.playerID, 100f, this.Player.transform.position, this.Player.transform.rotation));
                 CardUtils.Call_RemoveCardFromPlayer_ClientsideCardBar(this.Player, C4Card.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);

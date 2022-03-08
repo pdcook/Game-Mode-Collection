@@ -3,6 +3,7 @@ using UnityEngine;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects.GameModeObjects.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.Objects;
 using UnboundLib.Networking;
 using UnboundLib;
 using System.Linq;
@@ -51,7 +52,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             GameObject _ = A_RadarPrefabs.RadarPoint;
 
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_DoNotDropOnDeath, TRTCardCategories.TRT_IgnoreCardLimit };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_DoNotDropOnDeath, CardItem.IgnoreMaxCardsCategory };
 
             statModifiers.AddObjectToPlayer = A_RadarPrefabs.Radar;
         }
@@ -105,23 +106,42 @@ namespace GameModeCollection.GameModes.TRT.Cards
             ModdingUtils.Utils.Cards.instance.AddHiddenCard(card);
         }
     }
+    class RadarTimer : MonoBehaviour
+    {
+        public const float ScanEvery = 30f;
+        private float ScanTimer = 0f;
+        public bool IsReady => this.ScanTimer <= 0f;
+        public float Perc => 1f - this.ScanTimer / ScanEvery;
+        void Start()
+        {
+            this.ScanTimer = 0f;
+        }
+        void Update()
+        {
+            if (this.ScanTimer <= 0f) { return; }
+            this.ScanTimer -= TimeHandler.deltaTime;
+        }
+        public void ResetTimer()
+        {
+            this.ScanTimer = ScanEvery;
+        }
+    }
     class A_Radar : MonoBehaviour
     {
-        private const float ScanEvery = 30f;
-        private float ScanTimer = 0f;
         private Player Player;
+        private RadarTimer Timer;
         private List<GameObject> RadarPoints = new List<GameObject>() { };
         void Start()
         {
             this.Player = this.GetComponentInParent<Player>();
+            if (this.Player != null) { this.Timer = this.Player.gameObject.GetOrAddComponent<RadarTimer>(); }
         }
         void Update()
         {
-            if (this.Player is null || !this.Player.data.view.IsMine) { return; }
-            this.ScanTimer -= TimeHandler.deltaTime;
-            if (this.ScanTimer <= 0f)
+            if (this.Player is null || this.Timer is null || !this.Player.data.view.IsMine) { return; }
+            if (this.Timer.IsReady)
             {
-                this.ScanTimer = ScanEvery;
+                this.Timer.ResetTimer();
                 this.DoScan();
             }
         }
@@ -142,7 +162,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         void OnDestroy()
         {
-            this.DestroyAllPoints();
+            //this.DestroyAllPoints();
         }
         void DestroyAllPoints()
         {
@@ -156,15 +176,23 @@ namespace GameModeCollection.GameModes.TRT.Cards
     }
     class RadarPoint : MonoBehaviour
     {
+        private const float DestroyTimerPerc = 0.01f;
+        private const float FadeOutTimerPerc = 0.1f;
         private const float ConstScale = 0.3f;
         private Player Player;
+        private RadarTimer Timer;
         private Player TrackedPlayer;
         private TextMeshPro Text;
         private GameObject Circle;
         private GameObject Arrow;
+        private SpriteRenderer CircleSprite;
+        private SpriteRenderer ArrowSprite;
+        private SpriteRenderer CircleBackgroundSprite;
+        private SpriteRenderer ArrowBackgroundSprite;
         private Vector2 TrackedPosition;
         private ITRT_Role TargetRole;
         private Alignment? PlayerAlignment;
+        private int FramesSinceCreation = 0;
         internal void SetPrefab(bool isPrefab)
         {
             this.gameObject.SetActive(!isPrefab);
@@ -173,6 +201,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             this.Player = player;
             this.PlayerAlignment = RoleManager.GetPlayerAlignment(player);
+            this.Timer = player.GetComponent<RadarTimer>();
         }
         internal void SetTracked(Player player)
         {
@@ -181,6 +210,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         void Start()
         {
+            this.FramesSinceCreation = 0;
+
             this.TrackedPosition = this.transform.position;
 
             this.Text = this.GetComponentInChildren<TextMeshPro>(true);
@@ -209,9 +240,29 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 this.Circle.GetComponent<SpriteRenderer>().color = color;
                 this.Arrow.GetComponent<SpriteRenderer>().color = color;
             }
+            this.CircleSprite = this.Circle.GetComponent<SpriteRenderer>();
+            this.CircleBackgroundSprite = this.Circle.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            this.ArrowSprite = this.Arrow.GetComponent<SpriteRenderer>();
+            this.ArrowBackgroundSprite = this.Arrow.transform.GetChild(0).GetComponent<SpriteRenderer>();
         }
         void Update()
         {
+            this.FramesSinceCreation++;
+
+            if (this.Timer != null && this.FramesSinceCreation > 5 && 1f - this.Timer.Perc < FadeOutTimerPerc)
+            {
+                this.Text.color = Color.Lerp(Color.clear, this.Text.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
+                this.CircleSprite.color = Color.Lerp(Color.clear, this.CircleSprite.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
+                this.CircleBackgroundSprite.color = Color.Lerp(Color.clear, this.CircleBackgroundSprite.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
+                this.ArrowSprite.color = Color.Lerp(Color.clear, this.ArrowSprite.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
+                this.ArrowBackgroundSprite.color = Color.Lerp(Color.clear, this.ArrowBackgroundSprite.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
+                if (this.Timer.Perc < DestroyTimerPerc)
+                {
+                    Destroy(this.gameObject);
+                }
+            }
+
+
             this.transform.localScale = ConstScale * MainCam.instance.cam.orthographicSize / ControllerManager.DefaultZoom * Vector3.one;
 
             this.Text.text = $"{Vector2.Distance(this.Player.transform.position, this.TrackedPosition):0}";

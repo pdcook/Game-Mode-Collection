@@ -4,7 +4,7 @@ using GameModeCollection.GameModes;
 using UnityEngine;
 using TMPro;
 using UnboundLib;
-using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.Objects;
 
 namespace GameModeCollection.Extensions
 {
@@ -39,7 +39,7 @@ namespace GameModeCollection.Extensions
         }
         public static bool CanHaveMoreCards(this CharacterData instance)
         {
-            return instance.currentCards.Count(c => !c.categories.Contains(GameModes.TRT.Cards.TRTCardCategories.TRT_IgnoreCardLimit)) < instance.GetData().maxAllowedCards;
+            return instance.currentCards.Count(c => !c.categories.Contains(CardItem.IgnoreMaxCardsCategory)) < instance.GetData().maxAllowedCards;
         }
         public static float TRT_Karma(this CharacterData instance)
         {

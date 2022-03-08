@@ -2,6 +2,7 @@
 using UnityEngine;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects.GameModeObjects.TRT;
+using GameModeCollection.Objects;
 using UnboundLib.Networking;
 using UnboundLib;
 using System.Linq;
@@ -34,7 +35,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Slot_1, TRTCardCategories.TRT_IgnoreCardLimit };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Slot_1, CardItem.IgnoreMaxCardsCategory };
             statModifiers.AddObjectToPlayer = A_DeathStationPrefab.DeathStation;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)

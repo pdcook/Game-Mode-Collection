@@ -1,43 +1,20 @@
-﻿using UnboundLib.Cards;
+﻿using GameModeCollection.Objects;
+using UnboundLib.Cards;
 using UnityEngine;
-using GameModeCollection.Extensions;
-using GameModeCollection.Objects.GameModeObjects.TRT;
-using UnboundLib.Networking;
-using UnboundLib;
-using System.Linq;
-using Photon.Pun;
-using GameModeCollection.Utils;
 
 namespace GameModeCollection.GameModes.TRT.Cards
-{    
-    static class A_DiffuserPrefab
-    {
-        private static GameObject _Diffuser = null;
-        public static GameObject Diffuser
-        {
-            get
-            {
-                if (_Diffuser is null)
-                {
-                    _Diffuser = new GameObject("A_Diffuser");
-                    UnityEngine.GameObject.DontDestroyOnLoad(_Diffuser);
-                }
-                return _Diffuser;
-            }
-        }
-    }
-
-    public class DiffuserCard : CustomCard
+{
+    public class DefuserCard : CustomCard
     {    
         /// One time use, defuses C4
+        /// time it takes to disarm it scales with the timer set on the c4
 
         internal static CardInfo Card = null;
+        internal static string CardName => "Defuser";
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_IgnoreCardLimit, TRTCardCategories.TRT_Slot_3 };
-
-            statModifiers.AddObjectToPlayer = A_DiffuserPrefab.Diffuser;
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, CardItem.IgnoreMaxCardsCategory, TRTCardCategories.TRT_Slot_3 };
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -48,7 +25,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override string GetTitle()
         {
-            return "Diffuser";
+            return CardName;
         }
         protected override string GetDescription()
         {
@@ -85,7 +62,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         internal static void Callback(CardInfo card)
         {
-            DiffuserCard.Card = card;
+            card.gameObject.AddComponent<TRTCardSlotText>();
+            DefuserCard.Card = card;
             ModdingUtils.Utils.Cards.instance.AddHiddenCard(card);
         }
     }
