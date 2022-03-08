@@ -60,7 +60,9 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	public class C4Handler : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
 	{
 		public static readonly Color StartDefuseColor = new Color32(230, 0, 0, 255);
+		public static readonly Color StartDefuseFillColor = new Color32(230, 0, 0, 26);
 		public static readonly Color FinishDefuseColor = new Color32(0, 230, 0, 255);
+		public static readonly Color FinishDefuseFillColor = new Color32(0, 230, 0, 26);
 
 		private const float TriggerRadius = 1.5f;
         public override bool RemoveOnPointEnd { get => true; protected set => base.RemoveOnPointEnd = value; }
@@ -171,7 +173,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			}
 
 			this.DefusalTimerEffect.outerRing.color = StartDefuseColor;
-			this.DefusalTimerEffect.fill.color = new Color(StartDefuseColor.r, StartDefuseColor.g, StartDefuseColor.b, 0.1f);
+			this.DefusalTimerEffect.fill.color = StartDefuseFillColor;
 			this.DefusalTimerEffect.rotator.gameObject.GetComponentInChildren<ProceduralImage>().color = this.DefusalTimerEffect.outerRing.color;
 			this.DefusalTimerEffect.still.gameObject.GetComponentInChildren<ProceduralImage>().color = this.DefusalTimerEffect.outerRing.color;
 			this.DefusalTimerObject.transform.Find("Canvas/Size/BackRing").GetComponent<ProceduralImage>().color = Color.clear;
@@ -266,11 +268,12 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             this.backRing.type = UnityEngine.UI.Image.Type.Filled;
             this.rotator.gameObject.SetActive(false);
             this.still.gameObject.SetActive(false);
-            this.fill.gameObject.SetActive(false);
+            this.fill.gameObject.SetActive(true);
             this.outerRing.gameObject.SetActive(true);
             this.backRing.gameObject.SetActive(false);
 
 			this.outerRing.fillAmount = 0f;
+			this.fill.fillAmount = 0f;
             this.outerRing.BorderWidth = 20f;
             this.backRing.BorderWidth = 20f;
             this.backRing.fillAmount = 0f;
@@ -278,7 +281,9 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		public void DefuseProgress(float progress)
 		{
 			this.outerRing.fillAmount = UnityEngine.Mathf.Clamp01(progress);
+			this.fill.fillAmount = UnityEngine.Mathf.Clamp01(progress);
 			this.outerRing.color = Color.Lerp(C4Handler.StartDefuseColor, C4Handler.FinishDefuseColor, UnityEngine.Mathf.Clamp01(progress));
+			this.fill.color = Color.Lerp(C4Handler.StartDefuseFillColor, C4Handler.FinishDefuseFillColor, UnityEngine.Mathf.Clamp01(progress));
 		}
 	}
 }
