@@ -13,7 +13,7 @@ namespace GameModeCollection.Patches
 
             GameModeCollection.instance.ExecuteAfterFrames(2, () =>
             {
-                if (LocalZoom.LocalZoom.enableShaderSetting)
+                if (LocalZoom.LocalZoom.enableShaderSetting && __instance?.transform?.root.GetComponent<CharacterData>() != null)
                 {
                     foreach (CharacterItem characterItem in __instance.transform.root.GetComponentsInChildren<CharacterItem>(true))
                     {

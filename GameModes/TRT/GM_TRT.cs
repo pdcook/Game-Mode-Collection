@@ -55,7 +55,6 @@ namespace GameModeCollection.GameModes
     ///         --> For each death, of any kind, time is added to the clock (30 seconds?)
     /// - [X] below the clock (also with the round counter) is the player's current role
     /// - [X] Each client sees ONLY their own card bar
-    /// - [ ]   --> until they die and enter spectator mode
     /// - [X] Players can have a max of one card
     /// - [X] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
     /// - [X] Dead players have a separate text chat
@@ -67,12 +66,12 @@ namespace GameModeCollection.GameModes
     /// - [X] custom maps specifically for this mode, not available in normal rotation
     ///   [X] --> custom map object mod for card spawn points
     /// - [X] card random spawning
-    /// - [ ] Remove screenshake entirely, or make it dependent on distance (if possible)
+    /// - [X] Remove screenshake entirely, or make it dependent on distance (if possible)
     /// - [ ] Low karma punishment: slaying. the player is killed AFTER the next round starts and is forced to sit out the round
     /// - [ ] LaTeX document with a short guide to each role
     /// - [ ] Round summaries in chat
-    /// - [ ] T and D shops...
-    /// - [ ] Custom cards specifically for certain roles
+    /// - [~] T and D shops...
+    /// - [~] Custom cards specifically for certain roles
     ///     - [~] (T) C4 - TODO: beeping, explosion, sound, diffusal
     ///     - [~] (T) Knife - TODO: knife asset to replace gun
     ///     - [X] (D) Golden Gun - change layer and color of gun handle/barrel to gold
@@ -258,9 +257,9 @@ namespace GameModeCollection.GameModes
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
                     UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.mouths.Count()),
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
-                    UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.accessories.Count()),
+                    CharacterCreatorItemLoader.instance.GetRandomItemID(CharacterItemType.Detail, new string[] { "TRT_Detective_Hat" }),
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
-                    UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.accessories.Count()),
+                    CharacterCreatorItemLoader.instance.GetRandomItemID(CharacterItemType.Detail, new string[] { "TRT_Detective_Hat" }),
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1)
                 });
             });

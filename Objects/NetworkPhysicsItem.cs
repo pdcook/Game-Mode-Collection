@@ -12,6 +12,41 @@ using System;
 
 namespace GameModeCollection.Objects
 {
+	public static class PhysicsItemRemover
+    {
+		private static List<GameObject> ItemsToRemoveOnPointEnd = new List<GameObject>() { };
+
+		public static void AddItemToRemoveOnPointEnd(GameObject obj)
+        {
+			ItemsToRemoveOnPointEnd.Add(obj);
+        }
+		public static void RemoveItemToRemoveOnPointEnd(GameObject obj)
+        {
+			ItemsToRemoveOnPointEnd.Remove(obj);
+        }
+		public static IEnumerator RemoveItemsOnPointEnd(IGameModeHandler gm)
+        {
+			foreach (GameObject obj in ItemsToRemoveOnPointEnd)
+            {
+				if (obj is null) { continue; }
+				try
+                {
+					PhotonView View = obj.GetComponentInChildren<PhotonView>();
+					if (View is null)
+                    {
+						UnityEngine.GameObject.Destroy(obj);
+                    }
+					else if (View.IsMine)
+                    {
+						PhotonNetwork.Destroy(obj);
+                    }
+                }
+                catch { }
+            }
+			ItemsToRemoveOnPointEnd.Clear();
+			yield break;
+        }
+    }
 	public class ItemPhysicalProperties
 	{
 		private const float DefaultBounciness = 0.2f;
@@ -127,6 +162,8 @@ namespace GameModeCollection.Objects
 	{
 
 		public override ItemPhysicalProperties PhysicalProperties { get; protected set; } = new ItemPhysicalProperties();
+
+		public virtual bool RemoveOnPointEnd { get; protected set; } = false;
 
         private PhysicsMaterial2D _Material = null;
 		public PhysicsMaterial2D Material
@@ -269,6 +306,11 @@ namespace GameModeCollection.Objects
 		}
 		protected virtual void Start()
 		{
+			if (this.RemoveOnPointEnd)
+            {
+				PhysicsItemRemover.AddItemToRemoveOnPointEnd(gameObject);
+            }
+
 			this.Col.GetComponent<ItemTriggerAndCollision>().SetAsTrigger(false);
 			this.Trig.GetComponent<ItemTriggerAndCollision>().SetAsTrigger(true);
 			if (this.PhysicalProperties.IgnoreBackgroundObjects)

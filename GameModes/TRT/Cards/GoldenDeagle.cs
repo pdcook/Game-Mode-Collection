@@ -115,6 +115,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             return "TRT";
         }
+        public override bool GetEnabled()
+        {
+            return false;
+        }
         internal static void Callback(CardInfo card)
         {
             GoldenDeagleCard.Card = card;
@@ -203,6 +207,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             Player playerToKill = PlayerManager.instance.GetPlayerWithID(playerIDToKill);
             Player killingPlayer = PlayerManager.instance.GetPlayerWithID(killingPlayerID);
             if (playerToKill is null) { return; }
+            /*
             try
             {
                 RoleManager.GetPlayerRole(playerToKill)?.OnKilledByPlayer(killingPlayer);
@@ -213,6 +218,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 RoleManager.GetPlayerRole(killingPlayer)?.OnKilledPlayer(playerToKill);
             }
             catch { }
+            */
             playerToKill.data.lastSourceOfDamage = killingPlayer;
             if (playerToKill.data.view.IsMine)
             {

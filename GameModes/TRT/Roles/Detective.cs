@@ -59,9 +59,9 @@ namespace GameModeCollection.GameModes.TRT.Roles
                     currentFace.eyeOffset,
                     currentFace.mouthID,
                     currentFace.mouthOffset,
-                    currentFace.detailID,
-                    currentFace.detailOffset,
                     CharacterCreatorItemLoader.instance.GetItemIDByName("TRT_Detective_Hat", CharacterItemType.Detail),
+                    Vector2.zero,
+                    0,
                     Vector2.zero
                 });
             }

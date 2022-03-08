@@ -1,23 +1,21 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using HarmonyLib;
-using UnboundLib;
-using UnityEngine;
-using UnboundLib.Utils.UI;
-using UnboundLib.GameModes;
-using TMPro;
 using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.GameModes.TRT.Controllers;
-using UnboundLib.Cards;
-using UnboundLib.Utils;
-using System.IO;
-using System.Linq;
+using GameModeCollection.Objects;
+using HarmonyLib;
 using Jotunn.Utils;
 using MapEmbiggener.Controllers;
-using On;
+using System.Linq;
+using TMPro;
+using UnboundLib;
+using UnboundLib.Cards;
+using UnboundLib.GameModes;
+using UnboundLib.Utils.UI;
+using UnityEngine;
 
 namespace GameModeCollection
 {
@@ -121,6 +119,9 @@ namespace GameModeCollection
 
             // register callback to enable vanilla cards in TRT
             Unbound.AddAllCardsCallback(TRTCardManager.SetTRTEnabled);
+
+            // hooks
+            GameModeManager.AddHook(GameModeHooks.HookPointEnd, PhysicsItemRemover.RemoveItemsOnPointEnd);
 
             // Pykess game mode stuff
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());

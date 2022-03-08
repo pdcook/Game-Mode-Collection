@@ -153,8 +153,9 @@
     <Compile Include="Extensions\UIHandler.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
+    <Compile Include="GameModes\TRT\Cards\Diffuser.cs" />
     <Compile Include="GameModes\TRT\Cards\Radar.cs" />
-    <Compile Include="GameModes\TRT\Cards\GoldenGun.cs" />
+    <Compile Include="GameModes\TRT\Cards\GoldenDeagle.cs" />
     <Compile Include="GameModes\TRT\Cards\BodyArmor.cs" />
     <Compile Include="GameModes\TRT\Cards\Knife.cs" />
     <Compile Include="GameModes\TRT\Cards\DeathStation.cs" />

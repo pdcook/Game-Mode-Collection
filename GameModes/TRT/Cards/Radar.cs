@@ -95,6 +95,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             return "TRT";
         }
+        public override bool GetEnabled()
+        {
+            return false;
+        }
         internal static void Callback(CardInfo card)
         {
             RadarCard.Card = card;

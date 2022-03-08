@@ -5,30 +5,50 @@ using GameModeCollection.Objects.GameModeObjects.TRT;
 using UnboundLib.Networking;
 using UnboundLib;
 using System.Linq;
+using Photon.Pun;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.GameModes.TRT.Cards
-{
-    public class BodyArmorCard : CustomCard
+{    
+    static class A_DiffuserPrefab
     {
+        private static GameObject _Diffuser = null;
+        public static GameObject Diffuser
+        {
+            get
+            {
+                if (_Diffuser is null)
+                {
+                    _Diffuser = new GameObject("A_Diffuser");
+                    UnityEngine.GameObject.DontDestroyOnLoad(_Diffuser);
+                }
+                return _Diffuser;
+            }
+        }
+    }
+
+    public class DiffuserCard : CustomCard
+    {    
+        /// One time use, defuses C4
+
         internal static CardInfo Card = null;
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_DoNotDropOnDeath };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_IgnoreCardLimit, TRTCardCategories.TRT_Slot_3 };
 
-            // double health
-            statModifiers.health = 2f;
+            statModifiers.AddObjectToPlayer = A_DiffuserPrefab.Diffuser;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
         }
-        public override void OnRemoveCard()
+        public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
         }
 
         protected override string GetTitle()
         {
-            return "Body Armor";
+            return "Diffuser";
         }
         protected override string GetDescription()
         {
@@ -49,12 +69,11 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             return new CardInfoStat[]
             {
-                new CardInfoStat(){amount = "+100%", positive = true, simepleAmount=CardInfoStat.SimpleAmount.aHugeAmountOf, stat = "HP"}
             };
         }
         protected override CardThemeColor.CardThemeColorType GetTheme()
         {
-            return CardThemeColor.CardThemeColorType.DefensiveBlue;
+            return CardThemeColor.CardThemeColorType.TechWhite;
         }
         public override string GetModName()
         {
@@ -66,7 +85,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         internal static void Callback(CardInfo card)
         {
-            BodyArmorCard.Card = card;
+            DiffuserCard.Card = card;
             ModdingUtils.Utils.Cards.instance.AddHiddenCard(card);
         }
     }
