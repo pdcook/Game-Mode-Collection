@@ -105,7 +105,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             {
                 GameModeCollection.Log("PLACE HealthStation");
                 this.HasPlaced = true;
-                this.StartCoroutine(HealthStationHandler.AskHostToMakeHealthStation(200f, this.Player.transform.position, this.Player.transform.rotation));
+                GameModeCollection.instance.StartCoroutine(HealthStationHandler.AskHostToMakeHealthStation(200f, this.Player.transform.position, this.Player.transform.rotation));
                 CardUtils.Call_RemoveCardFromPlayer_ClientsideCardBar(this.Player, HealthStationCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);
                 Destroy(this.gameObject);
             }

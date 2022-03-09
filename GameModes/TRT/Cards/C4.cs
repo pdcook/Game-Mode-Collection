@@ -7,6 +7,9 @@ using UnboundLib.Networking;
 using UnboundLib;
 using System.Linq;
 using GameModeCollection.Utils;
+using UnityEngine.UI;
+using TMPro;
+using System;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -23,6 +26,20 @@ namespace GameModeCollection.GameModes.TRT.Cards
                     UnityEngine.GameObject.DontDestroyOnLoad(_C4);
                 }
                 return _C4;
+            }
+        }
+        private static GameObject _C4TimerUI = null;
+        public static GameObject C4TimerUI
+        {
+            get
+            {
+                if (_C4TimerUI is null)
+                {
+                    _C4TimerUI = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_C4UI"));
+                    _C4TimerUI.AddComponent<C4TimerHandler>().SetPrefab(true);
+                    UnityEngine.GameObject.DontDestroyOnLoad(_C4TimerUI);
+                }
+                return _C4TimerUI;
             }
         }
     }
@@ -105,10 +122,109 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if (!HasPlaced && this.Player.data.playerActions.ItemWasPressed(0))
             {
                 this.HasPlaced = true;
-                this.StartCoroutine(C4Handler.AskHostToMakeC4(this.Player.playerID, 100f, this.Player.transform.position, this.Player.transform.rotation));
+                GameObject C4UI = GameObject.Instantiate(A_C4Prefab.C4TimerUI);
+                C4TimerHandler handler = C4UI.GetComponent<C4TimerHandler>();
+                handler.SetPlayer(this.Player);
+                handler.SetPrefab(false);
                 CardUtils.Call_RemoveCardFromPlayer_ClientsideCardBar(this.Player, C4Card.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);
                 Destroy(this.gameObject);
             }
+        }
+    }
+
+    internal class C4TimerHandler : MonoBehaviour
+    {
+        private const float RepeatInputDelay = 0.1f;
+        private const float StepSize = 15f;
+        private const float MinTime = 30f;
+        private const float MaxTime = 300f;
+        Slider Slider;
+        Player Player;
+        bool HasSet = false;
+        TextMeshProUGUI Timer;
+        float repeatInputTimer = 0f;
+        bool IsPrefab = true;
+        public void SetPrefab(bool prefab)
+        {
+            this.IsPrefab = prefab;
+            this.transform.GetChild(0).gameObject.SetActive(!prefab);
+            this.transform.GetChild(1).gameObject.SetActive(!prefab);
+        }
+        void Start()
+        {
+            if (this.IsPrefab) { return; }
+            this.GetComponent<Canvas>().worldCamera = Camera.current;
+            this.GetComponent<Canvas>().sortingLayerID = SortingLayer.NameToID("MostFront");
+            this.GetComponent<GraphicRaycaster>().enabled = true;
+            this.Slider = this.GetComponentInChildren<Slider>();
+            this.Timer = this.transform.GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
+            this.HasSet = false;
+        }
+        internal void SetPlayer(Player player)
+        {
+            this.HasSet = false;
+            this.Player = player;
+            this.Player.data.input.enabled = false;
+            this.Player.data.input.jumpIsPressed = false;
+            this.Player.data.input.jumpWasPressed = false;
+        }
+        void Update()
+        {
+            if (this.IsPrefab) { return; }
+            if (this.Slider is null || this.Timer is null) { return; }
+            // update text
+            this.Timer.text = this.GetClockString(this.Slider.value);
+
+            if (this.Player is null || this.HasSet) { return; }
+            // do player input
+            this.Player.data.input.enabled = false;
+            this.Player.data.input.jumpIsPressed = false;
+            this.Player.data.input.jumpWasPressed = false;
+
+            this.repeatInputTimer -= Time.deltaTime;
+            if (this.Player.data.playerActions.Left.IsPressed)
+            {
+                if (this.repeatInputTimer <= 0f)
+                {
+                    this.repeatInputTimer = RepeatInputDelay;
+                    this.Slider.value = Mathf.Clamp(this.Slider.value - StepSize, MinTime, MaxTime);
+                }
+            }
+            else if (this.Player.data.playerActions.Right.IsPressed)
+            {
+                if (this.repeatInputTimer <= 0f)
+                {
+                    this.repeatInputTimer = RepeatInputDelay;
+                    this.Slider.value = Mathf.Clamp(this.Slider.value + StepSize, MinTime, MaxTime);
+                }
+            }
+            else
+            {
+                this.repeatInputTimer = 0f;
+            }
+
+            if (this.Player.data.playerActions.Jump.WasPressed)
+            {
+                this.SetC4Timer();
+            }
+        }
+        string GetClockString(float time_in_seconds)
+        {
+            return TimeSpan.FromSeconds(time_in_seconds).ToString(@"mm\:ss");
+        }
+
+        void SetC4Timer()
+        {
+            this.HasSet = true;
+            this.Player.data.input.enabled = true;
+
+            GameModeCollection.instance.StartCoroutine(C4Handler.AskHostToMakeC4(this.Player.playerID, this.Slider.value, this.Player.transform.position, this.Player.transform.rotation));
+
+            Destroy(this.gameObject);
+        }
+        void OnDestroy()
+        {
+            if (this.Player != null) { this.Player.data.input.enabled = true; }
         }
     }
 }

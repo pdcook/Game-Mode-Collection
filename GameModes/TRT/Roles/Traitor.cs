@@ -123,7 +123,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override void OnKilledPlayer(Player killedPlayer)
         {
             // punish RDM
-            if (killedPlayer?.GetComponent<TRT_Role>()?.Alignment == this.Alignment)
+            if (killedPlayer?.GetComponent<TRT_Role>()?.Alignment == this.Alignment && killedPlayer?.playerID != this.GetComponent<Player>()?.playerID)
             {
                 KarmaChange -= GM_TRT.KarmaPenaltyPerRDM;
             }
