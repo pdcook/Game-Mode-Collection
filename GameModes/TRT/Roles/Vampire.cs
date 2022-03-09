@@ -347,31 +347,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             }
             player.GetComponent<WeaponHandler>().gun.transform.Find("Spring/Handle").gameObject.SetActive(!invisible);
             player.GetComponent<WeaponHandler>().gun.transform.Find("Spring/Barrel").gameObject.SetActive(!invisible);
-            player.GetComponent<WeaponHandler>().gun.transform.Find("Spring/Ammo/Canvas").gameObject.SetActive(!invisible);
-
-            if (!invisible)
-            {
-                GameModeCollection.instance.ExecuteAfterFrames(5, () =>
-                {
-                    GunAmmo gunAmmo = player.GetComponent<WeaponHandler>().gun.GetComponentInChildren<GunAmmo>();
-
-                    // redraw current ammo
-                    for (int i = gunAmmo.populate.transform.childCount - 1; i >= 0; i--)
-                    {
-                        if (gunAmmo.populate.transform.GetChild(i).gameObject.activeSelf)
-                        {
-                            Object.Destroy(gunAmmo.populate.transform.GetChild(i).gameObject);
-                        }
-                    }
-                    gunAmmo.populate.times = (int)gunAmmo.GetFieldValue("currentAmmo");
-                    gunAmmo.populate.DoPopulate();
-                    typeof(GunAmmo).InvokeMember("SetActiveBullets",
-                                BindingFlags.Instance | BindingFlags.InvokeMethod |
-                                BindingFlags.NonPublic, null, gunAmmo, new object[] { false });
-                });
-            }
-
+            player.GetComponent<WeaponHandler>().gun.transform.Find("Spring/Ammo/Canvas").localScale = invisible ? Vector3.zero : 0.0018f * Vector3.one;
         }
-
     }
 }

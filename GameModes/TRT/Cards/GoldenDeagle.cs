@@ -181,7 +181,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 this.NumCards = this.data.currentCards.Count();
                 if ((bool)this.GetFieldValue("modifiersActive"))
                 {
-                    GameModeCollection.Log("REAPPLY GOLDEN DEAGLE");
                     this.DisableGoldenDeagle();
                     this.EnableGoldenDeagle();
                 }
@@ -222,8 +221,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             // things that can't be changed with ReversibleEffect
 
-            GameModeCollection.Log("ENABLE GOLDEN DEAGLE");
-
             // save originals
             this.OriginalObjectsToSpawn = this.gun.objectsToSpawn.ToList();
 
@@ -252,6 +249,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             if (damagedPlayer is null) { return; }
             if (this.Spent) { return; }
+            if (damage.sqrMagnitude > 0.01f) { return; } // detect if the player shot a bullet and then very quickly switched to the golden deagle
             this.Spent = true;
             if (!this.gameObject.GetComponentInParent<Player>().data.view.IsMine) { return; }
 

@@ -113,7 +113,7 @@ namespace GameModeCollection
             }
             try
             {
-                TRT_Card_Assets = AssetUtils.LoadAssetBundleFromResources("trt_card_assets", typeof(GameModeCollection).Assembly);
+                TRT_Card_Assets = AssetUtils.LoadAssetBundleFromResources("trt_card_art", typeof(GameModeCollection).Assembly);
                 if (TRT_Card_Assets == null)
                 {
                     LogError("TRT Card Assets failed to load.");
@@ -149,6 +149,7 @@ namespace GameModeCollection
             ControllerManager.AddMapController(TRTMapController.ControllerID, new TRTMapController());
             ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
             CustomCard.BuildCard<C4Card>(C4Card.Callback);
+            CustomCard.BuildCard<ClawCard>(ClawCard.Callback);
             CustomCard.BuildCard<KnifeCard>(KnifeCard.Callback);
             CustomCard.BuildCard<RadarCard>(RadarCard.Callback);
             CustomCard.BuildCard<DefuserCard>(DefuserCard.Callback);

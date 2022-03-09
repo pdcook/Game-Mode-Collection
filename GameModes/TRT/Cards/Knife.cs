@@ -31,7 +31,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
     {
         internal static CardInfo Card = null;
         /*
-         * TRT traitor shop card that allows the player to instakill a (very) nearby target by pressing [item 2]
+         * TRT traitor shop card that allows the player to switch to a knife with [item 2]
          */
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
@@ -117,7 +117,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
         // the knife is consumed on kill
         // it will instakill the stabbed player
         // pressing [item 2] will switch the player's gun into a knife
-        private const float Radius = 2.5f;
         private float StabTimer = 0f;
         public bool HasStabbed { get; set;} = false;
         public bool IsOut { get; private set; } = false;
@@ -173,6 +172,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             Knife.SetActive(knife);
 
+            springObj.transform.Find("Ammo/Canvas").localScale = knife ? Vector3.zero : 0.0018f * Vector3.one;
             springObj.transform.GetChild(2).gameObject.SetActive(!knife);
             springObj.transform.GetChild(3).gameObject.SetActive(!knife);
 
@@ -262,7 +262,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             Player stabbingPlayer = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == stabbingPlayerID);
             Player stabbedPlayer = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == stabbedPlayerID);
             if (stabbedPlayer is null || stabbingPlayer is null) { return; }
-            stabbedPlayer.data.healthHandler.DoDamage(10000f * Vector2.up, stabbedPlayer.transform.position, Color.white, null, stabbingPlayer, false, true, true);
+            stabbedPlayer.data.healthHandler.DoDamage(10000f * stabbingPlayer.data.weaponHandler.gun.shootPosition.forward, stabbedPlayer.transform.position, Color.white, stabbingPlayer.data?.weaponHandler?.gun?.transform?.GetChild(1)?.Find("TRT_Knife(Clone)")?.gameObject, stabbingPlayer, false, true, true);
             CardUtils.RemoveCardFromPlayer_ClientsideCardBar(stabbingPlayer, KnifeCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);
         }
     }

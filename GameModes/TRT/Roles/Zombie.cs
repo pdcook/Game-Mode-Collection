@@ -64,7 +64,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
                 ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar();
             }
         }
-        public override void OnKilledPlayer(Player killedPlayer)
+        public void CallZombieInfect(Player killedPlayer)
         {
             // do zombie stuff
             if (this.GetComponent<PhotonView>().IsMine && RoleManager.GetPlayerAlignment(killedPlayer) != this.Alignment && killedPlayer?.playerID != this.GetComponent<Player>().playerID && !this.playerIDsKilled.Contains(killedPlayer.playerID))
@@ -76,8 +76,6 @@ namespace GameModeCollection.GameModes.TRT.Roles
                     this.GetComponent<PhotonView>().RPC(nameof(RPCA_ZombieInfect), RpcTarget.All, killedPlayer.playerID);
                 }
             }
-
-            base.OnKilledPlayer(killedPlayer);
         }
         [PunRPC]
         private void RPCA_ZombieInfect(int playerID)

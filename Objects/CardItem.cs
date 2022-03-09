@@ -62,6 +62,7 @@ namespace GameModeCollection.Objects
     {
 
         public static readonly CardCategory IgnoreMaxCardsCategory = CustomCardCategories.instance.CardCategory("CardItem_IgnoreMaxCards");
+        public static readonly CardCategory CannotDiscard = CustomCardCategories.instance.CardCategory("CardItem_CannotDiscard");
 
         internal static IEnumerator MakeCardItem(CardInfo card, Vector3 position, Quaternion rotation, Vector2 velocity = default, float angularVelocity = 0f, float maxHealth = -1f, bool requireInteract = true)
         {
@@ -348,10 +349,19 @@ namespace GameModeCollection.Objects
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
-            int idx = player.data.currentCards.Count() - 1;
+            // find the most recent card index which can be discarded
+            int idx = -1;
+            for (int i = player.data.currentCards.Count() -1; i >= 0; i--)
+            {
+                if (!player.data.currentCards[i].categories.Contains(CardItem.CannotDiscard))
+                { 
+                    idx = i; 
+                    break;
+                }
+            }
+            if (idx == -1) { return; }
             CardInfo card = player.data.currentCards[idx];
-
-            CardInfo[] cardsToKeep = player.data.currentCards.Take(player.data.currentCards.Count() - 1).ToArray();
+            CardInfo[] cardsToKeep = player.data.currentCards.Where((c, i) => i != idx).ToArray();
             ModdingUtils.Utils.Cards.instance.RemoveAllCardsFromPlayer(player, false);
             if (player.data.view.IsMine) { ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar(); }
             CardItemHandler.Instance.StartCoroutine(CardItemHandler.Instance.RestoreCardsWhenReady(player, cardsToKeep));

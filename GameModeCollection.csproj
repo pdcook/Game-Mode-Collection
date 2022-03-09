@@ -155,6 +155,7 @@
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
     <Compile Include="GameModes\TRT\Cards\Defuser.cs" />
+    <Compile Include="GameModes\TRT\Cards\Claw.cs" />
     <Compile Include="GameModes\TRT\Cards\Radar.cs" />
     <Compile Include="GameModes\TRT\Cards\GoldenDeagle.cs" />
     <Compile Include="GameModes\TRT\Cards\BodyArmor.cs" />

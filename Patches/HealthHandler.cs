@@ -16,6 +16,23 @@ namespace GameModeCollection.Patches
 {   
     [HarmonyPriority(Priority.First)]
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
+    class HealthHandler_Patch_DoDamage_TRT_Claw
+    {
+        // prefix for Zombie claw in TRT
+        private static void Prefix(HealthHandler __instance, ref Vector2 damage, GameObject damagingWeapon = null, Player damagingPlayer = null)
+        {
+            if (damagingPlayer?.data is null || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer.playerID == __instance.GetComponent<Player>()?.playerID) { return; }
+
+            if (damagingWeapon.GetComponent<ClawSlash>() != null && damagingPlayer.GetComponent<Zombie>() != null)
+            {
+                damagingPlayer.GetComponent<Zombie>().CallZombieInfect(__instance.GetComponent<Player>());
+            }
+
+        }
+    }
+ 
+    [HarmonyPriority(Priority.First)]
+    [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_Karma
     {
         // prefix for Karma in TRT 
