@@ -150,7 +150,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         private int NumCards;
         public override void OnAwake()
         {
-            this.SetLivesToEffect(int.MaxValue);
+            this.SetLivesToEffect(1);
             this.applyImmediately = false;
 
             base.OnAwake();

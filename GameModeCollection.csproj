@@ -226,6 +226,7 @@
     <Compile Include="Patches\Gun.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
     <Compile Include="Patches\MapsExtended_UpdateMapFiles.cs" />
+    <Compile Include="Patches\Player.cs" />
     <Compile Include="Patches\PlayerActions.cs" />
     <Compile Include="Patches\PlayerCollision.cs" />
     <Compile Include="Patches\PlayerFlyParticle.cs" />

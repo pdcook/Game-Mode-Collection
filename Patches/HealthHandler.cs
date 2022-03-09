@@ -14,24 +14,40 @@ using GameModeCollection.GameModes.TRT.Cards;
 
 namespace GameModeCollection.Patches
 {   
-    [HarmonyPriority(Priority.First)]
+    [HarmonyPriority(Priority.Normal)]
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_Claw
     {
         // prefix for Zombie claw in TRT
-        private static void Prefix(HealthHandler __instance, ref Vector2 damage, GameObject damagingWeapon = null, Player damagingPlayer = null)
+        private static void Prefix(HealthHandler __instance, CharacterData ___data, Vector2 damage, GameObject damagingWeapon = null, Player damagingPlayer = null)
         {
             if (damagingPlayer?.data is null || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || damagingPlayer.playerID == __instance.GetComponent<Player>()?.playerID) { return; }
 
-            if (damagingWeapon.GetComponent<ClawSlash>() != null && damagingPlayer.GetComponent<Zombie>() != null)
+            // if the player was killed with the claw by a zombie, infect them
+            if ((damagingWeapon?.GetComponent<ClawSlash>()?.isActiveAndEnabled ?? false) && damagingPlayer.GetComponent<Zombie>() != null && ___data.health - damage.magnitude < 0f && ___data.stats.remainingRespawns <= 0)
             {
                 damagingPlayer.GetComponent<Zombie>().CallZombieInfect(__instance.GetComponent<Player>());
             }
+        }
+    }
+    [HarmonyPriority(Priority.VeryHigh)]
+    [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
+    class HealthHandler_Patch_DoDamage_TRT_Zombie
+    {
+        // zombies deal 50% damage with all non-claw weapons
+        private static void Prefix(HealthHandler __instance, ref Vector2 damage, GameObject damagingWeapon = null, Player damagingPlayer = null)
+        {
+            if (damagingPlayer?.data is null || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
 
+            // if the weapon was not the claw and the player is a zombie, do 50% damage instead
+            if (!(damagingWeapon?.GetComponent<ClawSlash>()?.isActiveAndEnabled ?? false) && damagingPlayer.GetComponent<Zombie>() != null)
+            {
+                damage = 0.5f * damage;
+            }
         }
     }
  
-    [HarmonyPriority(Priority.First)]
+    [HarmonyPriority(Priority.VeryHigh)]
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_Karma
     {
@@ -43,7 +59,7 @@ namespace GameModeCollection.Patches
             damage = damagingPlayer.data.TRT_Karma() * damage;
         }
     }
-    [HarmonyPriority(Priority.First)]
+    [HarmonyPriority(Priority.VeryHigh)]
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_Assassin
     {

@@ -5,6 +5,9 @@ using GameModeCollection.GameModeHandlers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnboundLib.Networking;
+using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.Objects;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class ZombieRoleHandler : IRoleHandler
@@ -16,8 +19,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public Color WinColor => Zombie.RoleAppearance.Color;
         public string RoleName => ZombieRoleName;
         public string RoleID => ZombieRoleID;
-        public int MinNumberOfPlayersForRole => 5;
-        public float Rarity => 0.1f;
+        public int MinNumberOfPlayersForRole => 0;//5;
+        public float Rarity => 1f;//0.1f;
         public string[] RoleIDsToOverwrite => new string[] { "GM_TRT_Traitor", "GM_TRT_Vampire", "GM_TRT_Hypnotist", "GM_TRT_Assassin" };
         public Alignment? AlignmentToReplace => Alignment.Traitor;
         public void AddRoleToPlayer(Player player)
@@ -25,15 +28,38 @@ namespace GameModeCollection.GameModes.TRT.Roles
             player.gameObject.GetOrAddComponent<Zombie>();
         }
     }
-    public class Zombie : Traitor
+    public class Zombie : TRT_Role
     {
-        new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Traitor, "Zombie", 'Z', GM_TRT.ZombieColor);
+        public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Traitor, "Zombie", 'Z', GM_TRT.ZombieColor);
+        public static readonly Alignment RoleAlignment = Alignment.Traitor;
 
-        public override int MaxCards => 0;
-
+        public override int MaxCards => GM_TRT.BaseMaxCards;
+        public override Alignment Alignment => Zombie.RoleAlignment;
         public override TRT_Role_Appearance Appearance => Zombie.RoleAppearance;
 
         private List<int> playerIDsKilled = new List<int>() { };
+        public override float BaseHealth => GM_TRT.BaseHealth;
+
+        public override bool CanDealDamageAndTakeEnvironmentalDamage => true;
+
+        public override float KarmaChange { get; protected set; } = 0f;
+
+        public override bool AlertAlignment(Alignment alignment)
+        {
+            switch (alignment)
+            {
+                case Alignment.Innocent:
+                    return false;
+                case Alignment.Traitor:
+                    return true;
+                case Alignment.Chaos:
+                    return false;
+                case Alignment.Killer:
+                    return false;
+                default:
+                    return false;
+            }
+        }
 
         public override TRT_Role_Appearance AppearToAlignment(Alignment alignment)
         {
@@ -57,11 +83,22 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
             this.playerIDsKilled = new List<int>() { };
 
-            // zombies cannot have cards, for now
-            this.GetComponent<Player>()?.InvokeMethod("FullReset");
-            if (this.GetComponent<PhotonView>().IsMine)
+            // zombies always spawn with claws
+            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false))
             {
-                ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar();
+                NetworkingManager.RPC(typeof(Zombie), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID);
+            }
+
+        }
+        [UnboundRPC]
+        private static void RPCA_AddCardToPlayer(int playerID)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
+            if (player is null) { return; }
+            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, ClawCard.Card, addToCardBar: false);
+            if (player.data.view.IsMine)
+            {
+                CardItemHandler.ClientsideAddToCardBar(player.playerID, ClawCard.Card);
             }
         }
         public void CallZombieInfect(Player killedPlayer)
@@ -109,6 +146,32 @@ namespace GameModeCollection.GameModes.TRT.Roles
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
             player.data.healthHandler.Revive(true);
+        }
+        public override void OnCorpseInteractedWith(Player player)
+        {
+        }
+
+        public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
+        {
+            corpse.SearchBody(this.GetComponent<Player>(), false);
+        }
+
+        public override void OnKilledByPlayer(Player killingPlayer)
+        {
+        }
+
+        public override void OnKilledPlayer(Player killedPlayer)
+        {
+            // punish RDM
+            if (killedPlayer?.GetComponent<TRT_Role>()?.Alignment == this.Alignment)
+            {
+                KarmaChange -= GM_TRT.KarmaPenaltyPerRDM;
+            }
+        }
+
+        public override bool WinConditionMet(Player[] playersRemaining)
+        {
+            return playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Traitor || a == Alignment.Chaos);
         }
     }
 }

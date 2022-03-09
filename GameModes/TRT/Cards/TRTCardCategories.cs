@@ -5,6 +5,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
     {
         public readonly static CardCategory TRT_Traitor = CustomCardCategories.instance.CardCategory("TRT_Traitor");
         public readonly static CardCategory TRT_Detective = CustomCardCategories.instance.CardCategory("TRT_Detective");
+        public readonly static CardCategory TRT_Zombie = CustomCardCategories.instance.CardCategory("TRT_Zombie");
         public readonly static CardCategory TRT_Slot_0 = CustomCardCategories.instance.CardCategory("TRT_Slot_0");
         public readonly static CardCategory TRT_Slot_1 = CustomCardCategories.instance.CardCategory("TRT_Slot_1");
         public readonly static CardCategory TRT_Slot_2 = CustomCardCategories.instance.CardCategory("TRT_Slot_2");

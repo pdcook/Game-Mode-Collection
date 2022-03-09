@@ -31,12 +31,12 @@ namespace GameModeCollection.GameModes.TRT.Cards
     {
         internal static CardInfo Card = null;
         /*
-         * TRT Zombie card - switch to the claws with [item 5] - cannot be discarded
+         * TRT Zombie card - switch to the claws with [item 2] - cannot be discarded
          */
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_5, CardItem.IgnoreMaxCardsCategory, CardItem.CannotDiscard };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Zombie, TRTCardCategories.TRT_Slot_2, TRTCardCategories.TRT_DoNotDropOnDeath, CardItem.IgnoreMaxCardsCategory, CardItem.CannotDiscard };
             statModifiers.AddObjectToPlayer = A_ClawPrefab.Claw;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
@@ -135,7 +135,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             this.SlashTimer -= TimeHandler.deltaTime;
             this.SwitchTimer -= TimeHandler.deltaTime;
-            if (this.SwitchTimer <= 0f && this.Player.data.playerActions.ItemWasPressed(5))
+            if (this.SwitchTimer <= 0f && this.Player.data.playerActions.ItemWasPressed(2))
             {
                 this.SwitchTimer = this.IsOut ? 0f : SwitchDelay;
                 this.IsOut = !this.IsOut;
@@ -197,9 +197,11 @@ namespace GameModeCollection.GameModes.TRT.Cards
         private A_Claw Claw;
         private const float SlashDuration = 0.25f;
         private float SlashTimer = 0f;
+        private bool CanDoDamage = false;
         Holdable holdable;
         Player Player;
         GeneralInput Input;
+        public bool IsOut => this.Claw.IsOut;
         void Start()
         {
             this.Player = this.transform.root.GetComponent<Holdable>().holder.GetComponent<Player>();
@@ -210,6 +212,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             if (!this.Claw.IsOut) { return; }
             this.SlashTimer = SlashDuration;
+            this.CanDoDamage = true;
             this.DoSlashAnim();
             if (this.Player.data.view.IsMine)
             {
@@ -232,11 +235,12 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             if (this.holdable is null) { this.holdable = base.transform.root.GetComponent<Holdable>(); }
             bool left = this.transform.root.position.x - 0.1f < this.holdable.holder.transform.position.x;
-            this.transform.root.position += 0.707f*(-this.transform.right + (left ? 1f : -1f) * this.transform.up);
-            for (int _ = 0; _ < 5; _++)
+            this.transform.root.position += 0.75f*0.707f*(-this.transform.right + (left ? 1f : -1f) * this.transform.up);
+            for (int _ = 0; _ < 10; _++)
             {
+                left = this.transform.root.position.x - 0.1f < this.holdable.holder.transform.position.x;
                 yield return new WaitForEndOfFrame();
-                this.transform.root.position += (left ? -1f : 1f) * this.transform.up / 10f;
+                this.transform.root.position += 0.5f*0.707f * (-this.transform.right + (left ? -1f : 1f) * this.transform.up);
             }
             yield break;
         }
@@ -253,8 +257,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if (this.SlashTimer <= 0f || !this.Player.data.view.IsMine) { return; }
             if (collider2D?.GetComponent<Player>() != null
                 && !collider2D.GetComponent<Player>().data.dead
-                && collider2D.GetComponent<Player>().playerID != this.Player.playerID)
+                && collider2D.GetComponent<Player>().playerID != this.Player.playerID
+                && this.CanDoDamage)
             {
+                this.CanDoDamage = false;
                 NetworkingManager.RPC(typeof(ClawSlash), nameof(RPCA_SlashPlayer), this.Player.playerID, collider2D.GetComponent<Player>().playerID);
             }
         }
@@ -265,7 +271,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
             Player slashingPlayer = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == slashingPlayerID);
             Player slashedPlayer = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == slashedPlayerID);
             if (slashedPlayer is null || slashingPlayer is null) { return; }
-            slashedPlayer.data.healthHandler.DoDamage(50f * slashingPlayer.data.weaponHandler.gun.shootPosition.forward, slashedPlayer.transform.position, Color.white, slashingPlayer.data?.weaponHandler?.gun?.transform?.GetChild(1)?.Find("TRT_Claw(Clone)")?.gameObject, slashingPlayer, false, true, true);
+            // 51 damage instead of 50 because players dont die until they are less than 0 hp
+            slashedPlayer.data.healthHandler.DoDamage(51f * slashingPlayer.data.weaponHandler.gun.shootPosition.forward, slashedPlayer.transform.position, Color.white, slashingPlayer.data?.weaponHandler?.gun?.transform?.GetChild(1)?.Find("TRT_Claw(Clone)")?.gameObject, slashingPlayer, false, true, true);
         }
     }
     class ClawMirror : MonoBehaviour
