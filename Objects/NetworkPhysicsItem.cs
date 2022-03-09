@@ -9,6 +9,7 @@ using GameModeCollection.GameModes;
 using Photon.Pun;
 using Sonigon;
 using System;
+using UnityEngine.SceneManagement;
 
 namespace GameModeCollection.Objects
 {

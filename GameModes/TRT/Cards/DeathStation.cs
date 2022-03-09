@@ -56,7 +56,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return null;
+            return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_DEATHSTATION");
         }
 
         protected override CardInfo.Rarity GetRarity()

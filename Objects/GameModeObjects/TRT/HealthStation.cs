@@ -49,7 +49,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	{
 		private const float TriggerRadius = 2f;
 
-        public override bool RemoveOnPointEnd { get => true; protected set => base.RemoveOnPointEnd = value; }
+        public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
 
         public bool IsPrefab { get; internal set; } = false;
 
@@ -102,7 +102,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		protected override void Awake()
 		{
 			this.PhysicalProperties = new ItemPhysicalProperties(mass: 80000f, bounciness: 0f,
-																	playerPushMult: 0f,
+																	playerPushMult: 100000f,
 																	playerDamageMult: 0f,
 																	collisionDamageThreshold: float.MaxValue,
 																	friction: 1f,

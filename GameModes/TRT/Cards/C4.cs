@@ -2,6 +2,7 @@
 using UnityEngine;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects.GameModeObjects.TRT;
+using GameModeCollection.Objects;
 using UnboundLib.Networking;
 using UnboundLib;
 using System.Linq;
@@ -35,7 +36,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_0 };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_0, CardItem.IgnoreMaxCardsCategory};
             statModifiers.AddObjectToPlayer = A_C4Prefab.C4;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
@@ -56,7 +57,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return null;
+            return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_C4");
         }
 
         protected override CardInfo.Rarity GetRarity()

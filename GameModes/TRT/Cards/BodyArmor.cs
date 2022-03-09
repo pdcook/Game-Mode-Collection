@@ -1,10 +1,6 @@
-﻿using UnboundLib.Cards;
+﻿using GameModeCollection.Objects;
+using UnboundLib.Cards;
 using UnityEngine;
-using GameModeCollection.Extensions;
-using GameModeCollection.Objects.GameModeObjects.TRT;
-using UnboundLib.Networking;
-using UnboundLib;
-using System.Linq;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -14,7 +10,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_DoNotDropOnDeath };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_DoNotDropOnDeath, CardItem.IgnoreMaxCardsCategory };
 
             // double health
             statModifiers.health = 2f;
@@ -37,7 +33,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return null;
+            return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_BODYARMOR");
         }
 
         protected override CardInfo.Rarity GetRarity()

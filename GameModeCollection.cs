@@ -41,6 +41,7 @@ namespace GameModeCollection
         public static GameModeCollection instance;
 
         internal static AssetBundle TRT_Assets;
+        internal static AssetBundle TRT_Card_Assets;
 
         private Harmony harmony;
 
@@ -110,6 +111,19 @@ namespace GameModeCollection
             {
                 // ignored
             }
+            try
+            {
+                TRT_Card_Assets = AssetUtils.LoadAssetBundleFromResources("trt_card_assets", typeof(GameModeCollection).Assembly);
+                if (TRT_Card_Assets == null)
+                {
+                    LogError("TRT Card Assets failed to load.");
+                }
+            }
+            catch
+            {
+                // ignored
+            }
+
 
             // add credits
             Unbound.RegisterCredits(ModName, new string[] { "Pykess (Crown Control, Trouble In Rounds Town, Dodgeball, Physics Items, MapEmbiggener)", "BossSloth (Hide & Seek, LocalZoom, MapEmbiggener)", " ", "Special Thanks To", "Willuwontu (TRT shop, sound effects, TRT Map)","TheCoconutDream (TRT Card Art)","LMS (TRT Maps)", "Ascyst (TRT Maps)" }, new string[] { "github", "Support Pykess", "Support BossSloth" }, new string[] { "https://github.com/pdcook/Game-Mode-Collection", "https://ko-fi.com/pykess", "https://www.buymeacoffee.com/BossSloth" });
@@ -122,6 +136,9 @@ namespace GameModeCollection
 
             // hooks
             GameModeManager.AddHook(GameModeHooks.HookPointEnd, PhysicsItemRemover.RemoveItemsOnPointEnd);
+            GameModeManager.AddHook(GameModeHooks.HookPointEnd, A_Radar.DestroyAllPointsOnPointEnd);
+            GameModeManager.AddHook(GameModeHooks.HookPointEnd, A_Knife.RemoveAllKnives);
+            GameModeManager.AddHook(GameModeHooks.HookPointStart, A_Knife.RemoveAllKnives);
 
             // Pykess game mode stuff
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());

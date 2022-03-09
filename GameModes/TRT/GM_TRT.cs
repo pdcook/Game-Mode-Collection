@@ -107,7 +107,7 @@ namespace GameModeCollection.GameModes
         internal static GM_TRT instance;
 
         private const float RoundTime = 300f; // default 300f
-        private const float PrepPhaseTime = 30f; // default 30f
+        private const float PrepPhaseTime = 1f;//30f; // default 30f
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 

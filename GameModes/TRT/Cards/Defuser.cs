@@ -34,7 +34,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return null;
+            return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_DEFUSER"); // (sic)
         }
 
         protected override CardInfo.Rarity GetRarity()

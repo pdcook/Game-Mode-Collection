@@ -9,7 +9,9 @@ using UnboundLib;
 using System.Linq;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
 using MapEmbiggener.Controllers;
+using UnboundLib.GameModes;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -74,7 +76,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return null;
+            return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_RADAR");
         }
 
         protected override CardInfo.Rarity GetRarity()
@@ -131,6 +133,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         private Player Player;
         private RadarTimer Timer;
         private List<GameObject> RadarPoints = new List<GameObject>() { };
+        internal static List<GameObject> AllRadarPoints = new List<GameObject>(){};
         void Start()
         {
             this.Player = this.GetComponentInParent<Player>();
@@ -157,6 +160,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 RadarPoint.GetComponent<RadarPoint>().SetTracked(player);
                 RadarPoint.GetComponent<RadarPoint>().SetPrefab(false);
                 this.RadarPoints.Add(RadarPoint);
+                AllRadarPoints.Add(RadarPoint);
 
             });
         }
@@ -173,6 +177,18 @@ namespace GameModeCollection.GameModes.TRT.Cards
             }
             this.RadarPoints.Clear();
         }
+        internal static IEnumerator DestroyAllPointsOnPointEnd(IGameModeHandler gm)
+        {
+            foreach (GameObject point in AllRadarPoints)
+            {
+                if (point is null) { continue; }
+                GameObject.Destroy(point);
+            }
+            AllRadarPoints.Clear();
+
+            yield break;
+        }
+
     }
     class RadarPoint : MonoBehaviour
     {

@@ -32,16 +32,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 					c4.AddComponent<C4Handler>();
 					c4.name = "C4Prefab";
 
-					/*
-					GameObject Clock = new GameObject("C4 Clock",typeof(TextMeshPro));
-					Clock.GetComponent<TextMeshPro>().color = Color.red;
-					Clock.transform.SetParent(c4.transform);
-					Clock.transform.localPosition = Vector3.zero;
-					Clock.transform.localScale = Vector3.one;
-					Clock.GetComponent<TextMeshPro>().enabled = false;
-					Clock.GetComponent<TextMeshPro>().alignment = TextAlignmentOptions.Center;
-					Clock.GetComponent<TextMeshPro>().fontSize = 10;*/
-
 					c4.GetComponent<C4Handler>().IsPrefab = true;
 
 					GameModeCollection.Log("C4 Prefab Instantiated");
@@ -65,7 +55,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		public static readonly Color FinishDefuseFillColor = new Color32(0, 230, 0, 26);
 
 		private const float TriggerRadius = 1.5f;
-        public override bool RemoveOnPointEnd { get => true; protected set => base.RemoveOnPointEnd = value; }
+        public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
         public bool IsPrefab { get; internal set; } = false;
 
 		public bool IsDefusing { get; private set; } = false;
@@ -74,6 +64,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		private float TimeDefused = 0f;
 
 		public float Time { get; private set; } = float.MaxValue;
+		public bool Armed { get; private set; } = true;
 		public int PlacerID { get; private set; } = -1;
 
 		private GameObject DefusalTimerObject;
@@ -127,6 +118,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		protected override void Start()
 		{
 			base.Start();
+
+			this.Armed = true;
 
 			this.Trig.radius = C4Handler.TriggerRadius;
 			this.Col.size = new Vector2(2f, 0.65f);
@@ -184,24 +177,42 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		private int blink = 1;
 		protected override void Update()
         {
-			this.Time -= TimeHandler.deltaTime;
-
-			if (this.IsDefusing) { this.TimeDefused += TimeHandler.deltaTime; }
-            else { this.TimeDefused = 0f; }
-
-			this.DefusalTimerEffect.DefuseProgress(this.DefuseProgress);
-
-            base.Update();
-
-			this.BlinkTimer -= TimeHandler.deltaTime;
-			if (this.BlinkTimer < 0f)
+			if (this.Armed)
             {
-				this.BlinkTimer = BlinkEvery;
-				this.blink *= -1;
+                this.Time -= TimeHandler.deltaTime;
+
+                if (this.IsDefusing) { this.TimeDefused += TimeHandler.deltaTime; }
+                else { this.TimeDefused = 0f; }
+
+                this.BlinkTimer -= TimeHandler.deltaTime;
+                if (this.BlinkTimer < 0f)
+                {
+                    this.BlinkTimer = BlinkEvery;
+                    this.blink *= -1;
+                }
+
+				if (this.DefuseProgress >= 1f)
+                {
+					this.View.RPC(nameof(this.RPCA_Defuse), RpcTarget.All);
+                }
+
+				if (this.Time <= 0f && this.View.IsMine)
+                {
+					this.View.RPC(nameof(this.RPCA_Explode), RpcTarget.All);
+                }
+
+            }
+			else
+            {
+				this.TimeDefused = 0f;
             }
 
-			this.Renderer.color = this.blink > 0 ? Color.red : Color.clear;
-        }
+            this.DefusalTimerEffect.DefuseProgress(this.DefuseProgress);
+
+            this.Renderer.color = this.Armed ? (this.blink > 0 ? Color.red : Color.clear) : Color.green;
+
+            base.Update();
+		}
         protected internal override void OnTriggerStay2D(Collider2D collider2D)
         {
 			if (collider2D?.GetComponent<Player>() != null
@@ -232,19 +243,32 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
         }
 
         private const string SyncedTimeKey = "C4_Time";
+        private const string SyncedArmedKey = "C4_Armed";
 
 		protected override void SetDataToSync()
 		{
 			this.SetSyncedFloat(SyncedTimeKey, this.Time);
+			this.SetSyncedInt(SyncedArmedKey, this.Armed ? 1 : 0);
 		}
 		protected override void ReadSyncedData()
 		{
 			// syncing
 			this.Time = this.GetSyncedFloat(SyncedTimeKey, this.Time);
+			this.Armed = this.GetSyncedInt(SyncedArmedKey, this.Armed ? 1 : 0) == 1;
 		}
         protected override bool SyncDataNow()
         {
 			return true;
+        }
+		[PunRPC]
+		private void RPCA_Defuse()
+        {
+			this.Armed = false;
+        }
+		[PunRPC]
+		private void RPCA_Explode()
+        {
+
         }
     }
 	class DefusalTimerEffect : MonoBehaviour
@@ -271,6 +295,10 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             this.fill.gameObject.SetActive(true);
             this.outerRing.gameObject.SetActive(true);
             this.backRing.gameObject.SetActive(false);
+			foreach (SpriteRenderer sprite in this.gameObject.GetComponentsInChildren<SpriteRenderer>(true))
+            {
+				sprite.sortingLayerID = SortingLayer.NameToID("Player10");
+            }
 
 			this.outerRing.fillAmount = 0f;
 			this.fill.fillAmount = 0f;

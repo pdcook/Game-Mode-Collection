@@ -144,6 +144,7 @@
     <Compile Include="Extensions\CharacterCreatorItemLoader.cs" />
     <Compile Include="Extensions\CharacterData.cs" />
     <Compile Include="Extensions\GameObject.cs" />
+    <Compile Include="Extensions\Gun.cs" />
     <Compile Include="Extensions\HealthHandler.cs" />
     <Compile Include="Extensions\MapManager.cs" />
     <Compile Include="Extensions\PlayerActions.cs" />
@@ -221,6 +222,7 @@
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\GamefeelManager.cs" />
     <Compile Include="Patches\GeneralInput.cs" />
+    <Compile Include="Patches\Gun.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
     <Compile Include="Patches\MapsExtended_UpdateMapFiles.cs" />
     <Compile Include="Patches\PlayerActions.cs" />
@@ -254,6 +256,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AssetsEmbedded\trt_assets" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AssetsEmbedded\trt_card_art" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
