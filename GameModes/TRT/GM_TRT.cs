@@ -685,11 +685,13 @@ namespace GameModeCollection.GameModes
             if (winningRoleID is null)
             {
                 this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
+                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendChat(null, "<b>DRAW - NOBODY WINS</b>", false); }
             }
             else
             {
                 IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
                 this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
             }
 
             yield return new WaitForSecondsRealtime(1f);
@@ -735,11 +737,13 @@ namespace GameModeCollection.GameModes
             if (winningRoleID is null)
             {
                 this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
+                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendChat(null, "<b>DRAW - NOBODY WINS</b>", false); }
             }
             else
             {
                 IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
                 this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
             }
 
             yield return new WaitForSecondsRealtime(1f);
@@ -784,11 +788,13 @@ namespace GameModeCollection.GameModes
             if (winningRoleID is null)
             {
                 this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
+                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendChat(null, "<b>DRAW - NOBODY WINS</b>", false); }
             }
             else
             {
                 IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
                 this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
             }
 
             yield return new WaitForSecondsRealtime(1f);

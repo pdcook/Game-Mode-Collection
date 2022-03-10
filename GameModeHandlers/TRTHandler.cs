@@ -273,7 +273,16 @@ namespace GameModeCollection.GameModeHandlers
             BetterChat.BetterChat.GroupSettings TraitorChatGroup = new BetterChat.BetterChat.GroupSettings(CanReceiveTraitorChat, KeyCode.V, canSeeGroup: CanSeeTraitorGroup);
             BetterChat.BetterChat.CreateGroup("Traitors", TraitorChatGroup);
         }
-
+        public static void SendPointOverChat(IRoleHandler winningRole)
+        {
+            SendChat(null, GetColoredString(winningRole.WinMessage, winningRole.WinColor, true), false);
+        }
+        public static string GetColoredString(string str, Color color, bool bold = false)
+        {
+            string res = $"<color=#{ColorUtility.ToHtmlStringRGBA(color)}>{str}</color>";
+            if (bold) { res = $"<b>{res}</b>"; }
+            return res;
+        }
         public static void SendChat(Player player, string message, bool local = false)
         {
             if (player is null)
