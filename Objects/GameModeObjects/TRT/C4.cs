@@ -61,6 +61,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	}
 	public class C4Handler : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
 	{
+		public const float ExplosionVolume = 1f;
+
 		public const float InnerExplosionDamage = 1000f;
 		public const float OuterExplosionDamage = 70f;
 		public const float InnerExplosionRange = 25f;
@@ -100,6 +102,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		private GameObject DefusalTimerObject;
 		private DefusalTimerEffect DefusalTimerEffect;
 		private SoundEvent BeepSound = null;
+		private SoundEvent ExplosionSound = null;
 
 		internal SpriteRenderer Renderer => this.transform.GetChild(0).GetComponent<SpriteRenderer>();
 		public override void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -179,6 +182,9 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             soundContainer.audioClip[0] = sound;
             this.BeepSound = ScriptableObject.CreateInstance<SoundEvent>();
             this.BeepSound.soundContainerArray[0] = soundContainer;
+
+			// load explosion sound
+			this.ExplosionSound = CardManager.cards.Values.Select(card => card.cardInfo).Where(card => card.cardName.ToLower() == "EXPLOSIVE BULLET".ToLower()).First().GetComponent<Gun>().soundImpactModifier.impactEnvironment;
 
 			// ring for defusal progress
 
@@ -316,6 +322,9 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		[PunRPC]
 		private void RPCA_Explode()
         {
+			// play sound
+			SoundManager.Instance.Play(this.ExplosionSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * ExplosionVolume) });
+
 			this.Exploded = true;
 			// spawn two explosions
 			// - one that is smaller, more powerful, and respects walls
