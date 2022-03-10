@@ -410,6 +410,7 @@ namespace GameModeCollection.GameModes
         }
         private IEnumerator PlayerDropCard(Player player, CardInfo card)
         {
+            if (!this.battleOngoing) { yield break; }
             Vector2 velocty = (Vector2)player.data.playerVel.GetFieldValue("velocity");
             yield return CardItem.MakeCardItem(card,
                                                 player.data.playerVel.position,
@@ -422,6 +423,7 @@ namespace GameModeCollection.GameModes
         {
             foreach (CardInfo card in cardsToDrop.Where(c => !c.categories.Contains(TRTCardCategories.TRT_DoNotDropOnDeath)))
             {
+                if (!this.battleOngoing) { yield break; }
                 yield return new WaitForSecondsRealtime(TimeBetweenCardDrops);
                 yield return this.PlayerDropCard(player, card);
             }

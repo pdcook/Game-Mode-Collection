@@ -136,8 +136,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
     {
         private const float RepeatInputDelay = 0.1f;
         private const float StepSize = 15f;
-        private const float MinTime = 30f;
-        private const float MaxTime = 300f;
         Slider Slider;
         Player Player;
         bool HasSet = false;
@@ -159,6 +157,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.Slider = this.GetComponentInChildren<Slider>();
             this.Timer = this.transform.GetChild(1).GetChild(2).GetComponent<TextMeshProUGUI>();
             this.HasSet = false;
+            this.Slider.minValue = C4Handler.MinTime;
+            this.Slider.maxValue = C4Handler.MaxTime;
         }
         internal void SetPlayer(Player player)
         {
@@ -187,7 +187,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 if (this.repeatInputTimer <= 0f)
                 {
                     this.repeatInputTimer = RepeatInputDelay;
-                    this.Slider.value = Mathf.Clamp(this.Slider.value - StepSize, MinTime, MaxTime);
+                    this.Slider.value = Mathf.Clamp(this.Slider.value - StepSize, C4Handler.MinTime, C4Handler.MaxTime);
                 }
             }
             else if (this.Player.data.playerActions.Right.IsPressed)
@@ -195,7 +195,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 if (this.repeatInputTimer <= 0f)
                 {
                     this.repeatInputTimer = RepeatInputDelay;
-                    this.Slider.value = Mathf.Clamp(this.Slider.value + StepSize, MinTime, MaxTime);
+                    this.Slider.value = Mathf.Clamp(this.Slider.value + StepSize, C4Handler.MinTime, C4Handler.MaxTime);
                 }
             }
             else

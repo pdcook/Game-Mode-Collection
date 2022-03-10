@@ -206,7 +206,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         Holdable holdable;
         Player Player;
         GeneralInput Input;
-        void Start()
+        void OnEnable()
         {
             this.Player = this.transform.root.GetComponent<Holdable>().holder.GetComponent<Player>();
             this.Knife = this.Player.GetComponentInChildren<A_Knife>();
@@ -277,12 +277,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
         private const float RightRot = 235f;
         private bool Spinning = false;
         private float SpinTimer = 0f;
-        void Start()
-        {
-            this.holdable = base.transform.root.GetComponent<Holdable>();
-        }
         void OnEnable()
         {
+            this.holdable = base.transform.root.GetComponent<Holdable>();
+
             // do a quick 360 when first pulled out
             this.Spinning = true;
             this.SpinTimer = A_Knife.SwitchDelay;

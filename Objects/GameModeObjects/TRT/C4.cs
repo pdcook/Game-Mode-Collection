@@ -13,6 +13,8 @@ using UnboundLib.Networking;
 using GameModeCollection.Extensions;
 using UnboundLib.Utils;
 using UnityEngine.UI.ProceduralImage;
+using Sonigon;
+using Sonigon.Internal;
 
 namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
@@ -44,11 +46,28 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				return C4Prefab._C4;
 			}
 		}
-
-
+		private static GameObject _C4Explosion = null;
+		public static GameObject C4Explosion
+        {
+			get
+            {
+				if (C4Prefab._C4Explosion is null)
+                {
+					_C4Explosion = CardManager.cards.Values.Select(card => card.cardInfo).Where(card => card.cardName.ToLower() == "EXPLOSIVE BULLET".ToLower()).First().GetComponent<Gun>().objectsToSpawn[0].effect;
+				}
+				return C4Prefab._C4Explosion;
+            }
+        }
 	}
 	public class C4Handler : NetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
 	{
+		public const float InnerExplosionDamage = 1000f;
+		public const float OuterExplosionDamage = 70f;
+		public const float InnerExplosionRange = 25f;
+		public const float OuterExplosionRange = 100f;
+
+		public const float MinTime = 30f;
+		public const float MaxTime = 300f;
 		public static readonly Color StartDefuseColor = new Color32(230, 0, 0, 255);
 		public static readonly Color StartDefuseFillColor = new Color32(230, 0, 0, 26);
 		public static readonly Color FinishDefuseColor = new Color32(0, 230, 0, 255);
@@ -58,17 +77,29 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
         public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
         public bool IsPrefab { get; internal set; } = false;
 
+		// when set for the minimum time, the c4 will beep loudly every 1 second
+		// when set for the maximum time, the c4 will beep quietly every 10 seconds
+		public float BeepIntensity => Mathf.Lerp(1f, 0.1f, (this.TotalTime - MinTime) / MaxTime);
+		public float BeepEvery => Mathf.Lerp(1f, 10f, (this.TotalTime - MinTime) / MaxTime);
+		public float BeepTimer = 0f;
+		private const float BlinkEvery = 1f;
+		private float BlinkTimer = BlinkEvery;
+		private int blink = 1; // +1 for on, -1 for off
+
 		public bool IsDefusing { get; private set; } = false;
-		public float TimeToDefuse { get; private set; } = 10f; // will depend on how long the C4's detonation timer was set for
+		public float TimeToDefuse => this.TotalTime / 20f; // takes 1 20th as long to defuse as it was set for
 		public float DefuseProgress => this.TimeDefused / this.TimeToDefuse;
 		private float TimeDefused = 0f;
 
+		public float TotalTime { get; private set; } = float.MaxValue;
 		public float Time { get; private set; } = float.MaxValue;
 		public bool Armed { get; private set; } = true;
+		public bool Exploded { get; private set; } = false;
 		public int PlacerID { get; private set; } = -1;
 
 		private GameObject DefusalTimerObject;
 		private DefusalTimerEffect DefusalTimerEffect;
+		private SoundEvent BeepSound = null;
 
 		internal SpriteRenderer Renderer => this.transform.GetChild(0).GetComponent<SpriteRenderer>();
 		public override void OnPhotonInstantiate(PhotonMessageInfo info)
@@ -76,7 +107,10 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			object[] data = info.photonView.InstantiationData;
 
 			this.PlacerID = (int)data[0];
+			this.TotalTime = (float)data[1];
 			this.Time = (float)data[1];
+
+			this.BeepTimer = this.BeepEvery;
 		}
 		internal static IEnumerator MakeC4Handler(int placerID, float time, Vector3 position, Quaternion rotation)
 		{
@@ -120,6 +154,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			base.Start();
 
 			this.Armed = true;
+			this.Exploded = false;
 
 			this.Trig.radius = C4Handler.TriggerRadius;
 			this.Col.size = new Vector2(2f, 0.65f);
@@ -137,6 +172,14 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				this.gameObject.SetActive(true);
             }
 
+			// load beep sound
+            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("BombBeep.ogg");
+            SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+            soundContainer.setting.volumeIntensityEnable = true;
+            soundContainer.audioClip[0] = sound;
+            this.BeepSound = ScriptableObject.CreateInstance<SoundEvent>();
+            this.BeepSound.soundContainerArray[0] = soundContainer;
+
 			// ring for defusal progress
 
 			var abyssalCard = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("AbyssalCountdown")).cardInfo;
@@ -144,7 +187,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			var abyssalObj = statMods.AddObjectToPlayer;
 
 			this.DefusalTimerObject = Instantiate(abyssalObj, this.transform);
-			this.DefusalTimerObject.name = "A_TRT_VampireEffects";
+			this.DefusalTimerObject.name = "DefusalTimerEffects";
 			this.DefusalTimerObject.transform.localPosition = Vector3.zero;
 
 			AbyssalCountdown abyssal = this.DefusalTimerObject.GetComponent<AbyssalCountdown>();
@@ -172,24 +215,29 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			this.DefusalTimerObject.transform.Find("Canvas/Size/BackRing").GetComponent<ProceduralImage>().color = Color.clear;
 
 		}
-		private const float BlinkEvery = 1f;
-		private float BlinkTimer = BlinkEvery;
-		private int blink = 1;
 		protected override void Update()
         {
-			if (this.Armed)
+			if (this.Armed && !this.Exploded)
             {
                 this.Time -= TimeHandler.deltaTime;
 
                 if (this.IsDefusing) { this.TimeDefused += TimeHandler.deltaTime; }
                 else { this.TimeDefused = 0f; }
 
-                this.BlinkTimer -= TimeHandler.deltaTime;
-                if (this.BlinkTimer < 0f)
+                this.BeepTimer -= TimeHandler.deltaTime;
+                if (this.BeepTimer < 0f)
                 {
-                    this.BlinkTimer = BlinkEvery;
+                    this.BeepTimer = this.BeepEvery;
+					// do beep
+					SoundManager.Instance.Play(this.BeepSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * this.BeepIntensity) });
+                }
+				this.BlinkTimer -= TimeHandler.deltaTime;
+				if (this.BlinkTimer < 0f)
+                {
+					this.BlinkTimer = BlinkEvery;
                     this.blink *= -1;
                 }
+
 
 				if (this.DefuseProgress >= 1f)
                 {
@@ -209,7 +257,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
             this.DefusalTimerEffect.DefuseProgress(this.DefuseProgress);
 
-            this.Renderer.color = this.Armed ? (this.blink > 0 ? Color.red : Color.clear) : Color.green;
+            this.Renderer.color = !this.Exploded ? (this.Armed ? (this.blink > 0 ? Color.red : Color.clear) : Color.green) : Color.clear;
 
             base.Update();
 		}
@@ -268,7 +316,46 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		[PunRPC]
 		private void RPCA_Explode()
         {
+			this.Exploded = true;
+			// spawn two explosions
+			// - one that is smaller, more powerful, and respects walls
+			// - one that is larger, less powerful, and goes through walls
+			GameObject innerExplosionObj = GameObject.Instantiate(C4Prefab.C4Explosion, this.transform.position, Quaternion.identity);
+			GameObject outerExplosionObj = GameObject.Instantiate(C4Prefab.C4Explosion, this.transform.position, Quaternion.identity);
+			Explosion innerExpl = innerExplosionObj.GetComponent<Explosion>();
+			Explosion outerExpl = outerExplosionObj.GetComponent<Explosion>();
+			innerExplosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
+			outerExplosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
 
+			innerExpl.ignoreTeam = false;
+			innerExpl.ignoreWalls = false;
+			innerExpl.scaleDmg = false;
+			innerExpl.scaleForce = false;
+			innerExpl.scaleRadius = false;
+			innerExpl.scaleSilence = false;
+			innerExpl.scaleSlow = false;
+			innerExpl.scaleStun = false;
+			innerExpl.auto = true;
+
+			outerExpl.ignoreTeam = false;
+			outerExpl.ignoreWalls = true;
+			outerExpl.scaleDmg = false;
+			outerExpl.scaleForce = false;
+			outerExpl.scaleRadius = false;
+			outerExpl.scaleSilence = false;
+			outerExpl.scaleSlow = false;
+			outerExpl.scaleStun = false;
+			outerExpl.auto = true;
+
+			innerExpl.damage = InnerExplosionDamage;
+			outerExpl.damage = OuterExplosionDamage;
+			innerExpl.range = InnerExplosionRange;
+			outerExpl.range = OuterExplosionRange;
+
+			innerExplosionObj.SetActive(true);
+			outerExplosionObj.SetActive(true);
+
+			Destroy(this.gameObject);
         }
     }
 	class DefusalTimerEffect : MonoBehaviour

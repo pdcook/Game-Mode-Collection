@@ -202,7 +202,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         Player Player;
         GeneralInput Input;
         public bool IsOut => this.Claw.IsOut;
-        void Start()
+        void OnEnable()
         {
             this.Player = this.transform.root.GetComponent<Holdable>().holder.GetComponent<Player>();
             this.Claw = this.Player.GetComponentInChildren<A_Claw>();
@@ -284,7 +284,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         private static readonly Vector3 RightScale = new Vector3(-0.1f, -0.1f, 1f);
         private const float LeftRot = 300f;
         private const float RightRot = 235f;
-        void Start()
+        void OnEnable()
         {
             this.holdable = base.transform.root.GetComponent<Holdable>();
         }
