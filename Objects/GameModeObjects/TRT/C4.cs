@@ -140,12 +140,12 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		protected override void Awake()
 		{
 			this.PhysicalProperties = new ItemPhysicalProperties(mass: 80000f, bounciness: 0f,
-																	playerPushMult: 0f,
-																	playerDamageMult: 0f,
-																	collisionDamageThreshold: float.MaxValue,
-																	friction: 1f,
-																	impulseMult: 0f,
-																	forceMult: 0f, visibleThroughShader: false);
+														playerPushMult: 30000f,
+														playerDamageMult: 0f,
+														collisionDamageThreshold: float.MaxValue,
+														friction: 1f,
+														impulseMult: 0f,
+														forceMult: 1f, visibleThroughShader: false);
 
 			base.Awake();
 		}

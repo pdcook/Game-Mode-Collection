@@ -453,7 +453,7 @@ namespace GameModeCollection.Objects
 			float mult = 1f;
 			if (forceMode2D == ForceMode2D.Force) { mult = this.PhysicalProperties.PhysicsForceMult; }
 			if (forceMode2D == ForceMode2D.Impulse) { mult = this.PhysicalProperties.PhysicsImpulseMult; }
-				this.Rig.AddForceAtPosition(force * mult, point, forceMode2D);
+			this.Rig.AddForceAtPosition(force * mult, point, forceMode2D);
 		}
 
 		protected virtual void FixedUpdate()

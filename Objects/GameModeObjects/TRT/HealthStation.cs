@@ -11,6 +11,8 @@ using TMPro;
 using System;
 using UnboundLib.Networking;
 using GameModeCollection.Extensions;
+using Sonigon;
+using Sonigon.Internal;
 
 namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
@@ -49,6 +51,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	{
 		private const float TriggerRadius = 2f;
 
+		private const float Volume = 1f;
+
         public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
 
         public bool IsPrefab { get; internal set; } = false;
@@ -62,10 +66,17 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 		private const float AmountToHeal = 10f;
 		private const float Delay = 0.4f;
-		private float TimeUntilNextLocalHeal = 10f;
+		private float TimeUntilNextLocalHeal = 0f;
 
 		private float CheckOOBTimer = 0f;
 		private const float CheckOOBEvery = 1f;
+
+		private bool isHealing = false;
+		private int NumPlayersHealing = 0;
+		private bool ContinuousSoundPlaying = false;
+
+		private SoundEvent HealStartSound;
+		private SoundEvent HealContinuousSound;
 
 		public override void OnPhotonInstantiate(PhotonMessageInfo info)
 		{
@@ -102,17 +113,35 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		protected override void Awake()
 		{
 			this.PhysicalProperties = new ItemPhysicalProperties(mass: 80000f, bounciness: 0f,
-																	playerPushMult: 100000f,
+																	playerPushMult: 30000f,
 																	playerDamageMult: 0f,
 																	collisionDamageThreshold: float.MaxValue,
 																	friction: 1f,
 																	impulseMult: 0f,
-																	forceMult: 0f, visibleThroughShader: false);
+																	forceMult: 1f, visibleThroughShader: false);
 
 			base.Awake();
 		}
 		protected override void Start()
 		{
+			this.isHealing = false;
+			this.NumPlayersHealing = 0;
+			this.ContinuousSoundPlaying = false;
+
+			// load healstart and healcontinuous sounds
+			AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("HealthStationStart.ogg");
+			SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+			soundContainer.setting.volumeIntensityEnable = true;
+			soundContainer.audioClip[0] = sound;
+			this.HealStartSound = ScriptableObject.CreateInstance<SoundEvent>();
+			this.HealStartSound.soundContainerArray[0] = soundContainer;
+			AudioClip sound2 = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("HealthStationContinuous.ogg");
+			SoundContainer soundContainer2 = ScriptableObject.CreateInstance<SoundContainer>();
+			soundContainer2.setting.volumeIntensityEnable = true;
+			soundContainer2.setting.loopEnabled = true;
+			soundContainer2.audioClip[0] = sound2;
+			this.HealContinuousSound = ScriptableObject.CreateInstance<SoundEvent>();
+			this.HealContinuousSound.soundContainerArray[0] = soundContainer2;
 
 			base.Start();
 
@@ -156,9 +185,20 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
         }
         protected override void Update()
         {
-			this.TimeUntilNextLocalHeal = Mathf.Clamp(this.TimeUntilNextLocalHeal - TimeHandler.deltaTime, 0f, float.MaxValue);
+			this.TimeUntilNextLocalHeal -= TimeHandler.deltaTime;
 
 			this.Renderer.color = Color.Lerp(EmptyColor, FullColor, this.Health / this.MaxHealth);
+
+			if (this.TimeUntilNextLocalHeal <= -Delay/10f)
+            {
+				if (this.isHealing) { this.View.RPC(nameof(RPCA_PlayerStopHealing), RpcTarget.All); }
+				this.isHealing = false;
+            }
+			else
+            {
+				if (!this.isHealing) { this.View.RPC(nameof(RPCA_PlayerStartHealing), RpcTarget.All); }
+				this.isHealing = true;
+            }
 
 			base.Update();
 			this.CheckOOBTimer -= Time.deltaTime;
@@ -172,16 +212,40 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
                 }
 			}
 		}
+		[PunRPC]
+		private void RPCA_PlayerStartHealing()
+        {
+			SoundManager.Instance.Play(this.HealStartSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * Volume) });
+			if (!this.ContinuousSoundPlaying)
+            {
+				this.ContinuousSoundPlaying = true;
+				SoundManager.Instance.Play(this.HealContinuousSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * Volume) });
+            }
+			this.NumPlayersHealing++;
+        }
+		[PunRPC]
+		private void RPCA_PlayerStopHealing()
+        {
+			this.NumPlayersHealing = Mathf.Clamp(this.NumPlayersHealing - 1, 0, int.MaxValue);
+			if (this.NumPlayersHealing == 0)
+            {
+				this.ContinuousSoundPlaying = false;
+				SoundManager.Instance.Stop(this.HealContinuousSound, this.transform, true);
+            }
+        }
         private const string SyncedHealthKey = "HealthStation_Health";
+        private const string SyncedHealingKey = "HealthStation_Healing";
 
 		protected override void SetDataToSync()
 		{
 			this.SetSyncedFloat(SyncedHealthKey, this.Health);
+			this.SetSyncedInt(SyncedHealingKey, this.NumPlayersHealing);
 		}
 		protected override void ReadSyncedData()
 		{
 			// syncing
 			this.Health = this.GetSyncedFloat(SyncedHealthKey, this.Health);
+			this.NumPlayersHealing = this.GetSyncedInt(SyncedHealingKey, this.NumPlayersHealing);
 		}
         protected override bool SyncDataNow()
         {
