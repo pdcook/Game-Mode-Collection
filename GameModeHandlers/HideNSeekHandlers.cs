@@ -8,6 +8,8 @@ namespace GameModeCollection.GameModeHandlers
         internal const string GameModeName = "Hide & Seek";
         internal const string GameModeID = "Hide & Seek";
 
+        public override bool OnlineOnly => true;
+
         public HideNSeekHandler() : base(
             name: GameModeName,
             gameModeId: GameModeID,

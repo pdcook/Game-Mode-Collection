@@ -33,6 +33,7 @@ namespace GameModeCollection.GameModeHandlers
 
         internal const string GameModeName = "Trouble in Rounds Town";
         internal const string GameModeID = "TroubleInRoundsTown";
+        public override bool OnlineOnly => true;
         public override GameSettings Settings { get; protected set; }
 
         private static float TimeLastSent = -1f;
