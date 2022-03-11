@@ -19,8 +19,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public Color WinColor => Traitor.RoleAppearance.Color;
         public string RoleName => Vampire.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
-        public int MinNumberOfPlayersForRole => 0;//5;
-        public float Rarity => 1f;//0.2f;
+        public int MinNumberOfPlayersForRole => 5;
+        public float Rarity => 0.2f;
         public string[] RoleIDsToOverwrite => new string[] { };
         public Alignment? AlignmentToReplace => Alignment.Traitor;
         public void AddRoleToPlayer(Player player)
