@@ -78,7 +78,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "Kills traitors and killers instantly. But if you shoot an innocent, <b>YOU</b> will die instantly. If you shoot a jester or swapper, you both will die.\nPress [item 2] to switch to it.";
         }
 
         protected override GameObject GetCardArt()

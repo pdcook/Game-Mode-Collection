@@ -71,7 +71,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "Shows the positions of all other players every 30 seconds.";
         }
 
         protected override GameObject GetCardArt()

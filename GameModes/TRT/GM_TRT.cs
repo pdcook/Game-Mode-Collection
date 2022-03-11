@@ -197,10 +197,11 @@ namespace GameModeCollection.GameModes
         {
             PlayerManager.instance.ForEachAlivePlayer(p =>
             {
-                if (!(p?.data?.view?.IsMine ?? false)) { return; }
 
                 if (p.data.TRT_Karma() < GM_TRT.MinimumKarma)
                 {
+                    p.data.TRT_ChangeKarma(0.0f, GM_TRT.MinimumKarma);
+                    if (!(p?.data?.view?.IsMine ?? false)) { return; }
                     p.data.view.RPC("RPCA_Die", RpcTarget.All, Vector2.up);
                     TRTHandler.SendChat(null, "You have been automatically slain for having too low karma. Avoid killing your teammates.", true);
                 }

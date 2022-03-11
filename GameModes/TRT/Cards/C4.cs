@@ -70,7 +70,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "A powerful timed explosive which you can place with [item 2] and set the timer. Longer timer means the C4 will be harder to find and harder to disarm.";
         }
 
         protected override GameObject GetCardArt()

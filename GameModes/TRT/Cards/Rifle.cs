@@ -62,7 +62,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "A tried and true precision weapon. Press [item 2] to switch to it.";
         }
 
         protected override GameObject GetCardArt()
@@ -80,6 +80,28 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             return new CardInfoStat[]
             {
+                new CardInfoStat()
+                {
+                    stat = "Bullet Velocity",
+                    amount = "High",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
+                    positive = true
+                },
+
+                new CardInfoStat()
+                {
+                    stat = "Damage",
+                    amount = "Very High",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
+                    positive = true
+                },
+                new CardInfoStat()
+                {
+                    stat = "Fire Rate",
+                    amount = "Very Low",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
+                    positive = false
+                }
             };
         }
         protected override CardThemeColor.CardThemeColorType GetTheme()

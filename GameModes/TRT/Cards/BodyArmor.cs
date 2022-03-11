@@ -28,7 +28,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "Body armor to increase your maximum HP.";
         }
 
         protected override GameObject GetCardArt()

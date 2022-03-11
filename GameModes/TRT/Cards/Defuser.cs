@@ -30,7 +30,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "Equipment to defuse C4 with. Press and hold [item 3] near C4 to defuse it.";
         }
 
         protected override GameObject GetCardArt()

@@ -61,7 +61,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "A decisive melee weapon you can switch to with [item 2]. Good for one kill.";
         }
 
         protected override GameObject GetCardArt()

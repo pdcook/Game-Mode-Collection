@@ -61,7 +61,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "A quick and dirty melee weapon you can switch to with [item 2]. Killing a player with these claws will infect them, making them into a fellow zombie.";
         }
 
         protected override GameObject GetCardArt()
