@@ -12,16 +12,16 @@ namespace GameModeCollection.Utils
 {
     static class CardUtils
     {
-        internal static void RemoveCardFromPlayer_ClientsideCardBar(Player player, CardInfo card, Cards.SelectionType selectionType)
+        internal static void RemoveCardFromPlayer_ClientsideCardBar(Player player, CardInfo card, Cards.SelectionType selectionType, bool silent = true)
         {
-            RPCA_RemoveCardFromPlayer_ClientsideCardBar(player.playerID, card.cardName, (byte)selectionType);
+            RPCA_RemoveCardFromPlayer_ClientsideCardBar(player.playerID, card.cardName, (byte)selectionType, silent);
         }
-        internal static void Call_RemoveCardFromPlayer_ClientsideCardBar(Player player, CardInfo card, Cards.SelectionType selectionType)
+        internal static void Call_RemoveCardFromPlayer_ClientsideCardBar(Player player, CardInfo card, Cards.SelectionType selectionType, bool silent = true)
         {
-            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_RemoveCardFromPlayer_ClientsideCardBar), player.playerID, card.cardName, (byte)selectionType);
+            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_RemoveCardFromPlayer_ClientsideCardBar), player.playerID, card.cardName, (byte)selectionType, silent);
         }
         [UnboundRPC]
-        private static void RPCA_RemoveCardFromPlayer_ClientsideCardBar(int playerID, string cardName, byte selectionByte)
+        private static void RPCA_RemoveCardFromPlayer_ClientsideCardBar(int playerID, string cardName, byte selectionByte, bool silent)
         {
             Player player = PlayerManager.instance.GetPlayerWithID(playerID);
             if (player is null) { return; }
@@ -33,25 +33,25 @@ namespace GameModeCollection.Utils
             {
                 ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar();
             }
-            GameModeCollection.instance.StartCoroutine(RestoreCardBarWhenReady(player, numCards-1));
+            GameModeCollection.instance.StartCoroutine(RestoreCardBarWhenReady(player, numCards-1, silent));
 
         }
-        static IEnumerator RestoreCardBarWhenReady(Player player, int numCards)
+        static IEnumerator RestoreCardBarWhenReady(Player player, int numCards, bool silent)
         {
             yield return new WaitUntil(() => player.data.currentCards.Count() == numCards);
             if (!player.data.view.IsMine) { yield break; }
             foreach (CardInfo card in player.data.currentCards)
             {
-                ClientsideAddToCardBar(player.playerID, card);
+                ClientsideAddToCardBar(player.playerID, card, silent: silent);
             }
         }
-        public static void ClientsideAddToCardBar(int playerID, CardInfo card, string twoLetterCode = "")
+        public static void ClientsideAddToCardBar(int playerID, CardInfo card, string twoLetterCode = "", bool silent = true)
         {
             if (!PlayerManager.instance.players.Find(p => p.playerID == playerID).data.view.IsMine) { return; }
 
 
             CardBar[] cardBars = (CardBar[])Traverse.Create(CardBarHandler.instance).Field("cardBars").GetValue();
-            SoundManager.Instance.Play(cardBars[0].soundCardPick, cardBars[0].transform);
+            if (!silent) { SoundManager.Instance.Play(cardBars[0].soundCardPick, cardBars[0].transform); }
 
             Traverse.Create(cardBars[0]).Field("ci").SetValue(card);
             GameObject source = (GameObject)Traverse.Create(cardBars[playerID]).Field("source").GetValue();

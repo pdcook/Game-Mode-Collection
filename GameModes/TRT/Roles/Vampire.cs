@@ -19,8 +19,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public Color WinColor => Traitor.RoleAppearance.Color;
         public string RoleName => Vampire.RoleAppearance.Name;
         public string RoleID => $"GM_TRT_{this.RoleName}";
-        public int MinNumberOfPlayersForRole => 5;
-        public float Rarity => 0.2f;
+        public int MinNumberOfPlayersForRole => 0;//5;
+        public float Rarity => 1f;//0.2f;
         public string[] RoleIDsToOverwrite => new string[] { };
         public Alignment? AlignmentToReplace => Alignment.Traitor;
         public void AddRoleToPlayer(Player player)
@@ -71,36 +71,24 @@ namespace GameModeCollection.GameModes.TRT.Roles
             var abyssalCard = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("AbyssalCountdown")).cardInfo;
             var statMods = abyssalCard.gameObject.GetComponentInChildren<CharacterStatModifiers>();
             var abyssalObj = statMods.AddObjectToPlayer;
+            
+            this.EatSound = abyssalObj.GetComponent<AbyssalCountdown>().soundAbyssalChargeLoop;
 
-            this.VampireEffectsObj = Instantiate(abyssalObj, this.player.transform);
+            this.VampireEffectsObj = Instantiate(abyssalObj.transform.Find("Canvas").gameObject, this.transform);
             this.VampireEffectsObj.name = "A_TRT_VampireEffects";
             this.VampireEffectsObj.transform.localPosition = Vector3.zero;
 
-            AbyssalCountdown abyssal = this.VampireEffectsObj.GetComponent<AbyssalCountdown>();
-
-            this.EatSound = abyssal.soundAbyssalChargeLoop;
-
             this.vampireEffects = this.VampireEffectsObj.AddComponent<VampireCounterDisplays>();
-            this.vampireEffects.outerRing = abyssal.outerRing;
-            this.vampireEffects.fill = abyssal.fill;
-            this.vampireEffects.rotator = abyssal.rotator;
-            this.vampireEffects.still = abyssal.still;
-
-            UnityEngine.GameObject.Destroy(abyssal);
-
-            foreach (Transform child in this.VampireEffectsObj.transform)
-            {
-                if (child.name != "Canvas")
-                {
-                    Destroy(child.gameObject);
-                }
-            }
+            this.vampireEffects.outerRing = this.VampireEffectsObj.transform.Find("Size/Ring").GetComponent<ProceduralImage>();
+            this.vampireEffects.fill = this.VampireEffectsObj.transform.Find("Size/Background").GetComponent<ProceduralImage>();
+            this.vampireEffects.rotator = this.VampireEffectsObj.transform.Find("Size/Rotate").GetComponent<RectTransform>();
+            this.vampireEffects.still = this.VampireEffectsObj.transform.Find("Size/Top").GetComponent<RectTransform>();
 
             this.vampireEffects.outerRing.color = this.Appearance.Color;
             this.vampireEffects.fill.color = new Color(this.Appearance.Color.r, this.Appearance.Color.g, this.Appearance.Color.b, 0.1f);
             this.vampireEffects.rotator.gameObject.GetComponentInChildren<ProceduralImage>().color = this.vampireEffects.outerRing.color;
             this.vampireEffects.still.gameObject.GetComponentInChildren<ProceduralImage>().color = this.vampireEffects.outerRing.color;
-            this.VampireEffectsObj.transform.Find("Canvas/Size/BackRing").GetComponent<ProceduralImage>().color = this.Appearance.Color;
+            this.VampireEffectsObj.transform.Find("Size/BackRing").GetComponent<ProceduralImage>().color = this.Appearance.Color;
         }
 
         public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
@@ -191,6 +179,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
                 SoundManager.Instance.Stop(this.EatSound, this.transform, true);
             }
             catch { }
+            this.vampireEffects?.StopInvisibility();
             if (this.VampireEffectsObj != null)
             {
                 Destroy(this.VampireEffectsObj);
@@ -247,7 +236,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             this.player = this.GetComponentInParent<Player>();
 
             // spawn with ability ready
-            this.transform.localScale = 0.5f * Vector3.one;
+            this.transform.localScale = 0.005f * Vector3.one;
             this.counter = 1f;
             this.backRing = this.outerRing.transform.parent.GetChild(0).gameObject.GetComponent<ProceduralImage>();
             this.backRing.type = UnityEngine.UI.Image.Type.Filled;
@@ -321,22 +310,31 @@ namespace GameModeCollection.GameModes.TRT.Roles
             }
             this.outerRing.fillAmount = this.counter;
         }
+        static void MoveToHide(Transform transform, bool hide)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, hide ? -10000f : 0f);
+        }
         [UnboundRPC]
         private static void RPCA_ToggleInvisible(int playerID, bool invisible)
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
 
-            player.GetComponentInChildren<VampireCounterDisplays>(true).Invisible = invisible;
+            if (player.GetComponentInChildren<VampireCounterDisplays>(true) != null)
+            {
+                player.GetComponentInChildren<VampireCounterDisplays>(true).Invisible = invisible;
+            }
 
             if (invisible)
             {
                 SoundManager.Instance.Play(player.data.block.soundBlockRecharged, player.transform, new SoundParameterBase[] {new SoundParameterIntensity(Vampire.InvisSoundIntensity)});
             }
+            
+            player.GetComponent<PlayerJump>().jumpPart.First().transform.parent.gameObject.SetActive(!invisible);
 
-            player.transform.Find("Art").gameObject.SetActive(!invisible);
+            MoveToHide(player.transform.Find("Art"), invisible);
             player.transform.Find("WobbleObjects").gameObject.SetActive(!invisible && !player.data.dead);
-            player.transform.Find("PlayerSkin").GetChild(0).gameObject.SetActive(!invisible);
+            MoveToHide(player.transform.Find("PlayerSkin").GetChild(0), invisible);
             player.transform.Find("Limbs/ArmStuff").gameObject.SetActive(!invisible);
             foreach (Transform child in player.transform.Find("Limbs/LegStuff").gameObject.GetComponentsInChildren<Transform>(true))
             {
@@ -345,9 +343,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
                     child.gameObject.SetActive(!invisible);
                 }
             }
-            player.GetComponent<WeaponHandler>().gun.transform.Find("Spring/Handle").gameObject.SetActive(!invisible);
-            player.GetComponent<WeaponHandler>().gun.transform.Find("Spring/Barrel").gameObject.SetActive(!invisible);
-            player.GetComponent<WeaponHandler>().gun.transform.Find("Spring/Ammo/Canvas").localScale = invisible ? Vector3.zero : 0.0018f * Vector3.one;
+            Transform spring = player.GetComponent<WeaponHandler>().gun.transform.Find("Spring");
+            MoveToHide(spring, invisible);
         }
     }
 }

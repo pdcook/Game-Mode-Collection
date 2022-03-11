@@ -121,8 +121,8 @@ namespace GameModeCollection.GameModes
 
         public const float KarmaPenaltyPerRDM = 0.2f; // you lose 0.2 (20%) karma for each RDM
         public const float KarmaRewardPerPoint = 0.1f; // you gain 0.1 (10%) karma for each clean point
-        public const float MinimumKarma = 0.1f; // the minimum karma is 0.1 (10%)
-        public const float KarmaFractionForDeath = 0.25f; // if you are dead at the end of a point, you only gain 25% of the 10% you would usuall gain
+        public const float MinimumKarma = 0.4f; // the minimum karma is 0.4 (40%), players below this will receive a slay
+        public const float KarmaFractionForDeath = 0.5f; // if you are dead at the end of a point, you only gain 50% of the 10% you would usuall gain
 
         public const int BaseMaxCards = 1;
         public const float BaseHealth = 100f;
@@ -190,6 +190,20 @@ namespace GameModeCollection.GameModes
                 if (player?.GetComponentInChildren<PlayerWobblePosition>() is null) { return; }
                 LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages.AddRange(player.GetComponentInChildren<PlayerWobblePosition>().GetComponentsInChildren<UnityEngine.UI.Image>(true));
                 LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages = LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages.Distinct().ToList();
+            });
+        }
+
+        private void DoSlays()
+        {
+            PlayerManager.instance.ForEachAlivePlayer(p =>
+            {
+                if (!(p?.data?.view?.IsMine ?? false)) { return; }
+
+                if (p.data.TRT_Karma() < GM_TRT.MinimumKarma)
+                {
+                    p.data.view.RPC("RPCA_Die", RpcTarget.All, Vector2.up);
+                    TRTHandler.SendChat(null, "You have been automatically slain for having too low karma. Avoid killing your teammates.", true);
+                }
             });
         }
 
@@ -384,7 +398,7 @@ namespace GameModeCollection.GameModes
                 ITRT_Role role = RoleManager.GetPlayerRole(player);
                 if (role is null) { return; }
                 float change = role.KarmaChange == 0f ? (player.data.dead ? 0.25f : 1f) * GM_TRT.KarmaRewardPerPoint : role.KarmaChange;
-                player.data.TRT_ChangeKarma(change, GM_TRT.MinimumKarma);
+                player.data.TRT_ChangeKarma(change, 0f);
             });
         }
 
@@ -610,6 +624,8 @@ namespace GameModeCollection.GameModes
             PlayerManager.instance.SetPlayersInvulnerable(false);
             PlayerManager.instance.RevivePlayers();
 
+            this.ExecuteAfterSeconds(1f, this.DoSlays);
+
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
         }
 
@@ -663,6 +679,8 @@ namespace GameModeCollection.GameModes
             //UIHandler.instance.DisplayRoundStartText("TRAITOR", TraitorColor, new Vector3(0.5f, 0.8f, 0f));
             PlayerManager.instance.SetPlayersInvulnerable(false);
             PlayerManager.instance.RevivePlayers();
+
+            this.ExecuteAfterSeconds(1f, this.DoSlays);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookBattleStart);
 

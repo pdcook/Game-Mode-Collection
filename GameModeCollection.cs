@@ -156,6 +156,7 @@ namespace GameModeCollection
             CustomCard.BuildCard<RadarCard>(RadarCard.Callback);
             CustomCard.BuildCard<RifleCard>(RifleCard.Callback);
             CustomCard.BuildCard<DefuserCard>(DefuserCard.Callback);
+            CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.Callback);
             CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);

@@ -186,7 +186,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.damage_mult = 0f;
             this.gunStatModifier.damage_add = 2.1f;
             this.gunStatModifier.attackSpeed_mult = 0f;
-            this.gunStatModifier.attackSpeed_add = 3f;
+            this.gunStatModifier.attackSpeed_add = 2f;
             this.gunAmmoStatModifier.reloadTimeMultiplier_mult = 0f;
             this.gunAmmoStatModifier.reloadTimeAdd_add = 5f;
             this.gunStatModifier.gravity_mult = 0f;

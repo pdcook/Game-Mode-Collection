@@ -187,38 +187,25 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			this.ExplosionSound = CardManager.cards.Values.Select(card => card.cardInfo).Where(card => card.cardName.ToLower() == "EXPLOSIVE BULLET".ToLower()).First().GetComponent<Gun>().soundImpactModifier.impactEnvironment;
 
 			// ring for defusal progress
-
 			var abyssalCard = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("AbyssalCountdown")).cardInfo;
 			var statMods = abyssalCard.gameObject.GetComponentInChildren<CharacterStatModifiers>();
 			var abyssalObj = statMods.AddObjectToPlayer;
 
-			this.DefusalTimerObject = Instantiate(abyssalObj, this.transform);
+			this.DefusalTimerObject = Instantiate(abyssalObj.transform.Find("Canvas").gameObject, this.transform);
 			this.DefusalTimerObject.name = "DefusalTimerEffects";
 			this.DefusalTimerObject.transform.localPosition = Vector3.zero;
 
-			AbyssalCountdown abyssal = this.DefusalTimerObject.GetComponent<AbyssalCountdown>();
-
 			this.DefusalTimerEffect = this.DefusalTimerObject.AddComponent<DefusalTimerEffect>();
-			this.DefusalTimerEffect.outerRing = abyssal.outerRing;
-			this.DefusalTimerEffect.fill = abyssal.fill;
-			this.DefusalTimerEffect.rotator = abyssal.rotator;
-			this.DefusalTimerEffect.still = abyssal.still;
-
-			UnityEngine.GameObject.Destroy(abyssal);
-
-			foreach (Transform child in this.DefusalTimerObject.transform)
-			{
-				if (child.name != "Canvas")
-				{
-					Destroy(child.gameObject);
-				}
-			}
+			this.DefusalTimerEffect.outerRing = this.DefusalTimerObject.transform.Find("Size/Ring").GetComponent<ProceduralImage>();
+			this.DefusalTimerEffect.fill = this.DefusalTimerObject.transform.Find("Size/Background").GetComponent<ProceduralImage>();
+			this.DefusalTimerEffect.rotator = this.DefusalTimerObject.transform.Find("Size/Rotate").GetComponent<RectTransform>();
+			this.DefusalTimerEffect.still = this.DefusalTimerObject.transform.Find("Size/Top").GetComponent<RectTransform>();
 
 			this.DefusalTimerEffect.outerRing.color = StartDefuseColor;
 			this.DefusalTimerEffect.fill.color = StartDefuseFillColor;
 			this.DefusalTimerEffect.rotator.gameObject.GetComponentInChildren<ProceduralImage>().color = this.DefusalTimerEffect.outerRing.color;
 			this.DefusalTimerEffect.still.gameObject.GetComponentInChildren<ProceduralImage>().color = this.DefusalTimerEffect.outerRing.color;
-			this.DefusalTimerObject.transform.Find("Canvas/Size/BackRing").GetComponent<ProceduralImage>().color = Color.clear;
+			this.DefusalTimerObject.transform.Find("Size/BackRing").GetComponent<ProceduralImage>().color = Color.clear;
 
 		}
 		protected override void Update()
@@ -382,7 +369,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 		void Start()
         {
-            this.transform.localScale = 0.5f * Vector3.one;
+            this.transform.localScale = 0.005f * Vector3.one;
             this.counter = 1f;
             this.backRing = this.outerRing.transform.parent.GetChild(0).gameObject.GetComponent<ProceduralImage>();
             this.backRing.type = UnityEngine.UI.Image.Type.Filled;

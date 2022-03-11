@@ -164,6 +164,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             MakeGunClaw(slashingPlayerID, claw);
         }
+        static void MoveToHide(Transform transform, bool hide)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, hide ? -10000f : 0f);
+        }
         internal static void MakeGunClaw(int playerID, bool claw)
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
@@ -183,9 +187,11 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             Claw.SetActive(claw);
 
-            springObj.transform.Find("Ammo/Canvas").localScale = claw ? Vector3.zero : 0.0018f * Vector3.one;
-            springObj.transform.GetChild(2).gameObject.SetActive(!claw);
-            springObj.transform.GetChild(3).gameObject.SetActive(!claw);
+            MoveToHide(springObj.transform.Find("Ammo/Canvas"), claw);
+            MoveToHide(springObj.transform.GetChild(2), claw);
+            MoveToHide(springObj.transform.GetChild(3), claw);
+            springObj.transform.GetChild(2).GetComponent<RightLeftMirrorSpring>().enabled = !claw;
+            springObj.transform.GetChild(3).GetComponent<RightLeftMirrorSpring>().enabled = !claw;
 
             gun.GetData().disabled = claw;
         }

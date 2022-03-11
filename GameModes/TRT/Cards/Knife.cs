@@ -170,12 +170,16 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             MakeGunKnife(stabbingPlayerID, knife);
         }
+        static void MoveToHide(Transform transform, bool hide)
+        {
+            transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, hide ? -10000f : 0f);
+        }
         internal static void MakeGunKnife(int playerID, bool knife)
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
             Gun gun = player.GetComponent<Holding>().holdable.GetComponent<Gun>();
-            GameObject springObj = gun.transform.GetChild(1).gameObject;
+            GameObject springObj = gun.transform.Find("Spring").gameObject;
             RightLeftMirrorSpring spring = springObj.transform.GetChild(2).GetComponent<RightLeftMirrorSpring>();
 
             GameObject Knife = springObj.transform.Find("TRT_Knife(Clone)")?.gameObject;
@@ -189,9 +193,11 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             Knife.SetActive(knife);
 
-            springObj.transform.Find("Ammo/Canvas").localScale = knife ? Vector3.zero : 0.0018f * Vector3.one;
-            springObj.transform.GetChild(2).gameObject.SetActive(!knife);
-            springObj.transform.GetChild(3).gameObject.SetActive(!knife);
+            MoveToHide(springObj.transform.Find("Ammo/Canvas"), knife);
+            MoveToHide(springObj.transform.GetChild(2), knife);
+            MoveToHide(springObj.transform.GetChild(3), knife);
+            springObj.transform.GetChild(2).GetComponent<RightLeftMirrorSpring>().enabled = !knife;
+            springObj.transform.GetChild(3).GetComponent<RightLeftMirrorSpring>().enabled = !knife;
 
             gun.GetData().disabled = knife;
         }
@@ -218,7 +224,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
     class KnifeStab : MonoBehaviour
     {
         private A_Knife Knife;
-        private const float StabDuration = 0.5f;
+        private const float StabDuration = 0.25f;
         private float StabTimer = 0f;
         Holdable holdable;
         Player Player;
