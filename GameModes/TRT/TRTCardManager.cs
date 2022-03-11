@@ -37,6 +37,7 @@ namespace GameModeCollection.GameModes.TRT
                 if (card.name.Equals("HUGE")) { continue; }
                 if (card.name.Equals("Decay")) { continue; }
                 if (card.name.Equals("Pristine perseverence")) { continue; }
+                if (card.name.Equals("Brawler")) { continue; }
                 card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Enabled }).ToArray();
             }
         }

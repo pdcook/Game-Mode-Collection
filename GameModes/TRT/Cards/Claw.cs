@@ -8,6 +8,8 @@ using UnboundLib.Networking;
 using GameModeCollection.Utils;
 using UnboundLib.GameModes;
 using GameModeCollection.Objects;
+using Sonigon;
+using Sonigon.Internal;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -37,6 +39,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Zombie, TRTCardCategories.TRT_Slot_2, TRTCardCategories.TRT_DoNotDropOnDeath, CardItem.IgnoreMaxCardsCategory, CardItem.CannotDiscard };
+            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_2 };
             statModifiers.AddObjectToPlayer = A_ClawPrefab.Claw;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
@@ -113,6 +116,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
 
         internal const float SwitchDelay = 0.10f;
+        public const float Volume = 1f;
 
         // pressing [item 5] will switch the player's gun into a claw
         // claws deal 50 damage, if a zombie kills a player using the claw they will become infected
@@ -122,12 +126,20 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public bool IsOut { get; private set; } = false;
         private Player Player;
         public float SwitchTimer { get; private set; } = 0f;
+        SoundEvent ClawPullOutSound;
         void Start()
         {
             this.IsOut = false;
             this.SlashTimer = 0f;
             this.SwitchTimer = 0f;
             this.Player = this.GetComponentInParent<Player>();
+            // load sound effect
+            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("KnifePullOut.ogg");
+            SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+            soundContainer.setting.volumeIntensityEnable = true;
+            soundContainer.audioClip[0] = sound;
+            this.ClawPullOutSound = ScriptableObject.CreateInstance<SoundEvent>();
+            this.ClawPullOutSound.soundContainerArray[0] = soundContainer;
         }
         void Update()
         {
@@ -139,6 +151,11 @@ namespace GameModeCollection.GameModes.TRT.Cards
             {
                 this.SwitchTimer = this.IsOut ? 0f : SwitchDelay;
                 this.IsOut = !this.IsOut;
+                if (this.IsOut)
+                {
+                    // play sound locally
+                    SoundManager.Instance.Play(this.ClawPullOutSound, this.Player.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * Volume) });
+                }
                 NetworkingManager.RPC(typeof(A_Claw), nameof(RPCA_Switch_To_Claw), this.Player.playerID, this.IsOut);
             }
         }

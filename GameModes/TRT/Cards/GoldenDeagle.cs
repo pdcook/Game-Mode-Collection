@@ -56,6 +56,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Slot_2, CardItem.IgnoreMaxCardsCategory };
+            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_2 };
 
             statModifiers.AddObjectToPlayer = A_GoldenDeaglePrefab.GoldenDeagle;
         }
@@ -219,6 +220,9 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         public void EnableGoldenDeagle()
         {
+            // you can't cheese the attack speed by switching back and forth
+            this.gun.sinceAttack = 0f;
+
             // things that can't be changed with ReversibleEffect
 
             // save originals

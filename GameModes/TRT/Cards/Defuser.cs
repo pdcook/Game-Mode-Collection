@@ -15,6 +15,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, CardItem.IgnoreMaxCardsCategory, TRTCardCategories.TRT_Slot_3 };
+            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_3 };
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -34,7 +35,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_DEFUSER"); // (sic)
+            return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_DIFFUSER"); // (sic)
         }
 
         protected override CardInfo.Rarity GetRarity()

@@ -36,6 +36,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Slot_1, CardItem.IgnoreMaxCardsCategory };
+            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_1 };
             statModifiers.AddObjectToPlayer = A_HealthStationPrefab.HealthStation;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)

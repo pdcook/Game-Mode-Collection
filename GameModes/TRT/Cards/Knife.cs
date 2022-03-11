@@ -8,6 +8,8 @@ using UnboundLib.Networking;
 using GameModeCollection.Utils;
 using UnboundLib.GameModes;
 using GameModeCollection.Objects;
+using Sonigon;
+using Sonigon.Internal;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -37,6 +39,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_2, CardItem.IgnoreMaxCardsCategory };
+            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_2 };
             statModifiers.AddObjectToPlayer = A_KnifePrefab.Knife;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
@@ -113,6 +116,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
 
         internal const float SwitchDelay = 0.25f;
+        public const float Volume = 1f;
 
         // the knife is consumed on kill
         // it will instakill the stabbed player
@@ -122,6 +126,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public bool IsOut { get; private set; } = false;
         private Player Player;
         public float SwitchTimer { get; private set; } = 0f;
+        SoundEvent KnifePullOutSound;
         void Start()
         {
             this.HasStabbed = false;
@@ -129,6 +134,13 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.StabTimer = 0f;
             this.SwitchTimer = 0f;
             this.Player = this.GetComponentInParent<Player>();
+            // load sound effect
+            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("KnifePullOut.ogg");
+            SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+            soundContainer.setting.volumeIntensityEnable = true;
+            soundContainer.audioClip[0] = sound;
+            this.KnifePullOutSound = ScriptableObject.CreateInstance<SoundEvent>();
+            this.KnifePullOutSound.soundContainerArray[0] = soundContainer;
         }
         void Update()
         {
@@ -140,6 +152,11 @@ namespace GameModeCollection.GameModes.TRT.Cards
             {
                 this.SwitchTimer = this.IsOut ? 0f : SwitchDelay;
                 this.IsOut = !this.IsOut;
+                if (this.IsOut)
+                {
+                    // play sound locally
+                    SoundManager.Instance.Play(this.KnifePullOutSound, this.Player.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * Volume) });
+                }
                 NetworkingManager.RPC(typeof(A_Knife), nameof(RPCA_Switch_To_Knife), this.Player.playerID, this.IsOut);
             }
             else if (this.HasStabbed && this.IsOut)

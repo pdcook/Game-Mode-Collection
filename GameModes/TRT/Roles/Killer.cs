@@ -75,7 +75,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override bool WinConditionMet(Player[] playersRemaining)
         {
-            return playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Killer || a == Alignment.Chaos);
+            return playersRemaining.Count() > 0 && playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Killer || a == Alignment.Chaos);
         }
         protected override void Start()
         {

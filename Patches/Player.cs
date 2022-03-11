@@ -29,6 +29,15 @@ namespace GameModeCollection.Patches
                 }
             }
             catch { }
+            try
+            {
+                if (__instance.gameObject.GetComponent<RifleGun>() != null)
+                {
+                    GameObject.Destroy(__instance.gameObject.GetComponent<RifleGun>());
+                }
+            }
+            catch { }
+
 
         }
     }

@@ -66,7 +66,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 		private const float AmountToHeal = 10f;
 		private const float Delay = 0.4f;
-		private float TimeUntilNextLocalHeal = 0f;
+		private float TimeUntilNextLocalHeal = -Delay;
 
 		private float CheckOOBTimer = 0f;
 		private const float CheckOOBEvery = 1f;

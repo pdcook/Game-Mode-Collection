@@ -40,32 +40,32 @@ namespace GameModeCollection.GameModes.TRT.Cards
             {
                 if (cardCategory == TRTCardCategories.TRT_Slot_0)
                 {
-                    extraText = "Slot 0";
+                    extraText = "0";
                     break;
                 }
                 if (cardCategory == TRTCardCategories.TRT_Slot_1)
                 {
-                    extraText = "Slot 1";
+                    extraText = "1";
                     break;
                 }
                 if (cardCategory == TRTCardCategories.TRT_Slot_2)
                 {
-                    extraText = "Slot 2";
+                    extraText = "2";
                     break;
                 }
                 if (cardCategory == TRTCardCategories.TRT_Slot_3)
                 {
-                    extraText = "Slot 3";
+                    extraText = "3";
                     break;
                 }
                 if (cardCategory == TRTCardCategories.TRT_Slot_4)
                 {
-                    extraText = "Slot 4";
+                    extraText = "4";
                     break;
                 }
                 if (cardCategory == TRTCardCategories.TRT_Slot_5)
                 {
-                    extraText = "Slot 5";
+                    extraText = "5";
                     break;
                 }
             }
@@ -74,8 +74,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
             modText.text = extraText;
             modText.enableWordWrapping = false;
             modNameObj.transform.Rotate(0f, 0f, 135f);
-            modNameObj.transform.localScale = new Vector3(1f, 1f, 1f);
-            modNameObj.transform.localPosition = new Vector3(-50f, -50f, 0f);
+            modNameObj.transform.localScale = new Vector3(3f, 3f, 3f);
+            modNameObj.transform.localPosition = new Vector3(-75f, -75f, 0f);
             modText.alignment = TextAlignmentOptions.Bottom;
             modText.alpha = 0.1f;
             modText.fontSize = 50;

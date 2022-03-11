@@ -27,6 +27,7 @@ namespace GameModeCollection
     [BepInDependency("io.olavim.rounds.mapsextended", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("pykess.rounds.plugins.gununblockablepatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("pykess.rounds.plugins.demonicpactpatch", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("com.dk.rounds.plugins.zerogpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ModId, ModName, Version)]
     [BepInProcess("Rounds.exe")]
     public class GameModeCollection : BaseUnityPlugin
@@ -149,9 +150,11 @@ namespace GameModeCollection
             ControllerManager.AddMapController(TRTMapController.ControllerID, new TRTMapController());
             ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
             CustomCard.BuildCard<C4Card>(C4Card.Callback);
+            CustomCard.BuildCard<VSSCard>(VSSCard.Callback);
             CustomCard.BuildCard<ClawCard>(ClawCard.Callback);
             CustomCard.BuildCard<KnifeCard>(KnifeCard.Callback);
             CustomCard.BuildCard<RadarCard>(RadarCard.Callback);
+            CustomCard.BuildCard<RifleCard>(RifleCard.Callback);
             CustomCard.BuildCard<DefuserCard>(DefuserCard.Callback);
             CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);

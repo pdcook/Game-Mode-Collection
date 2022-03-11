@@ -97,12 +97,14 @@ namespace GameModeCollection.GameModes.TRT.Roles
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, DeathStationCard.Card, addToCardBar: false);
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, C4Card.Card, addToCardBar: false);
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, KnifeCard.Card, addToCardBar: false);
+            //ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, VSSCard.Card, addToCardBar: false);
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, RadarCard.Card, addToCardBar: false);
             if (player.data.view.IsMine)
             {
                 CardItemHandler.ClientsideAddToCardBar(player.playerID, DeathStationCard.Card);
                 CardItemHandler.ClientsideAddToCardBar(player.playerID, C4Card.Card);
                 CardItemHandler.ClientsideAddToCardBar(player.playerID, KnifeCard.Card);
+                //CardItemHandler.ClientsideAddToCardBar(player.playerID, VSSCard.Card);
                 CardItemHandler.ClientsideAddToCardBar(player.playerID, RadarCard.Card);
             }
         }
@@ -131,7 +133,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override bool WinConditionMet(Player[] playersRemaining)
         {
-            return playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Traitor || a == Alignment.Chaos);
+            return playersRemaining.Count() == 0 || playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Traitor || a == Alignment.Chaos);
         }
     }
 }
