@@ -124,7 +124,7 @@ namespace GameModeCollection.GameModes
         public const float MinimumKarma = 0.4f; // the minimum karma is 0.4 (40%), players below this will receive a slay
         public const float KarmaFractionForDeath = 0.5f; // if you are dead at the end of a point, you only gain 50% of the 10% you would usuall gain
 
-        public const int BaseMaxCards = 4;
+        public const int BaseMaxCards = 2;
         public const int CardsToSpawnPerPlayer = 3;
         public const float BaseHealth = 100f;
         internal static float Perc_Inno_For_Reward => TRTShopHandler.TRT_Perc_Inno_For_Reward; // what percent of innocents need to be killed for the traitors to be reworded
@@ -189,8 +189,8 @@ namespace GameModeCollection.GameModes
         {
             PlayerManager.instance.ForEachPlayer(player =>
             {
-                if (player?.GetComponentInChildren<PlayerWobblePosition>() is null) { return; }
-                LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages.AddRange(player.GetComponentInChildren<PlayerWobblePosition>().GetComponentsInChildren<UnityEngine.UI.Image>(true));
+                if (player?.GetComponentInChildren<PlayerWobblePosition>(true) is null) { return; }
+                LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages.AddRange(player.GetComponentInChildren<PlayerWobblePosition>(true).GetComponentsInChildren<UnityEngine.UI.Image>(true));
                 LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages = LocalZoom.Extensions.CharacterDataExtension.GetData(player.data).allWobbleImages.Distinct().ToList();
             });
         }

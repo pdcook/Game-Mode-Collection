@@ -218,13 +218,6 @@ namespace GameModeCollection.GameModes.TRT
             return container;
         }
 
-        public IEnumerator ShowCard(Player player, CardInfo card)
-        {
-            yield return ModdingUtils.Utils.CardBarUtils.instance.ShowImmediate(player, card, 2f);
-
-            yield break;
-        }
-
         private GameObject GetCardVisuals(CardInfo card, GameObject parent)
         {
 

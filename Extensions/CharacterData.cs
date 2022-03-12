@@ -78,13 +78,22 @@ namespace GameModeCollection.Extensions
         class PlayerNameSizeFitter : MonoBehaviour
         {
             public const float pad = 50f;
+            private bool imageEnabled;
             public void CheckForChanges()
             {
-                TextMeshProUGUI nameText = transform.parent.GetComponentInChildren<PlayerName>().GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI nameText = transform.parent.GetComponentInChildren<PlayerName>(true).GetComponent<TextMeshProUGUI>();
                 if (nameText is null) { return; }
                 nameText.ForceMeshUpdate();
-                GetComponent<RectTransform>().sizeDelta = nameText.textBounds.size + pad * Vector3.one;
+                this.GetComponent<RectTransform>().sizeDelta = nameText.textBounds.size + pad * Vector3.one;
                 this.transform.localPosition = nameText.transform.localPosition + nameText.textBounds.center;
+            }
+            void Update()
+            {
+                if (this.GetComponent<UnityEngine.UI.Image>().enabled != this.imageEnabled)
+                {
+                    this.CheckForChanges();
+                }
+                this.imageEnabled = this.GetComponent<UnityEngine.UI.Image>().enabled;
             }
         }
     }
