@@ -14,6 +14,8 @@ using Sonigon;
 using MapEmbiggener;
 using UnboundLib.Networking;
 using CardChoiceSpawnUniqueCardPatch.CustomCategories;
+using UnityEngine.EventSystems;
+using UnboundLib.GameModes;
 
 namespace GameModeCollection.Objects
 {
@@ -352,11 +354,35 @@ namespace GameModeCollection.Objects
             {
                 if (!player.data.playerActions.Discard()) { continue; }
                 this.CheckDiscardTimer = CheckDiscardEvery;
-                NetworkingManager.RPC(typeof(CardItemHandler), nameof(RPCA_PlayerDiscard), player.playerID);
+                NetworkingManager.RPC(typeof(CardItemHandler), nameof(RPCA_PlayerDiscardMostRecent), player.playerID);
             }
         }
+        public void PlayerDiscardSpecific(Player player, int idx)
+        { 
+            if (!this.CanDiscard) { return; }
+            if (this.CheckDiscardTimer > 0f) { return; }
+            if (!(player?.data?.view?.IsMine ?? false)) { return; }
+            if (idx < 0 || player.data.currentCards.Count() <= idx) { return; }
+            if (player.data.currentCards[idx] is null || player.data.currentCards[idx].categories.Contains(CardItem.CannotDiscard)) { return; }
+            this.CheckDiscardTimer = CheckDiscardEvery;
+            NetworkingManager.RPC(typeof(CardItemHandler), nameof(RPCA_PlayerDiscardSpecific), player.playerID, idx);
+        }
         [UnboundRPC]
-        private static void RPCA_PlayerDiscard(int playerID)
+        private static void RPCA_PlayerDiscardSpecific(int playerID, int idx)
+        {
+            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
+            if (player is null) { return; }
+            // find the most recent card index which can be discarded
+            if (idx < 0 || player.data.currentCards.Count() <= idx) { return; }
+            CardInfo card = player.data.currentCards[idx];
+            CardInfo[] cardsToKeep = player.data.currentCards.Where((c, i) => i != idx).ToArray();
+            ModdingUtils.Utils.Cards.instance.RemoveAllCardsFromPlayer(player, false);
+            if (player.data.view.IsMine) { ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar(); }
+            CardItemHandler.Instance.StartCoroutine(CardItemHandler.Instance.RestoreCardsWhenReady(player, cardsToKeep));
+            CardItemHandler.Instance.PlayerDiscardAction?.Invoke(player, card);
+        }
+        [UnboundRPC]
+        private static void RPCA_PlayerDiscardMostRecent(int playerID)
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
@@ -478,6 +504,72 @@ namespace GameModeCollection.Objects
             deathEffect.PlayDeath(killingPlayer.GetTeamColors().color, killingPlayer.data.playerVel, deathDirection, -1);
             SoundManager.Instance.Play(killingPlayer.data.healthHandler.soundDie, this.transform);
             this.GetComponent<CardItem>().CallDestroy();
+        }
+    }
+    internal class SelectableCardBarButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
+    {
+        int playerID;
+        int idx;
+        bool hover = false;
+        bool down = false;
+        Color origColor;
+        Vector3 origScale;
+        Player player => PlayerManager.instance.GetPlayerWithID(this.playerID);
+        void Start()
+        {
+            this.origColor = ModdingUtils.Utils.CardBarUtils.instance.GetCardSquareColor(this.gameObject.transform.GetChild(0).gameObject);
+            this.origScale = this.gameObject.transform.localScale;
+            this.idx = this.gameObject.transform.GetSiblingIndex() - 1;
+            this.playerID = this.transform.parent.GetSiblingIndex() - 3;
+        }
+        void Update()
+        {
+            this.idx = this.gameObject.transform.GetSiblingIndex() - 1;
+            this.playerID = this.transform.parent.GetSiblingIndex() - 3;
+        }
+        public void OnPointerDown(PointerEventData eventData)
+        {
+            if (!this.player.data.view.IsMine) { return; }
+            this.down = true;
+            this.gameObject.transform.localScale = 0.95f*this.origScale;
+            Color.RGBToHSV(ModdingUtils.Utils.CardBarUtils.instance.GetCardSquareColor(this.gameObject.transform.GetChild(0).gameObject), out float h, out float s, out float v);
+            Color newColor = Color.HSVToRGB(h, s - 0.1f, v - 0.1f);
+            newColor.a = origColor.a;
+            ModdingUtils.Utils.CardBarUtils.instance.ChangeCardSquareColor(this.gameObject.transform.GetChild(0).gameObject, newColor);
+        }
+        public void OnPointerUp(PointerEventData eventData)
+        {
+            if (!this.player.data.view.IsMine) { return; }
+            if (this.down)
+            {
+                this.down = false;
+
+                this.gameObject.transform.localScale = origScale;
+                ModdingUtils.Utils.CardBarUtils.instance.ChangeCardSquareColor(this.gameObject.transform.GetChild(0).gameObject, origColor);
+
+                if (this.hover)
+                {
+                    CardItemHandler.Instance.PlayerDiscardSpecific(PlayerManager.instance.GetPlayerWithID(this.playerID), this.idx);
+                }
+            }
+        }
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (!this.player.data.view.IsMine) { return; }
+            this.hover = true;
+            this.player.data.weaponHandler.gun.GetData().disabledFromCardBar = true;
+        }
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (!this.player.data.view.IsMine) { return; }
+            this.hover = false;
+            this.player.data.weaponHandler.gun.GetData().disabledFromCardBar = false;
+        }
+        void OnDestroy()
+        {
+            this.gameObject.transform.localScale = origScale;
+            ModdingUtils.Utils.CardBarUtils.instance.ChangeCardSquareColor(this.gameObject.transform.GetChild(0).gameObject, this.origColor);
+            this.player.data.weaponHandler.gun.GetData().disabledFromCardBar = false;
         }
     }
 }

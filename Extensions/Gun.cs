@@ -5,6 +5,7 @@ namespace GameModeCollection.Extensions
     public class GunAdditionalData
     {
         public bool disabled = false;
+        public bool disabledFromCardBar = false;
     }
     public static class GunExtensions
     {

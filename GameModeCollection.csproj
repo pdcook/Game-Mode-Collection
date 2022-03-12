@@ -223,6 +223,7 @@
     <Compile Include="Objects\PlayerDoNotFollow.cs" />
     <Compile Include="Objects\GameModeObjects\TRT\C4.cs" />
     <Compile Include="Patches\ApplyCardStats.cs" />
+    <Compile Include="Patches\CardBar.cs" />
     <Compile Include="Patches\CharacterCreatorItemEquipper.cs" />
     <Compile Include="Patches\CharacterData.cs" />
     <Compile Include="Patches\CharacterItem.cs" />

@@ -7,7 +7,7 @@ namespace GameModeCollection.Patches
     {
         static bool Prefix(Gun __instance)
         {
-            return !__instance.GetData().disabled;
+            return (!__instance.GetData().disabled && !__instance.GetData().disabledFromCardBar);
         }
     }
 }
