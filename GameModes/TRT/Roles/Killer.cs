@@ -33,13 +33,12 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override Alignment Alignment => Killer.RoleAlignment;
 
-        public override int MaxCards => GM_TRT.BaseMaxCards + 3;
-
         public override float BaseHealth => 1.5f*GM_TRT.BaseHealth;
 
         public override bool CanDealDamageAndTakeEnvironmentalDamage => true;
 
         public override float KarmaChange { get; protected set; } = 0f;
+        public override int StartingCredits => 2;
 
         public override bool AlertAlignment(Alignment alignment)
         {
@@ -77,6 +76,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
         {
             return playersRemaining.Count() > 0 && playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Killer || a == Alignment.Chaos);
         }
+        public override void TryShop()
+        {
+            TRTShopHandler.ToggleTDShop(this.GetComponent<Player>());
+        }
+
         protected override void Start()
         {
             base.Start();

@@ -36,6 +36,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Traitor, "Assassin", 'A', GM_TRT.AssassinColor);
 
         public override TRT_Role_Appearance Appearance => Assassin.RoleAppearance;
+        public override int StartingCredits => 0;
 
         private List<int> playerIDsKilled = new List<int>() { };
 

@@ -7,6 +7,7 @@ using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.Objects;
 using GameModeCollection.Extensions;
 using UnboundLib.Networking;
+using System.Collections.Generic;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class DetectiveRoleHandler : IRoleHandler
@@ -32,22 +33,14 @@ namespace GameModeCollection.GameModes.TRT.Roles
     {
         new public readonly static TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Innocent, "Detective", 'D', GM_TRT.DetectiveColor);
         public override TRT_Role_Appearance Appearance => Detective.RoleAppearance;
-        public override int MaxCards => GM_TRT.BaseMaxCards + 1;
+        public override int StartingCredits => 2;
+        private List<int> playerIDsRewardedFor = new List<int>() { };
 
         protected override void Start()
         {
             base.Start();
 
-            //CardInfo healingField = CardManager.cards.Values.First(card => card.cardInfo.name.Equals("Healing field")).cardInfo;
-
-            // 80% of the time the detective spawns with healing field
-            // 20% of the time they spawn with Golden Gun
-
-            // FOR NOW: the detective has a 80% chance of spawning with a health station
-            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false) )//&& UnityEngine.Random.Range(0f, 1f) < 0.8f)
-            {
-                NetworkingManager.RPC(typeof(Detective), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID);
-            }
+            this.playerIDsRewardedFor = new List<int>() { };
 
             // detective gets a fancy hat
             if (this.GetComponent<Player>()?.data?.view?.IsMine ?? false)
@@ -67,26 +60,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             }
 
         }
-        [UnboundRPC]
-        private static void RPCA_AddCardToPlayer(int playerID)
-        {
-            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
-            if (player is null) { return; }
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, HealthStationCard.Card, addToCardBar: false);
-            //ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, GoldenDeagleCard.Card, addToCardBar: false);
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, RadarCard.Card, addToCardBar: false);
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, DefuserCard.Card, addToCardBar: false);
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, RifleCard.Card, addToCardBar: false);
-            if (player.data.view.IsMine)
-            {
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, HealthStationCard.Card);
-                //CardItemHandler.ClientsideAddToCardBar(player.playerID, GoldenDeagleCard.Card);
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, RadarCard.Card);
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, DefuserCard.Card);
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, RifleCard.Card);
-            }
-        }
-
+      
         public override bool AlertAlignment(Alignment alignment)
         {
             return false;
@@ -100,6 +74,18 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
         {
             corpse.SearchBody(this.GetComponent<Player>(), true);
+        }
+        public override void TryShop()
+        {
+            TRTShopHandler.ToggleDetectiveShop(this.GetComponent<Player>());
+        }
+        public override void OnAnyPlayerDied(Player deadPlayer, ITRT_Role[] rolesRemaining)
+        {
+            if (RoleManager.GetPlayerAlignment(deadPlayer) == Alignment.Traitor && !this.playerIDsRewardedFor.Contains(deadPlayer.playerID))
+            {
+                this.playerIDsRewardedFor.Add(deadPlayer.playerID);
+                TRTShopHandler.GiveCreditToPlayer(this.GetComponent<Player>());
+            }
         }
     }
 }

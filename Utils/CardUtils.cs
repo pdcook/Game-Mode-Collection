@@ -12,6 +12,27 @@ namespace GameModeCollection.Utils
 {
     static class CardUtils
     {
+        internal static void AddCardToPlayer_ClientsideCardBar(Player player, CardInfo card, bool silent = false)
+        {
+            RPCA_AddCardToPlayer_ClientsideCardBar(player.playerID, card.cardName, silent);
+        }
+        internal static void Call_AddCardToPlayer_ClientsideCardBar(Player player, CardInfo card, bool silent = false)
+        {
+            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_AddCardToPlayer_ClientsideCardBar), player.playerID, card.cardName, silent);
+        }
+        [UnboundRPC]
+        private static void RPCA_AddCardToPlayer_ClientsideCardBar(int playerID, string cardName, bool silent)
+        {
+            Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
+            if (player is null) { return; }
+            CardInfo card = Cards.instance.GetCardWithName(cardName);
+            if (card is null) { return; }
+            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, card, false, "", 0, 0, false);
+            if (player.data.view.IsMine)
+            {
+                ClientsideAddToCardBar(player.playerID, card, silent: silent);
+            }
+        }
         internal static void RemoveCardFromPlayer_ClientsideCardBar(Player player, CardInfo card, Cards.SelectionType selectionType, bool silent = true)
         {
             RPCA_RemoveCardFromPlayer_ClientsideCardBar(player.playerID, card.cardName, (byte)selectionType, silent);

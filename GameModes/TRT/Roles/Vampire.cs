@@ -58,6 +58,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         new public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Traitor, "Vampire", 'V', GM_TRT.VampireColor);
 
         public override TRT_Role_Appearance Appearance => Vampire.RoleAppearance;
+        public override int StartingCredits => 0;
 
         private Player player => this.GetComponent<Player>();
         private VampireCounterDisplays vampireEffects = null;

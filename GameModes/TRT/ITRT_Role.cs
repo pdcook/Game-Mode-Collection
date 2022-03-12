@@ -33,10 +33,9 @@ namespace GameModeCollection.GameModes.TRT
         Alignment Alignment { get; }
         int MaxCards { get; }
         float BaseHealth { get; }
-        // TODO: add a postfix to CharacterStatModifiers.ConfigureMassAndSize to compensate for base health != 100f
-        // this way, players can't tell someone is a certain role that has extra health
         bool CanDealDamageAndTakeEnvironmentalDamage { get; }
         float KarmaChange { get; }
+        int StartingCredits { get; }
 
         /// <summary>
         /// What role should this role appear as to a given alignment?
@@ -67,6 +66,8 @@ namespace GameModeCollection.GameModes.TRT
         /// <returns></returns>
         bool AlertAlignment(Alignment alignment);
 
+        void OnAnyPlayerDied(Player deadPlayer, ITRT_Role[] rolesRemaining);
+
         void OnKilledPlayer(Player killedPlayer);
         void OnKilledByPlayer(Player killingPlayer);
 
@@ -80,6 +81,12 @@ namespace GameModeCollection.GameModes.TRT
         void OnCorpseInteractedWith(Player player);
 
         bool WinConditionMet(Player[] playersRemaining);
+
+        /// <summary>
+        /// what should happen when this player presses the shop button
+        /// this method should handle both the opening and the closing of the shop
+        /// </summary>
+        void TryShop();
 
     }
 }

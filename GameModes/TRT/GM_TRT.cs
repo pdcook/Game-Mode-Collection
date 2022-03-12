@@ -124,8 +124,10 @@ namespace GameModeCollection.GameModes
         public const float MinimumKarma = 0.4f; // the minimum karma is 0.4 (40%), players below this will receive a slay
         public const float KarmaFractionForDeath = 0.5f; // if you are dead at the end of a point, you only gain 50% of the 10% you would usuall gain
 
-        public const int BaseMaxCards = 1;
+        public const int BaseMaxCards = 4;
+        public const int CardsToSpawnPerPlayer = 3;
         public const float BaseHealth = 100f;
+        internal static float Perc_Inno_For_Reward => TRTShopHandler.TRT_Perc_Inno_For_Reward; // what percent of innocents need to be killed for the traitors to be reworded
 
         public readonly static Color InnocentColor = new Color32(26, 200, 25, 255);
         public readonly static Color DetectiveColor = new Color32(24, 29, 253, 255);
@@ -245,6 +247,8 @@ namespace GameModeCollection.GameModes
             TRTHandler.InitChatGroups();
             BetterChat.BetterChat.SetDeadChat(true);
             BetterChat.BetterChat.UsePlayerColors = true;
+
+            TRTShopHandler.BuildTRTShops();
 
             ControllerManager.SetMapController(TRTMapController.ControllerID);
             ControllerManager.SetBoundsController(TRTBoundsController.ControllerID);
@@ -594,7 +598,7 @@ namespace GameModeCollection.GameModes
             this.HideAllPlayerFaces();
             this.RegisterAllWobbleObjects();
 
-            yield return TRTCardManager.SpawnCards(2 * PlayerManager.instance.players.Count(), CardHealth, true);
+            yield return TRTCardManager.SpawnCards(CardsToSpawnPerPlayer * PlayerManager.instance.players.Count(), CardHealth, true);
 
             yield return this.WaitForSyncUp();
 
@@ -651,7 +655,7 @@ namespace GameModeCollection.GameModes
             this.HideAllPlayerFaces();
             this.RegisterAllWobbleObjects();
 
-            yield return TRTCardManager.SpawnCards(2 * PlayerManager.instance.players.Count(), CardHealth, true);
+            yield return TRTCardManager.SpawnCards(CardsToSpawnPerPlayer * PlayerManager.instance.players.Count(), CardHealth, true);
 
             //PlayerManager.instance.SetPlayersSimulated(false);
             yield return this.WaitForSyncUp();

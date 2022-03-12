@@ -55,6 +55,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>%(RoundsFolder)\Rounds_Data\Managed\InControl.dll</HintPath>
     </Reference>
+    <Reference Include="ItemShops">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\ItemShops.dll</HintPath>
+    </Reference>
     <Reference Include="LocalZoom, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProfileFolder)\BepInEx\plugins\LocalZoom.dll</HintPath>
@@ -204,7 +207,7 @@
     <Compile Include="GameModes\TRT\Roles\Traitor.cs" />
     <Compile Include="GameModes\TRT\TRT_Corpse.cs" />
     <Compile Include="GameModes\TRT\TRT_Role.cs" />
-    <Compile Include="GameModes\TRT\TRT_Shop.cs" />
+    <Compile Include="GameModes\TRT\TRTShopHandler.cs" />
     <Compile Include="Objects\CardItem.cs" />
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />

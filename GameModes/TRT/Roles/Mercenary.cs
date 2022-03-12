@@ -29,7 +29,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override TRT_Role_Appearance Appearance => Mercenary.RoleAppearance;
 
-        public override int MaxCards => GM_TRT.BaseMaxCards + 1;
+        public override int StartingCredits => 1;
 
         protected override void Start()
         {
@@ -40,7 +40,10 @@ namespace GameModeCollection.GameModes.TRT.Roles
             {
                 NetworkingManager.RPC(typeof(Mercenary), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID, rng);
             }
-
+        }
+        public override void TryShop()
+        {
+            TRTShopHandler.ToggleTDShop(this.GetComponent<Player>());
         }
         [UnboundRPC]
         private static void RPCA_AddCardToPlayer(int playerID, float rng)

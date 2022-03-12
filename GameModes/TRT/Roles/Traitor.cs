@@ -37,13 +37,15 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override Alignment Alignment => Traitor.RoleAlignment;
 
-        public override int MaxCards => GM_TRT.BaseMaxCards + 1;
-
         public override float BaseHealth => GM_TRT.BaseHealth;
 
         public override bool CanDealDamageAndTakeEnvironmentalDamage => true;
 
         public override float KarmaChange { get; protected set; } = 0f;
+        public override int StartingCredits => 1;
+
+        private float innocentStepCounter = 1f - GM_TRT.Perc_Inno_For_Reward;
+        private int numInnocent = -1;
 
         public override bool AlertAlignment(Alignment alignment)
         {
@@ -82,31 +84,9 @@ namespace GameModeCollection.GameModes.TRT.Roles
         protected override void Start()
         {
             base.Start();
-            // FOR NOW: the traitor has a 40% chance of spawning with a death station
-            if ((this.GetComponent<Player>()?.data?.view?.IsMine ?? false))// && UnityEngine.Random.Range(0f, 1f) < 0.4f)
-            {
-                NetworkingManager.RPC(typeof(Traitor), nameof(RPCA_AddCardToPlayer), this.GetComponent<Player>().playerID);
-            }
 
-        }
-        [UnboundRPC]
-        private static void RPCA_AddCardToPlayer(int playerID)
-        {
-            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
-            if (player is null) { return; }
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, DeathStationCard.Card, addToCardBar: false);
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, C4Card.Card, addToCardBar: false);
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, KnifeCard.Card, addToCardBar: false);
-            //ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, VSSCard.Card, addToCardBar: false);
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, RadarCard.Card, addToCardBar: false);
-            if (player.data.view.IsMine)
-            {
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, DeathStationCard.Card);
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, C4Card.Card);
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, KnifeCard.Card);
-                //CardItemHandler.ClientsideAddToCardBar(player.playerID, VSSCard.Card);
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, RadarCard.Card);
-            }
+            this.numInnocent = -1;
+            this.innocentStepCounter = 1f - GM_TRT.Perc_Inno_For_Reward;
         }
 
         public override void OnCorpseInteractedWith(Player player)
@@ -116,6 +96,27 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override void OnInteractWithCorpse(TRT_Corpse corpse, bool interact)
         {
             corpse.SearchBody(this.GetComponent<Player>(), false);
+        }
+        public override void OnAnyPlayerDied(Player deadPlayer, ITRT_Role[] rolesRemaining)
+        {
+            if (RoleManager.GetPlayerAlignment(deadPlayer) == Alignment.Innocent)
+            {
+                if (this.numInnocent == -1)
+                {
+                    // calculate how many innocents there were
+                    this.numInnocent = rolesRemaining.Count(r => r.Alignment == Alignment.Innocent) + 1;
+                }
+                float percInnoRemain = (float)rolesRemaining.Count(r => r.Alignment == Alignment.Innocent) / (float)this.numInnocent;
+                if (percInnoRemain < this.innocentStepCounter)
+                {
+                    TRTShopHandler.GiveCreditToPlayer(this.GetComponent<Player>());
+                    while (percInnoRemain < this.innocentStepCounter)
+                    {
+                        this.innocentStepCounter -= GM_TRT.Perc_Inno_For_Reward;
+                    }
+                }
+
+            }
         }
 
         public override void OnKilledByPlayer(Player killingPlayer)
@@ -134,6 +135,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override bool WinConditionMet(Player[] playersRemaining)
         {
             return playersRemaining.Count() == 0 || playersRemaining.Select(p => RoleManager.GetPlayerAlignment(p)).All(a => a == Alignment.Traitor || a == Alignment.Chaos);
+        }
+
+        public override void TryShop()
+        {
+            TRTShopHandler.ToggleTraitorShop(this.GetComponent<Player>());
         }
     }
 }

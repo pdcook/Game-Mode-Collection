@@ -2,6 +2,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -22,7 +23,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             }
             private set { }
         }
-
+  
         private void Start()
         {
             // add extra text to bottom right

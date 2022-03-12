@@ -35,7 +35,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Slot_1, CardItem.IgnoreMaxCardsCategory };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_1, CardItem.IgnoreMaxCardsCategory };
             cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_1 };
             statModifiers.AddObjectToPlayer = A_DeathStationPrefab.DeathStation;
         }

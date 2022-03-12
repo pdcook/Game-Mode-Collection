@@ -104,17 +104,17 @@ namespace GameModeCollection.Patches
 
             __result.GetAdditionalData().interact.AddDefaultBinding(Key.F);
 
-            __result.GetAdditionalData().trt_radio_imwith_mod_item1.AddDefaultBinding(Key.C);
+            __result.GetAdditionalData().trt_radio_imwith_mod_item1.AddDefaultBinding(Key.X);
 
             __result.GetAdditionalData().trt_radio_traitor_mod_item2.AddDefaultBinding(Key.R);
             
             __result.GetAdditionalData().trt_radio_suspect_mod_item3.AddDefaultBinding(Key.G);
 
-            __result.GetAdditionalData().trt_radio_innocent_mod_item4.AddDefaultBinding(Key.X);
+            __result.GetAdditionalData().trt_radio_innocent_mod_item4.AddDefaultBinding(Key.Z);
 
             __result.GetAdditionalData().discard_last_card_mod_item0.AddDefaultBinding(Key.Q);
 
-            __result.GetAdditionalData().trt_shop_mod_item5.AddDefaultBinding(Key.B);
+            __result.GetAdditionalData().trt_shop_mod_item5.AddDefaultBinding(Key.C);
 
             __result.GetAdditionalData().trt_item0.AddDefaultBinding(Key.Backquote);
             __result.GetAdditionalData().trt_item1.AddDefaultBinding(Key.Key1);

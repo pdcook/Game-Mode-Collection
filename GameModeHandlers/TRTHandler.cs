@@ -1,4 +1,5 @@
-﻿using GameModeCollection.GameModes;
+﻿using GameModeCollection.Extensions;
+using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
 using GameModeCollection.GameModes.TRT.Controllers;
@@ -107,6 +108,11 @@ namespace GameModeCollection.GameModeHandlers
             killingPlayer?.GetComponent<ITRT_Role>()?.OnKilledPlayer(player);
 
             player.GetComponent<ITRT_Role>()?.OnKilledByPlayer(killingPlayer);
+
+            PlayerManager.instance.ForEachAlivePlayer(p =>
+            {
+                RoleManager.GetPlayerRole(p)?.OnAnyPlayerDied(player, PlayerManager.instance.players.Where(pl => !pl.data.dead).Select(pl => RoleManager.GetPlayerRole(pl)).ToArray());
+            });
 
             this.GameMode.PlayerDied(player, playersAlive);
         }

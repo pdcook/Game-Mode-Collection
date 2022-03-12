@@ -32,8 +32,6 @@ namespace GameModeCollection.GameModes.TRT.Roles
     {
         public static readonly TRT_Role_Appearance RoleAppearance = new TRT_Role_Appearance(Alignment.Traitor, "Zombie", 'Z', GM_TRT.ZombieColor);
         public static readonly Alignment RoleAlignment = Alignment.Traitor;
-
-        public override int MaxCards => GM_TRT.BaseMaxCards;
         public override Alignment Alignment => Zombie.RoleAlignment;
         public override TRT_Role_Appearance Appearance => Zombie.RoleAppearance;
 
@@ -43,6 +41,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override bool CanDealDamageAndTakeEnvironmentalDamage => true;
 
         public override float KarmaChange { get; protected set; } = 0f;
+        public override int StartingCredits => 0;
 
         public override bool AlertAlignment(Alignment alignment)
         {
@@ -90,6 +89,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
             }
 
         }
+        public override void TryShop()
+        {
+            TRTShopHandler.ToggleZombieShop(this.GetComponent<Player>());
+        }
+
         [UnboundRPC]
         private static void RPCA_AddCardToPlayer(int playerID)
         {
@@ -111,6 +115,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
                 {
                     this.playerIDsKilled.Add(killedPlayer.playerID);
                     this.GetComponent<PhotonView>().RPC(nameof(RPCA_ZombieInfect), RpcTarget.All, killedPlayer.playerID);
+                    TRTShopHandler.GiveCreditToPlayer(this.GetComponent<Player>());
                 }
             }
         }

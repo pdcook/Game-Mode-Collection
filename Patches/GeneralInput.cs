@@ -1,5 +1,6 @@
 ﻿using GameModeCollection.Extensions;
 using GameModeCollection.GameModeHandlers;
+using GameModeCollection.GameModes.TRT;
 using HarmonyLib;
 using UnityEngine;
 using UnboundLib.GameModes;
@@ -83,6 +84,12 @@ namespace GameModeCollection.Patches
                 __instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_item4_was_pressed = __instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_item4.WasPressed;
                 __instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_item5_is_pressed = __instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_item5.IsPressed;
                 __instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_item5_was_pressed = __instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_item5.WasPressed;
+
+                // item shop
+                if (__instance.GetComponent<CharacterData>().playerActions.GetAdditionalData().trt_shop_mod_item5.WasPressed)
+                {
+                    __instance.GetComponent<ITRT_Role>()?.TryShop();
+                }
             }
         }
     }

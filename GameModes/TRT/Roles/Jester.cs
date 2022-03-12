@@ -28,12 +28,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
         public override TRT_Role_Appearance Appearance => Jester.RoleAppearance;
         public override Alignment Alignment => Jester.RoleAlignment;
-        public override int MaxCards => GM_TRT.BaseMaxCards;
-
         public override float BaseHealth => GM_TRT.BaseHealth;
 
         public override bool CanDealDamageAndTakeEnvironmentalDamage => false;
         public override float KarmaChange { get; protected set; } = 0f;
+        public override int StartingCredits => 0;
 
         public override bool AlertAlignment(Alignment alignment)
         {
@@ -99,6 +98,11 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public override bool WinConditionMet(Player[] playersRemaining)
         {
             return this.hasBeenKilled;
+        }
+        public override void TryShop()
+        {
+            // no shop for Jester
+            return;
         }
     }
 }
