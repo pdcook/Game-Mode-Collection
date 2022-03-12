@@ -114,6 +114,11 @@ namespace GameModeCollection.GameModeHandlers
                 RoleManager.GetPlayerRole(p)?.OnAnyPlayerDied(player, PlayerManager.instance.players.Where(pl => !pl.data.dead).Select(pl => RoleManager.GetPlayerRole(pl)).ToArray());
             });
 
+            if (player?.data?.view?.IsMine ?? false)
+            {
+                TRTShopHandler.CloseAllShops();
+            }
+
             this.GameMode.PlayerDied(player, playersAlive);
         }
         public override void StartGame()

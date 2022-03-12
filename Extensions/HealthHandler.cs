@@ -6,7 +6,8 @@ namespace GameModeCollection.Extensions
 {
     public class HealthHandlerAdditionalData
     {
-        public bool invulnerable = false;
+        public bool invulnerable = false; // take no damage
+        public bool intangible = false; // bullets pass straight through
     }
     static class HealthHandlerExtensions
     {
@@ -19,9 +20,17 @@ namespace GameModeCollection.Extensions
         {
             instance.GetData().invulnerable = invulnerable;
         }
+        public static void SetIntangible(this HealthHandler instance, bool intangible)
+        {
+            instance.GetData().intangible = intangible;
+        }
         public static bool Invulnerable(this HealthHandler instance)
         {
             return instance.GetData().invulnerable;
+        }
+        public static bool Intangible(this HealthHandler instance)
+        {
+            return instance.GetData().intangible;
         }
 
         static private void TrySetEnabled<TComponent>(Component obj, bool enabled) where TComponent : Behaviour

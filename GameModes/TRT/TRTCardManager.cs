@@ -26,18 +26,27 @@ namespace GameModeCollection.GameModes.TRT
         private const float Range = 2f;
         private const float MaxDistanceAway = 10f;
 
+        private static readonly List<string> BannedCards = new List<string>()
+        {
+            "Healing field",
+            "Phoenix",
+            "Tank",
+            "HUGE",
+            "Decay",
+            "Pristine perseverence",
+            "Brawler",
+            "ChillingPresence",
+            "AbyssalCountdown",
+            "Lifestealer",
+            "Radiance"
+        };
+
         internal static void SetTRTEnabled(CardInfo[] cards)
         {
-            // all default cards (except a few) are allowed
+            // most default cards (except a few) are allowed
             foreach (CardInfo card in cards.Where(c => c.GetComponent<CustomCard>() is null))
             {
-                if (card.name.Equals("Healing field")) { continue; }
-                if (card.name.Equals("Phoenix")) { continue; }
-                if (card.name.Equals("Tank")) { continue; }
-                if (card.name.Equals("HUGE")) { continue; }
-                if (card.name.Equals("Decay")) { continue; }
-                if (card.name.Equals("Pristine perseverence")) { continue; }
-                if (card.name.Equals("Brawler")) { continue; }
+                if (BannedCards.Contains(card.name)) { continue; }
                 card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Enabled }).ToArray();
             }
         }

@@ -141,6 +141,25 @@ namespace GameModeCollection.GameModes.TRT
                 ZShop.Show(player);
             }
         }
+        internal static void CloseAllShops()
+        {
+            if (TShop?.IsOpen ?? false)
+            {
+                TShop.Hide();
+            }
+            if (DShop?.IsOpen ?? false)
+            {
+                DShop.Hide();
+            }
+            if (TDShop?.IsOpen ?? false)
+            {
+                TDShop.Hide();
+            }
+            if (ZShop?.IsOpen ?? false)
+            {
+                ZShop.Hide();
+            }
+        }
     }
     public class PurchasableTRTCard : PurchasableCard
     {

@@ -107,7 +107,7 @@ namespace GameModeCollection.GameModes
         internal static GM_TRT instance;
 
         private const float RoundTime = 300f; // default 300f
-        private const float PrepPhaseTime = 1f;//30f; // default 30f
+        private const float PrepPhaseTime = 30f; // default 30f
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 
@@ -429,7 +429,6 @@ namespace GameModeCollection.GameModes
         }
         private IEnumerator PlayerDropCard(Player player, CardInfo card)
         {
-            if (!this.battleOngoing) { yield break; }
             Vector2 velocty = (Vector2)player.data.playerVel.GetFieldValue("velocity");
             yield return CardItem.MakeCardItem(card,
                                                 player.data.playerVel.position,
@@ -576,7 +575,7 @@ namespace GameModeCollection.GameModes
         }
         public IEnumerator DoRoundStart()
         {
-            PlayerManager.instance.SetPlayersInvulnerable(true);
+            PlayerManager.instance.SetPlayersInvulnerableAndIntangible(true);
 
             // reset players completely
             PlayerManager.instance.InvokeMethod("ResetCharacters");
@@ -603,7 +602,7 @@ namespace GameModeCollection.GameModes
             yield return this.WaitForSyncUp();
 
             PlayerManager.instance.SetPlayersSimulated(true);
-            PlayerManager.instance.SetPlayersInvulnerable(true);
+            PlayerManager.instance.SetPlayersInvulnerableAndIntangible(true);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundStart);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointStart);
@@ -626,7 +625,7 @@ namespace GameModeCollection.GameModes
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             //UIHandler.instance.DisplayRoundStartText("INNOCENT", InnocentColor, new Vector3(0.5f, 0.8f, 0f));
-            PlayerManager.instance.SetPlayersInvulnerable(false);
+            PlayerManager.instance.SetPlayersInvulnerableAndIntangible(false);
             PlayerManager.instance.RevivePlayers();
 
             this.ExecuteAfterSeconds(1f, this.DoSlays);
@@ -636,7 +635,7 @@ namespace GameModeCollection.GameModes
 
         public IEnumerator DoPointStart()
         {
-            PlayerManager.instance.SetPlayersInvulnerable(true);
+            PlayerManager.instance.SetPlayersInvulnerableAndIntangible(true);
 
             // reset players completely
             PlayerManager.instance.InvokeMethod("ResetCharacters");
@@ -660,7 +659,7 @@ namespace GameModeCollection.GameModes
             //PlayerManager.instance.SetPlayersSimulated(false);
             yield return this.WaitForSyncUp();
             PlayerManager.instance.SetPlayersSimulated(true);
-            PlayerManager.instance.SetPlayersInvulnerable(true);
+            PlayerManager.instance.SetPlayersInvulnerableAndIntangible(true);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointStart);
 
@@ -682,7 +681,7 @@ namespace GameModeCollection.GameModes
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             //UIHandler.instance.DisplayRoundStartText("TRAITOR", TraitorColor, new Vector3(0.5f, 0.8f, 0f));
-            PlayerManager.instance.SetPlayersInvulnerable(false);
+            PlayerManager.instance.SetPlayersInvulnerableAndIntangible(false);
             PlayerManager.instance.RevivePlayers();
 
             this.ExecuteAfterSeconds(1f, this.DoSlays);

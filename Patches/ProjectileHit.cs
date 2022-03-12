@@ -7,6 +7,7 @@ using System.Linq;
 using System.Collections.Generic;
 using UnboundLib;
 using GameModeCollection.Objects;
+using GameModeCollection.Extensions;
 
 namespace GameModeCollection.Patches
 {
@@ -99,6 +100,7 @@ namespace GameModeCollection.Patches
             }
             if (healthHandler)
             {
+                if (healthHandler.Invulnerable()) { return false; }
                 Player hitPlayer = healthHandler.GetComponent<Player>();
                 // if the hit player is not null
                 if (hitPlayer != null && __instance?.ownPlayer != null)

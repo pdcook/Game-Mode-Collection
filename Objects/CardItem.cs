@@ -126,11 +126,11 @@ namespace GameModeCollection.Objects
         protected override void Awake()
         {
             this.PhysicalProperties = new ItemPhysicalProperties(mass: 60000f,
-                                                                    playerPushMult: 12000f,
+                                                                    playerPushMult: 15000f,
                                                                     playerDamageMult: 0f,
                                                                     collisionDamageThreshold: float.MaxValue,
                                                                     friction: 0.9f,
-                                                                    impulseMult: 0.1f,
+                                                                    impulseMult: 0.2f,
                                                                     forceMult: 2f, visibleThroughShader: true);
 
             base.Awake();
@@ -145,7 +145,7 @@ namespace GameModeCollection.Objects
 
             this.Col.size = Vector3.one;
             this.Trig.radius = 40f;
-            this.transform.localScale = 0.15f * Vector3.one;
+            this.transform.localScale = 0.1f * Vector3.one;
         }
 
         protected internal override void OnTriggerEnter2D(Collider2D collider2D)
@@ -214,19 +214,21 @@ namespace GameModeCollection.Objects
         {
             if (this.HasBeenTaken) { return; }
             else if (player.data.dead) { return; }
+            else if (!CardItemHandler.Instance.CanCollectBaseOnTimer) { return; }
             else if (!player.data.CanHaveMoreCards() && !this.Card.categories.Contains(CardItem.IgnoreMaxCardsCategory)) { return; }
             else if (!ModdingUtils.Utils.Cards.instance.PlayerIsAllowedCard(player, this.Card)) { return; }
 
             // final check: is the player trying to collect multiple cards at once?
-            // if so, fail to collect any of them
-            Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, CollectionDistance);
-            if (colliders.Where(c => c?.GetComponentInParent<CardItem>() != null).Count() > 1)
+            // if so, collect only the nearest
+            Collider2D[] colliders = Physics2D.OverlapCircleAll(player.transform.position, 2f*CollectionDistance);
+            if (colliders.Where(c => c?.GetComponentInParent<CardItem>() != null).Select(c => c.GetComponentInParent<CardItem>()).Distinct().Count() > 1)
             {
-                if (colliders.Select(c => c.GetComponentInParent<CardItem>()).Where(c => c != null && Vector2.Distance(player.transform.position, c.transform.position) < CollectionDistance).Distinct().Count() > 1)
+                if (colliders.Select(c => c.GetComponentInParent<CardItem>()).Where(c => c != null).OrderBy(c => Vector2.Distance(player.transform.position, c.transform.position)).FirstOrDefault() != this)
                 {
                     return;
                 }
             }
+            CardItemHandler.Instance.PlayerCollectCardNow();
 
             this.View.RPC(nameof(RPCA_AddCardToPlayer), RpcTarget.All, player.playerID);
             CardItemHandler.ClientsideAddToCardBar(player.playerID, this.Card);
@@ -272,6 +274,7 @@ namespace GameModeCollection.Objects
     {
         private const float CheckOOBEvery = 1f;
         private const float CheckDiscardEvery = 0.5f;
+        private const float CollectionDelay = 0.1f;
 
         public static readonly Vector3 PositionToCheck = new Vector3(100000f, 100000f, 0f);
         public static CardItemHandler Instance { get; private set; } = null;
@@ -280,8 +283,10 @@ namespace GameModeCollection.Objects
 
         private float CheckOOBTimer = 0f;
         private float CheckDiscardTimer = 0f;
+        private float CollectionTimer = 0f;
 
         public bool CanDiscard { get; private set; } = false;
+        public bool CanCollectBaseOnTimer => this.CollectionTimer <= 0f;
         public Action<Player, CardInfo> PlayerDiscardAction = (p, c) => { };
 
         public void DestroyAllCardItems()
@@ -295,6 +300,10 @@ namespace GameModeCollection.Objects
         public void SetCanDiscard(bool canDiscard)
         {
             this.CanDiscard = canDiscard;
+        }
+        public void PlayerCollectCardNow()
+        {
+            this.CollectionTimer = CollectionDelay;
         }
 
         void Awake()
@@ -317,6 +326,8 @@ namespace GameModeCollection.Objects
             this.Trigger.radius = 1f;
             this.Rig.position = PositionToCheck;
             this.Rig.velocity = Vector2.zero;
+
+            this.CollectionTimer -= Time.deltaTime;
 
             this.CheckOOBTimer -= Time.deltaTime;
             if (this.CheckOOBTimer < 0f)
