@@ -164,6 +164,7 @@
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
     <Compile Include="GameModes\TRT\Cards\Defuser.cs" />
     <Compile Include="GameModes\TRT\Cards\Claw.cs" />
+    <Compile Include="GameModes\TRT\Cards\Handcuffs.cs" />
     <Compile Include="GameModes\TRT\Cards\VSS.cs" />
     <Compile Include="GameModes\TRT\Cards\Rifle.cs" />
     <Compile Include="GameModes\TRT\Cards\Radar.cs" />

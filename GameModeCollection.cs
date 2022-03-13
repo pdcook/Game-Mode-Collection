@@ -141,6 +141,8 @@ namespace GameModeCollection
             GameModeManager.AddHook(GameModeHooks.HookPointEnd, A_Radar.DestroyAllPointsOnPointEnd);
             GameModeManager.AddHook(GameModeHooks.HookPointEnd, A_Knife.RemoveAllKnives);
             GameModeManager.AddHook(GameModeHooks.HookPointStart, A_Knife.RemoveAllKnives);
+            GameModeManager.AddHook(GameModeHooks.HookPointEnd, Cuffed.RemoveAllCuffsFromPlayers);
+            GameModeManager.AddHook(GameModeHooks.HookPointStart, Cuffed.RemoveAllCuffsFromPlayers);
 
             // Pykess game mode stuff
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());
@@ -158,6 +160,7 @@ namespace GameModeCollection
             CustomCard.BuildCard<RifleCard>(RifleCard.Callback);
             CustomCard.BuildCard<DefuserCard>(DefuserCard.Callback);
             CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.Callback);
+            CustomCard.BuildCard<HandcuffsCard>(HandcuffsCard.Callback);
             CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);

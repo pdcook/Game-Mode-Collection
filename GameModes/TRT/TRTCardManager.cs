@@ -38,7 +38,15 @@ namespace GameModeCollection.GameModes.TRT
             "ChillingPresence",
             "AbyssalCountdown",
             "Lifestealer",
+            "Leach",
             "Radiance"
+        };
+
+        private static readonly List<string> ZombieCards = new List<string>()
+        {
+            "TasteOfBlood",
+            "Chase",
+            "Teleport"
         };
 
         internal static void SetTRTEnabled(CardInfo[] cards)
@@ -48,6 +56,11 @@ namespace GameModeCollection.GameModes.TRT
             {
                 if (BannedCards.Contains(card.name)) { continue; }
                 card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Enabled }).ToArray();
+                // cards that go in special shops
+                if (ZombieCards.Contains(card.name))
+                {
+                    card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Zombie }).ToArray();
+                }
             }
         }
 

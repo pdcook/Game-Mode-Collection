@@ -37,8 +37,6 @@ namespace GameModeCollection.Patches
                 }
             }
             catch { }
-
-
         }
     }
 }

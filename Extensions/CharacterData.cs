@@ -10,6 +10,8 @@ namespace GameModeCollection.Extensions
 {
     public class CharacterDataAdditionalData
     {
+        public bool playerCanAccessShop = true;
+        public bool playerCanCollectCards = true;
         public int maxAllowedCards = GM_TRT.BaseMaxCards;
         public float TRT_Karma = 1f;
         public PlayerFace CurrentFace;

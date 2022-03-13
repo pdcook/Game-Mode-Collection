@@ -16,6 +16,7 @@ using UnboundLib.Networking;
 using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 using UnityEngine.EventSystems;
 using UnboundLib.GameModes;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.Objects
 {
@@ -217,6 +218,7 @@ namespace GameModeCollection.Objects
             if (this.HasBeenTaken) { return; }
             else if (player.data.dead) { return; }
             else if (!CardItemHandler.Instance.CanCollectBaseOnTimer) { return; }
+            else if (!player.data.GetData().playerCanCollectCards) { return; }
             else if (!player.data.CanHaveMoreCards() && !this.Card.categories.Contains(CardItem.IgnoreMaxCardsCategory)) { return; }
             else if (!ModdingUtils.Utils.Cards.instance.PlayerIsAllowedCard(player, this.Card)) { return; }
 
@@ -233,7 +235,7 @@ namespace GameModeCollection.Objects
             CardItemHandler.Instance.PlayerCollectCardNow();
 
             this.View.RPC(nameof(RPCA_AddCardToPlayer), RpcTarget.All, player.playerID);
-            CardItemHandler.ClientsideAddToCardBar(player.playerID, this.Card);
+            CardUtils.ClientsideAddToCardBar(player.playerID, this.Card, silent: false);
         }
         [PunRPC]
         private void RPCA_AddCardToPlayer(int playerID)
@@ -411,7 +413,7 @@ namespace GameModeCollection.Objects
             if (!player.data.view.IsMine) { yield break; }
             foreach (CardInfo card in cardsToKeep)
             {
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, card);
+                CardUtils.ClientsideAddToCardBar(player.playerID, card, silent: false);
             }
         }
         void OnTriggerEnter2D(Collider2D collider)
@@ -452,6 +454,7 @@ namespace GameModeCollection.Objects
         {
             return this.transform.GetComponentsInChildren<CardItem>().ToList().Find(c => c.CardName == cardName && c.CardObj == null);
         }
+        /*
         public static void ClientsideAddToCardBar(int playerID, CardInfo card, string twoLetterCode = "")
         {
             if (!PlayerManager.instance.players.Find(p => p.playerID == playerID).data.view.IsMine) { return; }
@@ -481,7 +484,7 @@ namespace GameModeCollection.Objects
             gameObject.GetComponentInChildren<TextMeshProUGUI>().text = text;
             Traverse.Create(gameObject.GetComponent<CardBarButton>()).Field("card").SetValue(card);
             gameObject.gameObject.SetActive(true);
-        }
+        }*/
     }
     class CardItemHealth : ObjectHealthHandler
     {
@@ -508,24 +511,30 @@ namespace GameModeCollection.Objects
     }
     internal class SelectableCardBarButton : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        int playerID;
+        int playerID = -1;
         int idx;
         bool hover = false;
         bool down = false;
         Color origColor;
         Vector3 origScale;
         Player player => PlayerManager.instance.GetPlayerWithID(this.playerID);
+        internal void SetPlayerID(int playerID)
+        {
+            this.playerID = playerID;
+        }
         void Start()
         {
             this.origColor = ModdingUtils.Utils.CardBarUtils.instance.GetCardSquareColor(this.gameObject.transform.GetChild(0).gameObject);
             this.origScale = this.gameObject.transform.localScale;
             this.idx = this.gameObject.transform.GetSiblingIndex() - 1;
-            this.playerID = this.transform.parent.GetSiblingIndex() - 3;
+            if (this.playerID == -1)
+            {
+                this.playerID = this.transform.parent.GetSiblingIndex() - 3;
+            }
         }
         void Update()
         {
             this.idx = this.gameObject.transform.GetSiblingIndex() - 1;
-            this.playerID = this.transform.parent.GetSiblingIndex() - 3;
         }
         public void OnPointerDown(PointerEventData eventData)
         {

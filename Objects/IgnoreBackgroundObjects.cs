@@ -29,11 +29,13 @@ namespace GameModeCollection.Objects
         }
 		void OnTriggerEnter2D(Collider2D collider2D)
         {
+            if (this.Trigger is null) { return; }
             // if the collider is on the layer to ignore, then have all the colliders on the parent of this object ignore the collider
             if (collider2D.gameObject.layer == LayerToIgnore)
             {
                 foreach (Collider2D collider in this.gameObject.transform.parent.gameObject.GetComponentsInChildren<Collider2D>())
                 {
+                    if (collider is null) { continue; }
                     Physics2D.IgnoreCollision(collider2D, collider, true);
                 }
             }

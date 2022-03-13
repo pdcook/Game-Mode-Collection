@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using UnityEngine;
 namespace GameModeCollection.Extensions
 {
     static class PlayerManagerExtensions
@@ -11,6 +12,19 @@ namespace GameModeCollection.Extensions
         public static Player GetLocalPlayer(this PlayerManager instance)
         {
             return instance.players.FirstOrDefault(p => p.data.view.IsMine);
+        }
+        public static Player GetClosestOtherPlayer(this PlayerManager instance, Player thisPlayer, bool requireAlive = true, bool requireLoS = false)
+        {
+            Player closest = null;
+            float dist = float.PositiveInfinity;
+            foreach (Player player in instance.players)
+            {
+                if (player.playerID == thisPlayer.playerID) { continue; }
+                if (requireAlive && player.data.dead) { continue; }
+                if (requireLoS && !instance.CanSeePlayer(thisPlayer.data.playerVel.position, player).canSee) { continue; }
+                if (Vector2.Distance(player.data.playerVel.position, thisPlayer.data.playerVel.position) < dist) { closest = player; }
+            }
+            return closest;
         }
         public static void SetPlayersInvulnerableAndIntangible(this PlayerManager instance, bool inv)
         {

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnboundLib.Networking;
 using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.Objects;
+using GameModeCollection.Utils;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class KillerRoleHandler : IRoleHandler
@@ -105,7 +106,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, card, addToCardBar: false);
             if (player.data.view.IsMine)
             {
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, card);
+                CardUtils.ClientsideAddToCardBar(player.playerID, card, silent: false);
             }
         }
     }

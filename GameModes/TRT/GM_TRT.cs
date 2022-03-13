@@ -113,7 +113,7 @@ namespace GameModeCollection.GameModes
 
         private const float DefaultZoom = 40f;
 
-        private const float TimeBetweenCardDrops = 0.5f;
+        internal const float TimeBetweenCardDrops = 0.5f;
         private const float CardRandomVelMult = 0.25f;
         private const float CardRandomVelMin = 3f;
         private const float CardAngularVelMult = 10f;
@@ -158,7 +158,7 @@ namespace GameModeCollection.GameModes
         private Dictionary<int, string> RoleIDsToAssign = null;
         private int? timeUntilBattleStart = null;
 
-        private bool battleOngoing = false;
+        internal bool battleOngoing = false;
         private bool prebattle = false;
 
         private float clocktime = RoundTime;
@@ -427,7 +427,7 @@ namespace GameModeCollection.GameModes
         {
             this.StartCoroutine(this.PlayerDropCard(player, card));
         }
-        private IEnumerator PlayerDropCard(Player player, CardInfo card)
+        internal IEnumerator PlayerDropCard(Player player, CardInfo card)
         {
             Vector2 velocty = (Vector2)player.data.playerVel.GetFieldValue("velocity");
             yield return CardItem.MakeCardItem(card,

@@ -1,13 +1,13 @@
-﻿using UnboundLib;
-using UnityEngine;
+﻿using GameModeCollection.GameModeHandlers;
+using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.Utils;
 using Photon.Pun;
-using GameModeCollection.GameModeHandlers;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnboundLib;
 using UnboundLib.Networking;
-using GameModeCollection.GameModes.TRT.Cards;
-using GameModeCollection.Objects;
+using UnityEngine;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class ZombieRoleHandler : IRoleHandler
@@ -19,8 +19,8 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public Color WinColor => Zombie.RoleAppearance.Color;
         public string RoleName => ZombieRoleName;
         public string RoleID => ZombieRoleID;
-        public int MinNumberOfPlayersForRole => 5;
-        public float Rarity => 0.1f;
+        public int MinNumberOfPlayersForRole => 0;//5;
+        public float Rarity => 1f;//0.1f;
         public string[] RoleIDsToOverwrite => new string[] { "GM_TRT_Traitor", "GM_TRT_Vampire", "GM_TRT_Hypnotist", "GM_TRT_Assassin" };
         public Alignment? AlignmentToReplace => Alignment.Traitor;
         public void AddRoleToPlayer(Player player)
@@ -102,7 +102,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, ClawCard.Card, addToCardBar: false);
             if (player.data.view.IsMine)
             {
-                CardItemHandler.ClientsideAddToCardBar(player.playerID, ClawCard.Card);
+                CardUtils.ClientsideAddToCardBar(player.playerID, ClawCard.Card, silent: false);
             }
         }
         public void CallZombieInfect(Player killedPlayer)

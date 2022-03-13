@@ -8,10 +8,34 @@ using TMPro;
 using UnboundLib;
 using UnboundLib.Networking;
 using UnityEngine;
+using GameModeCollection.Objects;
 namespace GameModeCollection.Utils
 {
     static class CardUtils
     {
+        internal static void AddCardsToPlayer_ClientsideCardBar(Player player, CardInfo[] cards, bool silent = false)
+        {
+            RPCA_AddCardsToPlayer_ClientsideCardBar(player.playerID, cards.Select(c => c.cardName).ToArray(), silent);
+        }
+        internal static void Call_AddCardsToPlayer_ClientsideCardBar(Player player, CardInfo[] cards, bool silent = false)
+        {
+            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_AddCardsToPlayer_ClientsideCardBar), player.playerID, cards.Select(c => c.cardName).ToArray(), silent);
+        }
+        [UnboundRPC]
+        private static void RPCA_AddCardsToPlayer_ClientsideCardBar(int playerID, string[] cardNames, bool silent)
+        {
+            Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
+            if (player is null) { return; }
+            if (cardNames.Any(c => Cards.instance.GetCardWithName(c) is null)) { return; }
+            ModdingUtils.Utils.Cards.instance.AddCardsToPlayer(player, cardNames.Select(c => Cards.instance.GetCardWithName(c)).ToArray(), false, null, null, null, false);
+            if (player.data.view.IsMine)
+            {
+                foreach (string cardName in cardNames)
+                {
+                    ClientsideAddToCardBar(player.playerID, Cards.instance.GetCardWithName(cardName), silent: silent);
+                }
+            }
+        }
         internal static void AddCardToPlayer_ClientsideCardBar(Player player, CardInfo card, bool silent = false)
         {
             RPCA_AddCardToPlayer_ClientsideCardBar(player.playerID, card.cardName, silent);
@@ -94,6 +118,7 @@ namespace GameModeCollection.Utils
             }
             gameObject.GetComponentInChildren<TextMeshProUGUI>().text = text;
             Traverse.Create(gameObject.GetComponent<CardBarButton>()).Field("card").SetValue(card);
+            gameObject.GetComponent<SelectableCardBarButton>().SetPlayerID(playerID);
             gameObject.gameObject.SetActive(true);
         }
     }
