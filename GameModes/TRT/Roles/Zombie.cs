@@ -136,21 +136,21 @@ namespace GameModeCollection.GameModes.TRT.Roles
                 UnityEngine.GameObject.Destroy(role);
             }
             yield return new WaitForEndOfFrame();
+            while (player.data.dead)
+            {
+                player.data.healthHandler.Revive(true);
+                yield return new WaitForEndOfFrame();
+            }
+            yield return new WaitUntil(() => !player.data.dead);
             yield return new WaitForEndOfFrame();
-            this.GetComponent<PhotonView>().RPC(nameof(RPCA_ReviveZombie), RpcTarget.All, player.playerID);
             RoleManager.GetHandler(ZombieRoleHandler.ZombieRoleID).AddRoleToPlayer(player);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
             RoleManager.DoRoleDisplaySpecific(player);
             if (player.data.view.IsMine)
             {
                 TRTHandler.SendChat(null, $"You've been infected by a {RoleManager.GetRoleColoredName(Zombie.RoleAppearance)}!", true);
             }
-        }
-        [PunRPC]
-        void RPCA_ReviveZombie(int playerID)
-        {
-            Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
-            if (player is null) { return; }
-            player.data.healthHandler.Revive(true);
         }
         public override void OnCorpseInteractedWith(Player player)
         {

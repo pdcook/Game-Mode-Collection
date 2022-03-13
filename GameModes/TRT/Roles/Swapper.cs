@@ -8,11 +8,13 @@ namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class SwapperRoleHandler : IRoleHandler
     {
+        public static string SwapperRoleName => Swapper.RoleAppearance.Name;
+        public static string SwapperRoleID = $"GM_TRT_{SwapperRoleName}";
         public Alignment RoleAlignment => Swapper.RoleAlignment;
         public string WinMessage => "THE SWAPPER WINS"; // this shouldn't even be possible
         public Color WinColor => Swapper.RoleAppearance.Color;
-        public string RoleName => Swapper.RoleAppearance.Name;
-        public string RoleID => $"GM_TRT_{this.RoleName}";
+        public string RoleName => SwapperRoleName;
+        public string RoleID => SwapperRoleID;
         public int MinNumberOfPlayersForRole => 5;
         public float Rarity => 0.25f;
         public string[] RoleIDsToOverwrite => new string[] {};
@@ -66,47 +68,68 @@ namespace GameModeCollection.GameModes.TRT.Roles
             string roleID = RoleManager.GetRoleID(killingPlayerRole);
             IRoleHandler roleHandler = RoleManager.GetHandler(roleID);
 
-            GameModeCollection.instance.StartCoroutine(this.IDoSwap(killingPlayer, roleHandler, killingPlayerRole));
+            GameModeCollection.instance.StartCoroutine(Swapper.IDoSwapFromSwapper(this.GetComponent<Player>(), roleHandler, killingPlayerRole));
+            GameModeCollection.instance.StartCoroutine(Swapper.IDoSwapToSwapper(killingPlayer));
 
         }
-        IEnumerator IDoSwap(Player killingPlayer, IRoleHandler roleHandler, ITRT_Role killingPlayerRole)
+        static IEnumerator IDoSwapFromSwapper(Player swapper, IRoleHandler killingPlayerRoleHandler, ITRT_Role killingPlayerRole)
         {
-            yield return new WaitUntil(() => this.GetComponent<CharacterData>().dead);
+            // wait until the swapper has registered as dead
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            yield return new WaitUntil(() => swapper.data.dead);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+
+            // the swapper has all of their roles removed
+            foreach (TRT_Role role in swapper.GetComponentsInChildren<TRT_Role>())
+            {
+                UnityEngine.GameObject.Destroy(role);
+            }
+            // the swapper is revived
+            while (swapper.data.dead)
+            {
+                swapper.GetComponent<HealthHandler>().Revive(true);
+                yield return new WaitForEndOfFrame();
+            }
+
+            // wait until the swapper has revived
+            yield return new WaitUntil(() => !swapper.data.dead);
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
 
             // the swapper now assumes the role of the killing player
-            roleHandler.AddRoleToPlayer(this.GetComponent<Player>());
+            killingPlayerRoleHandler.AddRoleToPlayer(swapper);
 
+            // finally, TRT chats and role displays are handled
+            RoleManager.DoRoleDisplaySpecific(swapper);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            if (swapper.data.view.IsMine)
+            {
+                TRTHandler.SendChat(null, $"You've swapped to become a {RoleManager.GetRoleColoredName(killingPlayerRole.Appearance)}!", true);
+            }
+        }
+        static IEnumerator IDoSwapToSwapper(Player killingPlayer)
+        {
             // the killing player has all their roles removed and is killed
             foreach (var role in killingPlayer.gameObject.GetComponentsInChildren<TRT_Role>())
             {
                 UnityEngine.GameObject.Destroy(role);
             }
-            if (this.GetComponent<PhotonView>().IsMine)
+            if (killingPlayer.GetComponent<PhotonView>().IsMine)
             {
                 killingPlayer.data.view.RPC("RPCA_Die", RpcTarget.All, Vector2.up);
             }
 
+            yield return new WaitUntil(() => killingPlayer.data.dead);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+
             // the (now killed) killing player will now appear as a swapper
-            RoleManager.GetHandler(RoleManager.GetRoleID(this)).AddRoleToPlayer(killingPlayer);
+            RoleManager.GetHandler(SwapperRoleHandler.SwapperRoleID).AddRoleToPlayer(killingPlayer);
 
-            // finally, the swapper is revived and this role is removed
-
-            Player player = this.GetComponent<Player>();
-
-            GameModeCollection.instance.ExecuteAfterFrames(2, () =>
-            {
-                player.GetComponent<HealthHandler>().Revive(true);
-                RoleManager.DoRoleDisplaySpecific(player);
-                if (player.data.view.IsMine)
-                {
-                    TRTHandler.SendChat(null, $"You've swapped to become a {RoleManager.GetRoleColoredName(killingPlayerRole.Appearance)}!", true);
-                }
-            });
-
-            Destroy(this);
-
+            yield break;
         }
     }
 }

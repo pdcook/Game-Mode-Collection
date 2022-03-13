@@ -2,6 +2,7 @@
 using UnityEngine;
 using Photon.Pun;
 using GameModeCollection.GameModeHandlers;
+using System.Collections;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class HypnotistRoleHandler : IRoleHandler
@@ -63,20 +64,30 @@ namespace GameModeCollection.GameModes.TRT.Roles
             this.CanRevive = false;
             Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
             if (player is null) { return; }
-            player.data.healthHandler.Revive(true);
             foreach (var role in player.gameObject.GetComponentsInChildren<TRT_Role>())
             {
                 UnityEngine.GameObject.Destroy(role);
             }
-            this.ExecuteAfterFrames(2, () =>
+            GameModeCollection.instance.StartCoroutine(IDoHypnotistRevive(player));
+        }
+        IEnumerator IDoHypnotistRevive(Player player)
+        {
+            yield return new WaitForEndOfFrame();
+            while (player.data.dead)
             {
-                RoleManager.GetHandler(TraitorRoleHandler.TraitorRoleID).AddRoleToPlayer(player);
-                RoleManager.DoRoleDisplaySpecific(player);
-                if (player.data.view.IsMine)
-                {
-                    TRTHandler.SendChat(null, $"A {RoleManager.GetRoleColoredName(Hypnotist.RoleAppearance)} has revived you as a {RoleManager.GetRoleColoredName(Traitor.RoleAppearance)}!" , true);
-                }
-            });
+                player.data.healthHandler.Revive(true);
+                yield return new WaitForEndOfFrame();
+            }
+            yield return new WaitForEndOfFrame();
+            RoleManager.GetHandler(TraitorRoleHandler.TraitorRoleID).AddRoleToPlayer(player);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            RoleManager.DoRoleDisplaySpecific(player);
+            if (player.data.view.IsMine)
+            {
+                TRTHandler.SendChat(null, $"A {RoleManager.GetRoleColoredName(Hypnotist.RoleAppearance)} has revived you as a {RoleManager.GetRoleColoredName(Traitor.RoleAppearance)}!" , true);
+            }
+            yield break;
         }
     }
 }

@@ -481,10 +481,17 @@ namespace GameModeCollection.GameModes
                 UIHandler.instance.roundCounterSmall.UpdateText(1, "ONGOING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
             }
 
+            float checkAfter = 1f;
+
+            if (RoleManager.GetPlayerRoleID(killedPlayer) == SwapperRoleHandler.SwapperRoleID)
+            {
+                checkAfter = 5f;
+            }
+
             // check win condition after a short delay to allow things like phantom spawning and swapper swapping to happen
             if (this.isCheckingWinCondition || !PhotonNetwork.IsMasterClient) { return; }
             this.isCheckingWinCondition = true;
-            this.ExecuteAfterFrames(10, () =>
+            this.ExecuteAfterSeconds(checkAfter, () =>
             {
                 this.isCheckingWinCondition = false;
 
