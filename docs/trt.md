@@ -18,7 +18,7 @@
     6. [Item Shops](#item-shops)
         - [Items](#items)
         - [Credits](#credits)
-    7. [Quickchat / Radio](#quickchat-%2F-radio)
+    7. [Radio](#radio)
 5. [Roles](#roles)
     - [Classic](#classic)
         - [<img src="./innocent-cropped.png" alt="innocent" width=150>](#innocent)
@@ -172,7 +172,7 @@ Some items cannot be discarded, nor are they dropped when the player dies.
 
 Some roles spawn with credits, others do not. Some roles can earn credits throughout the round, some cannot. For details on each specific role, see the Roles section.
 
-### Quickchat / Radio
+### Radio
 
 There are several radio shortcuts to help players communicate quickly. All of them make use of the closest player (denoted here as `<player>`). The quickchats and their default controls are listed below.
 
