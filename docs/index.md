@@ -10,7 +10,7 @@
 ##### Please consider supporting us! This project took hundreds upon hundreds of hours of work. There are more lines of code in this project and the dependencies we developed to support it than there are in the vanilla game.
 
 ## Game Modes
-#### [Crown Control](./crowncontrol.md)
+#### [![Crown Control](./CrownControlBannerTitle.png)](./crowncontrol.html)
 #### [Dodgeball](./dodgeball.md)
 #### [![Hide & Seek](./HideAndSeekBannerTitle.png)](./hideandseek.html)
 #### [![Trouble In ROUNDS Town](./TRTBannerTitle.png)](./trt.html)
