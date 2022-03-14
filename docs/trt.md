@@ -347,7 +347,7 @@ _Win condition: Kill all members of the innocent team._
 
 - Can become temporarily invisible by double tapping `[interact]` (default control: `F` or right stick button)
     - Ability has a short cooldown
-- Can eat bodies by holding `[interact]` (default control: `F` or right stick down)
+- Can eat bodies by holding `[interact]` (default control: `F` or right stick button)
     - Restores some HP
     - Completely destroys the body, making it impossible for players or **Detectives** to inspect or investigate it
 - Has access to the traitor shop
