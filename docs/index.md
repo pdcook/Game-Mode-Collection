@@ -11,7 +11,7 @@
 
 ## Game Modes
 #### [![Crown Control](./CrownControlBannerTitle.png)](./crowncontrol.html)
-#### [Dodgeball](./dodgeball.md)
+#### [![Dodgeball](./DodgeballBannerTitle.png)](./dodgeball.html)
 #### [![Hide & Seek](./HideAndSeekBannerTitle.png)](./hideandseek.html)
 #### [![Trouble In ROUNDS Town](./TRTBannerTitle.png)](./trt.html)
 [//]: # (ROUNDS Battle Royale)
