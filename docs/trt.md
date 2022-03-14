@@ -69,6 +69,8 @@ This section is a quick reference for if you already know how to play and just n
 
 ## Controls
 
+![DefaultControls](./TRT_DefaultControls.png)
+
 
 ## Gameplay
 
