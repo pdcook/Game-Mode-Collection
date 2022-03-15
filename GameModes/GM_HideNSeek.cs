@@ -44,6 +44,14 @@ namespace GameModeCollection.GameModes
 
         public static GM_HideNSeek instance;
 
+        protected override void Start()
+        {
+            base.Start();
+            // Force enable the shader
+            LocalZoom.LocalZoom.SetEnableShaderSetting(true);
+            LocalZoom.LocalZoom.SetEnableCameraSetting(true);
+        }
+
         protected override void Awake()
         {
             base.Awake();
