@@ -35,6 +35,7 @@ namespace GameModeCollection.GameModeHandlers
         internal const string GameModeName = "Trouble in Rounds Town";
         internal const string GameModeID = "TroubleInRoundsTown";
         public override bool OnlineOnly => true;
+        public override bool AllowTeams => false;
         public override GameSettings Settings { get; protected set; }
 
         private static float TimeLastSent = -1f;
@@ -45,7 +46,6 @@ namespace GameModeCollection.GameModeHandlers
             {
                 { "pointsToWinRound", 4},
                 { "roundsToWinGame", 4},
-                { "allowTeams", false },
                 { "playersRequiredToStartGame", UnityEngine.Mathf.Clamp(4, 1, RWFMod.MaxPlayersHardLimit) },
                 { "maxPlayers", UnityEngine.Mathf.Clamp(RWFMod.instance.MaxPlayers, 1, RWFMod.MaxPlayersHardLimit) },
                 { "maxTeams", UnityEngine.Mathf.Clamp(RWFMod.instance.MaxTeams, 1, RWFMod.MaxColorsHardLimit) },
