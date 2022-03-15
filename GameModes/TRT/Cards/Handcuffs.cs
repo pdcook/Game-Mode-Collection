@@ -62,7 +62,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_Handcuffs"));
+            return GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_Handcuffs");
         }
 
         protected override CardInfo.Rarity GetRarity()

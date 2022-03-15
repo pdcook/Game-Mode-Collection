@@ -67,7 +67,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         protected override GameObject GetCardArt()
         {
             //return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_KNIFE");
-            return GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_Knife"));
+            return GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_Knife");
         }
 
         protected override CardInfo.Rarity GetRarity()

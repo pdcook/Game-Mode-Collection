@@ -68,7 +68,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_VSS"));
+            return GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_VSS");
         }
 
         protected override CardInfo.Rarity GetRarity()
