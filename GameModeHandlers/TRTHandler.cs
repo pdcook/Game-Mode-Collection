@@ -40,6 +40,8 @@ namespace GameModeCollection.GameModeHandlers
 
         private static float TimeLastSent = -1f;
 
+        public override UISettings UISettings => new UISettings("<size=125%>T</size>rouble in <size=125%>R</size>OUNDS <size=125%>T</size>own.\nGuide available at\nhttps://pdcook.github.io/Game-Mode-Collection/trt.html");
+
         public TRTHandler() : base(gameModeId: GameModeID)
         {
             this.Settings = new GameSettings()
@@ -50,9 +52,6 @@ namespace GameModeCollection.GameModeHandlers
                 { "maxPlayers", UnityEngine.Mathf.Clamp(RWFMod.instance.MaxPlayers, 1, RWFMod.MaxPlayersHardLimit) },
                 { "maxTeams", UnityEngine.Mathf.Clamp(RWFMod.instance.MaxTeams, 1, RWFMod.MaxColorsHardLimit) },
                 { "maxClients", UnityEngine.Mathf.Clamp(RWFMod.instance.MaxClients, 1, RWFMod.MaxPlayersHardLimit) },
-                { "description", "Trouble in ROUNDS Town"},
-                { "descriptionFontSize", 30},
-                { "videoURL", "https://media.giphy.com/media/lcngwaPCkqFbfhzrsH/giphy.mp4"},
                 {GameModeCollection.ReviveOnCardAddKey, false }, // do not revive players when they get a card
                 {GameModeCollection.CreatePlayerCorpsesKey, true }, // do not hide players when they die, instead make a corpse
                 {GameModeCollection.IgnoreGameFeelKey, true }, // do not shake the screen or add chromatic aberration
