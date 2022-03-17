@@ -69,6 +69,7 @@ namespace GameModeCollection.Objects
 
         internal static IEnumerator MakeCardItem(CardInfo card, Vector3 position, Quaternion rotation, Vector2 velocity = default, float angularVelocity = 0f, float maxHealth = -1f, bool requireInteract = true)
         {
+            if (card is null) { yield break; }
             if (PhotonNetwork.IsMasterClient || PhotonNetwork.OfflineMode)
             {
                 // create item
