@@ -54,17 +54,17 @@ This game mode is a near-exact one-to-one port of [TTT from Gary's Mod](https://
 
 This section is a quick reference for if you already know how to play and just need the quick facts. The rest of this document provides a detailed guide on how to play.
 
-- Every round has a 30 second preparation phase during which players can collect cards from around the map (default control: "F" or left stick button) and explore.
+- Every round has a 30 second preparation phase during which players can collect cards from around the map (default control: `F` or left stick button) and explore.
 - Every round players' roles are randomly determined
 - **_Dead players cannot communicate with alive players by any means. This includes external voice chat._**
 - Detectives, Traitors, Mercenaries, Killers, and Zombies all have access to a shop.
-- Players can pick up cards at any time during a round (default control: "F" or left stick button)
+- Players can pick up cards at any time during a round (default control: `F` or left stick button)
 - Players can have a maximum of 2 cards. Custom cards bought in a shop do not count.
-- Players can discard their most recent card (default control: "Q" or Y/Δ) or any card by clicking on it in the card bar.
+- Players can discard their most recent card (default control: `Q` or Y/Δ) or any card by clicking on it in the card bar.
 - Killing teammates causes you to lose karma. This will negatively effect the amount of damage you do in future rounds.
 - Players gain karma each round they complete without team-killing.
 - If a player's karma drops too low, they will be automatically killed at the end of the next preparation phase.
-- Players can inspect bodies (default control: "E" or right stick button).
+- Players can inspect bodies (default control: `E` or right stick button).
 - Players can zoom in and out (default control: scroll wheel or right bumper + D-pad up/down). The maximum zoom a player can use is determined by their gun's projectile speed stat.
 
 ## Controls
@@ -86,7 +86,7 @@ Additionally, a small number of innocent players will be selected to be a **dete
 
 Vanilla ROUNDS cards are distributed around the map at set locations determined by the map itself. Modded cards are not enabled in TRT. Some vanilla cards are not enabled (e.g. Tank) for balance reasons.
 
-Players can collect up to 2 cards at any point in the round by walking up to one and pressing "F" or left stick button by default. Players can discard their most recent card at any time by pressing "Q" or Y/Δ by default. Players may also discard any card in their hand by clicking on the card bar square (e.g. a player can discard "Spray" by clicking on the small "Sp" square in their card bar.)  Discarded cards are simply dropped where the player stands.
+Players can collect up to 2 cards at any point in the round by walking up to one and pressing `F` or left stick button by default. Players can discard their most recent card at any time by pressing `Q` or Y/Δ by default. Players may also discard any card in their hand by clicking on the card bar square (e.g. a player can discard "Spray" by clicking on the small "Sp" square in their card bar.)  Discarded cards are simply dropped where the player stands.
 
 Some custom TRT cards cannot be discarded, usually because they are integral to the player's role.
 
@@ -104,7 +104,7 @@ When a player dies, they can no longer talk to players who are still alive. They
 
 ***If you are playing with a group in an external voice call, everyone must follow the rule that if you are dead, you cannot speak.***
 
-When a player dies, no one is notified, no score is updated, nothing changes. Their body will stay on the map and can be found by other players. If another player finds their body, they can (and should!) identify it by walking up to it and inspecting it (default control: "E" or right stick button). This will announce to the entire server which player identified the body, whose body it was, and what role they were. If a detective inspects a body, it will reveal additional information for everyone such as how long ago the player died and the color of the last player that either they shot or shot them.
+When a player dies, no one is notified, no score is updated, nothing changes. Their body will stay on the map and can be found by other players. If another player finds their body, they can (and should!) identify it by walking up to it and inspecting it (default control: `E` or right stick button). This will announce to the entire server which player identified the body, whose body it was, and what role they were. If a detective inspects a body, it will reveal additional information for everyone such as how long ago the player died and the color of the last player that either they shot or shot them.
 
 Dead players begin spectating the game but are still unable to see living players' roles, since there are circumstances where dead players can be revived.
 
@@ -112,7 +112,7 @@ Dead players begin spectating the game but are still unable to see living player
 
 Each round has two phases: **preparing** and **active** (or in-progress).
 
-The preparation phase lasts 30 seconds, during which players can explore the map and collect cards (default control: "F" or left stick button). Players can shoot but cannot deal or take damage.
+The preparation phase lasts 30 seconds, during which players can explore the map and collect cards (default control: `F` or left stick button). Players can shoot but cannot deal or take damage.
 
 At the end of the preparation phase, the active phase starts. This is the phase where the actual gameplay takes place. All players are immediately assigned roles at random, and damage is enabled.
 
@@ -122,9 +122,9 @@ The game will repeat the same map as many times as the `NumberOfPointsPerRound` 
 
 ### Chat
 
-Players that are alive have access to a global chat (default control: "T" or "Enter"). Players that are dead cannot communicate with living players, but can still see their messages. This prevents spectators from revealing information.
+Players that are alive have access to a global chat (default control: `T` or "Enter"). Players that are dead cannot communicate with living players, but can still see their messages. This prevents spectators from revealing information.
 
-Traitors have access to a traitor-only text chat (default control: "V"). Certain roles disable this chat for all traitors, and other roles have the ability to send, but not receive, messages in this chat.
+Traitors have access to a traitor-only text chat (default control: `V`). Certain roles disable this chat for all traitors, and other roles have the ability to send, but not receive, messages in this chat.
 
 ***If your party is playing with an external voice chat (which is recommended) it is important that all players follow the rule that dead players cannot speak.***
 
@@ -149,7 +149,7 @@ If a player's karma is too low, they will receive a "slay." Such a player will b
 
 ### Item Shops
 
-Some roles (Traitors, Detectives, Mercenaries, Zombies, and Killers) have access to a shop (default control: "C" or X/□) where they can buy useful weapons and equipment. The number of credits a player spawns with, as well as the items available to them in the shop, are dependent on their role.
+Some roles (Traitors, Detectives, Mercenaries, Zombies, and Killers) have access to a shop (default control: `C` or X/□) where they can buy useful weapons and equipment. The number of credits a player spawns with, as well as the items available to them in the shop, are dependent on their role.
 
 #### Items
 
