@@ -113,6 +113,8 @@ namespace GameModeCollection.GameModes
 
         private const float DefaultZoom = 40f;
 
+        public const float DelayRevivesFor = 1f;
+
         internal const float TimeBetweenCardDrops = 0.5f;
         private const float CardRandomVelMult = 0.25f;
         private const float CardRandomVelMin = 3f;
@@ -481,7 +483,7 @@ namespace GameModeCollection.GameModes
                 UIHandler.instance.roundCounterSmall.UpdateText(1, "ONGOING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
             }
 
-            float checkAfter = 1f;
+            float checkAfter = GM_TRT.DelayRevivesFor + 0.5f;
 
             if (RoleManager.GetPlayerRoleID(killedPlayer) == SwapperRoleHandler.SwapperRoleID)
             {

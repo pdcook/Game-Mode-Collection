@@ -157,9 +157,30 @@ namespace GameModeCollection.Patches
             }
         }
     }
+    [HarmonyPatch(typeof(HealthHandler), "RPCA_Die_Phoenix")]
+    class HealthHandler_Patch_RPCA_Die_Phoenix
+    {
+
+        [HarmonyPriority(Priority.First)]
+        static bool Prefix(HealthHandler __instance)
+        {
+            return !__instance.Invulnerable() && !__instance.Intangible() && (!__instance.isRespawning || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID);
+        }
+    }
     [HarmonyPatch(typeof(HealthHandler), "RPCA_Die")]
     class HealthHandler_Patch_RPCA_Die
     {
+
+        [HarmonyPriority(Priority.First)]
+        static bool Prefix(HealthHandler __instance)
+        {
+            GameModeCollection.Log($"IS INVULNERABLE: {__instance.Invulnerable()}");
+            GameModeCollection.Log($"IS INTANGIBLE: {__instance.Intangible()}");
+            GameModeCollection.Log($"IS RESPAWNING: {__instance.isRespawning}");
+            GameModeCollection.Log($"CURRENT GAMEMODE IS TRT: {GameModeManager.CurrentHandlerID == TRTHandler.GameModeID}");
+            GameModeCollection.Log($"DIE?: {!__instance.Invulnerable() && !__instance.Intangible() && (!__instance.isRespawning || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID)}");
+            return !__instance.Invulnerable() && !__instance.Intangible() && (!__instance.isRespawning || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID);
+        }
 
         static void MakeCorpse(HealthHandler healthHandler)
         {

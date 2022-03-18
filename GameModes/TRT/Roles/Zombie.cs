@@ -1,5 +1,6 @@
 ﻿using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.Extensions;
 using GameModeCollection.Utils;
 using Photon.Pun;
 using System.Collections;
@@ -108,7 +109,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
         public void CallZombieInfect(Player killedPlayer)
         {
             // do zombie stuff
-            if (this.GetComponent<PhotonView>().IsMine && RoleManager.GetPlayerAlignment(killedPlayer) != this.Alignment && killedPlayer?.playerID != this.GetComponent<Player>().playerID && !this.playerIDsKilled.Contains(killedPlayer.playerID))
+            if (this.GetComponent<PhotonView>().IsMine && RoleManager.GetPlayerAlignment(killedPlayer) != Alignment.Chaos && RoleManager.GetPlayerAlignment(killedPlayer) != this.Alignment && killedPlayer?.playerID != this.GetComponent<Player>().playerID && !this.playerIDsKilled.Contains(killedPlayer.playerID))
             {
                 // if this was the phantom and they can still haunt, don't revive them as a zombie
                 if (RoleManager.GetPlayerRoleID(killedPlayer) != PhantomRoleHandler.PhantomRoleID || !(((Phantom)RoleManager.GetPlayerRole(killedPlayer)).CanHaunt || ((Phantom)RoleManager.GetPlayerRole(killedPlayer)).IsHaunting))
@@ -138,10 +139,10 @@ namespace GameModeCollection.GameModes.TRT.Roles
             yield return new WaitForEndOfFrame();
             while (player.data.dead)
             {
-                player.data.healthHandler.Revive(true);
+                player.data.healthHandler.Revive(true, delayReviveFor: GM_TRT.DelayRevivesFor);
                 yield return new WaitForEndOfFrame();
             }
-            yield return new WaitUntil(() => !player.data.dead);
+            yield return new WaitUntil(() => !player.data.dead && !player.data.healthHandler.Invulnerable() && !player.data.healthHandler.Intangible());
             yield return new WaitForEndOfFrame();
             RoleManager.GetHandler(ZombieRoleHandler.ZombieRoleID).AddRoleToPlayer(player);
             yield return new WaitForEndOfFrame();

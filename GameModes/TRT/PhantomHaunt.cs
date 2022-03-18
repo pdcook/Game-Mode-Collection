@@ -37,7 +37,7 @@ namespace GameModeCollection.GameModes.TRT
             {
                 this.PhantomPlayer.GetComponent<PlayerCollision>().IgnoreWallForFrames(2);
                 this.PhantomPlayer.transform.position = this.RespawnPos;
-                this.PhantomPlayer.data.healthHandler.Revive(true, Phantom.ReviveWithHealthFrac);
+                this.PhantomPlayer.data.healthHandler.Revive(true, Phantom.ReviveWithHealthFrac, GM_TRT.DelayRevivesFor);
                 this.Phantom.IsHaunting = false;
                 // if the local player is the detective, they should be notified that the phantom was revived
                 if (RoleManager.GetPlayerRoleID(PlayerManager.instance.players.FirstOrDefault(p => p.data.view.IsMine)) == DetectiveRoleHandler.DetectiveRoleID)

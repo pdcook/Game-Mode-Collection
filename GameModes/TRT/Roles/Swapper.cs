@@ -3,6 +3,7 @@ using UnityEngine;
 using Photon.Pun;
 using System.Linq;
 using GameModeCollection.GameModeHandlers;
+using GameModeCollection.Extensions;
 using System.Collections;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
@@ -89,17 +90,19 @@ namespace GameModeCollection.GameModes.TRT.Roles
             // the swapper is revived
             while (swapper.data.dead)
             {
-                swapper.GetComponent<HealthHandler>().Revive(true);
+                swapper.data.healthHandler.Revive(true, delayReviveFor: GM_TRT.DelayRevivesFor); 
                 yield return new WaitForEndOfFrame();
             }
 
             // wait until the swapper has revived
-            yield return new WaitUntil(() => !swapper.data.dead);
+            yield return new WaitUntil(() => !swapper.data.dead && !swapper.data.healthHandler.Invulnerable() && !swapper.data.healthHandler.Intangible());
             yield return new WaitForEndOfFrame();
             yield return new WaitForEndOfFrame();
 
             // the swapper now assumes the role of the killing player
             killingPlayerRoleHandler.AddRoleToPlayer(swapper);
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
 
             // finally, TRT chats and role displays are handled
             RoleManager.DoRoleDisplaySpecific(swapper);

@@ -2,6 +2,7 @@
 using UnboundLib;
 using GameModeCollection.Objects;
 using System.Runtime.CompilerServices;
+using System.Collections;
 namespace GameModeCollection.Extensions
 {
     public class HealthHandlerAdditionalData
@@ -68,9 +69,19 @@ namespace GameModeCollection.Extensions
             }
         }
 
-        // overload for reviving with other than full health
-        public static void Revive(this HealthHandler instance, bool isFullRevive = true, float healthPerc = 1f)
+        // overload for reviving with other than full health, and adding a delay but still marking the player as alive immediately
+        public static void Revive(this HealthHandler instance, bool isFullRevive = true, float healthPerc = 1f, float delayReviveFor = 0f)
         {
+            instance.SetIntangible(true);
+            instance.SetInvulnerable(true);
+            ((CharacterData)instance.GetFieldValue("data")).dead = false;
+            GameModeCollection.instance.StartCoroutine(DelayRevive(instance, isFullRevive, Mathf.Clamp01(healthPerc), Mathf.Clamp(delayReviveFor, 0f, float.PositiveInfinity)));
+        }
+        private static IEnumerator DelayRevive(HealthHandler instance, bool isFullRevive, float healthPerc, float delay)
+        {
+            yield return new WaitForSecondsRealtime(delay);
+            instance.SetIntangible(false);
+            instance.SetInvulnerable(false);
             instance.Revive(isFullRevive);
             ((CharacterData)instance.GetFieldValue("data")).health *= healthPerc;
         }

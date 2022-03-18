@@ -2,6 +2,7 @@
 using UnityEngine;
 using Photon.Pun;
 using GameModeCollection.GameModeHandlers;
+using GameModeCollection.Extensions;
 using System.Collections;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
@@ -75,9 +76,17 @@ namespace GameModeCollection.GameModes.TRT.Roles
             yield return new WaitForEndOfFrame();
             while (player.data.dead)
             {
-                player.data.healthHandler.Revive(true);
+                // delay the revive enough so that the player has been dead for at least GM_TRT.DelayRevivesFor to ensure network BS doesn't kill them again immediately
+                TRT_Corpse corpse = player.GetComponent<TRT_Corpse>();
+                float delayFor = GM_TRT.DelayRevivesFor;
+                if (corpse != null && (Time.realtimeSinceStartup - corpse.TimeOfDeath) < GM_TRT.DelayRevivesFor)
+                {
+                    delayFor = GM_TRT.DelayRevivesFor - (Time.realtimeSinceStartup - corpse.TimeOfDeath);
+                }
+                player.data.healthHandler.Revive(true, delayReviveFor: delayFor);
                 yield return new WaitForEndOfFrame();
             }
+            yield return new WaitUntil(() => !player.data.dead && !player.data.healthHandler.Invulnerable() && !player.data.healthHandler.Intangible());
             yield return new WaitForEndOfFrame();
             RoleManager.GetHandler(TraitorRoleHandler.TraitorRoleID).AddRoleToPlayer(player);
             yield return new WaitForEndOfFrame();
