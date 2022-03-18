@@ -30,8 +30,8 @@
      width="1500px"
      inkscape:snap-page="true"
      inkscape:zoom="0.35355339"
-     inkscape:cx="864.08448"
-     inkscape:cy="1607.9608"
+     inkscape:cx="804.68752"
+     inkscape:cy="849.94235"
      inkscape:window-width="1920"
      inkscape:window-height="1017"
      inkscape:window-x="-8"
@@ -68,6 +68,10 @@
        position="389.1519,278.30091"
        orientation="1,0"
        id="guide176028" />
+    <sodipodi:guide
+       position="136.5572,182.74014"
+       orientation="1,0"
+       id="guide5458" />
   </sodipodi:namedview>
   <defs
      id="defs2">
@@ -1748,79 +1752,79 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#e53838;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="53.243259"
+       x="78.585396"
        y="145.76254"
        id="text16244"><tspan
          sodipodi:role="line"
          id="tspan16242"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#e53838;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="53.243259"
+         x="78.585396"
          y="145.76254">ITEMS</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#531414;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="52.621765"
+       x="64.263435"
        y="163.36455"
        id="text16244-4"><tspan
          sodipodi:role="line"
          id="tspan16242-6"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#531414;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="52.621765"
+         x="64.263435"
          y="163.36455">[`] Item 0</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#7b1e1e;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="52.621765"
+       x="64.263435"
        y="174.75267"
        id="text16244-4-4"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#7b1e1e;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="52.621765"
+         x="64.263435"
          y="174.75267">[1] Item 1</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#af2b2b;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="52.621765"
+       x="64.263435"
        y="186.14079"
        id="text16244-4-8"><tspan
          sodipodi:role="line"
          id="tspan16242-6-0"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#af2b2b;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="52.621765"
+         x="64.263435"
          y="186.14079">[2] Item 2</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#e53838;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="52.621765"
+       x="64.263435"
        y="197.52892"
        id="text16244-4-4-1"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-7"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#e53838;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="52.621765"
+         x="64.263435"
          y="197.52892">[3] Item 3</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#fb5151;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="52.621765"
+       x="64.263435"
        y="208.91704"
        id="text16244-4-8-3"><tspan
          sodipodi:role="line"
          id="tspan16242-6-0-6"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#fb5151;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="52.621765"
+         x="64.263435"
          y="208.91704">[4] Item 4</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ff7171;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="52.621765"
+       x="64.263435"
        y="220.30516"
        id="text16244-4-4-1-1"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-7-5"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#ff7171;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="52.621765"
+         x="64.263435"
          y="220.30516">[5] Item 5</tspan></text>
     <text
        xml:space="preserve"
@@ -1837,322 +1841,322 @@
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#531414;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
        x="303.37173"
-       y="343.64771"
+       y="338.35605"
        id="text16244-4-9"><tspan
          sodipodi:role="line"
          id="tspan16242-6-7"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#531414;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
          x="303.37173"
-         y="343.64771">[<tspan
+         y="338.35605">[<tspan
    style="fill:#d10000;fill-opacity:1"
    id="tspan176396">RB</tspan> + Y/Δ]         Item 0</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#7b1e1e;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
        x="303.30283"
-       y="354.2421"
+       y="348.95044"
        id="text16244-4-4-4"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-6"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#7b1e1e;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
          x="303.30283"
-         y="354.2421">[<tspan
+         y="348.95044">[<tspan
    style="fill:#d10000;fill-opacity:1"
    id="tspan177050">RB</tspan> + D-pad Left]  Item 1</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#af2b2b;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
        x="303.50128"
-       y="365.16721"
+       y="359.87555"
        id="text16244-4-8-5"><tspan
          sodipodi:role="line"
          id="tspan16242-6-0-8"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#af2b2b;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
          x="303.50128"
-         y="365.16721">[<tspan
+         y="359.87555">[<tspan
    style="fill:#d10000;fill-opacity:1"
    id="tspan177736">RB</tspan> + D-pad Up]    Item 2</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#e53838;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
        x="303.39929"
-       y="376.69312"
+       y="371.40146"
        id="text16244-4-4-1-3"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-7-59"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#e53838;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
          x="303.39929"
-         y="376.69312">[<tspan
+         y="371.40146">[<tspan
    style="fill:#d10000;fill-opacity:1"
    id="tspan178596">RB</tspan> + D-pad Right] Item 3</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#fb5151;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
        x="303.28629"
-       y="387.61823"
+       y="382.32657"
        id="text16244-4-8-3-3"><tspan
          sodipodi:role="line"
          id="tspan16242-6-0-6-0"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#fb5151;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
          x="303.28629"
-         y="387.61823">[<tspan
+         y="382.32657">[<tspan
    style="fill:#d10000;fill-opacity:1"
    id="tspan179598">RB</tspan> + D-pad Down]  Item 4</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff7171;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
        x="303.4158"
-       y="398.54333"
+       y="393.25168"
        id="text16244-4-4-1-1-5"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-7-5-9"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#ff7171;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
          x="303.4158"
-         y="398.54333">[<tspan
+         y="393.25168">[<tspan
    style="fill:#d10000;fill-opacity:1"
    id="tspan180564">RB</tspan> + X/□]         Item 5</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#2d2ba5;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="190.78864"
+       x="227.83034"
        y="145.76254"
        id="text16244-7"><tspan
          sodipodi:role="line"
          id="tspan16242-66"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#2d2ba5;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="190.78864"
+         x="227.83034"
          y="145.76254">RADIO</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#c84800;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="378.34091"
+       x="410.09085"
        y="145.76254"
        id="text16244-7-5"><tspan
          sodipodi:role="line"
          id="tspan16242-66-8"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#c84800;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="378.34091"
+         x="410.09085"
          y="145.76254">WORLD</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="190.78864"
+       x="227.83034"
        y="226.92859"
        id="text16244-7-4"><tspan
          sodipodi:role="line"
          id="tspan16242-66-9"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="190.78864"
+         x="227.83034"
          y="226.92859">CHAT</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#af00b1;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="378.25409"
+       x="410.00403"
        y="226.92859"
        id="text16244-7-4-9"><tspan
          sodipodi:role="line"
          id="tspan16242-66-9-6"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#af00b1;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="378.25409"
+         x="410.00403"
          y="226.92859">ZOOM</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#1c1b80;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="112.28033"
+       x="149.32202"
        y="162.24535"
        id="text16244-4-45"><tspan
          sodipodi:role="line"
          id="tspan16242-6-8"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#1c1b80;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="112.28033"
+         x="149.32202"
          y="162.24535">[R] &quot;__ is a traitor!&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#2d2ba5;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="112.28033"
+       x="149.32202"
        y="175.40839"
        id="text16244-4-4-19"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-2"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#2d2ba5;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="112.28033"
+         x="149.32202"
          y="175.40839">[G] &quot;__ is suspicious.&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#949494;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="112.28033"
+       x="149.32202"
        y="244.38156"
        id="text16244-4-45-9"><tspan
          sodipodi:role="line"
          id="tspan16242-6-8-3"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#949494;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="112.28033"
+         x="149.32202"
          y="244.38156">[T or ⏎] Global Chat</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="112.28033"
+       x="149.32202"
        y="257.54462"
        id="text16244-4-4-19-6"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-2-3"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#ffffff;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="112.28033"
+         x="149.32202"
          y="257.54462">[V] Traitor Chat</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#403ddf;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="112.28033"
+       x="149.32202"
        y="188.57143"
        id="text16244-4-8-2"><tspan
          sodipodi:role="line"
          id="tspan16242-6-0-60"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#403ddf;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="112.28033"
+         x="149.32202"
          y="188.57143">[X] &quot;I'm with __.&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#5b59c7;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="112.28033"
+       x="149.32202"
        y="201.73447"
        id="text16244-4-4-1-7"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-7-50"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#5b59c7;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="112.28033"
+         x="149.32202"
          y="201.73447">[Z] &quot;__ is innocent.&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#2d2ba5;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="346.64914"
-       y="504.09473"
+       x="136.82072"
+       y="504.54874"
        id="text16244-7-9"><tspan
          sodipodi:role="line"
          id="tspan16242-66-3"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#2d2ba5;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="346.64914"
-         y="504.09473">RADIO</tspan></text>
+         x="136.82072"
+         y="504.54874">RADIO</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#1c1b80;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="247.75134"
-       y="518.80396"
+       x="23.842184"
+       y="519.258"
        id="text16244-4-45-8"><tspan
          sodipodi:role="line"
          id="tspan16242-6-8-0"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#1c1b80;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="247.75134"
-         y="518.80396">[D-pad Up] &quot;__ is a traitor!&quot;</tspan></text>
+         x="23.842184"
+         y="519.258">[D-pad Up] &quot;__ is a traitor!&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#2d2ba5;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="247.75134"
-       y="531.96698"
+       x="23.842184"
+       y="532.42102"
        id="text16244-4-4-19-3"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-2-9"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#2d2ba5;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="247.75134"
-         y="531.96698">[D-pad Right] &quot;__ is suspicious.&quot;</tspan></text>
+         x="23.842184"
+         y="532.42102">[D-pad Right] &quot;__ is suspicious.&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#403ddf;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="247.75134"
-       y="545.13"
+       x="23.842184"
+       y="545.58405"
        id="text16244-4-8-2-0"><tspan
          sodipodi:role="line"
          id="tspan16242-6-0-60-8"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#403ddf;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="247.75134"
-         y="545.13">[D-pad Left] &quot;I'm with __.&quot;</tspan></text>
+         x="23.842184"
+         y="545.58405">[D-pad Left] &quot;I'm with __.&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#5b59c7;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="247.75134"
-       y="558.29303"
+       x="23.842184"
+       y="558.74707"
        id="text16244-4-4-1-7-5"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-7-50-3"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#5b59c7;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="247.75134"
-         y="558.29303">[D-pad Down] &quot;__ is innocent.&quot;</tspan></text>
+         x="23.842184"
+         y="558.74707">[D-pad Down] &quot;__ is innocent.&quot;</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#7e2e00;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="289.85486"
+       x="321.6048"
        y="162.24535"
        id="text16244-4-8-2-2-3"><tspan
          sodipodi:role="line"
          id="tspan16242-6-0-60-2-9"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#7e2e00;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="289.85486"
+         x="321.6048"
          y="162.24535">[Q] Drop Most Recent Card</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff8541;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="289.85486"
+       x="321.6048"
        y="188.57143"
        id="text16244-4-45-1"><tspan
          sodipodi:role="line"
          id="tspan16242-6-8-6"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#ff8541;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="289.85486"
+         x="321.6048"
          y="188.57143">[F] Interact</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#c84800;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="289.85486"
+       x="321.6048"
        y="175.40839"
        id="text16244-4-4-19-0"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-2-7"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#c84800;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="289.85486"
+         x="321.6048"
          y="175.40839">[E] Inspect Body</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#c84800;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
        x="389.53223"
-       y="430.25058"
+       y="476.79861"
        id="text16244-7-5-0"><tspan
          sodipodi:role="line"
          id="tspan16242-66-8-1"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#c84800;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
          x="389.53223"
-         y="430.25058">WORLD</tspan></text>
+         y="476.79861">WORLD</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#7e2e00;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="276.00385"
-       y="444.67993"
+       x="276.00366"
+       y="491.22794"
        id="text16244-4-8-2-2-3-7"><tspan
          sodipodi:role="line"
          id="tspan16242-6-0-60-2-9-0"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#7e2e00;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="276.00385"
-         y="444.67993">[Y/Δ] Drop Most Recent Card</tspan></text>
+         x="276.00366"
+         y="491.22794">[Y/Δ] Drop Most Recent Card</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#ff8541;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="276.00385"
-       y="471.00601"
+       x="276.00366"
+       y="517.55408"
        id="text16244-4-45-1-5"><tspan
          sodipodi:role="line"
          id="tspan16242-6-8-6-5"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#ff8541;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="276.00385"
-         y="471.00601">[Left Stick Button]  Interact</tspan></text>
+         x="276.00366"
+         y="517.55408">[Left Stick Button]  Interact</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#c84800;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="276.00385"
-       y="457.84299"
+       x="276.00366"
+       y="504.39102"
        id="text16244-4-4-19-0-5"><tspan
          sodipodi:role="line"
          id="tspan16242-6-1-2-7-8"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#c84800;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="276.00385"
-         y="457.84299">[Right Stick Button] Inspect Body</tspan></text>
+         x="276.00366"
+         y="504.39102">[Right Stick Button] Inspect Body</tspan></text>
     <g
        id="g44242"
        transform="matrix(0.23683921,0,0,0.23683921,373.3923,16.333859)"
@@ -2170,64 +2174,49 @@
          sodipodi:nodetypes="scccccccccccsccccccccccccccccccccccccssscccccccccccccccccccccccccccccccccssscccccccccss" />
       <g
          id="g44191"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44193"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44195"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44197"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44199"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44201"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44203"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44205"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44207"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44209"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44211"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44213"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44215"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44217"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
       <g
          id="g44219"
-         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none">
-</g>
+         style="stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none" />
     </g>
     <path
        d="m 422.74209,30.458171 c 0.58843,-0.01347 1.19073,0.106815 1.68386,0.440375 0.82928,0.529281 1.31441,1.52644 1.24165,2.502908 -0.003,3.921115 0.007,7.842523 -0.007,11.763455 -0.0623,1.30216 -1.19986,2.457484 -2.51055,2.519952 -0.4485,0.02159 -0.90443,0.03193 -1.34834,-0.04317 -1.19689,-0.236301 -2.16344,-1.357955 -2.16336,-2.583946 l 0.002,-12.082791 c 0.0712,-1.267733 1.15558,-2.388947 2.42619,-2.497355 0.22427,-0.024 0.4503,-0.015 0.67548,-0.01942 z"
@@ -2300,47 +2289,47 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#620d63;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="289.85486"
+       x="321.6048"
        y="244.38155"
        id="text16244-4-4-1-7-5-7"><tspan
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#620d63;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="289.85486"
+         x="321.6048"
          y="244.38155"
          id="tspan99492-9">[Scroll Up]   Zoom In</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#e659e7;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="289.85486"
+       x="321.6048"
        y="257.54459"
        id="text16244-4-4-1-7-5-8-0"><tspan
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#e659e7;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="289.85486"
+         x="321.6048"
          y="257.54459"
          id="tspan99492-4-0">[Scroll Down] Zoom Out</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#af00b1;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="123.01058"
-       y="509.38638"
+       x="389.03201"
+       y="414.37561"
        id="text16244-7-4-9-3"><tspan
          sodipodi:role="line"
          id="tspan16242-66-9-6-2"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#af00b1;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="123.01058"
-         y="509.38638">ZOOM</tspan></text>
+         x="389.03201"
+         y="414.37561">ZOOM</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#af00b1;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="123.13046"
-       y="519.26147"
+       x="389.15192"
+       y="424.2507"
        id="text16244-7-4-9-3-8"><tspan
          sodipodi:role="line"
          id="tspan16242-66-9-6-2-7"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#af00b1;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="123.13046"
-         y="519.26147">[Hold Right Bumper]</tspan></text>
+         x="389.15192"
+         y="424.2507">[Hold Right Bumper]</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#d10000;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
@@ -2355,28 +2344,72 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#620d63;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="34.053997"
-       y="538.43884"
+       x="300.07541"
+       y="438.13641"
        id="text16244-4-4-1-7-5-7-9"><tspan
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#620d63;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="34.053997"
-         y="538.43884"
+         x="300.07541"
+         y="438.13641"
          id="tspan99492-9-9">[<tspan
    style="fill:#af00b1;fill-opacity:1"
    id="tspan143185">RB</tspan> + D-pad Up]   Zoom In</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#e659e7;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-       x="34.053997"
-       y="551.60187"
+       x="300.07541"
+       y="451.29944"
        id="text16244-4-4-1-7-5-8-0-0"><tspan
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;text-anchor:start;fill:#e659e7;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
-         x="34.053997"
-         y="551.60187"
+         x="300.07541"
+         y="451.29944"
          id="tspan99492-4-0-8">[<tspan
    style="fill:#af00b1;fill-opacity:1"
    id="tspan144389">RB</tspan> + D-pad Down] Zoom Out</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#00b5b5;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
+       x="78.610199"
+       y="242.29852"
+       id="text16244-8"><tspan
+         sodipodi:role="line"
+         id="tspan16242-53"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#00b5b5;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
+         x="78.610199"
+         y="242.29852">SHOP</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#531414;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
+       x="77.856415"
+       y="257.34686"
+       id="text16244-4-2"><tspan
+         sodipodi:role="line"
+         id="tspan16242-6-3"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#00b5b5;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
+         x="77.856415"
+         y="257.34686">[C] Open/Close</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:16.9333px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#00b5b5;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
+       x="388.97412"
+       y="544.02405"
+       id="text16244-8-9"><tspan
+         sodipodi:role="line"
+         id="tspan16242-53-8"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:16.9333px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#00b5b5;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
+         x="388.97412"
+         y="544.02405">SHOP</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:semi-condensed;font-size:11.2889px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans Bold Semi-Condensed';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#531414;fill-opacity:1;stroke:none;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
+       x="388.22034"
+       y="559.07239"
+       id="text16244-4-2-1"><tspan
+         sodipodi:role="line"
+         id="tspan16242-6-3-3"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:11.2889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#00b5b5;fill-opacity:1;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none"
+         x="388.22034"
+         y="559.07239">[X/□] Open/Close</tspan></text>
   </g>
 </svg>
