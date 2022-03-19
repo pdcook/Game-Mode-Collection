@@ -21,3 +21,10 @@ Below are the currently included game modes! Click on them to see detailed guide
 #### [![Hide & Seek](./HideAndSeekBannerTitle.png)](./hideandseek.html)
 #### [![Trouble In ROUNDS Town](./TRTBannerTitle.png)](./trt.html)
 #### ![ROUNDS Battle Royale](./RBRBannerTitleComingSoon.png)
+
+### Release Promos
+
+![CCPromo](./CCPromo.png)
+![DodgeballPromo](./DodgeballPromo.png)
+![HideAndSeekPromo](./HideAndSeekPromo.png)
+![TRTPromo](./TRTPromo.png)
