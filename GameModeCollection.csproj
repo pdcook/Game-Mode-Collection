@@ -49,11 +49,10 @@
       <HintPath>$(ProfileFolder)\BepInEx\plugins\BetterChat.dll</HintPath>
     </Reference>
     <Reference Include="CardChoiceSpawnUniqueCardPatch">
-      <HintPath>%(RoundsFolder)\BepInEx\plugins\CardChoiceSpawnUniqueCardPatch.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\CardChoiceSpawnUniqueCardPatch.dll</HintPath>
     </Reference>
-    <Reference Include="InControl, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>%(RoundsFolder)\Rounds_Data\Managed\InControl.dll</HintPath>
+    <Reference Include="InControl">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\Rounds_Data\Managed\InControl.dll</HintPath>
     </Reference>
     <Reference Include="ItemShops">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\ItemShops.dll</HintPath>
