@@ -539,6 +539,7 @@ namespace GameModeCollection.Objects
         }
         public void OnPointerDown(PointerEventData eventData)
         {
+            if (this.player is null) { return; }
             if (!this.player.data.view.IsMine) { return; }
             this.down = true;
             this.gameObject.transform.localScale = 0.95f*this.origScale;
@@ -549,6 +550,7 @@ namespace GameModeCollection.Objects
         }
         public void OnPointerUp(PointerEventData eventData)
         {
+            if (this.player is null) { return; }
             if (!this.player.data.view.IsMine) { return; }
             if (this.down)
             {
@@ -565,12 +567,14 @@ namespace GameModeCollection.Objects
         }
         public void OnPointerEnter(PointerEventData eventData)
         {
+            if (this.player is null) { return; }
             if (!this.player.data.view.IsMine) { return; }
             this.hover = true;
             this.player.data.weaponHandler.gun.GetData().disabledFromCardBar = true;
         }
         public void OnPointerExit(PointerEventData eventData)
         {
+            if (this.player is null) { return; }
             if (!this.player.data.view.IsMine) { return; }
             this.hover = false;
             this.player.data.weaponHandler.gun.GetData().disabledFromCardBar = false;
@@ -579,6 +583,7 @@ namespace GameModeCollection.Objects
         {
             this.gameObject.transform.localScale = origScale;
             ModdingUtils.Utils.CardBarUtils.instance.ChangeCardSquareColor(this.gameObject.transform.GetChild(0).gameObject, this.origColor);
+            if (this.player is null) { return; }
             this.player.data.weaponHandler.gun.GetData().disabledFromCardBar = false;
         }
     }
