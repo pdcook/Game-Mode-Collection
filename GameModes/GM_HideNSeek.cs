@@ -200,8 +200,8 @@ namespace GameModeCollection.GameModes
                 
                 if(this.timeLeft <= 0 && PhotonNetwork.IsMasterClient)
                 {
-                    // Give all alive hiders a point
-                    this.otherTeamKills.Where(k => this.hiderIDs.Contains(k.Key) && !this.players[k.Key].data.dead).ToList().ForEach(kvp => this.otherTeamKills[kvp.Key] += 1);
+                    // Give all alive hiders three points
+                    this.otherTeamKills.Where(k => this.hiderIDs.Contains(k.Key) && !this.players[k.Key].data.dead).ToList().ForEach(kvp => this.otherTeamKills[kvp.Key] += 3);
                     
                     var hiderOtherTeamKills = this.otherTeamKills.Where(k => this.hiderIDs.Contains(k.Key)).ToDictionary(pair => pair.Key, pair => pair.Value);
                     NetworkingManager.RPC(
@@ -448,8 +448,8 @@ namespace GameModeCollection.GameModes
         {
             cardInfo.allowMultiple = false;
 
-            gun.damage = 0.75f;
-            statModifiers.health = 0.75f;
+            gun.damage = 0.25f;
+            statModifiers.health = 0.5f;
         }
 
         protected override CardInfoStat[] GetStats()
