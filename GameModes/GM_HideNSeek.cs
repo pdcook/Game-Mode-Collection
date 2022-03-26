@@ -156,10 +156,8 @@ namespace GameModeCollection.GameModes
             foreach (var player in instance.players.Values.Where(p=>!instance.seekerIDs.Contains(p.playerID)))
             {
                 instance.hiderIDs.Add(player.playerID);
-                Cards.instance.AddCardToPlayer(player, HiderCard.instance, addToCardBar: false);
-
-                // GameModeCollection.Log("[Hide&Seek] Hider ID: " + player.playerID);
             }
+            instance.SetHiders(instance.hiderIDs.ToArray());
             
             instance.timeLeft = instance.timeLimit;
         }
@@ -211,7 +209,7 @@ namespace GameModeCollection.GameModes
                     );
                 }
 
-                if (this.timeLeft / this.timeLimit < 0.5f && this.hiderIDs.Count(p => !this.players[p].data.dead) == 1)
+                if (this.timeLeft / this.timeLimit < 0.25f && this.hiderIDs.Count(p => !this.players[p].data.dead) == 1)
                 {
                     var player = this.players.Values.First(p => !p.data.dead && this.hiderIDs.Contains(p.playerID));
                     player.GetComponent<TrailRenderer>().emitting = true;
@@ -368,10 +366,7 @@ namespace GameModeCollection.GameModes
 
             this.startTimer = false;
             base.PointOver(winningTeamIDs);
-            foreach (var player in this.players.Values)
-            {
-                Cards.instance.RemoveCardFromPlayer(player, HiderCard.instance, Cards.SelectionType.All);
-            }
+            this.SetHiders();
         }
 
         public override void RoundOver(int[] winningTeamIDs)
@@ -383,10 +378,7 @@ namespace GameModeCollection.GameModes
             
             this.startTimer = false;
             base.RoundOver(winningTeamIDs);
-            foreach (var player in this.players.Values)
-            {
-                Cards.instance.RemoveCardFromPlayer(player, HiderCard.instance, Cards.SelectionType.All);
-            }
+            this.SetHiders();
         }
 
         public override IEnumerator DoRoundStart()
@@ -424,8 +416,43 @@ namespace GameModeCollection.GameModes
             }
 
         }
+        
+        private void SetHiders(int[] hiderIDs = null)
+        {
+            PlayerManager.instance.ForEachPlayer(p =>
+            {
+                GameObject hider = p.transform.Find("/HideAndSeek")?.gameObject;
+                if (hider is null)
+                {
+                    hider = new GameObject("HideAndSeek", typeof(HiderEffect));
+                    hider.transform.SetParent(p.transform);
+                }
+                HiderEffect hiderEffect = hider.GetOrAddComponent<HiderEffect>();
+                if (hiderIDs != null && hiderIDs.Contains(p.playerID))
+                {
+                    hiderEffect.ApplyModifiers();
+                }
+                else
+                {
+                    hiderEffect.ClearModifiers(false);
+                }
+            });
+                
+        }
+    }
+   
+    internal class HiderEffect : ReversibleEffect
+    {
+        public override void OnStart()
+        {
+            this.characterDataModifier.maxHealth_mult = 0.5f;
+            this.gunStatModifier.damage_mult = 0.25f;
+            this.SetLivesToEffect(int.MaxValue);
+            this.applyImmediately = false;
+        }
     }
     
+    /* 
     public class HiderCard : CustomCard
     {
         public static CardInfo instance;
@@ -481,5 +508,5 @@ namespace GameModeCollection.GameModes
         {
         }
         
-    }
+    }*/
 }

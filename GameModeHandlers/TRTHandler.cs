@@ -40,7 +40,7 @@ namespace GameModeCollection.GameModeHandlers
 
         private static float TimeLastSent = -1f;
 
-        public override UISettings UISettings => new UISettings("<size=125%>T</size>rouble in <size=125%>R</size>OUNDS <size=125%>T</size>own.\nGuide available at\nhttps://pdcook.github.io/Game-Mode-Collection/trt.html");
+        public override UISettings UISettings => new UISettings("<size=125%>T</size>rouble in <size=125%>R</size>OUNDS <size=125%>T</size>own.\nGuide available at\nhttps://pdcook.github.io/Game-Mode-Collection/trt.html\nRequires at least 4 players to start.");
 
         public TRTHandler() : base(gameModeId: GameModeID)
         {

@@ -1,12 +1,24 @@
-﻿{
-  "name": "Deck_Builder",
-  "version_number": "#VERSION#",
-  "website_url": "https://github.com/pdcook/DeckBuilder",
-  "description": "Assemble your deck before the match!",
-  "dependencies": [
-    "willis81808-UnboundLib-2.10.2",
-    "willis81808-MMHook-1.0.0",
-    "Pykess-ModdingUtils-0.2.6",
-    "Pykess-CardChoiceSpawnUniqueCardPatch-0.1.7"
-  ]
+{
+    "name": "Game_Mode_Collection",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/pdcook/Game-Mode-Collection",
+    "description": "A collection of new game modes",
+    "dependencies": [
+        "olavim-RoundsWithFriends-2.2.0",
+        "BossSloth-LocalZoom-1.0.0",
+        "BossSloth-BetterChat-1.1.0",
+        "olavim-MapsExtended-0.9.5",
+        "willuwontu-ItemShops-0.0.1",
+        "Pykess-ModdingUtils-0.3.1",
+        "Pykess-TemporaryStatsPatch-0.0.0",
+        "Pykess-CardChoiceSpawnUniqueCardPatch-0.1.7",
+	"Pykess-PlayerJumpPatch-0.0.2",
+    "Pykess-LegRaycastersPatch-0.0.0",
+    "Pykess-GunUnblockablePatch-0.0.0",
+    "Pykess-DemonicPactPatch-0.0.0",
+    "TeamDK-ZeroGBulletPatch-1.1.0",
+        "willis81808-UnboundLib-2.11.1",
+	"willis81808-MMHook-1.0.0",
+	"BepInEx-BepInExPack_ROUNDS-5.4.1100"
+    ]
 }

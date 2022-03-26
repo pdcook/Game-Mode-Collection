@@ -35,7 +35,7 @@ namespace GameModeCollection
     {
         private const string ModId = "pykessandbosssloth.rounds.plugins.gamemodecollection";
         private const string ModName = "Game Mode Collection";
-        public const string Version = "0.0.0";
+        public const string Version = "1.0.0";
         private static string CompatibilityModName => ModName.Replace(" ", "");
 
         internal static ConfigEntry<float> TRTDefaultMapScale;
@@ -167,7 +167,7 @@ namespace GameModeCollection
 
            
             // BossSloth game mode stuff
-            CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
+            //CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
             GameModeManager.AddHandler<GM_HideNSeek>(HideNSeekHandler.GameModeID, new HideNSeekHandler());
             //GameModeManager.AddHandler<GM_BombDefusal>(BombDefusalHandler.GameModeID, new BombDefusalHandler());
         }
