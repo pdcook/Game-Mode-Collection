@@ -1,7 +1,7 @@
 {
     "name": "Game_Mode_Collection",
-    "version_number": "1.0.0",
-    "website_url": "https://github.com/pdcook/Game-Mode-Collection",
+    "version_number": "1.0.1",
+    "website_url": "https://pdcook.github.io/Game-Mode-Collection/",
     "description": "A collection of new game modes",
     "dependencies": [
         "olavim-RoundsWithFriends-2.2.0",
