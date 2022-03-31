@@ -10,12 +10,12 @@ using Photon.Pun;
 using MapEmbiggener;
 using GameModeCollection.Utils;
 using System.Collections;
-using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.GameModes.Murder.Cards;
 using CardChoiceSpawnUniqueCardPatch.CustomCategories;
 using UnboundLib.Cards;
-namespace GameModeCollection.GameModes.TRT
+namespace GameModeCollection.GameModes.Murder
 {
-    public static class TRTCardManager
+    public static class MurderCardManager
     {
         private const int MaxAttempts = 100;
         private const int NumCols = 32;
@@ -26,53 +26,7 @@ namespace GameModeCollection.GameModes.TRT
         private const float Range = 2f;
         private const float MaxDistanceAway = 10f;
 
-        private static readonly List<string> BannedCards = new List<string>()
-        {
-            "Healing field",
-            "Phoenix",
-            "Tank",
-            "HUGE",
-            "Decay",
-            "Pristine perseverence",
-            "Brawler",
-            "ChillingPresence",
-            "AbyssalCountdown",
-            "Lifestealer",
-            "Leach",
-            "Radiance"
-        };
-
-        private static readonly List<string> ZombieCards = new List<string>()
-        {
-            "TasteOfBlood",
-            "Chase",
-            "Teleport"
-        };
-
-        internal static void SetTRTEnabled(CardInfo[] cards)
-        {
-            // most default cards (except a few) are allowed
-            foreach (CardInfo card in cards.Where(c => c.GetComponent<CustomCard>() is null))
-            {
-                // remove null categories (thanks landfall spaghetti)
-                card.categories = card.categories.Where(c => c != null).ToArray(); // written entirely by Copilot
-
-                if (BannedCards.Contains(card.name)) { continue; }
-                card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Enabled }).ToArray();
-                // cards that go in special shops
-                if (ZombieCards.Contains(card.name))
-                {
-                    card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Zombie }).ToArray();
-                }
-            }
-        }
-
-        private static bool CardIsTRTAllowed(CardInfo c, Player p, Gun g, GunAmmo ga, CharacterData d, HealthHandler h, Gravity gr, Block b, CharacterStatModifiers s)
-        {
-            return c.categories.Contains(TRTCardCategories.TRT_Enabled);
-        }
-
-        public static IEnumerator SpawnCards(int N, float health, bool requireInteract)
+        public static IEnumerator SpawnClues(int N, float health, bool requireInteract)
         {
             if (!PhotonNetwork.IsMasterClient) { yield break; }
 
@@ -80,13 +34,13 @@ namespace GameModeCollection.GameModes.TRT
             List<Vector2> spawnPoints = (cardSpawns is null || cardSpawns.Count() == 0) ? null : cardSpawns.Select(c => (Vector2)c.transform.position).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
             if (spawnPoints is null)
             {
-                spawnPoints = GetDefaultPoints(TRTCardManager.Eps).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
+                spawnPoints = GetDefaultPoints(MurderCardManager.Eps).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
             }
 
             for (int i = 0; i < N; i++)
             {
                 int j = Mod(i, spawnPoints.Count());
-                yield return CardItem.MakeCardItem(ModdingUtils.Utils.Cards.instance.GetRandomCardWithCondition(null, null, null, null, null, null, null, null, CardIsTRTAllowed), GetNearbyValidPosition(spawnPoints[j]), Quaternion.identity, maxHealth: health, requireInteract: requireInteract);
+                yield return CardItem.MakeCardItem(ClueCard.clueCard, GetNearbyValidPosition(spawnPoints[j]), Quaternion.identity, maxHealth: health, requireInteract: requireInteract);
             }
         }
         public static void RemoveAllCardItems()
@@ -105,16 +59,16 @@ namespace GameModeCollection.GameModes.TRT
             Vector2 min = new Vector2(OutOfBoundsUtils.minX, OutOfBoundsUtils.minY);
             Vector2 max = new Vector2(OutOfBoundsUtils.maxX, OutOfBoundsUtils.maxY);
 
-            float dx = (max - min).x / (float)TRTCardManager.NumCols;
-            float dy = (max - min).y / (float)TRTCardManager.NumRows;
+            float dx = (max - min).x / (float)MurderCardManager.NumCols;
+            float dy = (max - min).y / (float)MurderCardManager.NumRows;
 
             Vector2 point;
             Vector2 groundedPoint;
 
             // Add the basic grid, projected to the nearest ground, only add if it's successfully grounded and is not within eps of any other point
-            for (float i = 0.5f; i < TRTCardManager.NumCols; i++)
+            for (float i = 0.5f; i < MurderCardManager.NumCols; i++)
             {
-                for (float j = 0.5f; j < TRTCardManager.NumRows; j++)
+                for (float j = 0.5f; j < MurderCardManager.NumRows; j++)
                 {
                     point = min + new Vector2(i * dx, j * dy);
                     groundedPoint = CastToGround(point, out bool grounded);
@@ -130,30 +84,30 @@ namespace GameModeCollection.GameModes.TRT
 
         private static Vector2 CastToGround(Vector2 position)
         {
-            var hit = Physics2D.Raycast(position, Vector2.down, 1000f, TRTCardManager.GroundMask);
+            var hit = Physics2D.Raycast(position, Vector2.down, 1000f, MurderCardManager.GroundMask);
             return hit.transform
-                ? position + Vector2.down * (hit.distance - TRTCardManager.GroundOffset)
+                ? position + Vector2.down * (hit.distance - MurderCardManager.GroundOffset)
                 : position;
         }
 
         private static Vector2 CastToGround(Vector2 position, out bool success)
         {
-            var hit = Physics2D.Raycast(position, Vector2.down, 1000f, TRTCardManager.GroundMask);
+            var hit = Physics2D.Raycast(position, Vector2.down, 1000f, MurderCardManager.GroundMask);
 
-            if (!hit.transform || hit.distance <= TRTCardManager.Eps)
+            if (!hit.transform || hit.distance <= MurderCardManager.Eps)
             {
                 success = false;
                 return position;
             }
 
             success = true;
-            return position + Vector2.down * hit.distance + hit.normal * TRTCardManager.GroundOffset;
+            return position + Vector2.down * hit.distance + hit.normal * MurderCardManager.GroundOffset;
         }
 
         private static bool IsValidPosition(Vector2 position, out RaycastHit2D raycastHit2D)
         {
 
-            raycastHit2D = Physics2D.Raycast(position, Vector2.down, TRTCardManager.Range, TRTCardManager.GroundMask);
+            raycastHit2D = Physics2D.Raycast(position, Vector2.down, MurderCardManager.Range, MurderCardManager.GroundMask);
 
             // Check if point is inside the bounds
             Vector3 point = OutOfBoundsUtils.InverseGetPoint(position);
@@ -170,24 +124,24 @@ namespace GameModeCollection.GameModes.TRT
 
         private static Vector2 GetNearbyValidPosition(Vector2 position, bool requireLOS = true, List<Vector2> avoidPoints = null)
         {
-            if (Vector2.Distance(position, CastToGround(position)) > TRTCardManager.MaxDistanceAway)
+            if (Vector2.Distance(position, CastToGround(position)) > MurderCardManager.MaxDistanceAway)
             {
-                return position + RandomUtils.ClippedGaussianVector2(-TRTCardManager.MaxDistanceAway, -TRTCardManager.MaxDistanceAway, TRTCardManager.MaxDistanceAway, TRTCardManager.MaxDistanceAway);
+                return position + RandomUtils.ClippedGaussianVector2(-MurderCardManager.MaxDistanceAway, -MurderCardManager.MaxDistanceAway, MurderCardManager.MaxDistanceAway, MurderCardManager.MaxDistanceAway);
             }
 
-            for (int i = 0; i < TRTCardManager.MaxAttempts; i++)
+            for (int i = 0; i < MurderCardManager.MaxAttempts; i++)
             {
-                var newPosition = CastToGround(position + RandomUtils.ClippedGaussianVector2(-TRTCardManager.MaxDistanceAway, -TRTCardManager.MaxDistanceAway, TRTCardManager.MaxDistanceAway, TRTCardManager.MaxDistanceAway));
+                var newPosition = CastToGround(position + RandomUtils.ClippedGaussianVector2(-MurderCardManager.MaxDistanceAway, -MurderCardManager.MaxDistanceAway, MurderCardManager.MaxDistanceAway, MurderCardManager.MaxDistanceAway));
                 float dist = (avoidPoints == null || avoidPoints.Count() == 0) ? Vector2.Distance(newPosition, position) : avoidPoints.Select(v => Vector2.Distance(v, newPosition)).Max();
 
-                if (IsValidPosition(newPosition, out var _) && dist <= TRTCardManager.MaxDistanceAway)
+                if (IsValidPosition(newPosition, out var _) && dist <= MurderCardManager.MaxDistanceAway)
                 {
                     // Check for line-of-sight if required
                     if (requireLOS)
                     {
                         var dir = newPosition - position;
 
-                        if (Physics2D.Raycast(position, dir, dist, TRTCardManager.GroundMask))
+                        if (Physics2D.Raycast(position, dir, dist, MurderCardManager.GroundMask))
                         {
                             // The ray hit something, and therefore there is no line-of-sight, so try again
                             continue;
@@ -215,7 +169,7 @@ namespace GameModeCollection.GameModes.TRT
 
         private static Vector2 RandomValidPosition()
         {
-            for (int i = 0; i < TRTCardManager.MaxAttempts; i++)
+            for (int i = 0; i < MurderCardManager.MaxAttempts; i++)
             {
                 var position = OutOfBoundsUtils.GetPoint(new Vector3( UnityEngine.Random.Range(0f, 1f), UnityEngine.Random.Range(0f, 1f), 0f));
                 if (IsValidPosition(position, out var _))

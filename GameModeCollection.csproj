@@ -161,6 +161,14 @@
     <Compile Include="Extensions\UIHandler.cs" />
     <Compile Include="GameModeCollection.cs" />
     <Compile Include="GameModeHandlers\BombDefusalHandlers.cs" />
+    <Compile Include="GameModeHandlers\MurderHandler.cs" />
+    <Compile Include="GameModes\Murder\Cards\ClueCard.cs" />
+    <Compile Include="GameModes\Murder\Cards\MurderCardCategories.cs" />
+    <Compile Include="GameModes\Murder\Controllers\MurderBoundsController.cs" />
+    <Compile Include="GameModes\Murder\Controllers\MurderMapController.cs" />
+    <Compile Include="GameModes\Murder\GM_Murder.cs" />
+    <Compile Include="GameModes\Murder\MurderCardManager.cs" />
+    <Compile Include="GameModes\Murder\MurderMapManager.cs" />
     <Compile Include="GameModes\TRT\Cards\Defuser.cs" />
     <Compile Include="GameModes\TRT\Cards\Claw.cs" />
     <Compile Include="GameModes\TRT\Cards\Handcuffs.cs" />

@@ -7,6 +7,10 @@ namespace GameModeCollection.Utils
 {
     public static class RandomUtils
     {
+        public static IEnumerable<T> Shuffled<T>(this IEnumerable<T> sequence)
+        {
+            return sequence.OrderBy(x => Guid.NewGuid());
+        }
         public static T RandomElementByWeight<T>(this IEnumerable<T> sequence, Func<T, float> weightSelector)
         {
             float totalWeight = sequence.Sum(weightSelector);

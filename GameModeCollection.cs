@@ -35,10 +35,11 @@ namespace GameModeCollection
     {
         private const string ModId = "pykessandbosssloth.rounds.plugins.gamemodecollection";
         private const string ModName = "Game Mode Collection";
-        public const string Version = "1.0.0";
+        public const string Version = "1.0.1";
         private static string CompatibilityModName => ModName.Replace(" ", "");
 
         internal static ConfigEntry<float> TRTDefaultMapScale;
+        internal static ConfigEntry<float> MurderDefaultMapScale;
 
         public static GameModeCollection instance;
 
@@ -79,6 +80,7 @@ namespace GameModeCollection
             harmony.PatchAll();
 
             TRTDefaultMapScale = Config.Bind(CompatibilityModName + "_TRT", "TRT Default Map Scale", 1f);
+            MurderDefaultMapScale = Config.Bind(CompatibilityModName + "_Murder", "Murder Default Map Scale", 1f);
 
             On.MainMenuHandler.Awake += (orig, self) =>
             {
@@ -324,6 +326,8 @@ namespace GameModeCollection
             MenuHandler.CreateText(" ", menu, out TextMeshProUGUI _, 30);
             GameObject TRTMenu = MenuHandler.CreateMenu("TROUBLE IN ROUNDS TOWN", () => { }, menu, 60, true, true, menu.transform.parent.gameObject);
             TRTHandler.TRTMenu(TRTMenu);
+            GameObject MurderMenu = MenuHandler.CreateMenu("MURDER", () => { }, menu, 60, true, true, menu.transform.parent.gameObject);
+            MurderHandler.MurderMenu(MurderMenu);
         }
     }
 }
