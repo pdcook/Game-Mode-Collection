@@ -8,6 +8,7 @@ using GameModeCollection.Objects;
 using GameModeCollection.Extensions;
 using UnboundLib.Networking;
 using System.Collections.Generic;
+using PlayerCustomizationUtils.Extensions;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class DetectiveRoleHandler : IRoleHandler
@@ -52,7 +53,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
                     currentFace.eyeOffset,
                     currentFace.mouthID,
                     currentFace.mouthOffset,
-                    CharacterCreatorItemLoader.instance.GetItemIDByName("TRT_Detective_Hat", CharacterItemType.Detail),
+                    CharacterCreatorItemLoader.instance.GetItemIDByName("(CUSTOM) TRT_Detective_Hat", CharacterItemType.Detail),
                     Vector2.zero,
                     0,
                     Vector2.zero

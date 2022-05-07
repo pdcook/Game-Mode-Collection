@@ -187,7 +187,7 @@ namespace GameModeCollection.GameModes.TRT
         {
             return RolesToDrawFrom.RandomElementByWeight(r => r.Rarity);
         }
-        private static string GetReputability(Player player)
+        public static string GetReputability(Player player)
         {
             switch (player.data.TRT_Karma())
             {
@@ -206,6 +206,7 @@ namespace GameModeCollection.GameModes.TRT
             }
         }
 
+        /*
         private static void SetPlayerNameRoleDisplay(Player player, TRT_Role_Appearance role_Appearance, bool hideNickName, bool clear = false, Color? backgroundColor = null)
         {
             Color backgroundColor_ = backgroundColor ?? (clear ? Color.clear : GM_TRT.NameBackgroundColor);
@@ -236,6 +237,7 @@ namespace GameModeCollection.GameModes.TRT
             }
             player.data.SetNameBackground(backgroundColor_);
         }
+        */
         public static Alignment? GetPlayerAlignmentAsSeenByOther(Player player, Player other)
         {
             ITRT_Role other_role = GetPlayerRole(other);
@@ -254,7 +256,7 @@ namespace GameModeCollection.GameModes.TRT
 
         public static void ClearRoleDisplay(Player player, bool hideNickNames = true)
         {
-            SetPlayerNameRoleDisplay(player, null, hideNickNames, true); 
+            //SetPlayerNameRoleDisplay(player, null, hideNickNames, true); 
         }
         /// <summary>
         /// Do role display from the perspective of the local player for a specific player only
@@ -269,12 +271,12 @@ namespace GameModeCollection.GameModes.TRT
             if (localPlayer.playerID == specificPlayer.playerID)
             {
                 // always show the player their own role
-                SetPlayerNameRoleDisplay(specificPlayer, specificRole?.Appearance, hideNickNames);
+                //SetPlayerNameRoleDisplay(specificPlayer, specificRole?.Appearance, hideNickNames);
             }
             else
             {
                 ITRT_Role localRole = GetPlayerRole(localPlayer);
-                SetPlayerNameRoleDisplay(specificPlayer, localRole?.Alignment is null ? null : GetPlayerRole(specificPlayer)?.AppearToAlignment(localRole.Alignment), hideNickNames);
+                //SetPlayerNameRoleDisplay(specificPlayer, localRole?.Alignment is null ? null : GetPlayerRole(specificPlayer)?.AppearToAlignment(localRole.Alignment), hideNickNames);
             }
             if (specificRole is null || !specificPlayer.data.view.IsMine) { return; }
             // to the specific player ONLY, do new display stuff
@@ -347,11 +349,11 @@ namespace GameModeCollection.GameModes.TRT
                 if (otherPlayer.playerID == player.playerID)
                 {
                     // always show the player their own role
-                    SetPlayerNameRoleDisplay(otherPlayer, role?.Appearance, hideNickNames);
+                    //SetPlayerNameRoleDisplay(otherPlayer, role?.Appearance, hideNickNames);
                 }
                 else
                 {
-                    SetPlayerNameRoleDisplay(otherPlayer, role?.Alignment is null ? null : GetPlayerRole(otherPlayer)?.AppearToAlignment(role.Alignment), hideNickNames);
+                    //SetPlayerNameRoleDisplay(otherPlayer, role?.Alignment is null ? null : GetPlayerRole(otherPlayer)?.AppearToAlignment(role.Alignment), hideNickNames);
                 }
             }
             if (role is null) { return; }

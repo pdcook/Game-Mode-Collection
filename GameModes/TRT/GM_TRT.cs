@@ -20,6 +20,7 @@ using UnboundLib.GameModes;
 using UnboundLib.Networking;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using PlayerCustomizationUtils.Extensions;
 
 namespace GameModeCollection.GameModes
 {
@@ -249,6 +250,7 @@ namespace GameModeCollection.GameModes
             TRTHandler.InitChatGroups();
             BetterChat.BetterChat.SetDeadChat(true);
             BetterChat.BetterChat.UsePlayerColors = true;
+            BetterChat.BetterChat.EnableTypingIndicators = false;
 
             TRTShopHandler.BuildTRTShops();
 
@@ -274,14 +276,15 @@ namespace GameModeCollection.GameModes
             {
                 player.data.view.RPC("RPCA_SetFace", RpcTarget.All, new object[]
                 {
-                    UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.eyes.Count()),
+                    CharacterCreatorItemLoader.instance.GetRandomItemID(CharacterItemType.Eyes, null, false),
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
-                    UnityEngine.Random.Range(0, CharacterCreatorItemLoader.instance.mouths.Count()),
+                    CharacterCreatorItemLoader.instance.GetRandomItemID(CharacterItemType.Mouth, null, false),
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
-                    CharacterCreatorItemLoader.instance.GetRandomItemID(CharacterItemType.Detail, new string[] { "TRT_Detective_Hat" }),
+                    CharacterCreatorItemLoader.instance.GetRandomItemID(CharacterItemType.Detail, null, false),
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1),
-                    CharacterCreatorItemLoader.instance.GetRandomItemID(CharacterItemType.Detail, new string[] { "TRT_Detective_Hat" }),
+                    CharacterCreatorItemLoader.instance.GetRandomItemID(CharacterItemType.Detail, null, false),
                     RandomUtils.ClippedGaussianVector2(-1, -1, 1, 1)
+
                 });
             });
         }
@@ -521,6 +524,7 @@ namespace GameModeCollection.GameModes
 
             BetterChat.BetterChat.SetDeadChat(true);
             BetterChat.BetterChat.UsePlayerColors = true;
+            BetterChat.BetterChat.EnableTypingIndicators = false;
             ControllerManager.SetMapController(TRTMapController.ControllerID);
             ControllerManager.SetBoundsController(TRTBoundsController.ControllerID);
 

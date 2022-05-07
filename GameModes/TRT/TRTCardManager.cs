@@ -39,14 +39,17 @@ namespace GameModeCollection.GameModes.TRT
             "AbyssalCountdown",
             "Lifestealer",
             "Leach",
-            "Radiance"
+            "Radiance",
+            "Shockwave" // banned for now, since Jesters can use it to kill players. hopefully a workaround/patch can be made for this in the future
         };
 
         private static readonly List<string> ZombieCards = new List<string>()
         {
             "TasteOfBlood",
             "Chase",
-            "Teleport"
+            "Teleport",
+            "Shield Charge",
+            "Toxic cloud"
         };
 
         internal static void SetTRTEnabled(CardInfo[] cards)

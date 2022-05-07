@@ -38,7 +38,7 @@ namespace GameModeCollection.GameModeHandlers
 
         private static float TimeLastSent = -1f;
 
-        private static List<string> PhoneticAlphabet = new List<string>() { "Alfa", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu" };
+        private static List<string> PhoneticAlphabet = new List<string>() { "Alpha", "Bravo", "Charlie", "Delta", "Echo", "Foxtrot", "Golf", "Hotel", "India", "Juliet", "Kilo", "Lima", "Mike", "November", "Oscar", "Papa", "Quebec", "Romeo", "Sierra", "Tango", "Uniform", "Victor", "Whiskey", "X-ray", "Yankee", "Zulu" };
 
         public override UISettings UISettings => new UISettings("One murderer, one detective, the rest must survive.\nGuide available at\nhttps://pdcook.github.io/Game-Mode-Collection/murder.html\nRequires at least 3 players to start.");
 

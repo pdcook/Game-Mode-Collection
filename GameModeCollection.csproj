@@ -84,6 +84,9 @@
     <Reference Include="PhotonUnityNetworking, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\PhotonUnityNetworking.dll</HintPath>
     </Reference>
+    <Reference Include="PlayerCustomization">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\PlayerCustomization.dll</HintPath>
+    </Reference>
     <Reference Include="RoundsWithFriends, Version=2.1.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProfileFolder)\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
@@ -147,7 +150,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\CardVisuals.cs" />
-    <Compile Include="Extensions\CharacterCreatorItemLoader.cs" />
     <Compile Include="Extensions\CharacterData.cs" />
     <Compile Include="Extensions\GameObject.cs" />
     <Compile Include="Extensions\Gun.cs" />
@@ -213,6 +215,7 @@
     <Compile Include="GameModes\TRT\Roles\Mercenary.cs" />
     <Compile Include="GameModes\TRT\Roles\Assassin.cs" />
     <Compile Include="GameModes\TRT\Roles\Traitor.cs" />
+    <Compile Include="GameModes\TRT\TRTNamePlate.cs" />
     <Compile Include="GameModes\TRT\TRT_Corpse.cs" />
     <Compile Include="GameModes\TRT\TRT_Role.cs" />
     <Compile Include="GameModes\TRT\TRTShopHandler.cs" />

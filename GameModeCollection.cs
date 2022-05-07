@@ -16,6 +16,7 @@ using UnboundLib.Cards;
 using UnboundLib.GameModes;
 using UnboundLib.Utils.UI;
 using UnityEngine;
+using PlayerCustomizationUtils;
 
 namespace GameModeCollection
 {
@@ -35,7 +36,7 @@ namespace GameModeCollection
     {
         private const string ModId = "pykessandbosssloth.rounds.plugins.gamemodecollection";
         private const string ModName = "Game Mode Collection";
-        public const string Version = "1.0.1";
+        public const string Version = "1.0.2";
         private static string CompatibilityModName => ModName.Replace(" ", "");
 
         internal static ConfigEntry<float> TRTDefaultMapScale;
@@ -82,6 +83,7 @@ namespace GameModeCollection
             TRTDefaultMapScale = Config.Bind(CompatibilityModName + "_TRT", "TRT Default Map Scale", 1f);
             MurderDefaultMapScale = Config.Bind(CompatibilityModName + "_Murder", "Murder Default Map Scale", 1f);
 
+            /*
             On.MainMenuHandler.Awake += (orig, self) =>
             {
                 this.ExecuteAfterFrames(10, () =>
@@ -99,6 +101,7 @@ namespace GameModeCollection
 
                 orig(self);
             };
+            */
         }
         private void Start()
         {
@@ -127,7 +130,6 @@ namespace GameModeCollection
             {
                 // ignored
             }
-
 
             // add credits
             Unbound.RegisterCredits(ModName, new string[] { "Pykess (Crown Control, Trouble In Rounds Town, Dodgeball, Physics Items, MapEmbiggener)", "BossSloth (Hide & Seek, LocalZoom, MapEmbiggener)", " ", "Special Thanks To", "Willuwontu (TRT shop, sound effects, TRT Map)","TheCoconutDream (TRT Card Art)","LMS (TRT Maps)", "Ascyst (TRT Maps)" }, new string[] { "github", "Support Pykess", "Support BossSloth" }, new string[] { "https://github.com/pdcook/Game-Mode-Collection", "https://ko-fi.com/pykess", "https://www.buymeacoffee.com/BossSloth" });
@@ -167,7 +169,10 @@ namespace GameModeCollection
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
 
-           
+            // add detective hat character item
+            CustomCharacterItemManager.AddCustomCharacterItem(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Detective_Hat"), CharacterItemType.Detail, 1.2f, 1f, 1f);
+
+
             // BossSloth game mode stuff
             //CustomCard.BuildCard<HiderCard>(card => { HiderCard.instance = card; ModdingUtils.Utils.Cards.instance.AddHiddenCard(HiderCard.instance); });
             GameModeManager.AddHandler<GM_HideNSeek>(HideNSeekHandler.GameModeID, new HideNSeekHandler());
@@ -326,8 +331,8 @@ namespace GameModeCollection
             MenuHandler.CreateText(" ", menu, out TextMeshProUGUI _, 30);
             GameObject TRTMenu = MenuHandler.CreateMenu("TROUBLE IN ROUNDS TOWN", () => { }, menu, 60, true, true, menu.transform.parent.gameObject);
             TRTHandler.TRTMenu(TRTMenu);
-            GameObject MurderMenu = MenuHandler.CreateMenu("MURDER", () => { }, menu, 60, true, true, menu.transform.parent.gameObject);
-            MurderHandler.MurderMenu(MurderMenu);
+            //GameObject MurderMenu = MenuHandler.CreateMenu("MURDER", () => { }, menu, 60, true, true, menu.transform.parent.gameObject);
+            //MurderHandler.MurderMenu(MurderMenu);
         }
     }
 }

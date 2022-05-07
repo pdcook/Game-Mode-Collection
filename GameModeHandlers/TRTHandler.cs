@@ -34,7 +34,7 @@ namespace GameModeCollection.GameModeHandlers
 
         internal const string GameModeName = "Trouble in Rounds Town";
         internal const string GameModeID = "TroubleInRoundsTown";
-        public override bool OnlineOnly => true;
+        public override bool OnlineOnly => false;
         public override bool AllowTeams => false;
         public override GameSettings Settings { get; protected set; }
 
@@ -98,6 +98,8 @@ namespace GameModeCollection.GameModeHandlers
 
         public override void PlayerJoined(Player player)
         {
+            // add TRT nameplate component to player
+            player.gameObject.GetOrAddComponent<TRTNamePlate>();
             this.GameMode.PlayerJoined(player);
         }
 

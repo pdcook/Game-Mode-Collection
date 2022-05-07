@@ -65,10 +65,15 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 		public const float InnerExplosionDamage = 1000f;
 		public const float OuterExplosionDamage = 70f;
-		public const float InnerExplosionRange = 25f;
-		public const float OuterExplosionRange = 100f;
+		public const float InnerExplosionRange = 35f;
+		public const float OuterExplosionRange = 75f;
 
-		public const float MinTime = 30f;
+		public const float MaxBeepVolume = 1f;
+		public const float MinBeepVolume = 0.05f;
+		public const float MaxBeepPeriod = 10f;
+		public const float MinBeepPeriod = 1f;
+
+		public const float MinTime = 15f;
 		public const float MaxTime = 300f;
 		public static readonly Color StartDefuseColor = new Color32(230, 0, 0, 255);
 		public static readonly Color StartDefuseFillColor = new Color32(230, 0, 0, 26);
@@ -81,8 +86,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 		// when set for the minimum time, the c4 will beep loudly every 1 second
 		// when set for the maximum time, the c4 will beep quietly every 10 seconds
-		public float BeepIntensity => Mathf.Lerp(1f, 0.1f, (this.TotalTime - MinTime) / MaxTime);
-		public float BeepEvery => Mathf.Lerp(1f, 10f, (this.TotalTime - MinTime) / MaxTime);
+		public float BeepIntensity => Mathf.Lerp(MaxBeepVolume, MinBeepVolume, (this.TotalTime - MinTime) / MaxTime);
+		public float BeepEvery => Mathf.Lerp(MinBeepPeriod, MaxBeepPeriod, (this.TotalTime - MinTime) / MaxTime);
 		public float BeepTimer = 0f;
 		private const float BlinkEvery = 1f;
 		private float BlinkTimer = BlinkEvery;

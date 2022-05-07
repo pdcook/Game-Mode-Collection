@@ -1,6 +1,6 @@
 {
     "name": "Game_Mode_Collection",
-    "version_number": "1.0.1",
+    "version_number": "#VERSION#",
     "website_url": "https://pdcook.github.io/Game-Mode-Collection/",
     "description": "A collection of new game modes",
     "dependencies": [

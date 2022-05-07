@@ -242,7 +242,7 @@ namespace GameModeCollection.Objects
         private void RPCA_AddCardToPlayer(int playerID)
         {
             Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
-            if (!player.data.CanHaveMoreCards()) { return; }
+            if (!player.data.CanHaveMoreCards() && !this.Card.categories.Contains(CardItem.IgnoreMaxCardsCategory)) { return; }
             this.HasBeenTaken = true;
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, this.Card, false, "", 0, 0, false);
             this.RPCA_DestroyCardItem();

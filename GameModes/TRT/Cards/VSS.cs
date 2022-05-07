@@ -158,6 +158,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
         private const float BarrelLength = 5f;
         private const float BarrelWidth = 1f;
 
+        private const float VolumeMultiplier = 0.5f; // multiplier for the impact sound volume
+
         private Vector3 OriginalScale;
         private Vector3 OriginalRightPos;
         private Vector3 OriginalLeftPos;
@@ -190,12 +192,14 @@ namespace GameModeCollection.GameModes.TRT.Cards
             AudioClip soundHitSurface = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("SniperHitSurface.ogg");
             SoundContainer soundContainer2 = ScriptableObject.CreateInstance<SoundContainer>();
             soundContainer2.setting.volumeIntensityEnable = true;
+            soundContainer2.setting.intensityMultiplier = VolumeMultiplier;
             soundContainer2.audioClip[0] = soundHitSurface;
             SoundEvent hitSurface = ScriptableObject.CreateInstance<SoundEvent>();
             hitSurface.soundContainerArray[0] = soundContainer2;
             AudioClip soundHitCharacter = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("SniperHitCharacter.ogg");
             SoundContainer soundContainer3 = ScriptableObject.CreateInstance<SoundContainer>();
             soundContainer3.setting.volumeIntensityEnable = true;
+            soundContainer3.setting.intensityMultiplier = VolumeMultiplier;
             soundContainer3.audioClip[0] = soundHitCharacter;
             SoundEvent hitCharacter = ScriptableObject.CreateInstance<SoundEvent>();
             hitCharacter.soundContainerArray[0] = soundContainer3;
@@ -286,7 +290,11 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gun.dontAllowAutoFire = true; // will be reset by reading all of the cards the player has when this is removed
             this.gun.objectsToSpawn = new ObjectsToSpawn[] { };
             //this.gun.soundDisableRayHitBulletSound = true;
-            this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier);
+
+            // VSS shot sound only plays for the owner
+            if (this.gun.player.data.view.IsMine) { this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier); }
+            
+            // impact sound always plays, but is quieter for the VSS
             this.gun.soundGun.AddSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
 
