@@ -173,7 +173,12 @@
     <Compile Include="GameModes\Murder\MurderMapManager.cs" />
     <Compile Include="GameModes\TRT\Cards\Defuser.cs" />
     <Compile Include="GameModes\TRT\Cards\Claw.cs" />
+    <Compile Include="GameModes\TRT\Cards\SmokeGrenade.cs" />
+    <Compile Include="GameModes\TRT\Cards\IncendiaryGrenade.cs" />
+    <Compile Include="GameModes\TRT\Cards\Grenade.cs" />
     <Compile Include="GameModes\TRT\Cards\Handcuffs.cs" />
+    <Compile Include="GameModes\TRT\Cards\AWP.cs" />
+    <Compile Include="GameModes\TRT\Cards\Discombobulator.cs" />
     <Compile Include="GameModes\TRT\Cards\VSS.cs" />
     <Compile Include="GameModes\TRT\Cards\Rifle.cs" />
     <Compile Include="GameModes\TRT\Cards\Radar.cs" />
@@ -223,6 +228,10 @@
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
     <Compile Include="Objects\GameModeObjects\DeathObjectHandler.cs" />
+    <Compile Include="Objects\GameModeObjects\TRT\SmokeGrenade.cs" />
+    <Compile Include="Objects\GameModeObjects\TRT\IncendiaryGrenade.cs" />
+    <Compile Include="Objects\GameModeObjects\TRT\Grenade.cs" />
+    <Compile Include="Objects\GameModeObjects\TRT\Discombobulator.cs" />
     <Compile Include="Objects\GameModeObjects\TRT\DeathStation.cs" />
     <Compile Include="Objects\GameModeObjects\TRT\HealthStation.cs" />
     <Compile Include="Objects\IgnoreBackgroundObjects.cs" />

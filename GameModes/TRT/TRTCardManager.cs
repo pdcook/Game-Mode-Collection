@@ -1,18 +1,14 @@
-﻿using GameModeCollection.GameModes;
+﻿using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.Objects;
-using GMCObjects;
+using GameModeCollection.Utils;
+using MapEmbiggener;
+using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
-using UnboundLib;
-using UnboundLib.Networking;
-using Photon.Pun;
-using MapEmbiggener;
-using GameModeCollection.Utils;
-using System.Collections;
-using GameModeCollection.GameModes.TRT.Cards;
-using CardChoiceSpawnUniqueCardPatch.CustomCategories;
+using System.Reflection;
 using UnboundLib.Cards;
+using UnityEngine;
 namespace GameModeCollection.GameModes.TRT
 {
     public static class TRTCardManager
@@ -61,7 +57,7 @@ namespace GameModeCollection.GameModes.TRT
                 card.categories = card.categories.Where(c => c != null).ToArray(); // written entirely by Copilot
 
                 if (BannedCards.Contains(card.name)) { continue; }
-                card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_Enabled }).ToArray();
+                card.categories = card.categories.ToList().Concat(new List<CardCategory>() { TRTCardCategories.TRT_CanSpawnNaturally }).ToArray();
                 // cards that go in special shops
                 if (ZombieCards.Contains(card.name))
                 {
@@ -70,14 +66,16 @@ namespace GameModeCollection.GameModes.TRT
             }
         }
 
-        private static bool CardIsTRTAllowed(CardInfo c, Player p, Gun g, GunAmmo ga, CharacterData d, HealthHandler h, Gravity gr, Block b, CharacterStatModifiers s)
+        private static bool CardIsTRTAllowed(CardInfo c)
         {
-            return c.categories.Contains(TRTCardCategories.TRT_Enabled);
+            return c.categories.Contains(TRTCardCategories.TRT_CanSpawnNaturally);
         }
 
         public static IEnumerator SpawnCards(int N, float health, bool requireInteract)
         {
             if (!PhotonNetwork.IsMasterClient) { yield break; }
+
+            List<CardInfo> ActiveAndHiddenCards = (List<CardInfo>)typeof(ModdingUtils.Utils.Cards).GetProperty("ACTIVEANDHIDDENCARDS", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ModdingUtils.Utils.Cards.instance, null);
 
             CardSpawnPoint[] cardSpawns = MapManager.instance?.currentMap?.Map?.gameObject?.GetComponentsInChildren<CardSpawnPoint>(true);
             List<Vector2> spawnPoints = (cardSpawns is null || cardSpawns.Count() == 0) ? null : cardSpawns.Select(c => (Vector2)c.transform.position).OrderBy(_ => UnityEngine.Random.Range(0f,1f)).ToList();
@@ -89,7 +87,7 @@ namespace GameModeCollection.GameModes.TRT
             for (int i = 0; i < N; i++)
             {
                 int j = Mod(i, spawnPoints.Count());
-                yield return CardItem.MakeCardItem(ModdingUtils.Utils.Cards.instance.GetRandomCardWithCondition(null, null, null, null, null, null, null, null, CardIsTRTAllowed), GetNearbyValidPosition(spawnPoints[j]), Quaternion.identity, maxHealth: health, requireInteract: requireInteract);
+                yield return CardItem.MakeCardItem(ActiveAndHiddenCards.RandomElementWithCondition(CardIsTRTAllowed), GetNearbyValidPosition(spawnPoints[j]), Quaternion.identity, maxHealth: health, requireInteract: requireInteract);
             }
         }
         public static void RemoveAllCardItems()

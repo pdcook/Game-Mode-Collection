@@ -159,6 +159,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 RadarPoint.GetComponent<RadarPoint>().SetCreator(this.Player);
                 RadarPoint.GetComponent<RadarPoint>().SetTracked(player);
                 RadarPoint.GetComponent<RadarPoint>().SetPrefab(false);
+                RadarPoint.GetComponent<RadarPoint>().CreatePing();
                 this.RadarPoints.Add(RadarPoint);
                 AllRadarPoints.Add(RadarPoint);
 
@@ -224,7 +225,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.TrackedPlayer = player;
             this.TargetRole = RoleManager.GetPlayerRole(this.TrackedPlayer);
         }
-        void Start()
+        internal void CreatePing()
         {
             this.FramesSinceCreation = 0;
 

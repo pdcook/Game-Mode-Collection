@@ -40,7 +40,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_2, CardItem.IgnoreMaxCardsCategory };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_CanSpawnNaturally, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_2, CardItem.IgnoreMaxCardsCategory };
             cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_2 };
             statModifiers.AddObjectToPlayer = A_RiflePrefab.Rifle;
         }
@@ -73,7 +73,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override CardInfo.Rarity GetRarity()
         {
-            return CardInfo.Rarity.Rare;
+            return CardInfo.Rarity.Uncommon;
         }
 
         protected override CardInfoStat[] GetStats()
@@ -207,7 +207,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.numberOfProjectiles_mult = 0;
             this.gunStatModifier.numberOfProjectiles_add = 1;
             this.gunStatModifier.damage_mult = 0f;
-            this.gunStatModifier.damage_add = 2.1f;
+            this.gunStatModifier.damage_add = 1.5f;
             this.gunStatModifier.attackSpeed_mult = 0f;
             this.gunStatModifier.attackSpeed_add = 2f;
             this.gunAmmoStatModifier.reloadTimeMultiplier_mult = 0f;

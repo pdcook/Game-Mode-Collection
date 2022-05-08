@@ -157,20 +157,28 @@ namespace GameModeCollection
             ControllerManager.AddMapController(TRTMapController.ControllerID, new TRTMapController());
             ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
             CustomCard.BuildCard<C4Card>(C4Card.Callback);
+            CustomCard.BuildCard<AWPCard>(AWPCard.Callback);
             CustomCard.BuildCard<VSSCard>(VSSCard.Callback);
             CustomCard.BuildCard<ClawCard>(ClawCard.Callback);
             CustomCard.BuildCard<KnifeCard>(KnifeCard.Callback);
             CustomCard.BuildCard<RadarCard>(RadarCard.Callback);
             CustomCard.BuildCard<RifleCard>(RifleCard.Callback);
             CustomCard.BuildCard<DefuserCard>(DefuserCard.Callback);
+            CustomCard.BuildCard<GrenadeCard>(GrenadeCard.Callback);
             CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.Callback);
             CustomCard.BuildCard<HandcuffsCard>(HandcuffsCard.Callback);
             CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.Callback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
+            CustomCard.BuildCard<SmokeGrenadeCard>(SmokeGrenadeCard.Callback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
+            CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.Callback);
+            CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.Callback);
 
             // add detective hat character item
-            CustomCharacterItemManager.AddCustomCharacterItem(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Detective_Hat"), CharacterItemType.Detail, 1.2f, 1f, 1f);
+            GameObject detectiveHat = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Detective_Hat"));
+            detectiveHat.name = "TRT_Detective_Hat";
+            GameObject.DontDestroyOnLoad(detectiveHat);
+            CustomCharacterItemManager.AddCustomCharacterItem(detectiveHat, CharacterItemType.Detail, 1.2f, 1f, 1f);
 
 
             // BossSloth game mode stuff

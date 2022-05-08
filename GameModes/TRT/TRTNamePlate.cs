@@ -9,9 +9,8 @@ namespace GameModeCollection.GameModes.TRT
 {
     internal class TRTNamePlate : MonoBehaviour
     {
-        // this component controls both the player's nameplate and their role icon. it handles:
+        // this component controls both the player's nameplate and their role abbreviation. it handles:
         // - setting the nameplate's text
-        // - setting the role icon
         // - showing/hiding the nameplate based on the local player's cursor position, player location, and dead/alive state
         // - showing/hiding the role icon based on the local player's role and dead/alive state
         Player LocalPlayer => PlayerManager.instance.GetLocalPlayer(); // the local player
@@ -42,15 +41,35 @@ namespace GameModeCollection.GameModes.TRT
             {
                 this.updateQueued = true; // queue an update to ensure it updates
                 // if the nameplate's visibility changed, update the nameplate's visibility
-                TRT_Role_Appearance appearance = this.LocalPlayer is null ? null : (RoleManager.GetPlayerAlignment(this.LocalPlayer) is null ? null : RoleManager.GetPlayerRole(this.Player).AppearToAlignment((Alignment)RoleManager.GetPlayerAlignment(this.LocalPlayer)));
-                this.DisplayNamePlate(appearance, !this.IsVisible);
+
+                // if the local player is dead or null, the role appearance should be the true appearance
+                TRT_Role_Appearance appearance = null;
+                if (this.Player.data.view.IsMine || this.LocalPlayer is null || this.LocalPlayer.data.dead)
+                {
+                    // if this is the local player, or the local player is dead or null, the role appearance should be the true appearance
+                    appearance = RoleManager.GetPlayerRole(this.Player)?.Appearance;
+                }
+                else
+                {
+                    // otherwise, the role appearance should be how the player's role appears to the local player's role
+                    appearance = RoleManager.GetPlayerAlignment(this.LocalPlayer) is null ? null : RoleManager.GetPlayerRole(this.Player)?.AppearToAlignment((Alignment)RoleManager.GetPlayerAlignment(this.LocalPlayer));
+                }
+                this.DisplayNamePlate(appearance, this.IsVisible);
             }
             this.wasVisibleLastFrame = this.IsVisible;
             this.roleIDLastFrame = this.RoleID;
         }            
-        public void DisplayNamePlate(TRT_Role_Appearance role_Appearance, bool clear = false, Color? backgroundColor = null)
+        public void DisplayNamePlate(TRT_Role_Appearance role_Appearance, bool inRange = false, Color? backgroundColor = null)
         {
-            Color backgroundColor_ = backgroundColor ?? (clear || role_Appearance is null ? Color.clear : GM_TRT.NameBackgroundColor);
+            /// name plates appear as:
+            /// [ROLE ABBR] (displayed at all distances, regardless of hover, only if role_Appearance is not null)
+            /// [PLAYER NAME] (displayed only if inRange is true, which is when the player is near enough or the cursor is hovering)
+            /// [REPUTABILITY] (same case as above)
+            /// the color of the nameplate will be the player's role color, unless role_Appearance is null
+            /// the color of the reputability is set separately
+
+            // if there will be no nameplate, set the background color to clear
+            Color backgroundColor_ = backgroundColor ?? (!inRange && role_Appearance is null ? Color.clear : GM_TRT.NameBackgroundColor);
 
             TextMeshProUGUI nameText = this.Player?.GetComponentInChildren<PlayerName>()?.GetComponent<TextMeshProUGUI>();
             if (nameText is null)
@@ -58,24 +77,40 @@ namespace GameModeCollection.GameModes.TRT
                 GameModeCollection.LogWarning($"NAME FOR PLAYER {this.Player?.playerID} IS NULL");
                 return;
             }
-            string nickName = this.Player.data.view?.Owner?.NickName ?? "";
-            if (!clear)
+            // always have the text container autosize
+            nameText.autoSizeTextContainer = true;
+            // do not autosize the font
+            nameText.enableAutoSizing = false;
+
+            // if in range or hovering, show the health bar
+            this.Player?.data?.SetHealthbarVisible(inRange);
+
+            // if the the role appearance is not null, start the content with the role abbreviation
+            string namePlateContent = role_Appearance is null ? "" : $"[{role_Appearance.Abbr}]";
+            // if the player is in range (or the cursor is hovering), add their name and reputability
+            if (inRange)
             {
+                if (this.Player?.data?.view?.Owner?.NickName != null)
+                {
+                    if (role_Appearance != null) { namePlateContent += "\n"; }
+                    namePlateContent += this.Player?.data?.view?.Owner?.NickName;
+                }
                 string reputability = RoleManager.GetReputability(this.Player);
-                if (reputability != "") { nickName = reputability + (nickName == "" ? "" : "\n") + nickName; }
+                if (reputability != "")
+                { namePlateContent += (namePlateContent == "" ? "" : "\n") + reputability; }
             }
-            if (clear || role_Appearance is null)
+            // if the role appearance is not null, set the nameplate's color to the role's color, otherwise to text white
+            if (role_Appearance is null)
             {
-                nameText.text = "";
                 nameText.color = new Color(0.6132f, 0.6132f, 0.6132f, 1f);
-                nameText.fontStyle = FontStyles.Normal;
+                nameText.fontStyle = FontStyles.Bold;
             }
             else
             {
-                nameText.text = $"[{role_Appearance.Abbr}]{(nickName != "" ? "\n" : "")}{nickName}";
                 nameText.color = role_Appearance.Color;
                 nameText.fontStyle = FontStyles.Bold;
             }
+            nameText.text = namePlateContent;
             this.Player.data.SetNameBackground(backgroundColor_);
             this.updateQueued = false; // clear the update queued flag
         }
@@ -86,7 +121,7 @@ namespace GameModeCollection.GameModes.TRT
         // the circle is used to detect when the cursor is within range to display the player's name and reputability
         // the circle collider is used to detect when the local player is within range to display the player's name and reputability
 
-        private const float CursorTriggerSize = 0.05f;
+        private const float CursorTriggerSize = 0.025f;
         private const float PlayerTriggerSize = 5f;
 
         Player LocalPlayer => PlayerManager.instance.GetLocalPlayer(); // the local player

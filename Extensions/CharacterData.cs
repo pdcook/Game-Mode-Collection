@@ -55,6 +55,10 @@ namespace GameModeCollection.Extensions
         {
             instance.GetData().TRT_Karma = UnityEngine.Mathf.Clamp(instance.GetData().TRT_Karma + amount_to_add, minimum, 1f);
         }
+        public static void SetHealthbarVisible(this CharacterData instance, bool visible)
+        {
+            instance?.transform?.Find("WobbleObjects/Healthbar/Canvas/Image")?.gameObject?.SetActive(visible);
+        }
 
         public static void SetNameBackground(this CharacterData instance, Color color)
         {

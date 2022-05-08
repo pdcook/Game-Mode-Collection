@@ -9,51 +9,50 @@ using UnboundLib;
 using UnboundLib.Cards;
 using UnboundLib.Networking;
 using UnityEngine;
-using Sonigon;
-using Sonigon.Internal;
 using SoundImplementation;
+using Sonigon;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
-    static class A_VSSPrefab
+    static class A_AWPPrefab
     {
-        private static GameObject _VSS = null;
-        public static GameObject VSS
+        private static GameObject _AWP = null;
+        public static GameObject AWP
         {
             get
             {
-                if (_VSS is null)
+                if (_AWP is null)
                 {
-                    _VSS = new GameObject("A_VSS", typeof(A_VSS));
-                    UnityEngine.GameObject.DontDestroyOnLoad(_VSS);
+                    _AWP = new GameObject("A_AWP", typeof(A_AWP));
+                    UnityEngine.GameObject.DontDestroyOnLoad(_AWP);
                 }
-                return _VSS;
+                return _AWP;
             }
         }
     }
 
-    public class VSSCard : CustomCard
+    public class AWPCard : CustomCard
     {    
-        // high (not one-shot) damage, slow rate of fire, SILENCED sniper rifle available to traitors
+        // one shot, very slow rate of fire, sniper rifle available to both traitors and detectives
 
         internal static CardInfo Card = null;
-        internal static string CardName => "VSS Vintorez";
+        internal static string CardName => "AWP";
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
             cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_2, CardItem.IgnoreMaxCardsCategory };
             cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_2 };
-            statModifiers.AddObjectToPlayer = A_VSSPrefab.VSS;
+            statModifiers.AddObjectToPlayer = A_AWPPrefab.AWP;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-            player.gameObject.GetOrAddComponent<VSSGun>();
+            player.gameObject.GetOrAddComponent<AWPGun>();
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-           if (player.gameObject.GetComponent<VSSGun>() != null)
+           if (player.gameObject.GetComponent<AWPGun>() != null)
            {
-                Destroy(player.gameObject.GetComponent<VSSGun>());
+                Destroy(player.gameObject.GetComponent<AWPGun>());
            }
         }
 
@@ -63,12 +62,14 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "A Traitor's <b>silenced</b> sniper rifle. Press [item 2] to switch to it.";
+            return "An extremely powerful and loud traitor sniper. Press [item 2] to switch to it.";
         }
 
         protected override GameObject GetCardArt()
         {
-            return GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_VSS");
+            return null;
+            //return GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_AWP");
+
         }
 
         protected override CardInfo.Rarity GetRarity()
@@ -91,23 +92,22 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 new CardInfoStat()
                 {
                     stat = "Damage",
-                    amount = "High",
+                    amount = "Instakill",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
                     positive = true
                 },
                 new CardInfoStat()
                 {
                     stat = "Fire Rate",
-                    amount = "Low",
+                    amount = "Extremely Slow",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
                     positive = false
                 }
             };
-
         }
         protected override CardThemeColor.CardThemeColorType GetTheme()
         {
-            return CardThemeColor.CardThemeColorType.FirepowerYellow;
+            return CardThemeColor.CardThemeColorType.DestructiveRed;
         }
         public override string GetModName()
         {
@@ -120,14 +120,14 @@ namespace GameModeCollection.GameModes.TRT.Cards
         internal static void Callback(CardInfo card)
         {
             card.gameObject.AddComponent<TRTCardSlotText>();
-            VSSCard.Card = card;
+            AWPCard.Card = card;
             ModdingUtils.Utils.Cards.instance.AddHiddenCard(card);
         }
     }
-    public class A_VSS : MonoBehaviour
+    public class A_AWP : MonoBehaviour
     {
         Player Player;
-        private const float SwitchDelay = 0.2f;
+        private const float SwitchDelay = 0.5f;
         private float Timer = 0f;
         private bool IsOut = false;
         void Start()
@@ -143,22 +143,20 @@ namespace GameModeCollection.GameModes.TRT.Cards
             {
                 this.Timer = SwitchDelay;
                 this.IsOut = !this.IsOut;
-                NetworkingManager.RPC(typeof(A_VSS), nameof(RPCA_SwitchToVSS), this.Player.playerID, this.IsOut);
+                NetworkingManager.RPC(typeof(A_AWP), nameof(RPCA_SwitchToAWP), this.Player.playerID, this.IsOut);
             }
         }
         [UnboundRPC]
-        private static void RPCA_SwitchToVSS(int playerID, bool switchTo)
+        private static void RPCA_SwitchToAWP(int playerID, bool switchTo)
         {
-            if (switchTo) { PlayerManager.instance.GetPlayerWithID(playerID)?.GetComponent<VSSGun>()?.EnableVSS(); }
-            else { PlayerManager.instance.GetPlayerWithID(playerID)?.GetComponent<VSSGun>()?.DisableVSS(); }
+            if (switchTo) { PlayerManager.instance.GetPlayerWithID(playerID)?.GetComponent<AWPGun>()?.EnableAWP(); }
+            else { PlayerManager.instance.GetPlayerWithID(playerID)?.GetComponent<AWPGun>()?.DisableAWP(); }
         }
     }
-    public class VSSGun : ReversibleEffect
+    public class AWPGun : ReversibleEffect
     {
-        private const float BarrelLength = 5f;
-        private const float BarrelWidth = 1f;
-
-        private const float VolumeMultiplier = 0.5f; // multiplier for the impact sound volume
+        private const float BarrelLength = 7f;
+        private const float BarrelWidth = 0.5f;
 
         private Vector3 OriginalScale;
         private Vector3 OriginalRightPos;
@@ -168,7 +166,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         private SoundShotModifier SoundShotModifier;
         private SoundImpactModifier SoundImpactModifier;
-
         public override void OnAwake()
         {
             this.SetLivesToEffect(1);
@@ -179,48 +176,43 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void OnStart()
         {
             // set sound effects
-            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("VSSShoot.ogg");
+            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("AWPShoot.ogg");
             SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
             soundContainer.setting.volumeIntensityEnable = true;
             soundContainer.audioClip[0] = sound;
             SoundEvent shoot = ScriptableObject.CreateInstance<SoundEvent>();
             shoot.soundContainerArray[0] = soundContainer;
 
-            this.SoundShotModifier = ScriptableObject.CreateInstance<SoundShotModifier>();
-            this.SoundShotModifier.single = shoot;
+            this.SoundShotModifier = new SoundShotModifier() { single = shoot };
 
             AudioClip soundHitSurface = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("SniperHitSurface.ogg");
             SoundContainer soundContainer2 = ScriptableObject.CreateInstance<SoundContainer>();
             soundContainer2.setting.volumeIntensityEnable = true;
-            soundContainer2.setting.intensityMultiplier = VolumeMultiplier;
             soundContainer2.audioClip[0] = soundHitSurface;
             SoundEvent hitSurface = ScriptableObject.CreateInstance<SoundEvent>();
             hitSurface.soundContainerArray[0] = soundContainer2;
             AudioClip soundHitCharacter = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("SniperHitCharacter.ogg");
             SoundContainer soundContainer3 = ScriptableObject.CreateInstance<SoundContainer>();
             soundContainer3.setting.volumeIntensityEnable = true;
-            soundContainer3.setting.intensityMultiplier = VolumeMultiplier;
             soundContainer3.audioClip[0] = soundHitCharacter;
             SoundEvent hitCharacter = ScriptableObject.CreateInstance<SoundEvent>();
             hitCharacter.soundContainerArray[0] = soundContainer3;
 
-            this.SoundImpactModifier = ScriptableObject.CreateInstance<SoundImpactModifier>();
-            this.SoundImpactModifier.impactCharacter = hitCharacter;
-            this.SoundImpactModifier.impactEnvironment = hitSurface;
+            this.SoundImpactModifier = new SoundImpactModifier() { impactCharacter = hitCharacter, impactEnvironment = hitSurface };
 
             this.NumCards = this.data.currentCards.Count();
 
             this.gunAmmoStatModifier.maxAmmo_mult = 0;
-            this.gunAmmoStatModifier.maxAmmo_add = 5;
+            this.gunAmmoStatModifier.maxAmmo_add = 3;
             this.gunStatModifier.bursts_mult = 0;
             this.gunStatModifier.numberOfProjectiles_mult = 0;
             this.gunStatModifier.numberOfProjectiles_add = 1;
             this.gunStatModifier.damage_mult = 0f;
-            this.gunStatModifier.damage_add = 1.2f;
+            this.gunStatModifier.damage_add = 1000f;
             this.gunStatModifier.attackSpeed_mult = 0f;
-            this.gunStatModifier.attackSpeed_add = 1.25f;
+            this.gunStatModifier.attackSpeed_add = 3f;
             this.gunAmmoStatModifier.reloadTimeMultiplier_mult = 0f;
-            this.gunAmmoStatModifier.reloadTimeAdd_add = 3.5f;
+            this.gunAmmoStatModifier.reloadTimeAdd_add = 10f;
             this.gunStatModifier.gravity_mult = 0f;
             this.gunStatModifier.projectileSpeed_mult = 0f;
             this.gunStatModifier.projectileSpeed_add = 100f;
@@ -235,8 +227,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 this.NumCards = this.data.currentCards.Count();
                 if ((bool)this.GetFieldValue("modifiersActive"))
                 {
-                    this.DisableVSS();
-                    this.EnableVSS();
+                    this.DisableAWP();
+                    this.EnableAWP();
                 }
             }
 
@@ -244,21 +236,20 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         public override void OnOnDestroy()
         {
-            this.DisableVSS();
+            this.DisableAWP();
             base.OnOnDestroy();
         }
-        public void DisableVSS()
+        public void DisableAWP()
         {
             // things that can't be changed with ReversibleEffect
 
             // restore originals
             this.gun.objectsToSpawn = this.OriginalObjectsToSpawn.Concat(this.gun.objectsToSpawn).ToArray();
             this.gun.dontAllowAutoFire = this.data.currentCards.Any(c => (c.gameObject?.GetComponent<Gun>()?.dontAllowAutoFire ?? false));
-            //this.gun.soundDisableRayHitBulletSound = false; // the vanilla game never modifies this
             this.gun.soundGun.RemoveSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.RemoveSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
-
+            
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject barrel = spring.transform.GetChild(3).gameObject;
             barrel.transform.localScale = this.OriginalScale;
@@ -275,9 +266,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
             GameModeCollection.instance.ExecuteAfterFrames(2, () => this.characterStatModifiers.WasUpdated());
         }
 
-        public void EnableVSS()
+        public void EnableAWP()
         {
-
             // you can't cheese the attack speed by switching back and forth
             this.gun.sinceAttack = 0f;
 
@@ -289,12 +279,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             // disable auto-fire (requires demonicpactpatch to reset properly)
             this.gun.dontAllowAutoFire = true; // will be reset by reading all of the cards the player has when this is removed
             this.gun.objectsToSpawn = new ObjectsToSpawn[] { };
-            //this.gun.soundDisableRayHitBulletSound = true;
-
-            // VSS shot sound only plays for the owner
-            if (this.gun.player.data.view.IsMine) { this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier); }
-            
-            // impact sound always plays, but is quieter for the VSS
+            this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.AddSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
 

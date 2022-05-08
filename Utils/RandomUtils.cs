@@ -29,6 +29,17 @@ namespace GameModeCollection.Utils
             }
             return default(T);
         }
+        /// <summary>
+        /// Returns a random element from the sequence, so long as it satisfies the predicate.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sequence"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static T RandomElementWithCondition<T>(this IEnumerable<T> sequence, Func<T, bool> predicate)
+        {
+            return sequence.Where(x => predicate(x)).RandomElementByWeight(x => 1f);
+        }            
 
         public static UnityEngine.Vector2 ClippedGaussianVector2(float minX, float minY, float maxX, float maxY)
         {

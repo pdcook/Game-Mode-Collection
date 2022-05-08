@@ -226,6 +226,10 @@ namespace GameModeCollection.GameModes
             _ = HealthStationPrefab.HealthStation;
             _ = DeathStationPrefab.DeathStation;
             _ = C4Prefab.C4;
+            _ = GrenadePrefab.Grenade;
+            _ = DiscombobulatorPrefab.Discombobulator;
+            _ = IncendiaryGrenadePrefab.IncendiaryGrenade;
+            _ = SmokeGrenadePrefab.SmokeGrenade;
             // spawn handler
             _ = CardItemPrefabs.CardItemHandler;
             this.StartCoroutine(this.Init());
