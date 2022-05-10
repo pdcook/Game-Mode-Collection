@@ -292,7 +292,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             //this.gun.soundDisableRayHitBulletSound = true;
 
             // VSS shot sound only plays for the owner
-            if (this.gun.player.data.view.IsMine) { this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier); }
+            this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier);
             
             // impact sound always plays, but is quieter for the VSS
             this.gun.soundGun.AddSoundImpactModifier(this.SoundImpactModifier);

@@ -81,6 +81,10 @@ namespace GameModeCollection.GameModes.TRT
             nameText.autoSizeTextContainer = true;
             // do not autosize the font
             nameText.enableAutoSizing = false;
+            // do not allow lines to wrap
+            nameText.enableWordWrapping = false;
+            // move the text up slightly to prevent overlap with the health bar
+            nameText.transform.localPosition = new Vector3(0f, 175f, 0f);
 
             // if in range or hovering, show the health bar
             this.Player?.data?.SetHealthbarVisible(inRange);

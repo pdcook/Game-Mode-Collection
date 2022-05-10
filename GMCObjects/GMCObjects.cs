@@ -5,6 +5,7 @@ using MapsExt;
 using MapsExt.MapObjects;
 using UnboundLib;
 using UnityEngine;
+using Jotunn.Utils;
 
 namespace GMCObjects
 {
@@ -20,6 +21,7 @@ namespace GMCObjects
         public static GMCObjects instance;
 
         public GameObject CardSpot;
+        internal static AssetBundle TRT_Assets;
 
         private void Awake()
         {
@@ -30,6 +32,19 @@ namespace GMCObjects
         {
             var harmony = new Harmony(ModId);
             harmony.PatchAll();
+
+            try
+            {
+                TRT_Assets = AssetUtils.LoadAssetBundleFromResources("trt_assets", typeof(GMCObjects).Assembly);
+                if (TRT_Assets == null)
+                {
+                    UnityEngine.Debug.LogError("TRT Assets failed to load.");
+                }
+            }
+            catch
+            {
+                // ignored
+            }
 
             instance = this;
             MapsExtended.instance.RegisterMapObjects();
