@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace GMCObjects
+namespace GameModeCollection.GMCObjects
 {
     public static class TransformExtension
     {

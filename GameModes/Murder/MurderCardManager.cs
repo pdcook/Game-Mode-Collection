@@ -1,6 +1,6 @@
 ﻿using GameModeCollection.GameModes;
 using GameModeCollection.Objects;
-using GMCObjects;
+using GameModeCollection.GMCObjects;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;

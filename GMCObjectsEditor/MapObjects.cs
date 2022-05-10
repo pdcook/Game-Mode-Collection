@@ -1,4 +1,4 @@
-﻿using GMCObjects;
+﻿using GameModeCollection.GMCObjects;
 using MapsExt.Editor;
 using MapsExt.Editor.MapObjects;
 using MapsExt.MapObjects;

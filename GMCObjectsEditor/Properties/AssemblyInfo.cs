@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion(GMCObjects.GMCObjects.Version)]
-[assembly: AssemblyFileVersion(GMCObjects.GMCObjects.Version)]
+[assembly: AssemblyVersion(GMCObjectsEditor.GMCObjectsEditor.Version)]
+[assembly: AssemblyFileVersion(GMCObjectsEditor.GMCObjectsEditor.Version)]

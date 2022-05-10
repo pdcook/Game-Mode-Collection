@@ -4,7 +4,7 @@ using MapsExt.MapObjects;
 using UnboundLib;
 using UnityEngine;
 
-namespace GMCObjects
+namespace GameModeCollection.GMCObjects
 {
     public class MapObjects
     {

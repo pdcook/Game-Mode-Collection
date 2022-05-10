@@ -149,6 +149,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GMCObjects\CardSpawnPoint.cs" />
     <Compile Include="Extensions\CardVisuals.cs" />
     <Compile Include="Extensions\CharacterData.cs" />
     <Compile Include="Extensions\GameObject.cs" />
@@ -224,6 +225,8 @@
     <Compile Include="GameModes\TRT\TRT_Corpse.cs" />
     <Compile Include="GameModes\TRT\TRT_Role.cs" />
     <Compile Include="GameModes\TRT\TRTShopHandler.cs" />
+    <Compile Include="GMCObjects\GMCObjects.cs" />
+    <Compile Include="GMCObjects\MapObjects.cs" />
     <Compile Include="Objects\CardItem.cs" />
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
@@ -266,6 +269,9 @@
     <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameModeObjects\CrownHandler.cs" />
+    <Compile Include="GMCObjects\TraitorDoor.cs" />
+    <Compile Include="GMCObjects\TraitorInteractable.cs" />
+    <Compile Include="GMCObjects\TransformExtension.cs" />
     <Compile Include="Utils\CardUtils.cs" />
     <Compile Include="Utils\RandomUtils.cs" />
   </ItemGroup>
@@ -280,12 +286,6 @@
     <Content Include="ThunderStore\manifest.json" />
     <Content Include="publish.ps1" />
     <Content Include="ThunderStore\icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="GMCObjects\GMCObjects.csproj">
-      <Project>{1d1ad7d6-e593-4272-9a16-9b03cfbbd1a0}</Project>
-      <Name>GMCObjects</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AssetsEmbedded\trt_assets" />

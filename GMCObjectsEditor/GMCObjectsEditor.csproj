@@ -83,11 +83,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GameModeCollection.csproj">
       <Project>{615fd723-e714-4f78-9bae-dc91790f95c0}</Project>
-      <Name>GMCObjects</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\GMCObjects\GMCObjects.csproj">
-      <Project>{615fd723-e714-4f78-9bae-dc91790f95c0}</Project>
-      <Name>GMCObjects</Name>
+      <Name>GameModeCollection</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

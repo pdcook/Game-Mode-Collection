@@ -3,8 +3,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
 using MapEmbiggener.Controllers;
-using GameModeCollection.GameModes;
-namespace GMCObjects
+using GameModeCollection.GameModes.TRT;
+namespace GameModeCollection.GMCObjects
 {
     public static class TraitorInteractablePrefabs
     {
@@ -15,7 +15,7 @@ namespace GMCObjects
             {
                 if (_InteractableIcon is null)
                 {
-                    _InteractableIcon = GameObject.Instantiate(GMCObjects.TRT_Assets.LoadAsset<GameObject>("TRT_TraitorInteractIcon"));
+                    _InteractableIcon = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_TraitorInteractIcon"));
                     _InteractableIcon.AddComponent<TraitorInterationIcon>().SetPrefab(true);
                     UnityEngine.GameObject.DontDestroyOnLoad(_InteractableIcon);
                 }
@@ -37,7 +37,11 @@ namespace GMCObjects
         }
         public void TryInteract(Player player)
         {
-            if (player is null || player.data.dead || RoleManager
+            if (player is null || player.data.dead || RoleManager.GetPlayerAlignment(player) != Alignment.Traitor)
+            {
+                return;
+            }
+            this.OnInteract(player);
         }
 
         public abstract void OnInteract(Player player);
@@ -48,10 +52,18 @@ namespace GMCObjects
     /// </summary>
     public class TraitorInterationIcon : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
     {
-        private const float ConstScale = 0.3f;
+        private const float DefaultScale = 0.3f; // default scale of the icon
+        private const float HoverScale = 0.4f; // scale of the icon when hovered
+        private const float ClickScale = 0.2f; // scale of the icon when clicked
         private Vector2 IconPosition; // position of the clickable icon
         private SpriteRenderer IconSprite { get; set; }
-        
+
+        private float Scale => IsClicked ? ClickScale : IsHovering ? HoverScale : DefaultScale;
+
+        public bool IsHovering { get; private set; } = false;
+        public bool IsClicked { get; private set; } = false;
+        public bool IsInteractable { get; private set; } = true;
+
         internal void SetPrefab(bool isPrefab)
         {
             this.gameObject.SetActive(!isPrefab);
@@ -60,80 +72,74 @@ namespace GMCObjects
         {
             this.IconPosition = this.transform.position;
 
-            this.transform.localScale = ConstScale * MainCam.instance.cam.orthographicSize / ControllerManager.DefaultZoom * Vector3.one;
+            this.transform.localScale = DefaultScale * MainCam.instance.cam.orthographicSize / ControllerManager.DefaultZoom * Vector3.one;
 
-            foreach (SpriteRenderer spriteRenderer in this.GetComponentsInChildren<SpriteRenderer>(true))
-            {
-                spriteRenderer.sortingLayerID = SortingLayer.NameToID("MostFront");
-            }
-
-            this.CircleSprite = this.Circle.GetComponent<SpriteRenderer>();
-            this.CircleBackgroundSprite = this.Circle.transform.GetChild(0).GetComponent<SpriteRenderer>();
-            this.ArrowSprite = this.Arrow.GetComponent<SpriteRenderer>();
-            this.ArrowBackgroundSprite = this.Arrow.transform.GetChild(0).GetComponent<SpriteRenderer>();
+            this.IconSprite = this.GetComponent<SpriteRenderer>();
+            this.IconSprite.sortingLayerID = SortingLayer.NameToID("MostFront");
         }
         void Update()
         {
-            this.FramesSinceCreation++;
-
-            if (this.Timer != null && this.FramesSinceCreation > 5 && 1f - this.Timer.Perc < FadeOutTimerPerc)
+            Player player = PlayerManager.instance.GetLocalPlayer();
+            if (player is null || player.data.dead || RoleManager.GetPlayerAlignment(player) != Alignment.Traitor)
             {
-                this.Text.color = Color.Lerp(Color.clear, this.Text.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
-                this.CircleSprite.color = Color.Lerp(Color.clear, this.CircleSprite.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
-                this.CircleBackgroundSprite.color = Color.Lerp(Color.clear, this.CircleBackgroundSprite.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
-                this.ArrowSprite.color = Color.Lerp(Color.clear, this.ArrowSprite.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
-                this.ArrowBackgroundSprite.color = Color.Lerp(Color.clear, this.ArrowBackgroundSprite.color, (1f - this.Timer.Perc) / (FadeOutTimerPerc - DestroyTimerPerc));
-                if (this.Timer.Perc < DestroyTimerPerc)
-                {
-                    Destroy(this.gameObject);
-                }
+                this.IconSprite.enabled = false;
+                this.IsInteractable = false;
+                return;
             }
 
+            this.IsInteractable = true;
 
-            this.transform.localScale = ConstScale * MainCam.instance.cam.orthographicSize / ControllerManager.DefaultZoom * Vector3.one;
+            this.transform.localScale = this.Scale * MainCam.instance.cam.orthographicSize / ControllerManager.DefaultZoom * Vector3.one;
 
-            this.Text.text = $"{Vector2.Distance(this.Player.transform.position, this.IconPosition):0}";
-
-            Vector2 screenPos = MainCam.instance.cam.WorldToViewportPoint(this.IconPosition); //get viewport positions
+            Vector2 screenPos = MainCam.instance.cam.WorldToViewportPoint(this.IconPosition); // get viewport positions
 
             if (screenPos.x >= 0f && screenPos.x <= 1f && screenPos.y >= 0f && screenPos.y <= 1f)
             {
                 // point is on screen
                 this.transform.position = this.IconPosition;
-                this.Circle.SetActive(true);
-                this.Arrow.SetActive(false);
                 this.transform.rotation = Quaternion.identity;
                 return;
             }
 
             Vector2 onScreenPos = new Vector2(screenPos.x - 0.5f, screenPos.y - 0.5f) * 2f; // 2D version, new mapping
             float max = Mathf.Max(Mathf.Abs(onScreenPos.x), Mathf.Abs(onScreenPos.y)); // get largest offset
-            onScreenPos = 0.9f * (onScreenPos / (max * 2f)) + new Vector2(0.5f, 0.5f); // undo mapping, scale to add margin
+            onScreenPos = 0.95f * (onScreenPos / (max * 2f)) + new Vector2(0.5f, 0.5f); // undo mapping, scale to add margin
 
             Vector2 newPos = MainCam.instance.cam.ViewportToWorldPoint(onScreenPos);
             this.transform.position = new Vector3(newPos.x, newPos.y, 0f);
-            this.Circle.SetActive(false);
-            this.Arrow.SetActive(true);
-            this.transform.up = (Vector3)this.IconPosition - this.Player.transform.position;
+            this.transform.up = player.transform.position - (Vector3)this.IconPosition;
         }
-        public void OnPointerDown(PointerEventData eventData)
+        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
         {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnPointerEnter(PointerEventData eventData)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            throw new System.NotImplementedException();
-        }
-
+            if (this.IsHovering)
+            {
+                this.IsClicked = true;
+            }
+        }            
         void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
         {
-            throw new System.NotImplementedException();
+            if (this.IsClicked)
+            {
+                this.IsClicked = false;
+            }
+        }
+
+        void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
+        {
+            this.IsHovering = true;
+        }
+
+        void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
+        {
+            this.IsHovering = false;
+        }
+
+    }
+    public class TraitorInteractionTrigger : MonoBehaviour
+    {
+        void Start()
+        {
+
         }
     }
     class TextBackground : MonoBehaviour
@@ -145,13 +151,13 @@ namespace GMCObjects
             Transform background = this.transform.parent.Find("Background");
             if (background is null)
             {
-                background = new GameObject("Background", typeof(UnityEngine.UI.Image), typeof(PlayerNameSizeFitter)).transform;
-                background.SetParent(nameText.transform.parent);
+                //background = new GameObject("Background", typeof(UnityEngine.UI.Image), typeof(PlayerNameSizeFitter)).transform;
+                //background.SetParent(nameText.transform.parent);
                 background.SetAsFirstSibling();
                 background.localPosition = Vector3.zero;
                 background.localScale = Vector3.one;
             }
-            background.GetComponent<UnityEngine.UI.Image>().color = color;
+            //background.GetComponent<UnityEngine.UI.Image>().color = color;
         }
         public void CheckForChanges()
         {

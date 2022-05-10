@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace GMCObjects
+namespace GameModeCollection.GMCObjects
 {
     /// <summary>
     /// The main behaviour for the traitor door, which can be opened by traitors, and closes automatically after a brief period of time.
@@ -22,7 +22,6 @@ namespace GMCObjects
             interact.transform.localRotation = Quaternion.identity;
             interact.transform.localScale = Vector3.one;
             interact.AddComponent<TraitorInteractable>();
-            interact.GetComponent<TraitorInteractable>().Door = this;
             Interacter = interact;
             
         }
