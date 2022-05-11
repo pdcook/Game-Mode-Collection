@@ -60,6 +60,7 @@ namespace GameModeCollection.GMCObjects
             {
                 SpatialSerializer.Deserialize(data, target);
                 // this would be where we would add the door component and the interaction gameobjects
+                target.AddComponent<TraitorDoor>();
             }
         }
 

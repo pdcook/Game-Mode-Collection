@@ -149,6 +149,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\Transform.cs" />
     <Compile Include="GMCObjects\CardSpawnPoint.cs" />
     <Compile Include="Extensions\CardVisuals.cs" />
     <Compile Include="Extensions\CharacterData.cs" />

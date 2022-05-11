@@ -149,7 +149,7 @@ namespace GameModeCollection.GameModes
         public readonly static Color DullWhite = new Color32(230, 230, 230, 255);
         public readonly static Color WarningColor = new Color32(230, 0, 0, 255);
         public readonly static Color DisplayBackgroundColor = new Color32(0, 0, 0, 150);
-        public readonly static Color NameBackgroundColor = new Color32(0, 0, 0, 200);
+        public readonly static Color TextBackgroundColor = new Color32(0, 0, 0, 200);
 
         private readonly ReadOnlyDictionary<int, int> roundCounterValues = new ReadOnlyDictionary<int, int>(new Dictionary<int, int>() { { 0, 0 }, { 1, 0 } }) { };
 

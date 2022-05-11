@@ -69,7 +69,7 @@ namespace GameModeCollection.GameModes.TRT
             /// the color of the reputability is set separately
 
             // if there will be no nameplate, set the background color to clear
-            Color backgroundColor_ = backgroundColor ?? (!inRange && role_Appearance is null ? Color.clear : GM_TRT.NameBackgroundColor);
+            Color backgroundColor_ = backgroundColor ?? (!inRange && role_Appearance is null ? Color.clear : GM_TRT.TextBackgroundColor);
 
             TextMeshProUGUI nameText = this.Player?.GetComponentInChildren<PlayerName>()?.GetComponent<TextMeshProUGUI>();
             if (nameText is null)
