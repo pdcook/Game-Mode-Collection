@@ -6,6 +6,8 @@ using MapEmbiggener.Controllers;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes;
 using GameModeCollection.Extensions;
+using UnboundLib;
+using System;
 namespace GameModeCollection.GMCObjects
 {
     public static class TraitorInteractablePrefabs
@@ -58,9 +60,21 @@ namespace GameModeCollection.GMCObjects
     {
         public abstract string HoverText { get; protected set; }
         public abstract Color TextColor { get; protected set; }
+        public virtual float VisibleDistance { get; protected set; } = float.PositiveInfinity;
+        public bool IsEditorObj => this.GetComponent<DetectMapEditor>()?.IsMapEditor ?? false;
+        public string UniqueKey { get; protected set; } // unique key for RPC
 
         protected void Start()
         {
+            this.UniqueKey = string.Concat(new object[]
+            {
+            "TraitorIneractable ",
+            (int)base.GetComponentInParent<Map>().GetFieldValue("levelID"),
+            " ",
+            base.transform.GetSiblingIndex()
+            });
+            MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.Add(this.UniqueKey, new Action<int>(this.RPCA_TryInteract));
+
             // add the interaction UI
             GameObject interactableUI = GameObject.Instantiate(TraitorInteractablePrefabs.InteractableUI, this.transform.parent);
             interactableUI.GetComponent<TraitorInteractionIcon>().SetInteractableObject(this.transform);
@@ -70,8 +84,20 @@ namespace GameModeCollection.GMCObjects
             interactableUI.GetComponentInChildren<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
             interactableUI.GetComponentInChildren<TextBackground>().CheckForChanges();
         }
-        public void TryInteract(Player player)
+        private void OnDestroy()
         {
+            if (MapManager.instance)
+            {
+                MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.Remove(this.UniqueKey);
+            }
+        }
+        public void Call_TryInteract(Player player)
+        {
+            MapManager.instance.GetComponent<ChildRPC>().CallFunction(this.UniqueKey, player is null ? -1 : player.playerID);
+        }
+        public void RPCA_TryInteract(int playerID)
+        {
+            Player player = playerID == -1 ? null : PlayerManager.instance?.GetPlayerWithID(playerID);
             if (!GameModeCollection.DEBUG && (player is null || player.data.dead || RoleManager.GetPlayerAlignment(player) != Alignment.Traitor))
             {
                 return;
@@ -85,7 +111,7 @@ namespace GameModeCollection.GMCObjects
     /// <summary>
     /// interaction icon for traitor map objects
     /// </summary>
-    public class TraitorInteractionIcon : MonoBehaviour, IPointerUpHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
+    public class TraitorInteractionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         private const float DefaultScale = 0.6f; // default scale of the icon
         private const float HoverScale = 0.8f; // scale of the icon when hovered
@@ -102,10 +128,36 @@ namespace GameModeCollection.GMCObjects
         private UnityEngine.UI.Image IconImage { get; set; }
         private TextMeshProUGUI Text { get; set; }
 
+        private bool IsEditorObj => this.InteractableObject?.GetComponent<TraitorInteractable>()?.IsEditorObj ?? false;
+
         private float Scale => this.IsClicked ? ClickScale : this.IsHovering ? HoverScale : DefaultScale;
 
+        // the local player is alive, is a traitor, is close enough to interact/see the icon, OR debug mode is enabled 
+        public bool LocalPlayerIsEligible
+        {
+            get
+            {
+                Player player = PlayerManager.instance?.GetLocalPlayer();
+                return !(!GameModeCollection.DEBUG && !this.IsEditorObj && (this.InteractableObject is null || player is null || player.data.dead || RoleManager.GetPlayerAlignment(player) != Alignment.Traitor || Vector2.Distance(player.transform.position, this.InteractableObject.position) > this.InteractableObject.GetComponent<TraitorInteractable>().VisibleDistance));
+            }
+        }
+
         public bool IsHovering { get; private set; } = false;
-        public bool IsClicked { get; private set; } = false;
+        // icons are clicked when the local player is a traitor, is hovering over it (or is a controller player within a certain range), and presses the interact button
+        public bool IsClicked
+        {
+            get
+            {
+                return this.IsHovering && this.LocalPlayerIsEligible && ((PlayerManager.instance?.GetLocalPlayer()?.data.playerActions.InteractIsPressed() ?? false) || ((GameModeCollection.DEBUG || this.IsEditorObj) && Input.GetKey(KeyCode.F)));
+            }                
+        }
+        public bool WasClicked
+        {
+            get
+            {
+                return this.IsHovering && this.LocalPlayerIsEligible && ((PlayerManager.instance?.GetLocalPlayer()?.data.playerActions.InteractWasPressed() ?? false) || ((GameModeCollection.DEBUG || this.IsEditorObj) && Input.GetKeyDown(KeyCode.F)));
+            }                
+        }
         public bool IsInteractable { get; private set; } = true;
         public Transform InteractableObject { get; private set; } = null;
         internal void SetPrefab(bool isPrefab)
@@ -151,8 +203,7 @@ namespace GameModeCollection.GMCObjects
             this.IconImage.transform.rotation = Quaternion.identity;
             this.Text.transform.rotation = Quaternion.identity;
 
-            Player player = PlayerManager.instance.GetLocalPlayer();
-            if (!GameModeCollection.DEBUG && (this.InteractableObject is null || player is null || player.data.dead || RoleManager.GetPlayerAlignment(player) != Alignment.Traitor))
+            if (!this.LocalPlayerIsEligible)
             {
                 this.IconImage.enabled = false;
                 this.IsInteractable = false;
@@ -166,6 +217,11 @@ namespace GameModeCollection.GMCObjects
 
             this.IconImage.transform.SetGlobalScale(this.Scale * Vector3.one);
             this.Text.transform.SetGlobalScale(DefaultScale * Vector3.one);
+
+            if (this.WasClicked)
+            {
+                this.InteractableObject?.GetComponent<TraitorInteractable>()?.Call_TryInteract(PlayerManager.instance?.GetLocalPlayer());
+            }
 
             Vector2 screenPos = MainCam.instance.cam.WorldToViewportPoint(this.InteractableObject.position); // get viewport positions
 
@@ -198,22 +254,6 @@ namespace GameModeCollection.GMCObjects
             this.Text.transform.rotation = (offTop || offBottom) ? Quaternion.identity : offLeft ? Quaternion.Euler(0f, 0f, 90f) : Quaternion.Euler(0f, 0f, -90f);
             this.Text.transform.position = MainCam.instance.cam.ViewportToScreenPoint(onScreenPos + textOffset);
         }
-        void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
-        {
-            if (this.IsHovering)
-            {
-                this.IsClicked = true;
-                this.InteractableObject?.GetComponent<TraitorInteractable>()?.TryInteract(PlayerManager.instance?.GetLocalPlayer());
-            }
-        }            
-        void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
-        {
-            if (this.IsClicked)
-            {
-                this.IsClicked = false;
-            }
-        }
-
         void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
         {
             this.IsHovering = true;

@@ -226,8 +226,10 @@
     <Compile Include="GameModes\TRT\TRT_Corpse.cs" />
     <Compile Include="GameModes\TRT\TRT_Role.cs" />
     <Compile Include="GameModes\TRT\TRTShopHandler.cs" />
+    <Compile Include="GMCObjects\DetectMapEditor.cs" />
     <Compile Include="GMCObjects\GMCObjects.cs" />
     <Compile Include="GMCObjects\MapObjects.cs" />
+    <Compile Include="GMCObjects\Teleporter.cs" />
     <Compile Include="Objects\CardItem.cs" />
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />

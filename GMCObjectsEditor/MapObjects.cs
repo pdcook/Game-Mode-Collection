@@ -36,6 +36,15 @@ namespace GMCObjectsEditor
         [EditorMapObjectSerializer]
         public static SerializerAction<MapObjects.TraitorDoorObj> Serialize => EditorSpatialSerializer.BuildSerializer<MapObjects.TraitorDoorObj>(MapObjects.TraitorDoorSpec.Serialize);
         [EditorMapObjectDeserializer]
-        public static DeserializerAction<MapObjects.TraitorDoorObj> Deserialize => EditorSpatialSerializer.BuildDeserializer<MapObjects.TraitorDoorObj>(MapObjects.TraitorDoorSpec.Deserialize);
+        public static DeserializerAction<MapObjects.TraitorDoorObj> Deserialize
+        {
+            get
+            {
+                return EditorSpatialSerializer.BuildDeserializer<MapObjects.TraitorDoorObj>(MapObjects.TraitorDoorSpec.Deserialize) + ((data, target) =>
+                {
+                    target.gameObject.GetOrAddComponent<DetectMapEditor>().IsMapEditor = true;
+                });
+            }                
+        }
     }
 }

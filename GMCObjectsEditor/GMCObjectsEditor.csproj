@@ -51,6 +51,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Reflection.DispatchProxy, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.DispatchProxy.4.7.1\lib\net461\System.Reflection.DispatchProxy.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="UnboundLib, Version=2.10.2.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(ProfileFolder)\BepInEx\plugins\UnboundLib\UnboundLib.dll</HintPath>
@@ -76,9 +79,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardSpawnPointVisualizer.cs" />
+    <Compile Include="EditorActionHandlers\TeleporterActionHandler.cs" />
+    <Compile Include="EditorTeleporter.cs" />
     <Compile Include="MapObjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="GMCObjectsEditor.cs" />
+    <Compile Include="Visualizers\TeleporterVisualizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameModeCollection.csproj">
@@ -89,6 +95,9 @@
   <ItemGroup>
     <Content Include="publish.ps1" />
     <Content Include="ThunderStore\manifest.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
