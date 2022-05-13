@@ -10,72 +10,28 @@ using GMCObjectsEditor.EditorActionHandlers;
 
 namespace GMCObjectsEditor 
 {
-	[EditorMapObjectSpec(typeof(Teleporter), "Teleporter")]
-	public static class EditorRopeSpec
-	{
-		[EditorMapObjectPrefab]
-		public static GameObject Prefab => MapObjectManager.LoadCustomAsset<GameObject>("Editor Rope");
+    [EditorMapObjectSpec(typeof(MapObjects.TeleporterObj), "Teleporter", "TRT | Static")]
+    public static class EditorTeleporterSpec
+    {
+        [EditorMapObjectPrefab]
+        public static GameObject Prefab => MapObjects.TeleporterSpec.Prefab;
 
-		[EditorMapObjectSerializer]
-		public static void Serialize(GameObject instance, Teleporter target)
-		{
-			var ropeInstance = instance.GetComponent<EditorTeleporterInstance>();
-			target.startPosition = ropeInstance.GetAnchor(0).GetPosition();
-			target.endPosition = ropeInstance.GetAnchor(1).GetPosition();
-		}
+        [EditorMapObjectSerializer]
+        public static void Serialize(GameObject instance, MapObjects.TeleporterObj target)
+        {
+            MapObjects.TeleporterSpec.Serialize(instance, target);
+        }
 
-		[EditorMapObjectDeserializer]
-		public static void Deserialize(Teleporter data, GameObject target)
-		{
-			target.transform.GetChild(0).gameObject.GetOrAddComponent<MapObjectAnchor>();
-			target.transform.GetChild(0).gameObject.GetOrAddComponent<TeleporterActionHandler>();
-
-			target.transform.GetChild(1).gameObject.GetOrAddComponent<MapObjectAnchor>();
-			target.transform.GetChild(1).gameObject.GetOrAddComponent<TeleporterActionHandler>();
-
-			var startCollider = target.transform.GetChild(0).gameObject.GetOrAddComponent<BoxCollider2D>();
-			var endCollider = target.transform.GetChild(1).gameObject.GetOrAddComponent<BoxCollider2D>();
-			startCollider.size = Vector2.one * 1;
-			endCollider.size = Vector2.one * 1;
-
-			var instance = target.GetOrAddComponent<EditorTeleporterInstance>();
-			target.GetOrAddComponent<TeleporterVisualizer>();
-
-			instance.Detach();
-			target.transform.GetChild(0).position = data.startPosition;
-			target.transform.GetChild(1).position = data.endPosition;
-			instance.UpdateAttachments();
-		}
-	}
-
-	public class EditorTeleporterInstance : MonoBehaviour
-	{
-		private List<MapObjectAnchor> anchors;
-
-		private void Awake()
-		{
-			this.anchors = this.gameObject.GetComponentsInChildren<MapObjectAnchor>().ToList();
-		}
-
-		public MapObjectAnchor GetAnchor(int index)
-		{
-			return this.anchors[index];
-		}
-
-		public void UpdateAttachments()
-		{
-			foreach (var anchor in this.anchors)
-			{
-				anchor.UpdateAttachment();
-			}
-		}
-
-		public void Detach()
-		{
-			foreach (var anchor in this.anchors)
-			{
-				anchor.Detach();
-			}
-		}
-	}
+        [EditorMapObjectDeserializer]
+        public static void Deserialize(MapObjects.TeleporterObj data, GameObject target)
+        {
+            MapObjects.TeleporterSpec.Deserialize(data, target);
+            target.GetOrAddComponent<TeleporterVisualizer>();
+            target.transform.GetChild(0).gameObject.GetOrAddComponent<TeleporterBaseVisualizer>();
+            target.transform.GetChild(1).gameObject.GetOrAddComponent<TeleporterBaseVisualizer>();
+            target.transform.GetChild(0).gameObject.GetOrAddComponent<SpawnActionHandler>();
+            target.transform.GetChild(1).gameObject.GetOrAddComponent<SpawnActionHandler>();
+            target.transform.SetAsLastSibling();
+        }
+    }
 }

@@ -1,47 +1,83 @@
 ﻿using UnityEngine;
-using MapsExt;
-using MapsExt.MapObjects;
-using HarmonyLib;
+using GameModeCollection.GameModes;
+using UnboundLib;
 namespace GameModeCollection.GMCObjects
 {
-    public class Teleporter : MapObject
+    public class Teleporter : MonoBehaviour
     {
-        public Vector3 startPosition = Vector3.up;
-        public Vector3 endPosition = Vector3.down;
-
-        public override MapObject Move(Vector3 v)
+        void Start()
         {
-            var copy = (Teleporter)AccessTools.Constructor(this.GetType()).Invoke(new object[] { });
-            copy.active = this.active;
-            copy.startPosition = this.startPosition + v;
-            copy.endPosition = this.endPosition + v;
-            return copy;
-        }
-
-        public override string ToString()
-        {
-            return $"Teleporter[{this.startPosition}, {this.endPosition}]";
+            this.transform.GetChild(0).gameObject.GetOrAddComponent<TeleporterBase>();
+            this.transform.GetChild(1).gameObject.GetOrAddComponent<TeleporterBase>();
         }
     }
-
-    [MapObjectSpec(typeof(Teleporter))]
-    public static class TeleporterSpec
+    public class TeleporterBase : TraitorInteractable
     {
-        [MapObjectPrefab]
-        public static GameObject Prefab => MapObjectManager.LoadCustomAsset<GameObject>("Rope");
+        public const float RechargeTime = 1f;
+        public static readonly Color RechargingColor = new Color32(230, 230, 230, 128);
+        public override string HoverText { get; protected set; } = "Teleporter";
+        public override Color TextColor { get; protected set; } = GM_TRT.DullWhite;
+        public override float VisibleDistance { get; protected set; } = 5f;
+        private TeleporterBase PairedTeleporter = null;
+        float timer = 0f;
 
-        [MapObjectSerializer]
-        public static void Serialize(GameObject instance, Teleporter target)
+        new void Start()
         {
-            target.startPosition = instance.transform.position;
-            target.endPosition = instance.transform.GetChild(0).position;
+            base.Start();
+
+            foreach (TeleporterBase teleporter in this.transform.parent.GetComponentsInChildren<TeleporterBase>())
+            {
+                if (teleporter != this)
+                {
+                    this.PairedTeleporter = teleporter;
+                    break;
+                }
+            }
+
         }
-
-        [MapObjectDeserializer]
-        public static void Deserialize(Teleporter data, GameObject target)
+        public void StartRecharge()
         {
-            target.transform.position = data.startPosition;
-            target.transform.GetChild(0).position = data.endPosition;
+            this.InteractionUI.SetText("<size=50%>Recharging...");
+            this.InteractionUI.SetTextColor(RechargingColor);
+            this.timer = RechargeTime;
+        }
+        public override void OnInteract(Player player)
+        {
+            if (this.PairedTeleporter is null || player is null || this.timer > 0f) { return; }
+            this.StartRecharge();
+            this.PairedTeleporter.StartRecharge();
+            this.PlayParts(player);
+            player.GetComponentInParent<PlayerCollision>().IgnoreWallForFrames(2);
+            player.GetComponentInChildren<PlayerWobblePosition>().transform.position = this.PairedTeleporter.transform.position;
+            player.GetComponentInChildren<PlayerWobblePosition>().SetFieldValue("physicsPos", this.PairedTeleporter.transform.position);
+            player.GetComponentInChildren<PlayerWobblePosition>().SetFieldValue("velocity", Vector3.zero);
+            player.transform.position = this.PairedTeleporter.transform.position;
+            this.PlayParts(player);
+        }
+        public void PlayParts(Player player)
+        {
+            PlayerJump playerJump = player.GetComponent<PlayerJump>();
+            if (playerJump != null)
+            {
+                for (int i = 0; i < playerJump.jumpPart.Length; i++)
+                {
+                    playerJump.jumpPart[i].transform.position = player.transform.position;
+                    playerJump.jumpPart[i].transform.rotation = Quaternion.LookRotation(new Vector3(0f, 1f, 0f));
+                    playerJump.jumpPart[i].Play();
+                }
+            }
+        }
+        void Update()
+        {
+            if (this.timer > 0f)
+            {
+                this.timer -= TimeHandler.deltaTime;
+                if (this.timer <= 0f)
+                {
+                    this.InteractionUI.SetText(this.HoverText);
+                    this.InteractionUI.SetTextColor(this.TextColor);
+                }
+            }
         }
     }
 }

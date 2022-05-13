@@ -20,7 +20,7 @@ namespace GameModeCollection.GMCObjects
                 if (_InteractableUI is null)
                 {
                     _InteractableUI = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_TraitorInteract"));
-                    _InteractableUI.AddComponent<TraitorInteractionIcon>().SetPrefab(true);
+                    _InteractableUI.AddComponent<TraitorInteractionUI>().SetPrefab(true);
                     GameObject interactableText = GameObject.Instantiate(InteractableText, _InteractableUI.transform);
                     interactableText.SetActive(true);
                     UnityEngine.GameObject.DontDestroyOnLoad(_InteractableUI);
@@ -61,8 +61,10 @@ namespace GameModeCollection.GMCObjects
         public abstract string HoverText { get; protected set; }
         public abstract Color TextColor { get; protected set; }
         public virtual float VisibleDistance { get; protected set; } = float.PositiveInfinity;
+        public virtual bool VisibleInEditor { get; protected set; } = false;
         public bool IsEditorObj => this.GetComponent<DetectMapEditor>()?.IsMapEditor ?? false;
         public string UniqueKey { get; protected set; } // unique key for RPC
+        protected TraitorInteractionUI InteractionUI = null;
 
         protected void Start()
         {
@@ -77,7 +79,8 @@ namespace GameModeCollection.GMCObjects
 
             // add the interaction UI
             GameObject interactableUI = GameObject.Instantiate(TraitorInteractablePrefabs.InteractableUI, this.transform.parent);
-            interactableUI.GetComponent<TraitorInteractionIcon>().SetInteractableObject(this.transform);
+            this.InteractionUI = interactableUI.GetComponent<TraitorInteractionUI>();
+            this.InteractionUI.SetInteractableObject(this.transform);
             interactableUI.SetActive(true);
             interactableUI.GetComponentInChildren<TextMeshProUGUI>().text = HoverText;
             interactableUI.GetComponentInChildren<TextMeshProUGUI>().color = TextColor;
@@ -111,7 +114,7 @@ namespace GameModeCollection.GMCObjects
     /// <summary>
     /// interaction icon for traitor map objects
     /// </summary>
-    public class TraitorInteractionIcon : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class TraitorInteractionUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         private const float DefaultScale = 0.6f; // default scale of the icon
         private const float HoverScale = 0.8f; // scale of the icon when hovered
@@ -129,6 +132,7 @@ namespace GameModeCollection.GMCObjects
         private TextMeshProUGUI Text { get; set; }
 
         private bool IsEditorObj => this.InteractableObject?.GetComponent<TraitorInteractable>()?.IsEditorObj ?? false;
+        private bool IsVisibleInEditor => this.InteractableObject?.GetComponent<TraitorInteractable>()?.VisibleInEditor ?? false;
 
         private float Scale => this.IsClicked ? ClickScale : this.IsHovering ? HoverScale : DefaultScale;
 
@@ -138,7 +142,7 @@ namespace GameModeCollection.GMCObjects
             get
             {
                 Player player = PlayerManager.instance?.GetLocalPlayer();
-                return !(!GameModeCollection.DEBUG && !this.IsEditorObj && (this.InteractableObject is null || player is null || player.data.dead || RoleManager.GetPlayerAlignment(player) != Alignment.Traitor || Vector2.Distance(player.transform.position, this.InteractableObject.position) > this.InteractableObject.GetComponent<TraitorInteractable>().VisibleDistance));
+                return ((this.IsEditorObj && this.IsVisibleInEditor) || (this.InteractableObject != null && player != null && !player.data.dead && player.data.isPlaying && (bool)player.data.playerVel.GetFieldValue("simulated") && (RoleManager.GetPlayerAlignment(player) == Alignment.Traitor || GameModeCollection.DEBUG) && Vector2.Distance(player.transform.position, this.InteractableObject.position) <= this.InteractableObject.GetComponent<TraitorInteractable>().VisibleDistance));
             }
         }
 
@@ -167,6 +171,14 @@ namespace GameModeCollection.GMCObjects
         public void SetInteractableObject(Transform interactableObject)
         {
             this.InteractableObject = interactableObject;
+        }
+        public void SetText(string text)
+        {
+            this.Text.text = text;
+        }
+        public void SetTextColor(Color color)
+        {
+            this.Text.color = color;
         }
         void Start()
         {

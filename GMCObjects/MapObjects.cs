@@ -3,6 +3,7 @@ using MapsExt;
 using MapsExt.MapObjects;
 using UnboundLib;
 using UnityEngine;
+using HarmonyLib;
 
 namespace GameModeCollection.GMCObjects
 {
@@ -59,10 +60,54 @@ namespace GameModeCollection.GMCObjects
             public static void Deserialize(TraitorDoorObj data, GameObject target)
             {
                 SpatialSerializer.Deserialize(data, target);
-                // this would be where we would add the door component and the interaction gameobjects
                 target.AddComponent<TraitorDoor>();
             }
         }
+        public class TeleporterObj : MapObject
+        {
+            public Vector3 loc1;
+            public Vector3 loc2;
+        }
+
+        [MapObjectSpec(typeof(TeleporterObj))]
+        public static class TeleporterSpec
+        {
+            private static GameObject _prefab = null;
+            [MapObjectPrefab] public static GameObject Prefab
+            {
+                get
+                {
+                    if (_prefab == null)
+                    {
+                        GameObject spawnPoint = MapObjectManager.LoadCustomAsset<GameObject>("Spawn Point");
+                        GameObject teleporterParent = new GameObject("Teleporter");
+                        GameObject.Instantiate(spawnPoint, teleporterParent.transform.position + Vector3.right, Quaternion.identity, teleporterParent.transform).name = "Loc 1";
+                        GameObject.Instantiate(spawnPoint, teleporterParent.transform.position - Vector3.right, Quaternion.identity, teleporterParent.transform).name = "Loc 2";
+                        _prefab = teleporterParent;
+                        GameObject.DontDestroyOnLoad(_prefab);
+                    }
+                    return _prefab;
+
+                }
+            }
+
+            [MapObjectSerializer]
+            public static void Serialize(GameObject instance, TeleporterObj target)
+            {
+                target.loc1 = instance.transform.GetChild(0).position;
+                target.loc2 = instance.transform.GetChild(1).position;
+            }
+
+            [MapObjectDeserializer]
+            public static void Deserialize(TeleporterObj data, GameObject target)
+            {
+                target.transform.GetChild(0).position = data.loc1;
+                target.transform.GetChild(1).position = data.loc2;
+                GameObject.Destroy(target.transform.GetChild(0).GetComponent<SpawnPoint>());
+                GameObject.Destroy(target.transform.GetChild(1).GetComponent<SpawnPoint>());
+                target.AddComponent<Teleporter>();
+            }
+        }        
 
         #endregion
     }

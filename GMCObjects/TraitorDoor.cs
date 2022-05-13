@@ -53,17 +53,13 @@ namespace GameModeCollection.GMCObjects
 
         public override void OnInteract(Player player)
         {
-            GameModeCollection.Log($"{HoverText} INTERACT");
-            if (GameModeCollection.DEBUG || (player != null && !player.data.dead && RoleManager.GetPlayerAlignment(player) == Alignment.Traitor))
+            if (this.State == DoorState.Closed || this.State == DoorState.Closing)
             {
-                if (this.State == DoorState.Closed || this.State == DoorState.Closing)
-                {
-                    this.Open();
-                }
-                else if (this.State == DoorState.Open || this.State == DoorState.Opening)
-                {
-                    this.Close();
-                }
+                this.Open();
+            }
+            else if (this.State == DoorState.Open || this.State == DoorState.Opening)
+            {
+                this.Close();
             }
         }
         public void Open(bool autoClose = true)

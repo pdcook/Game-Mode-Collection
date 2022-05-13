@@ -4,6 +4,7 @@ using MapsExt.Editor.MapObjects;
 using MapsExt.MapObjects;
 using UnboundLib;
 using UnityEngine;
+using GMCObjectsEditor.Visualizers;
 
 namespace GMCObjectsEditor
 {
@@ -28,7 +29,7 @@ namespace GMCObjectsEditor
             target.transform.SetAsLastSibling();
         }
     }
-    [EditorMapObjectSpec(typeof(MapObjects.TraitorDoorObj), "TRT Traitor Door", "Static")]
+    [EditorMapObjectSpec(typeof(MapObjects.TraitorDoorObj), "Traitor Door", "TRT | Static")]
     public static class EditorTraitorDoorSpec
     {
         [EditorMapObjectPrefab]
