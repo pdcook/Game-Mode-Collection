@@ -14,9 +14,9 @@ namespace GameModeCollection.GMCObjects
     [BepInProcess("Rounds.exe")]
     public class GMCObjects : BaseUnityPlugin
     {
-        private const string ModId = "com.pykessandbosssloth.rounds.GMCObjects";
+        private const string ModId = "com.pykess.rounds.GMCObjects";
         private const string ModName = "GMCObjects";
-        public const string Version = "1.0.0";
+        public const string Version = "1.1.0";
 
         public static GMCObjects instance;
 

@@ -10,13 +10,13 @@ using UnityEngine;
 namespace GMCObjectsEditor
 {
     [BepInDependency("com.willis.rounds.unbound")]
-    [BepInDependency("com.pykessandbosssloth.rounds.GMCObjects")]
+    [BepInDependency("com.pykess.rounds.GMCObjects")]
     [BepInPlugin(GMCObjectsEditor.ModId, GMCObjectsEditor.ModName, GMCObjectsEditor.Version)]
     [BepInProcess("Rounds.exe")]
     public class GMCObjectsEditor : BaseUnityPlugin
     {
-        private const string ModId = "com.bosssloth.rounds.TRTCardSpotsEditor";
-        private const string ModName = "TRTCardSpotsEditor";
+        private const string ModId = "com.pykess.rounds.GMCObjectsEditor";
+        private const string ModName = "GMCObjectsEditor";
         public const string Version = GameModeCollection.GMCObjects.GMCObjects.Version;
         
         public void Start()

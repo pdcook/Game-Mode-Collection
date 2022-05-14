@@ -116,9 +116,12 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             return false;
         }
-        internal static void Callback(CardInfo card)
+        public override void Callback()
         {
-            card.gameObject.AddComponent<TRTCardSlotText>();
+            this.gameObject.AddComponent<TRTCardSlotText>();
+        }
+        internal static void BuildCardCallback(CardInfo card)
+        {
             RifleCard.Card = card;
             ModdingUtils.Utils.Cards.instance.AddHiddenCard(card);
         }

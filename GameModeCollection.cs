@@ -30,6 +30,7 @@ namespace GameModeCollection
     [BepInDependency("pykess.rounds.plugins.demonicpactpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.dk.rounds.plugins.zerogpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.willuwontu.rounds.itemshops", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("com.pykess.rounds.GMCObjects", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ModId, ModName, Version)]
     [BepInProcess("Rounds.exe")]
     public class GameModeCollection : BaseUnityPlugin
@@ -156,23 +157,23 @@ namespace GameModeCollection
             GameModeManager.AddHandler<GM_TRT>(TRTHandler.GameModeID, new TRTHandler());
             ControllerManager.AddMapController(TRTMapController.ControllerID, new TRTMapController());
             ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
-            CustomCard.BuildCard<C4Card>(C4Card.Callback);
-            CustomCard.BuildCard<AWPCard>(AWPCard.Callback);
-            CustomCard.BuildCard<VSSCard>(VSSCard.Callback);
-            CustomCard.BuildCard<ClawCard>(ClawCard.Callback);
-            CustomCard.BuildCard<KnifeCard>(KnifeCard.Callback);
-            CustomCard.BuildCard<RadarCard>(RadarCard.Callback);
-            CustomCard.BuildCard<RifleCard>(RifleCard.Callback);
-            CustomCard.BuildCard<DefuserCard>(DefuserCard.Callback);
-            CustomCard.BuildCard<GrenadeCard>(GrenadeCard.Callback);
-            CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.Callback);
-            CustomCard.BuildCard<HandcuffsCard>(HandcuffsCard.Callback);
-            CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.Callback);
-            CustomCard.BuildCard<DeathStationCard>(DeathStationCard.Callback);
-            CustomCard.BuildCard<SmokeGrenadeCard>(SmokeGrenadeCard.Callback);
-            CustomCard.BuildCard<HealthStationCard>(HealthStationCard.Callback);
-            CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.Callback);
-            CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.Callback);
+            CustomCard.BuildCard<C4Card>(C4Card.BuildCardCallback);
+            CustomCard.BuildCard<AWPCard>(AWPCard.BuildCardCallback);
+            CustomCard.BuildCard<VSSCard>(VSSCard.BuildCardCallback);
+            CustomCard.BuildCard<ClawCard>(ClawCard.BuildCardCallback);
+            CustomCard.BuildCard<KnifeCard>(KnifeCard.BuildCardCallback);
+            CustomCard.BuildCard<RadarCard>(RadarCard.BuildCardCallback);
+            CustomCard.BuildCard<RifleCard>(RifleCard.BuildCardCallback);
+            CustomCard.BuildCard<DefuserCard>(DefuserCard.BuildCardCallback);
+            CustomCard.BuildCard<GrenadeCard>(GrenadeCard.BuildCardCallback);
+            CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.BuildCardCallback);
+            CustomCard.BuildCard<HandcuffsCard>(HandcuffsCard.BuildCardCallback);
+            CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.BuildCardCallback);
+            CustomCard.BuildCard<DeathStationCard>(DeathStationCard.BuildCardCallback);
+            CustomCard.BuildCard<SmokeGrenadeCard>(SmokeGrenadeCard.BuildCardCallback);
+            CustomCard.BuildCard<HealthStationCard>(HealthStationCard.BuildCardCallback);
+            CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.BuildCardCallback);
+            CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.BuildCardCallback);
 
             // add detective hat character item
             GameObject detectiveHat = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Detective_Hat"));
