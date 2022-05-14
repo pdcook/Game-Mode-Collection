@@ -68,10 +68,11 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		public const float InnerExplosionRange = 35f;
 		public const float OuterExplosionRange = 75f;
 
-		public const float MaxBeepVolume = 1f;
+		public const float MaxBeepVolume = 0.75f;
 		public const float MinBeepVolume = 0.05f;
 		public const float MaxBeepPeriod = 10f;
 		public const float MinBeepPeriod = 1f;
+		public const bool CanHearThroughWalls = false;
 
 		public const float MinTime = 15f;
 		public const float MaxTime = 300f;
@@ -226,8 +227,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
                 if (this.BeepTimer < 0f)
                 {
                     this.BeepTimer = this.BeepEvery;
-					// do beep
-					SoundManager.Instance.Play(this.BeepSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * this.BeepIntensity) });
+					// try beep
+					this.TryBeep();
                 }
 				this.BlinkTimer -= TimeHandler.deltaTime;
 				if (this.BlinkTimer < 0f)
@@ -259,6 +260,14 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
             base.Update();
 		}
+		void TryBeep()
+        {
+			Player player = PlayerManager.instance.GetLocalPlayer();
+            if (player is null || CanHearThroughWalls || this.CanSeePlayer(player))
+            {
+				SoundManager.Instance.Play(this.BeepSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * this.BeepIntensity) });
+            }
+        }
         protected internal override void OnTriggerStay2D(Collider2D collider2D)
         {
 			if (collider2D?.GetComponent<Player>() != null
