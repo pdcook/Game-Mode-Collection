@@ -13,7 +13,7 @@ namespace GameModeCollection.GMCObjects
     }
     public class TeleporterBase : TraitorInteractable
     {
-        public const float RechargeTime = 1f;
+        public const float RechargeTime = 5f;
         public static readonly Color RechargingColor = new Color32(230, 230, 230, 128);
         public override string HoverText { get; protected set; } = "Teleporter";
         public override Color TextColor { get; protected set; } = GM_TRT.DullWhite;
@@ -47,11 +47,27 @@ namespace GameModeCollection.GMCObjects
             this.StartRecharge();
             this.PairedTeleporter.StartRecharge();
             this.PlayParts(player);
+
+            // disable the player's wall collision
             player.GetComponentInParent<PlayerCollision>().IgnoreWallForFrames(2);
+
+            // teleport the player's wobble objects
             player.GetComponentInChildren<PlayerWobblePosition>().transform.position = this.PairedTeleporter.transform.position;
             player.GetComponentInChildren<PlayerWobblePosition>().SetFieldValue("physicsPos", this.PairedTeleporter.transform.position);
             player.GetComponentInChildren<PlayerWobblePosition>().SetFieldValue("velocity", Vector3.zero);
+
+            // teleport the player
             player.transform.position = this.PairedTeleporter.transform.position;
+            
+            // Moves the hand? container to the player's position
+            FollowTransform follow = ((HoldingObject)player.data.GetComponent<Aim>().GetFieldValue("holdingObject")).GetComponent<FollowTransform>();
+            Vector3 startPos = follow.transform.position;
+            follow.InvokeMethod("LateUpdate");
+            Vector3 travel = follow.transform.position - startPos;
+
+            // Moves the gun the same distance to avoid Lerp
+            player.GetComponent<Holding>().holdable.rig.transform.position += travel;
+            
             this.PlayParts(player);
         }
         public void PlayParts(Player player)
