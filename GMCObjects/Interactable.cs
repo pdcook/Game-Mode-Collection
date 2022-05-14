@@ -10,7 +10,7 @@ using UnboundLib;
 using System;
 namespace GameModeCollection.GMCObjects
 {
-    public static class TraitorInteractablePrefabs
+    public static class InteractablePrefabs
     {
         private static GameObject _InteractableUI = null;
         public static GameObject InteractableUI
@@ -19,8 +19,8 @@ namespace GameModeCollection.GMCObjects
             {
                 if (_InteractableUI is null)
                 {
-                    _InteractableUI = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_TraitorInteract"));
-                    _InteractableUI.AddComponent<TraitorInteractionUI>().SetPrefab(true);
+                    _InteractableUI = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Interact"));
+                    _InteractableUI.AddComponent<InteractionUI>().SetPrefab(true);
                     GameObject interactableText = GameObject.Instantiate(InteractableText, _InteractableUI.transform);
                     interactableText.SetActive(true);
                     UnityEngine.GameObject.DontDestroyOnLoad(_InteractableUI);
@@ -54,23 +54,25 @@ namespace GameModeCollection.GMCObjects
         }            
     }
     /// <summary>
-    /// Interaction base class for traitor map objects
+    /// Interaction base class for interactable map objects
     /// </summary>
-    public abstract class TraitorInteractable : MonoBehaviour
+    public abstract class Interactable : MonoBehaviour
     {
         public abstract string HoverText { get; protected set; }
         public abstract Color TextColor { get; protected set; }
+        public abstract Color IconColor { get; protected set; }
+        public virtual Alignment? RequiredAlignment { get; protected set; } = null; // require player to be this alignment to interact
         public virtual float VisibleDistance { get; protected set; } = float.PositiveInfinity;
-        public virtual bool VisibleInEditor { get; protected set; } = false;
+        public virtual bool InteractableInEditor { get; protected set; } = false;
         public bool IsEditorObj => this.GetComponent<DetectMapEditor>()?.IsMapEditor ?? false;
         public string UniqueKey { get; protected set; } // unique key for RPC
-        protected TraitorInteractionUI InteractionUI = null;
+        protected InteractionUI InteractionUI = null;
 
         protected void Start()
         {
             this.UniqueKey = string.Concat(new object[]
             {
-            "TraitorIneractable ",
+            "Interactable ",
             (int)base.GetComponentInParent<Map>().GetFieldValue("levelID"),
             " ",
             base.transform.GetSiblingIndex()
@@ -78,8 +80,8 @@ namespace GameModeCollection.GMCObjects
             MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.Add(this.UniqueKey, new Action<int>(this.RPCA_TryInteract));
 
             // add the interaction UI
-            GameObject interactableUI = GameObject.Instantiate(TraitorInteractablePrefabs.InteractableUI, this.transform.parent);
-            this.InteractionUI = interactableUI.GetComponent<TraitorInteractionUI>();
+            GameObject interactableUI = GameObject.Instantiate(InteractablePrefabs.InteractableUI, this.transform.parent);
+            this.InteractionUI = interactableUI.GetComponent<InteractionUI>();
             this.InteractionUI.SetInteractableObject(this.transform);
             interactableUI.SetActive(true);
             interactableUI.GetComponentInChildren<TextMeshProUGUI>().text = HoverText;
@@ -114,25 +116,49 @@ namespace GameModeCollection.GMCObjects
     /// <summary>
     /// interaction icon for traitor map objects
     /// </summary>
-    public class TraitorInteractionUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class InteractionUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        private const float DefaultScale = 0.6f; // default scale of the icon
-        private const float HoverScale = 0.8f; // scale of the icon when hovered
-        private const float ClickScale = 0.5f; // scale of the icon when clicked
+        private const float TextScale = 0.7f;
+        private const float DefaultScale = 0.1f; // default scale of the icon
+        private const float HoverScale = 0.133f; // scale of the icon when hovered
+        private const float ClickScale = 0.083f; // scale of the icon when clicked
 
         private const float HorizMargin = 0.95f; // horizontal margin of the icon from the screen border
         private const float VertMargin = 0.9f; // vertical margin of the icon from the screen border
         private const float HorizTextOffset = 0.01f; // offset of the text from the icon in viewport units (1f is the entire size of the screen)
         private const float VertTextOffset = 0.05f; // offset of the text from the icon in viewport units (1f is the entire size of the screen)
 
-        private static readonly Color DefaultColor = new Color(1f, 1f, 1f, 0.75f);
-        private static readonly Color HoveredColor = new Color(1f, 1f, 1f, 1f);
+        private Color DefaultColor
+        {
+            get
+            {
+                Color? color = this.InteractableObject?.GetComponent<Interactable>()?.IconColor;
+                if (color.HasValue)
+                {
+                    // return the color with the opacity lowered by 25%
+                    return new Color(color.Value.r, color.Value.g, color.Value.b, color.Value.a * 0.75f);
+                }
+                else { return new Color(1f, 1f, 1f, 0.75f); }
+                
+            }
+        }
+        private Color HoveredColor
+        {
+            get
+            {
+                Color? color = this.InteractableObject?.GetComponent<Interactable>()?.IconColor;
+                return color ?? new Color(1f, 1f, 1f, 1f);
+            }
+        }
 
         private UnityEngine.UI.Image IconImage { get; set; }
+        private UnityEngine.UI.Image ShadowImage { get; set; }
         private TextMeshProUGUI Text { get; set; }
 
-        private bool IsEditorObj => this.InteractableObject?.GetComponent<TraitorInteractable>()?.IsEditorObj ?? false;
-        private bool IsVisibleInEditor => this.InteractableObject?.GetComponent<TraitorInteractable>()?.VisibleInEditor ?? false;
+        private bool IsEditorObj => this.InteractableObject?.GetComponent<Interactable>()?.IsEditorObj ?? false;
+        private bool IsVisibleInEditor => this.InteractableObject?.GetComponent<Interactable>()?.InteractableInEditor ?? false;
+
+        private Alignment? RequiredAlignment => this.InteractableObject?.GetComponent<Interactable>()?.RequiredAlignment;
 
         private float Scale => this.IsClicked ? ClickScale : this.IsHovering ? HoverScale : DefaultScale;
 
@@ -142,7 +168,7 @@ namespace GameModeCollection.GMCObjects
             get
             {
                 Player player = PlayerManager.instance?.GetLocalPlayer();
-                return ((this.IsEditorObj && this.IsVisibleInEditor) || (this.InteractableObject != null && player != null && !player.data.dead && player.data.isPlaying && (bool)player.data.playerVel.GetFieldValue("simulated") && (RoleManager.GetPlayerAlignment(player) == Alignment.Traitor || GameModeCollection.DEBUG) && Vector2.Distance(player.transform.position, this.InteractableObject.position) <= this.InteractableObject.GetComponent<TraitorInteractable>().VisibleDistance));
+                return ((this.IsEditorObj && this.IsVisibleInEditor) || (this.InteractableObject != null && player != null && !player.data.dead && player.data.isPlaying && (bool)player.data.playerVel.GetFieldValue("simulated") && (!this.RequiredAlignment.HasValue || RoleManager.GetPlayerAlignment(player) == this.RequiredAlignment.Value || GameModeCollection.DEBUG) && Vector2.Distance(player.transform.position, this.InteractableObject.position) <= this.InteractableObject.GetComponent<Interactable>().VisibleDistance));
             }
         }
 
@@ -180,13 +206,32 @@ namespace GameModeCollection.GMCObjects
         {
             this.Text.color = color;
         }
+        private void SetImages()
+        {
+            Image[] images = this.GetComponentsInChildren<Image>();
+            foreach (Image image in images)
+            {
+                if (image.gameObject.name.ToLower().Contains("shadow"))
+                {
+                    this.ShadowImage = image;
+                }
+                else if (image.gameObject.name.ToLower().Contains("icon"))
+                {
+                    this.IconImage = image;
+                }
+                if (this.IconImage != null && this.ShadowImage != null)
+                {
+                    break;
+                }
+            }                
+        }
         void Start()
         {
-
-            this.IconImage = this.GetComponentInChildren<Image>();
+            this.SetImages();
             this.IconImage?.transform.SetGlobalScale(DefaultScale * Vector3.one);
+            this.ShadowImage?.transform.SetGlobalScale(DefaultScale * Vector3.one);
             this.Text = this.GetComponentInChildren<TextMeshProUGUI>();
-            this.Text?.transform.SetGlobalScale(DefaultScale * Vector3.one);
+            this.Text?.transform.SetGlobalScale(TextScale * Vector3.one);
             this.Text.gameObject.SetActive(false);
         }
         void Update()
@@ -196,10 +241,10 @@ namespace GameModeCollection.GMCObjects
                 this.gameObject.SetActive(false);
                 return;
             }
-            if (this.IconImage is null)
+            if (this.IconImage is null || this.ShadowImage is null)
             {
-                this.IconImage = this.GetComponentInChildren<Image>();
-                if (this.IconImage is null)
+                this.SetImages();
+                if (this.IconImage is null || this.ShadowImage is null)
                 {
                     return;
                 }
@@ -213,26 +258,29 @@ namespace GameModeCollection.GMCObjects
                 }
             }
             this.IconImage.transform.rotation = Quaternion.identity;
+            this.ShadowImage.transform.rotation = Quaternion.identity;
             this.Text.transform.rotation = Quaternion.identity;
 
             if (!this.LocalPlayerIsEligible)
             {
                 this.IconImage.enabled = false;
+                this.ShadowImage.enabled = false;
                 this.IsInteractable = false;
                 return;
             }
-
             this.IconImage.enabled = true;
+            this.ShadowImage.enabled = true;
             this.IsInteractable = true;
 
-            this.IconImage.color = this.IsHovering ? HoveredColor : DefaultColor;
+            this.IconImage.color = this.IsHovering ? this.HoveredColor : this.DefaultColor;
 
             this.IconImage.transform.SetGlobalScale(this.Scale * Vector3.one);
-            this.Text.transform.SetGlobalScale(DefaultScale * Vector3.one);
+            this.ShadowImage.transform.SetGlobalScale(this.Scale * Vector3.one);
+            this.Text.transform.SetGlobalScale(TextScale * Vector3.one);
 
             if (this.WasClicked)
             {
-                this.InteractableObject?.GetComponent<TraitorInteractable>()?.Call_TryInteract(PlayerManager.instance?.GetLocalPlayer());
+                this.InteractableObject?.GetComponent<Interactable>()?.Call_TryInteract(PlayerManager.instance?.GetLocalPlayer());
             }
 
             Vector2 screenPos = MainCam.instance.cam.WorldToViewportPoint(this.InteractableObject.position); // get viewport positions
@@ -241,7 +289,8 @@ namespace GameModeCollection.GMCObjects
             {
                 // point is on screen
                 this.IconImage.transform.position = MainCam.instance.cam.WorldToScreenPoint(this.InteractableObject.position);
-                this.Text.transform.position = this.IconImage.transform.position + new Vector3(0f, VertTextOffset * Screen.height, 0f);
+                this.ShadowImage.transform.position = MainCam.instance.cam.WorldToScreenPoint(this.InteractableObject.position);
+                this.Text.transform.position = this.IconImage.transform.position - new Vector3(0f, VertTextOffset * Screen.height, 0f);
                 return;
             }
 
@@ -260,6 +309,7 @@ namespace GameModeCollection.GMCObjects
             onScreenPos = margin * (onScreenPos / (max * 2f)) + new Vector2(0.5f, 0.5f); // undo mapping, scale to add margin
 
             this.IconImage.transform.position = MainCam.instance.cam.ViewportToScreenPoint(onScreenPos);
+            this.ShadowImage.transform.position = MainCam.instance.cam.ViewportToScreenPoint(onScreenPos);
             Vector2 textOffset = offVert && offHoriz ? new Vector2(HorizTextOffset, VertTextOffset) : offVert ? new Vector2(0f, VertTextOffset) : offHoriz ? new Vector2(HorizTextOffset, 0f) : new Vector2(0f, 0f);
             textOffset.Scale(offRight ? new Vector2(-1f, 1f) : Vector2.one);
             textOffset.Scale(offTop ? new Vector2(1f, -1f) : Vector2.one);
@@ -279,7 +329,7 @@ namespace GameModeCollection.GMCObjects
         }
 
     }
-    public class TraitorInteractionTrigger : MonoBehaviour
+    public class InteractionTrigger : MonoBehaviour
     {
         void Start()
         {

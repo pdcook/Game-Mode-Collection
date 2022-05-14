@@ -9,13 +9,16 @@ namespace GameModeCollection.GMCObjects
     /// The main behaviour for the traitor door, which can be opened by traitors, and closes automatically after a brief period of time.
     /// Traitors can see the interact icon from all distances, as they stay on the edge of the screen similar to Radar points
     /// </summary>
-    public class TraitorDoor : TraitorInteractable
+    public class TraitorDoor : Interactable
     {
         /// <summary>
         /// Creates a new gameobject with the traitor interaction assigned to this door
         /// </summary>
         public override string HoverText { get; protected set; } = "Traitor Door";
         public override Color TextColor { get; protected set; } = GM_TRT.DullWhite;
+        public override Color IconColor { get; protected set; } = GM_TRT.TraitorColor;
+        public override bool InteractableInEditor { get; protected set; } = true;
+        public override Alignment? RequiredAlignment { get; protected set; } = Alignment.Traitor;
 
         public const float MoveTime = 1f; // The time it takes to move the door
         public const float OpenTime = 1f; // The time the door remains open

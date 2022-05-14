@@ -11,12 +11,13 @@ namespace GameModeCollection.GMCObjects
             this.transform.GetChild(1).gameObject.GetOrAddComponent<TeleporterBase>();
         }
     }
-    public class TeleporterBase : TraitorInteractable
+    public class TeleporterBase : Interactable
     {
-        public const float RechargeTime = 5f;
+        public const float RechargeTime = 3f;
         public static readonly Color RechargingColor = new Color32(230, 230, 230, 128);
         public override string HoverText { get; protected set; } = "Teleporter";
         public override Color TextColor { get; protected set; } = GM_TRT.DullWhite;
+        public override Color IconColor { get; protected set; } = GM_TRT.DullWhite;
         public override float VisibleDistance { get; protected set; } = 5f;
         private TeleporterBase PairedTeleporter = null;
         float timer = 0f;

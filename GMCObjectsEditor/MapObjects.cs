@@ -29,7 +29,7 @@ namespace GMCObjectsEditor
             target.transform.SetAsLastSibling();
         }
     }
-    [EditorMapObjectSpec(typeof(MapObjects.TraitorDoorObj), "Traitor Door", "TRT | Static")]
+    [EditorMapObjectSpec(typeof(MapObjects.TraitorDoorObj), "Traitor Door", "TRT")]
     public static class EditorTraitorDoorSpec
     {
         [EditorMapObjectPrefab]

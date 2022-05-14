@@ -10,7 +10,7 @@ using GMCObjectsEditor.EditorActionHandlers;
 
 namespace GMCObjectsEditor 
 {
-    [EditorMapObjectSpec(typeof(MapObjects.TeleporterObj), "Teleporter", "TRT | Static")]
+    [EditorMapObjectSpec(typeof(MapObjects.TeleporterObj), "Teleporter", "TRT")]
     public static class EditorTeleporterSpec
     {
         [EditorMapObjectPrefab]
