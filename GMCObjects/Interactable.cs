@@ -95,6 +95,10 @@ namespace GameModeCollection.GMCObjects
             {
                 MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.Remove(this.UniqueKey);
             }
+            if (this.InteractionUI != null)
+            {
+                GameObject.Destroy(this.InteractionUI.gameObject);
+            }
         }
         public void Call_TryInteract(Player player)
         {
@@ -236,7 +240,7 @@ namespace GameModeCollection.GMCObjects
         }
         void Update()
         {
-            if (!this.InteractableObject.gameObject.activeSelf)
+            if (!(this.InteractableObject?.gameObject?.activeSelf ?? false))
             {
                 this.gameObject.SetActive(false);
                 return;

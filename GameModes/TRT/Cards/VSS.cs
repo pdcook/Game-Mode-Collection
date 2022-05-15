@@ -167,6 +167,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         private Vector3 OriginalRightPos;
         private Vector3 OriginalLeftPos;
         private List<ObjectsToSpawn> OriginalObjectsToSpawn;
+        private bool OriginalSilence;
         private int NumCards;
 
         private SoundShotModifier SoundShotModifier;
@@ -221,7 +222,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.damage_mult = 0f;
             this.gunStatModifier.damage_add = 1.2f;
             this.gunStatModifier.attackSpeed_mult = 0f;
-            this.gunStatModifier.attackSpeed_add = 1.25f;
+            this.gunStatModifier.attackSpeed_add = 1f;
             this.gunAmmoStatModifier.reloadTimeMultiplier_mult = 0f;
             this.gunAmmoStatModifier.reloadTimeAdd_add = 3.5f;
             this.gunStatModifier.gravity_mult = 0f;
@@ -256,6 +257,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             // restore originals
             this.gun.objectsToSpawn = this.OriginalObjectsToSpawn.Concat(this.gun.objectsToSpawn).ToArray();
+            this.gun.GetData().silenced = this.OriginalSilence;
             this.gun.dontAllowAutoFire = this.data.currentCards.Any(c => (c.gameObject?.GetComponent<Gun>()?.dontAllowAutoFire ?? false));
             //this.gun.soundDisableRayHitBulletSound = false; // the vanilla game never modifies this
             this.gun.soundGun.RemoveSoundShotModifier(this.SoundShotModifier);
@@ -288,13 +290,14 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             // save originals
             this.OriginalObjectsToSpawn = this.gun.objectsToSpawn.ToList();
+            this.OriginalSilence = this.gun.GetData().silenced;
 
             // disable auto-fire (requires demonicpactpatch to reset properly)
             this.gun.dontAllowAutoFire = true; // will be reset by reading all of the cards the player has when this is removed
             this.gun.objectsToSpawn = new ObjectsToSpawn[] { };
             //this.gun.soundDisableRayHitBulletSound = true;
+            this.gun.GetData().silenced = true;
 
-            // VSS shot sound only plays for the owner
             this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier);
             
             // impact sound always plays, but is quieter for the VSS

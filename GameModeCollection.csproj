@@ -230,6 +230,7 @@
     <Compile Include="GMCObjects\GMCObjects.cs" />
     <Compile Include="GMCObjects\MapObjects.cs" />
     <Compile Include="GMCObjects\Teleporter.cs" />
+    <Compile Include="GMCObjects\TraitorTrap_Destructible.cs" />
     <Compile Include="Objects\CardItem.cs" />
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
@@ -269,6 +270,7 @@
     <Compile Include="Patches\PlayerFlyParticle.cs" />
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />
+    <Compile Include="Patches\SoundGun.cs" />
     <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameModeObjects\CrownHandler.cs" />

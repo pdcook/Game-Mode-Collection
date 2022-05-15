@@ -38,7 +38,8 @@ namespace GameModeCollection.GMCObjects
 
         #endregion
 
-        #region TRT_Traitor
+        #region TRT
+        #region TRT_Traitor_Door
 
         public class TraitorDoorObj : SpatialMapObject
         {
@@ -63,6 +64,53 @@ namespace GameModeCollection.GMCObjects
                 target.AddComponent<TraitorDoor>();
             }
         }
+        #endregion
+        #region TRT_Traitor_Trap 
+        public class TraitorTrap_GroundDestructibleObj : SpatialMapObject
+        {
+        }
+
+        [MapObjectSpec(typeof(TraitorTrap_GroundDestructibleObj))]
+        public static class TraitorTrap_GroundDestructibleSpec
+        {
+            [MapObjectPrefab] public static GameObject Prefab => MapObjectManager.LoadCustomAsset<GameObject>("Ground");
+
+            [MapObjectSerializer]
+            public static void Serialize(GameObject instance, TraitorTrap_GroundDestructibleObj target)
+            {
+                SpatialSerializer.Serialize(instance, target);
+            }
+
+            [MapObjectDeserializer]
+            public static void Deserialize(TraitorTrap_GroundDestructibleObj data, GameObject target)
+            {
+                SpatialSerializer.Deserialize(data, target);
+                target.AddComponent<TraitorTrap_Destructible>();
+            }
+        }
+        public class TraitorTrap_BoxDestructibleObj : SpatialMapObject
+        {
+        }
+
+        [MapObjectSpec(typeof(TraitorTrap_BoxDestructibleObj))]
+        public static class TraitorTrap_BoxDestructibleSpec
+        {
+            [MapObjectPrefab] public static GameObject Prefab => Resources.Load<GameObject>("4 Map Objects/Box");
+
+            [MapObjectSerializer]
+            public static void Serialize(GameObject instance, TraitorTrap_BoxDestructibleObj target)
+            {
+                SpatialSerializer.Serialize(instance, target);
+            }
+
+            [MapObjectDeserializer]
+            public static void Deserialize(TraitorTrap_BoxDestructibleObj data, GameObject target)
+            {
+                SpatialSerializer.Deserialize(data, target);
+                target.AddComponent<TraitorTrap_Destructible>();
+            }
+        }
+        #endregion
         public class TeleporterObj : MapObject
         {
             public Vector3 loc1;

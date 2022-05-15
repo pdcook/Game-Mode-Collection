@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using GameModeCollection.GameModes.TRT.Cards;
 using UnityEngine;
+using GameModeCollection.Extensions;
 
 namespace GameModeCollection.Patches
 {
@@ -35,6 +36,11 @@ namespace GameModeCollection.Patches
                 {
                     GameObject.Destroy(__instance.gameObject.GetComponent<RifleGun>());
                 }
+            }
+            catch { }
+            try
+            {
+                __instance.data.weaponHandler.gun.GetData().silenced = false;
             }
             catch { }
         }
