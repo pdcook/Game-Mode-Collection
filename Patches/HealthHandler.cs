@@ -11,6 +11,7 @@ using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Roles;
 using GameModeCollection.GameModes.TRT.Cards;
+using Sonigon;
 
 namespace GameModeCollection.Patches
 {   
@@ -223,6 +224,46 @@ namespace GameModeCollection.Patches
             codes[index-2] = new CodeInstruction(OpCodes.Call, m_makeCorpse);
 
             return codes.AsEnumerable();
+        }
+    }
+
+    [HarmonyPatch(typeof(HealthHandler), "RPCA_Die")]
+    class HealthHandler_Patch_RPCA_Die_Silence
+    {
+        /// patch to silence the death sound if the killing weapon was a silenced weapon
+
+        static void PlayDeathHandleSilence(SoundManager soundManager, SoundEvent soundDie, Transform transform, HealthHandler healthHandler)
+        {
+            CharacterData data = (CharacterData)healthHandler.GetFieldValue("data");
+            if (data?.lastSourceOfDamage?.data?.weaponHandler?.gun?.GetData()?.silenced ?? false)
+            {
+                // do not play death sound
+                GameModeCollection.Log("[RPCA_Die Silence Patch] Silent death");
+                return;
+            }
+            else
+            {
+                GameModeCollection.Log("[RPCA_Die Silence Patch] Normal death");
+                soundManager.Play(soundDie, transform);
+            }
+        }
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var m_play = ExtensionMethods.GetMethodInfo(typeof(SoundManager), nameof(SoundManager.Play), new System.Type[] {typeof(SoundEvent), typeof(Transform)});
+            var m_playHandleSilence = ExtensionMethods.GetMethodInfo(typeof(HealthHandler_Patch_RPCA_Die_Silence), nameof(PlayDeathHandleSilence));
+            foreach (var code in instructions)
+            {
+                if (code.Calls(m_play))
+                {
+                    yield return new CodeInstruction(OpCodes.Ldarg_0);
+                    yield return new CodeInstruction(OpCodes.Call, m_playHandleSilence);
+                }
+                else
+                {
+                    yield return code;
+                }
+            }
         }
     }
 }

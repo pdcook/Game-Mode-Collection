@@ -204,6 +204,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             springObj.transform.GetChild(3).GetComponent<RightLeftMirrorSpring>().enabled = !knife;
 
             gun.GetData().disabled = knife;
+            gun.GetData().silenced = knife; // players killed by knives do not make noise
         }
 
     }
