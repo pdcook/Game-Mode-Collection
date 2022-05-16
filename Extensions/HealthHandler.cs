@@ -86,7 +86,7 @@ namespace GameModeCollection.Extensions
             ((CharacterData)instance.GetFieldValue("data")).health *= healthPerc;
         }
 
-        private class Corpse : PlayerDoNotFollow
+        internal class Corpse : PlayerDoNotFollow
         {
             private const float AngularVelMult = 10f;
             private const float Drag = 10f;

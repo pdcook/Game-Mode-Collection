@@ -31,7 +31,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "Prevents other players from hearing your gun through walls and prevents players you kill from making a death noise. Applies only to your normal gun."
+            return "Prevents other players from hearing your gun through walls and prevents players you kill from making a death noise. Applies only to your normal gun.";
         }
 
         protected override GameObject GetCardArt()

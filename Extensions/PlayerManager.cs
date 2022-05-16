@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
+using GameModeCollection.GameModes.TRT;
 namespace GameModeCollection.Extensions
 {
     static class PlayerManagerExtensions
@@ -21,6 +22,19 @@ namespace GameModeCollection.Extensions
             {
                 if (player.playerID == thisPlayer.playerID) { continue; }
                 if (requireAlive && player.data.dead) { continue; }
+                if (requireLoS && !instance.CanSeePlayer(thisPlayer.data.playerVel.position, player).canSee) { continue; }
+                if (Vector2.Distance(player.data.playerVel.position, thisPlayer.data.playerVel.position) < dist) { closest = player; }
+            }
+            return closest;
+        }
+        public static Player GetClosestCorpse(this PlayerManager instance, Player thisPlayer, bool requireLoS = false)
+        {
+            Player closest = null;
+            float dist = float.PositiveInfinity;
+            foreach (Player player in instance.players)
+            {
+                if (player.playerID == thisPlayer.playerID) { continue; }
+                if (!player.data.dead || player.GetComponent<HealthHandlerExtensions.Corpse>() is null) { continue; }
                 if (requireLoS && !instance.CanSeePlayer(thisPlayer.data.playerVel.position, player).canSee) { continue; }
                 if (Vector2.Distance(player.data.playerVel.position, thisPlayer.data.playerVel.position) < dist) { closest = player; }
             }
