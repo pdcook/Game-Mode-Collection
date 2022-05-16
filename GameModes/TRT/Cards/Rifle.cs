@@ -141,16 +141,18 @@ namespace GameModeCollection.GameModes.TRT.Cards
         void Update()
         {
             this.Timer -= Time.deltaTime;
-            if ((this.Player?.data?.view?.IsMine ?? false) && this.Timer <= 0f && !this.Player.data.dead && this.Player.data.playerActions.ItemWasPressed(2))
+            bool mismatch = this.Player?.GetComponent<RifleGun>() != null && this.IsOut != (bool)this.Player.GetComponent<RifleGun>().GetFieldValue("modifiersActive");
+            if ((this.Player?.data?.view?.IsMine ?? false) && this.Timer <= 0f && !this.Player.data.dead && (this.Player.data.playerActions.ItemWasPressed(2) || mismatch))
             {
                 this.Timer = SwitchDelay;
-                this.IsOut = !this.IsOut;
-                NetworkingManager.RPC(typeof(A_Rifle), nameof(RPCA_SwitchToRifle), this.Player.playerID, this.IsOut);
+                if (this.Player.data.playerActions.ItemWasPressed(2)) { this.IsOut = !this.IsOut; }
+                NetworkingManager.RPC(typeof(A_Rifle), nameof(RPCA_SwitchToRifle), this.Player.playerID, this.IsOut, mismatch);
             }
         }
         [UnboundRPC]
-        private static void RPCA_SwitchToRifle(int playerID, bool switchTo)
+        private static void RPCA_SwitchToRifle(int playerID, bool switchTo, bool mismatch)
         {
+            if (mismatch){  PlayerManager.instance.GetPlayerWithID(playerID)?.GetComponent<RifleGun>()?.DisableRifle(); } 
             if (switchTo) { PlayerManager.instance.GetPlayerWithID(playerID)?.GetComponent<RifleGun>()?.EnableRifle(); }
             else { PlayerManager.instance.GetPlayerWithID(playerID)?.GetComponent<RifleGun>()?.DisableRifle(); }
         }
@@ -251,7 +253,15 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gun.soundGun.RemoveSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.RemoveSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
-            
+            if (this.player.data.currentCards.Contains(SilencerCard.Card))
+            {
+                this.gun.GetData().silenced = true;
+            }
+            else
+            {
+                this.gun.GetData().silenced = false;
+            }
+
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject barrel = spring.transform.GetChild(3).gameObject;
             barrel.transform.localScale = this.OriginalScale;
@@ -284,6 +294,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.AddSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
+            this.gun.GetData().silenced = false;
 
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject barrel = spring.transform.GetChild(3).gameObject;

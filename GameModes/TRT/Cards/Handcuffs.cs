@@ -160,6 +160,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
             TRTCardCategories.TRT_Slot_4,
             TRTCardCategories.TRT_Slot_5
         };
+        private static readonly List<CardCategory> ForceDropByHandcuffs = new List<CardCategory>()
+        {
+            TRTCardCategories.TRT_CanSpawnNaturally,
+        };
         void Start()
         {
             this.player = this.GetComponent<Player>();
@@ -170,8 +174,22 @@ namespace GameModeCollection.GameModes.TRT.Cards
             HideGun(this.player.playerID, true);
 
             // hold cards that had to have been purchased in the shop, or the player shouldn't be able to drop, and give them back later 
-            this.cardsToHold = this.player.data.currentCards.Where(c => c.categories.Intersect(NonDropCategories).Any()).ToList();
-            List<CardInfo> cardsToDrop = this.player.data.currentCards.Where(c => !c.categories.Intersect(NonDropCategories).Any()).ToList();
+            List<CardInfo> cardsToDrop = new List<CardInfo>() { };
+            foreach (CardInfo card in this.player.data.currentCards)
+            {
+                if (card.categories.Intersect(ForceDropByHandcuffs).Any())
+                {
+                    cardsToDrop.Add(card);
+                }
+                else if (card.categories.Intersect(NonDropCategories).Any())
+                {
+                    this.cardsToHold.Add(card);
+                }
+                else
+                {
+                    cardsToDrop.Add(card);
+                }
+            }
             ModdingUtils.Utils.Cards.instance.RemoveAllCardsFromPlayer(this.player, false);
             if (this.player.data.view.IsMine)
             {

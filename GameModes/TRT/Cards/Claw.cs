@@ -175,6 +175,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
+            A_Claw ClawHandler = player.GetComponentInChildren<A_Claw>();
             Gun gun = player.GetComponent<Holding>().holdable.GetComponent<Gun>();
             GameObject springObj = gun.transform.GetChild(1).gameObject;
             RightLeftMirrorSpring spring = springObj.transform.GetChild(2).GetComponent<RightLeftMirrorSpring>();
@@ -197,6 +198,22 @@ namespace GameModeCollection.GameModes.TRT.Cards
             springObj.transform.GetChild(3).GetComponent<RightLeftMirrorSpring>().enabled = !claw;
 
             gun.GetData().disabled = claw;
+            // save or restore original stats
+            if (claw)
+            {
+                gun.GetData().silenced = true; // players killed by the claw do not make noise
+            }
+            else
+            {
+                if (player.data.currentCards.Contains(SilencerCard.Card))
+                {
+                    gun.GetData().silenced = true;
+                }
+                else
+                {
+                    gun.GetData().silenced = false;
+                }
+            }     
         }
 
     }

@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\Transform.cs" />
+    <Compile Include="GameModes\TRT\Cards\Silencer.cs" />
     <Compile Include="GMCObjects\CardSpawnPoint.cs" />
     <Compile Include="Extensions\CardVisuals.cs" />
     <Compile Include="Extensions\CharacterData.cs" />
@@ -264,6 +265,8 @@
     <Compile Include="Patches\Gun.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
     <Compile Include="Patches\MapsExtended_UpdateMapFiles.cs" />
+    <Compile Include="Patches\NetworkPhysicsObject.cs" />
+    <Compile Include="Patches\Block.cs" />
     <Compile Include="Patches\Player.cs" />
     <Compile Include="Patches\PlayerActions.cs" />
     <Compile Include="Patches\PlayerCollision.cs" />

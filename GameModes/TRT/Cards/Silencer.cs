@@ -14,7 +14,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, CardItem.IgnoreMaxCardsCategory };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Traitor, CardItem.IgnoreMaxCardsCategory, TRTCardCategories.TRT_DoNotDropOnDeath };
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -31,7 +31,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "";
+            return "Prevents other players from hearing your gun through walls and prevents players you kill from making a death noise. Applies only to your normal gun."
         }
 
         protected override GameObject GetCardArt()

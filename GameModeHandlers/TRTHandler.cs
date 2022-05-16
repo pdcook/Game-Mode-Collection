@@ -55,6 +55,8 @@ namespace GameModeCollection.GameModeHandlers
                 {GameModeCollection.ReviveOnCardAddKey, false }, // do not revive players when they get a card
                 {GameModeCollection.CreatePlayerCorpsesKey, true }, // do not hide players when they die, instead make a corpse
                 {GameModeCollection.IgnoreGameFeelKey, true }, // do not shake the screen or add chromatic aberration
+                {GameModeCollection.DisableColliderDamageKey, true }, // physics objects do not deal damage
+                {GameModeCollection.DefaultBlockCooldownMultiplierKey, 2f }, // block cooldown is twice as long
             };
         }
         internal static void TRTMenu(GameObject menu)

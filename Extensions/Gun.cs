@@ -24,6 +24,5 @@ namespace GameModeCollection.Extensions
         {
             instance.GetData().disabled = false;
         }
-
     }
 }

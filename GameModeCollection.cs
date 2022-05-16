@@ -84,25 +84,6 @@ namespace GameModeCollection
             TRTDefaultMapScale = Config.Bind(CompatibilityModName + "_TRT", "TRT Default Map Scale", 1f);
             MurderDefaultMapScale = Config.Bind(CompatibilityModName + "_Murder", "Murder Default Map Scale", 1f);
 
-            /*
-            On.MainMenuHandler.Awake += (orig, self) =>
-            {
-                this.ExecuteAfterFrames(10, () =>
-                {
-                    // custom face items for TRT
-                    GameObject TRT_Detective_Hat = GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Detective_Hat");
-                    TRT_Detective_Hat.GetComponent<SpriteRenderer>().sortingLayerID = SortingLayer.NameToID("MostFront");
-                    TRT_Detective_Hat.GetComponent<SpriteRenderer>().sortingOrder = 0;
-                    CharacterItem characterItem = TRT_Detective_Hat.AddComponent<CharacterItem>();
-                    characterItem.itemType = CharacterItemType.Detail;
-                    characterItem.scale = 1.2f;
-                    characterItem.moveHealthBarUp = 1f;
-                    CharacterCreatorItemLoader.instance.UpdateItems(CharacterItemType.Detail, CharacterCreatorItemLoader.instance.accessories.Concat(new CharacterItem[] { characterItem }).ToArray());
-                });
-
-                orig(self);
-            };
-            */
         }
         private void Start()
         {
@@ -203,6 +184,8 @@ namespace GameModeCollection
         public static string CreatePlayerCorpsesKey => GetConfigKey("createPlayerCorpses");
         public static string UsePlayerColorsInsteadOfNamesInChatKey => GetConfigKey("usePlayerColorsInsteadOfNamesInChat");
         public static string IgnoreGameFeelKey => GetConfigKey("ignoreGameFeel");
+        public static string DisableColliderDamageKey => GetConfigKey("disableColliderDamage");
+        public static string DefaultBlockCooldownMultiplierKey => GetConfigKey("defaultBlockCooldownMultiplier");
 
         internal static bool EnemyDamageAllowed
         {
@@ -330,6 +313,48 @@ namespace GameModeCollection
                 else
                 {
                     return false;
+                }
+
+            }
+        }
+        public static bool DisableColliderDamage
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(DisableColliderDamageKey, out object disable) && (bool)disable)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+        public static float DefaultBlockCooldownMultiplier
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return 1f;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(DefaultBlockCooldownMultiplierKey, out object mult))
+                {
+                    try
+                    {
+                        return (float)mult;
+                    }
+                    catch { return 1f; }
+                }
+                else
+                {
+                    return 1f;
                 }
 
             }

@@ -36,7 +36,6 @@ namespace GameModeCollection.GameModes.TRT
             "Lifestealer",
             "Leach",
             "Radiance",
-            "Shockwave" // banned for now, since Jesters can use it to kill players. hopefully a workaround/patch can be made for this in the future
         };
 
         private static readonly List<string> ZombieCards = new List<string>()

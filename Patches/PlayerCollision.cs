@@ -6,11 +6,67 @@ using System.Collections.Generic;
 using System.Linq;
 using GameModeCollection.Objects;
 using System;
+using UnboundLib;
 namespace GameModeCollection.Patches
 {
+    [HarmonyPatch]
+    class PlayerCollision_Patch_IDoBounce
+    {
+        /// patch for disabling physics item collision damage in IDoBounce based on gamemode settings
+        static Type GetNestedMoveType()
+        {
+            var nestedTypes = typeof(PlayerCollision).GetNestedTypes(BindingFlags.Instance | BindingFlags.NonPublic);
+            Type nestedType = null;
+
+            foreach (var type in nestedTypes)
+            {
+                if (type.Name.Contains("IDoBounce"))
+                {
+                    nestedType = type;
+                    break;
+                }
+            }
+
+            return nestedType;
+        }
+
+        static MethodBase TargetMethod()
+        {
+            return AccessTools.Method(GetNestedMoveType(), "MoveNext");
+        }
+        static void CallTakeDamageIfEnabled(HealthHandler healthHandler, Vector2 damage, Vector2 damagePosition, GameObject damagingWeapon = null, Player damagingPlayer = null, bool lethal = true)
+        {
+            if (!GameModeCollection.DisableColliderDamage)
+            {
+                healthHandler.CallTakeDamage(damage, damagePosition, damagingWeapon, damagingPlayer, lethal);
+            }
+        }
+
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            
+            var m_callTakeDamage = ExtensionMethods.GetMethodInfo(typeof(Damagable), nameof(Damagable.CallTakeDamage), new System.Type[] {typeof(Vector2), typeof(Vector2), typeof(GameObject), typeof(Player), typeof(bool)} );
+            var m_callTakeDamageIfEnabled = ExtensionMethods.GetMethodInfo(typeof(NetworkPhysicsObjectPatch), nameof(PlayerCollision_Patch_IDoBounce.CallTakeDamageIfEnabled));
+            
+            // replace all occurances of CallTakeDamage with CallTakeDamageIfEnabled
+            foreach (var code in instructions)
+            {
+                if (code.Calls(m_callTakeDamage))
+                {
+                    yield return new CodeInstruction(OpCodes.Call, m_callTakeDamageIfEnabled);
+                }
+                else
+                {
+                    yield return code;
+                }
+            }
+        }
+    }
     [HarmonyPatch(typeof(PlayerCollision),"FixedUpdate")]
     class PlayerCollision_Patch_FixedUpdate
     {
+        // patch for pushing physics items
         static void DoPhysicsItemPush(RaycastHit2D raycast, CharacterData data)
         {
             raycast.transform.GetComponent<PhysicsItem>()?.Push(data);

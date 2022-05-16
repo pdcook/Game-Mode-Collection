@@ -28,80 +28,10 @@ namespace GameModeCollection.GameModes
     /// 
     /// Trouble In Rounds Town - just like Trouble in Terrorist Town
     /// 
-    /// 
     /// Maps only transition on round end, NOT point end
     /// No pick phase
     /// 
     /// Minimum three (maybe four?) players
-    /// 
-    /// 
-    /// Notes:
-    /// 
-    /// - [X] There are no game winners / losers. the game is 4 maps with 4 battles each, the game ends after all 16 have been played
-    /// 
-    /// - [X] Each client flips over cards ONLY they walk near, and they stay flipped (large circular trigger collider)
-    /// - [X] Cards can be collected by walking near them and clicking interact (F by default) (smaller box trigger collider just barely larger than card's box collider)
-    /// - [X] Cards have health (possibly proportional to their card health stat) and can be shot and permanently destroyed
-    /// - [X] Need to patch cards healing players when taken
-    /// - [X] Player skins are randomized each round (sorry)
-    /// - [X] Player faces are psuedo-randomized (double sorry)
-    /// - [X] Player nicknames are removed entirely (triple sorry)
-    /// - [X] Players are completely hidden during the skin randomization time
-    /// - [X] Local zoom is ON. optionally (by host settings in mod options) with the dark shader
-    /// - [X] local zoom scales with bullet speed instead of player size
-    /// - [X] RDM is punished (innocent killing innocent) somehow
-    /// - [X] Clock in upper left corner (with round counter) that counts down.
-    ///         --> Haste mode:
-    ///         --> The timer starts at some initial value (5 mins?), counting down
-    ///         --> For each death, of any kind, time is added to the clock (30 seconds?)
-    /// - [X] below the clock (also with the round counter) is the player's current role
-    /// - [X] Each client sees ONLY their own card bar
-    /// - [X] Players can have a max of one card
-    /// - [X] Dead player's bodies remain on the map (maybe without limbs?) by a patch in HealthHandler::RPCA_Die that freezes them and places them on the nearest ground straight down
-    /// - [X] Dead players have a separate text chat
-    /// - [X] Players can discard cards by clicking on the square in the card bar
-    ///     --> Or by pressing Q to discard their most recent card
-    /// - [X] If a non-detective player crouches over a body, it will report it (in the chat?) to the detective [EX: Pykess found the body of Ascyst, they were an innocent!]
-    /// - [X] If a detective crouches over a body it will report the approximate color [orang-ish, redd-ish, blue-ish, or green-ish] of the killer (in the chat?) [EX: Pykess inspected the body of Ascyst, the were a traitor killed by a blue-ish player!]
-    /// - [X] Add hotkeys for quick chats like: (E -> "[nearest player] is suspicious") (F -> "I'm with [nearest player]") (R -> "Kill [nearest player]!!!")
-    /// - [X] custom maps specifically for this mode, not available in normal rotation
-    ///   [X] --> custom map object mod for card spawn points
-    /// - [X] card random spawning
-    /// - [X] Remove screenshake entirely, or make it dependent on distance (if possible)
-    /// - [ ] Low karma punishment: slaying. the player is killed AFTER the next round starts and is forced to sit out the round
-    /// - [ ] LaTeX document with a short guide to each role
-    /// - [ ] Round summaries in chat
-    /// - [~] T and D shops...
-    /// - [~] Custom cards specifically for certain roles
-    ///     - [~] (T) C4 - TODO: beeping, explosion, sound, diffusal
-    ///     - [~] (T) Knife - TODO: knife asset to replace gun
-    ///     - [X] (D) Golden Gun - change layer and color of gun handle/barrel to gold
-    ///         --> One time use, once it hits any player, it is destroyed
-    ///         --> If it shoots a traitor/killer, they will die instantly, no phoenix revives either
-    ///         --> If it shoots an innocent, the shooter will die instantly, no phoenix revives
-    ///         --> If it shoots a jester/swapper, BOTH players will be killed instantly, no phoenix revives AND the jester/swapper will NOT win
-    ///     - [X] (T + D) Radar
-    ///     - [~] (D) Health Station - TODO: gmod sound effect
-    ///     - [X] (T) Death Station
-    ///     - [ ] (Z) Claw (same as knife) for zombies to infect others
-    ///     - [ ] (D) Diffuser
-    ///     - [X] (T + D) Body Armor
-    /// 
-    /// Roles:
-    /// - [X] Innocent
-    /// - [X] Traitor (red name, sees other traitors' names as red with a "[T]" in front, notified of other traitors and jesters at start of round) [can have two cards instead of one]
-    /// - [~] Detective (blue name visible to everyone with a "[D]" in front, spawns with HealingField, or Huge if healing field is unavailable)
-    /// Roles for more than four players:
-    /// - [X] Jester (own team) (pink name, visible to the traitors only with a "[J]" in front) [deals no damage]
-    /// - [X] Glitch (is innocent, but appears as a traitor to the traitors)
-    /// - [X] Mercenary (innocent) [can have two cards instead of one]
-    /// - [X] Phantom (innocent) [haunts their killer with a smoke trail in their color. when their killer dies, they revive with 50% health]
-    /// - [X] Killer (own team, can only ever be one at a time, traitors are notified that there is a killer) [has 150% health and can have up to four cards (two more than traitors)]
-    /// - [X] Hypnotist (traitor) [the first corpse they interact2 with will respawn as a traitor]
-    /// - [X] Zombie (has a chance to spawn instead of all traitors) (cannot have ANY cards) [players killed by any zombie will immediately revive as zombies]
-    /// - [X] Swapper ("innocent") (appears to traitors as a jester) [cannot deal damage, when killed, their attacker dies instead and they instantly respawn with the role of the attacker, when the attacker's body is searched they report as a swapper]
-    /// - [X] Assassin (traitor) [gets a "target" (never detective unless that is the only option) to which they deal double damage, and half damage to all other players. killing the wrong player results in them dealing half damage for the rest of the round]
-    /// - [X] Vampire (traitor) [can interact2 with a dead body to eat it (completely destroying the body) and healing 50 HP, though it freezes them in place for a few seconds]
     /// </summary>
     public class GM_TRT : MonoBehaviour
     {
@@ -109,6 +39,7 @@ namespace GameModeCollection.GameModes
 
         private const float RoundTime = 300f; // default 300f
         private const float PrepPhaseTime = 30f; // default 30f
+        private const float GracePeriodTime = 6f; // default 5f, amount of time at the end of the prep phase during which players cannot shoot or block
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 
@@ -147,6 +78,7 @@ namespace GameModeCollection.GameModes
         public readonly static Color VampireColor = new Color32(45, 45, 45, 255);
 
         public readonly static Color DullWhite = new Color32(230, 230, 230, 255);
+        public readonly static Color GracePeriodColor = new Color32(230, 115, 0, 255);
         public readonly static Color WarningColor = new Color32(230, 0, 0, 255);
         public readonly static Color DisplayBackgroundColor = new Color32(0, 0, 0, 150);
         public readonly static Color TextBackgroundColor = new Color32(0, 0, 0, 200);
@@ -163,6 +95,7 @@ namespace GameModeCollection.GameModes
 
         internal bool battleOngoing = false;
         private bool prebattle = false;
+        private bool gracePeriod = false;
 
         private float clocktime = RoundTime;
         private float syncCounter = -1f;
@@ -626,22 +559,28 @@ namespace GameModeCollection.GameModes
 
             this.clocktime = PrepPhaseTime;
             this.prebattle = true;
-
-            var sounds = GameObject.Find("/SonigonSoundEventPool");
+            this.gracePeriod = false;
 
             UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
 
-            yield return new WaitWhile(() => this.prebattle);
+            yield return new WaitWhile(() => this.prebattle && !this.gracePeriod);
+
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "READY", GracePeriodColor, 30, Vector3.one, DisplayBackgroundColor);
+            PlayerManager.instance.SetPlayersSimulated(false);
+            yield return this.WaitForSyncUp();
+
+            yield return new WaitWhile(() => this.prebattle && this.gracePeriod);
 
             yield return this.SyncBattleStart();
             this.HideAllPlayerFaces();
 
             this.clocktime = RoundTime;
             this.prebattle = false;
+            this.gracePeriod = false;
             this.battleOngoing = true;
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
-            //UIHandler.instance.DisplayRoundStartText("INNOCENT", InnocentColor, new Vector3(0.5f, 0.8f, 0f));
+            PlayerManager.instance.SetPlayersSimulated(true);
             PlayerManager.instance.SetPlayersInvulnerableAndIntangible(false);
             PlayerManager.instance.RevivePlayers();
 
@@ -682,22 +621,28 @@ namespace GameModeCollection.GameModes
 
             this.clocktime = PrepPhaseTime;
             this.prebattle = true;
-
-            var sounds = GameObject.Find("/SonigonSoundEventPool");
+            this.gracePeriod = false;
 
             UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
 
-            yield return new WaitWhile(() => this.prebattle);
+            yield return new WaitWhile(() => this.prebattle && !this.gracePeriod);
+
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "READY", GracePeriodColor, 30, Vector3.one, DisplayBackgroundColor);
+            PlayerManager.instance.SetPlayersSimulated(false);
+            yield return this.WaitForSyncUp();
+
+            yield return new WaitWhile(() => this.prebattle && this.gracePeriod);
 
             yield return this.SyncBattleStart();
             this.HideAllPlayerFaces();
 
             this.clocktime = RoundTime;
             this.prebattle = false;
+            this.gracePeriod = false;
             this.battleOngoing = true;
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
-            //UIHandler.instance.DisplayRoundStartText("TRAITOR", TraitorColor, new Vector3(0.5f, 0.8f, 0f));
+            PlayerManager.instance.SetPlayersSimulated(true);
             PlayerManager.instance.SetPlayersInvulnerableAndIntangible(false);
             PlayerManager.instance.RevivePlayers();
 
@@ -710,6 +655,7 @@ namespace GameModeCollection.GameModes
         {
             this.battleOngoing = false;
             this.prebattle = false;
+            this.gracePeriod = false;
             this.clocktime = 0f;
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
@@ -769,6 +715,7 @@ namespace GameModeCollection.GameModes
         {
             this.battleOngoing = false;
             this.prebattle = false;
+            this.gracePeriod = false;
             this.clocktime = 0f;
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
@@ -817,55 +764,6 @@ namespace GameModeCollection.GameModes
             RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value), this.roundCounterValues.ToDictionary(kv => kv.Key, kv => kv.Value));
 
             this.StartCoroutine(this.DoPointStart());
-            /*
-            this.battleOngoing = false;
-            this.prebattle = false;
-            this.clocktime = 0f;
-
-            yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
-
-            if (winningRoleID is null)
-            {
-                this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
-                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendChat(null, "<b>DRAW - NOBODY WINS</b>", false); }
-            }
-            else
-            {
-                IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
-                this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
-                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
-            }
-
-            yield return new WaitForSecondsRealtime(1f);
-
-            //MapManager.instance.LoadLevelFromID(MapManager.instance.currentLevelID, false, false);
-            yield return TRTMapManager.LoadTRTLevelFromID(TRTMapManager.CurrentLevel, false, false);
-
-            yield return new WaitForSecondsRealtime(1.3f);
-
-            PlayerManager.instance.InvokeMethod("SetPlayersVisible", false);
-
-            yield return this.WaitForSyncUp();
-
-            MapManager.instance.CallInNewMapAndMovePlayers(MapManager.instance.currentLevelID);
-
-            PlayerManager.instance.RevivePlayers();
-
-            this.RandomizePlayerSkins();
-            this.RandomizePlayerFaces();
-            yield return this.ClearRolesAndVisuals();
-
-            yield return new WaitForSecondsRealtime(0.3f);
-            this.HideAllPlayerFaces();
-
-            TimeHandler.instance.DoSpeedUp();
-            GameManager.instance.battleOngoing = true;
-            this.isTransitioning = false;
-            PlayerManager.instance.InvokeMethod("SetPlayersVisible", true);
-            RWF.UIHandlerExtensions.ShowRoundCounterSmall(UIHandler.instance, this.roundCounterValues, this.roundCounterValues);
-
-            this.StartCoroutine(this.DoPointStart());
-            */
         }
         private void GameOverRematch()
         {
@@ -1044,9 +942,15 @@ namespace GameModeCollection.GameModes
             this.clocktime -= TimeHandler.deltaTime;
             this.clocktime = UnityEngine.Mathf.Clamp(this.clocktime, 0f, float.PositiveInfinity);
 
-            Color timeColor = this.prebattle ? DullWhite : (this.clocktime < HasteModeAddPerDeath ? WarningColor : DullWhite);
+            Color timeColor = this.prebattle ? (this.gracePeriod ? GracePeriodColor : DullWhite) : (this.clocktime < HasteModeAddPerDeath ? WarningColor : DullWhite);
 
             UIHandler.instance.roundCounterSmall.UpdateText(0, GetClockString(clocktime), timeColor, 30, Vector3.one, DisplayBackgroundColor);
+
+            if (this.clocktime < GracePeriodTime && PhotonNetwork.IsMasterClient && this.prebattle && !this.gracePeriod)
+            {
+                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetGracePeriod), true);
+                return;
+            }
 
             if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.prebattle)
             {
@@ -1103,6 +1007,11 @@ namespace GameModeCollection.GameModes
         private static void RPCA_SetPreBattle(bool prebattle)
         {
             GM_TRT.instance.prebattle = prebattle;
+        }
+        [UnboundRPC]
+        private static void RPCA_SetGracePeriod(bool gracePeriod)
+        {
+            GM_TRT.instance.gracePeriod = gracePeriod;
         }
     }
 }

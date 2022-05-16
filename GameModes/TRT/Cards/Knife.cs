@@ -182,6 +182,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
+            A_Knife KnifeHandler = player.GetComponentInChildren<A_Knife>();
             Gun gun = player.GetComponent<Holding>().holdable.GetComponent<Gun>();
             GameObject springObj = gun.transform.Find("Spring").gameObject;
             RightLeftMirrorSpring spring = springObj.transform.GetChild(2).GetComponent<RightLeftMirrorSpring>();
@@ -204,7 +205,22 @@ namespace GameModeCollection.GameModes.TRT.Cards
             springObj.transform.GetChild(3).GetComponent<RightLeftMirrorSpring>().enabled = !knife;
 
             gun.GetData().disabled = knife;
-            gun.GetData().silenced = knife; // players killed by knives do not make noise
+            // restore original stats
+            if (knife)
+            {
+                gun.GetData().silenced = true; // players killed by the knife do not make noise
+            }
+            else
+            {
+                if (player.data.currentCards.Contains(SilencerCard.Card))
+                {
+                    gun.GetData().silenced = true;
+                }      
+                else
+                {
+                    gun.GetData().silenced = false;
+                }
+            }                
         }
 
     }
@@ -330,4 +346,3 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
     }
 }
-

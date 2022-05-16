@@ -204,6 +204,14 @@ namespace GameModeCollection.GameModes.TRT.Cards
             // restore originals
             this.gun.objectsToSpawn = this.OriginalObjectsToSpawn.Concat(this.gun.objectsToSpawn).ToArray();
             this.gun.dontAllowAutoFire = this.data.currentCards.Any(c => (c.gameObject?.GetComponent<Gun>()?.dontAllowAutoFire ?? false));
+            if (this.player.data.currentCards.Contains(SilencerCard.Card))
+            {
+                this.gun.GetData().silenced = true;
+            }
+            else
+            {
+                this.gun.GetData().silenced = false;
+            }
 
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject handle = spring.transform.GetChild(2).gameObject;
@@ -234,6 +242,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             // disable auto-fire (requires demonicpactpatch to reset properly)
             this.gun.dontAllowAutoFire = true; // will be reset by reading all of the cards the player has when this is removed
             this.gun.objectsToSpawn = new ObjectsToSpawn[] { };
+            this.gun.GetData().silenced = false;
 
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject handle = spring.transform.GetChild(2).gameObject;

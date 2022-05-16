@@ -252,7 +252,15 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gun.soundGun.RemoveSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.RemoveSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
-            
+            if (this.player.data.currentCards.Contains(SilencerCard.Card))
+            {
+                this.gun.GetData().silenced = true;
+            }
+            else
+            {
+                this.gun.GetData().silenced = false;
+            }
+
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject barrel = spring.transform.GetChild(3).gameObject;
             barrel.transform.localScale = this.OriginalScale;
@@ -285,6 +293,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.AddSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
+            this.gun.GetData().silenced = false;
 
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject barrel = spring.transform.GetChild(3).gameObject;

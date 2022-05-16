@@ -268,22 +268,8 @@ namespace GameModeCollection.GameModes.TRT
             if (specificPlayer is null) { return; }
             ITRT_Role specificRole = GetPlayerRole(specificPlayer);
             Player localPlayer = PlayerManager.instance.players.Find(p => p.data.view.IsMine);
-            if (localPlayer.playerID == specificPlayer.playerID)
-            {
-                // always show the player their own role
-                //SetPlayerNameRoleDisplay(specificPlayer, specificRole?.Appearance, hideNickNames);
-            }
-            else
-            {
-                ITRT_Role localRole = GetPlayerRole(localPlayer);
-                //SetPlayerNameRoleDisplay(specificPlayer, localRole?.Alignment is null ? null : GetPlayerRole(specificPlayer)?.AppearToAlignment(localRole.Alignment), hideNickNames);
-            }
             if (specificRole is null || !specificPlayer.data.view.IsMine) { return; }
             // to the specific player ONLY, do new display stuff
-            //UIHandler.instance.DisplayRoundStartText(specificRole.Appearance.Name, specificRole.Appearance.Color, new Vector3(0.5f, 0.8f, 0f));
-            //GameModeCollection.instance.ExecuteAfterSeconds(0.5f, () => {
-            //    RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
-            //});
             string playerRoleName = GetRoleColoredName(specificRole.Appearance);
             TRTHandler.SendChat(null, $"You are {GetPlayerColorNameAsColoredString(specificPlayer)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(specificRole.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
             // now do any necessary reporting
@@ -332,35 +318,13 @@ namespace GameModeCollection.GameModes.TRT
             {
                 TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Killer.RoleAppearance)}.", true);
             }
-            // special case for alerting traitors that there is a glitch
-            /*
-            if (specificRole.Alignment == Alignment.Traitor && PlayerManager.instance.players.Any(p => !p.data.dead && GetPlayerRoleID(p) == GlitchRoleHandler.GlitchRoleID))
-            {
-                TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Glitch.RoleAppearance)}.", true);
-            }*/
 
         }
         public static void DoRoleDisplay(Player player, bool hideNickNames = true)
         {
             if (player is null) { return; }
             ITRT_Role role = GetPlayerRole(player);
-            foreach (Player otherPlayer in PlayerManager.instance.players)
-            {
-                if (otherPlayer.playerID == player.playerID)
-                {
-                    // always show the player their own role
-                    //SetPlayerNameRoleDisplay(otherPlayer, role?.Appearance, hideNickNames);
-                }
-                else
-                {
-                    //SetPlayerNameRoleDisplay(otherPlayer, role?.Alignment is null ? null : GetPlayerRole(otherPlayer)?.AppearToAlignment(role.Alignment), hideNickNames);
-                }
-            }
             if (role is null) { return; }
-            //UIHandler.instance.DisplayRoundStartText(role.Appearance.Name, role.Appearance.Color, new Vector3(0.5f, 0.8f, 0f));
-            //GameModeCollection.instance.ExecuteAfterSeconds(0.5f, () => {
-            //    RWF.UIHandlerExtensions.HideRoundStartText(UIHandler.instance);
-            //});
             string playerRoleName = GetRoleColoredName(role.Appearance);
             TRTHandler.SendChat(null, $"You are {GetPlayerColorNameAsColoredString(player)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(role.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
             // now do any necessary reporting
@@ -409,12 +373,6 @@ namespace GameModeCollection.GameModes.TRT
             {
                 TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Killer.RoleAppearance)}.", true);
             }
-            // special case for alerting traitors that there is a glitch
-            /*
-            if (role.Alignment == Alignment.Traitor && PlayerManager.instance.players.Any(p => !p.data.dead && GetPlayerRoleID(p) == GlitchRoleHandler.GlitchRoleID))
-            {
-                TRTHandler.SendChat(null, $"There is a {GetRoleColoredName(Glitch.RoleAppearance)}.", true);
-            }*/
         }
         public static string GetColoredString(string str, Color color, bool bold = false)
         {
