@@ -21,8 +21,15 @@ namespace GameModeCollection.GameModes.TRT
 
         string RoleID => RoleManager.GetPlayerRoleID(Player); // the player's role ID
         string roleIDLastFrame = ""; // the player's role ID last frame
+        string NickName => this.Player?.data?.view.Owner.NickName; // the player's nickname
+        string Reputability => this.Player?.data?.Reputability(); // the player's reputability
 
         bool updateQueued = false; // whether an update has been queued
+
+        public void ForceUpdate()
+        {
+            this.updateQueued = true;
+        }
 
         void Start()
         {
@@ -37,16 +44,15 @@ namespace GameModeCollection.GameModes.TRT
         void Update()
         {
             if (this.Player.data.view.IsMine) { this.IsVisible = true; }
-            if (this.updateQueued || this.IsVisible != this.wasVisibleLastFrame || this.RoleID != this.roleIDLastFrame)
+            if (!this.Player.data.dead && (this.updateQueued || this.IsVisible != this.wasVisibleLastFrame || this.RoleID != this.roleIDLastFrame))
             {
                 this.updateQueued = true; // queue an update to ensure it updates
                 // if the nameplate's visibility changed, update the nameplate's visibility
 
-                // if the local player is dead or null, the role appearance should be the true appearance
                 TRT_Role_Appearance appearance = null;
-                if (this.Player.data.view.IsMine || this.LocalPlayer is null || this.LocalPlayer.data.dead)
+                if (this.Player.data.view.IsMine || this.LocalPlayer is null)
                 {
-                    // if this is the local player, or the local player is dead or null, the role appearance should be the true appearance
+                    // if this is the local player, or the local player is null, the role appearance should be the true appearance
                     appearance = RoleManager.GetPlayerRole(this.Player)?.Appearance;
                 }
                 else
@@ -58,7 +64,7 @@ namespace GameModeCollection.GameModes.TRT
             }
             this.wasVisibleLastFrame = this.IsVisible;
             this.roleIDLastFrame = this.RoleID;
-        }            
+        }
         public void DisplayNamePlate(TRT_Role_Appearance role_Appearance, bool inRange = false, Color? backgroundColor = null)
         {
             /// name plates appear as:
@@ -94,13 +100,13 @@ namespace GameModeCollection.GameModes.TRT
             // if the player is in range (or the cursor is hovering), add their name and reputability
             if (inRange)
             {
-                if (this.Player?.data?.view?.Owner?.NickName != null)
+                if (!string.IsNullOrEmpty(this.NickName))
                 {
                     if (role_Appearance != null) { namePlateContent += "\n"; }
-                    namePlateContent += this.Player?.data?.view?.Owner?.NickName;
+                    namePlateContent += this.NickName;
                 }
-                string reputability = RoleManager.GetReputability(this.Player);
-                if (reputability != "")
+                string reputability = this.Reputability;
+                if (!string.IsNullOrEmpty(reputability))
                 { namePlateContent += (namePlateContent == "" ? "" : "\n") + reputability; }
             }
             // if the role appearance is not null, set the nameplate's color to the role's color, otherwise to text white

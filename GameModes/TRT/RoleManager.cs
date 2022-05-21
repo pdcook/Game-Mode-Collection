@@ -271,7 +271,7 @@ namespace GameModeCollection.GameModes.TRT
             if (specificRole is null || !specificPlayer.data.view.IsMine) { return; }
             // to the specific player ONLY, do new display stuff
             string playerRoleName = GetRoleColoredName(specificRole.Appearance);
-            TRTHandler.SendChat(null, $"You are {GetPlayerColorNameAsColoredString(specificPlayer)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(specificRole.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
+            TRTHandler.SendChat(null, $"You are a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(specificRole.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
             // now do any necessary reporting
             Dictionary<TRT_Role_Appearance, List<string>> rolesAndNames = new Dictionary<TRT_Role_Appearance, List<string>>();
             foreach (Player otherPlayer in PlayerManager.instance.players)
@@ -286,7 +286,7 @@ namespace GameModeCollection.GameModes.TRT
                     rolesAndNames[appearAs] = new List<string>() { };
                 }
 
-                rolesAndNames[appearAs].Add(GetPlayerColorNameAsColoredString(otherPlayer));
+                rolesAndNames[appearAs].Add(GetPlayerNameAsColoredString(otherPlayer));
             }
             foreach (TRT_Role_Appearance roleAppearance in rolesAndNames.Keys)
             {
@@ -326,7 +326,7 @@ namespace GameModeCollection.GameModes.TRT
             ITRT_Role role = GetPlayerRole(player);
             if (role is null) { return; }
             string playerRoleName = GetRoleColoredName(role.Appearance);
-            TRTHandler.SendChat(null, $"You are {GetPlayerColorNameAsColoredString(player)}, a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(role.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
+            TRTHandler.SendChat(null, $"You are a{((new List<char> {'a', 'e', 'i', 'o', 'u'}).Contains(role.Appearance.Name.ToLower().First()) ? "n" : "")} {playerRoleName}.", true);
             // now do any necessary reporting
             Dictionary<TRT_Role_Appearance, List<string>> rolesAndNames = new Dictionary<TRT_Role_Appearance, List<string>>();
             foreach (Player otherPlayer in PlayerManager.instance.players)
@@ -341,7 +341,7 @@ namespace GameModeCollection.GameModes.TRT
                     rolesAndNames[appearAs] = new List<string>() { };
                 }
 
-                rolesAndNames[appearAs].Add(GetPlayerColorNameAsColoredString(otherPlayer));
+                rolesAndNames[appearAs].Add(GetPlayerNameAsColoredString(otherPlayer));
             }
             foreach (TRT_Role_Appearance roleAppearance in rolesAndNames.Keys)
             {
@@ -381,9 +381,9 @@ namespace GameModeCollection.GameModes.TRT
             return res;
         }
 
-        public static string GetPlayerColorNameAsColoredString(Player player)
+        public static string GetPlayerNameAsColoredString(Player player)
         {
-            return player is null ? "" : $"<b><color=#{ColorUtility.ToHtmlStringRGB(player.GetTeamColors().color)}>{ExtraPlayerSkins.GetTeamColorName(player.colorID())}</color></b>";
+            return player is null ? "" : $"<b><color=#{ColorUtility.ToHtmlStringRGB(player.GetTeamColors().color)}>{player.data.view.Owner.NickName}</color></b>";
         }
 
         public static string GetRoleColoredName(TRT_Role_Appearance roleAppearance)

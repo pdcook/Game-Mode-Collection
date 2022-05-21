@@ -149,11 +149,13 @@ namespace GameModeCollection
             CustomCard.BuildCard<GrenadeCard>(GrenadeCard.BuildCardCallback);
             CustomCard.BuildCard<SilencerCard>(SilencerCard.BuildCardCallback);
             CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.BuildCardCallback);
+            CustomCard.BuildCard<DisguiserCard>(DisguiserCard.BuildCardCallback);
             CustomCard.BuildCard<HandcuffsCard>(HandcuffsCard.BuildCardCallback);
             CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.BuildCardCallback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.BuildCardCallback);
             CustomCard.BuildCard<SmokeGrenadeCard>(SmokeGrenadeCard.BuildCardCallback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.BuildCardCallback);
+            CustomCard.BuildCard<JesterEmulatorCard>(JesterEmulatorCard.BuildCardCallback);
             CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.BuildCardCallback);
             CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.BuildCardCallback);
 
@@ -186,6 +188,8 @@ namespace GameModeCollection
         public static string IgnoreGameFeelKey => GetConfigKey("ignoreGameFeel");
         public static string DisableColliderDamageKey => GetConfigKey("disableColliderDamage");
         public static string DefaultBlockCooldownMultiplierKey => GetConfigKey("defaultBlockCooldownMultiplier");
+        public static string SuffocationDamageEnabledKey => GetConfigKey("suffocationDamageEnabled");
+        public static string HideGunOnDeathKey => GetConfigKey("hideGunOnDeath");
 
         internal static bool EnemyDamageAllowed
         {
@@ -355,6 +359,44 @@ namespace GameModeCollection
                 else
                 {
                     return 1f;
+                }
+
+            }
+        }
+        public static bool SuffocationDamageEnabled
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(SuffocationDamageEnabledKey, out object enabled) && (bool)enabled)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+        public static bool HideGunOnDeath
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(HideGunOnDeathKey, out object hide) && (bool)hide)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
                 }
 
             }

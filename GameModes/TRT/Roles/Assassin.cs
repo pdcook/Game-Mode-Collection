@@ -74,7 +74,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
 
             if (target != null)
             {
-                TRTHandler.SendChat(null, $"{RoleManager.GetRoleColoredName(this.Appearance)}, your target is {TRTHandler.GetPlayerColorNameAsColoredString(target)}.", true);
+                TRTHandler.SendChat(null, $"{RoleManager.GetRoleColoredName(this.Appearance)}, your target is {TRTHandler.GetPlayerNameAsColoredString(target)}.", true);
             }
 
             this.GetComponent<PhotonView>().RPC(nameof(RPCA_SetNewTarget), RpcTarget.All, target?.playerID);

@@ -131,7 +131,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             if (cuffingPlayer.data.view.IsMine)
             {
-                TRTHandler.SendChat(null, $"{RoleManager.GetPlayerColorNameAsColoredString(cuffedPlayer)} was cuffed.", true);
+                TRTHandler.SendChat(null, $"{RoleManager.GetPlayerNameAsColoredString(cuffedPlayer)} was cuffed.", true);
             }
             if (cuffedPlayer.data.view.IsMine)
             {

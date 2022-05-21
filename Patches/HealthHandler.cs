@@ -83,18 +83,29 @@ namespace GameModeCollection.Patches
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_NoDamage
     {
+        static bool PlayerRoleCanDealDamageAndTakeEnvironmentDamage(CharacterData data)
+        {
+            return data.GetComponent<ITRT_Role>()?.CanDealDamageAndTakeEnvironmentalDamage ?? true;
+        }
+        static bool PlayerGunIsJesterEmulator(CharacterData data)
+        {
+            JesterEmulatorGun jesterEmulatorGun = data.GetComponent<JesterEmulatorGun>();
+            if (jesterEmulatorGun is null) { return false; }
+            return (bool)jesterEmulatorGun.GetFieldValue("modifiersActive");
+        }
         // patch for TRT roles that cannot deal damage or take environmental damage
+        // and the JesterEmulator card
         private static void Prefix(CharacterData ___data, ref Vector2 damage, Player damagingPlayer = null)
         {
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
 
-            if (damagingPlayer is null && !(___data.GetComponent<ITRT_Role>()?.CanDealDamageAndTakeEnvironmentalDamage ?? true))
+            if (damagingPlayer is null && !PlayerRoleCanDealDamageAndTakeEnvironmentDamage(___data))
             {
                 damage = Vector2.zero;
                 return;
             }
 
-            if (damagingPlayer != null && !(damagingPlayer.GetComponent<ITRT_Role>()?.CanDealDamageAndTakeEnvironmentalDamage ?? true))
+            if (damagingPlayer != null && (!PlayerRoleCanDealDamageAndTakeEnvironmentDamage(damagingPlayer.data) || PlayerGunIsJesterEmulator(damagingPlayer.data)))
             {
                 damage = Vector2.zero;
                 return;
@@ -147,10 +158,19 @@ namespace GameModeCollection.Patches
         }
         static void Postfix(HealthHandler __instance, bool isFullRevive)
         {
+            if (GameModeCollection.HideGunOnDeath)
+            {
+                // if the gun is hidden on death, show it when the player is revived
+                ((CharacterData)__instance.GetFieldValue("data")).weaponHandler.gameObject.SetActive(true);
+            }
+            
             if (isFullRevive)
             {
+                // fix source of last damage
                 ((CharacterData)__instance.GetFieldValue("data")).lastDamagedPlayer = null;
                 ((CharacterData)__instance.GetFieldValue("data")).lastSourceOfDamage = null;
+
+                // destroy corpse component
                 if (__instance.GetComponent<TRT_Corpse>() != null)
                 {
                     UnityEngine.GameObject.Destroy(__instance.GetComponent<TRT_Corpse>());
@@ -167,11 +187,26 @@ namespace GameModeCollection.Patches
         {
             return !__instance.Invulnerable() && !__instance.Intangible() && (!__instance.isRespawning || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID);
         }
+        static void Postfix(HealthHandler __instance)
+        {
+            if (GameModeCollection.HideGunOnDeath)
+            {
+                // hide gun on death
+                ((CharacterData)__instance.GetFieldValue("data")).weaponHandler.gameObject.SetActive(false);
+            }
+        }
     }
     [HarmonyPatch(typeof(HealthHandler), "RPCA_Die")]
     class HealthHandler_Patch_RPCA_Die
     {
-
+        static void Postfix(HealthHandler __instance)
+        {
+            if (GameModeCollection.HideGunOnDeath)
+            {
+                // hide gun on death
+                ((CharacterData)__instance.GetFieldValue("data")).weaponHandler.gameObject.SetActive(false);
+            }
+        }
         [HarmonyPriority(Priority.First)]
         static bool Prefix(HealthHandler __instance)
         {

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Linq;
 using GameModeCollection.GameModes;
+using GameModeCollection.GameModes.TRT;
 using UnityEngine;
 using TMPro;
 using UnboundLib;
@@ -15,6 +16,8 @@ namespace GameModeCollection.Extensions
         public int maxAllowedCards = GM_TRT.BaseMaxCards;
         public float TRT_Karma = 1f;
         public PlayerFace CurrentFace;
+        public string forcedNickName = null;
+        public string forcedReputability = null;
     }
     public static class CharacterDataExtensions
     {
@@ -22,6 +25,10 @@ namespace GameModeCollection.Extensions
         public static CharacterDataAdditionalData GetData(this CharacterData instance)
         {
             return additionalData.GetOrCreateValue(instance);
+        }
+        public static string Reputability(this CharacterData instance)
+        {
+            return string.IsNullOrEmpty(instance.GetData().forcedReputability) ? RoleManager.GetReputability(instance.player) : instance.GetData().forcedReputability;
         }
         public static void SetCurrentFace(this CharacterData instance, PlayerFace face)
         {

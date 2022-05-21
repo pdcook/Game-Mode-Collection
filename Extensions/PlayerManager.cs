@@ -14,6 +14,10 @@ namespace GameModeCollection.Extensions
         {
             return instance.players.FirstOrDefault(p => p.data.view.IsMine);
         }
+        public static Player GetPlayerWithActorID(this PlayerManager instance, int actorID)
+        {
+            return instance.players.FirstOrDefault(p => p.data.view.Owner.ActorNumber == actorID);
+        }
         public static Player GetClosestOtherPlayer(this PlayerManager instance, Player thisPlayer, bool requireAlive = true, bool requireLoS = false)
         {
             Player closest = null;

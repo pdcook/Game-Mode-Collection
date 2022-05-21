@@ -151,6 +151,7 @@
   <ItemGroup>
     <Compile Include="Extensions\Transform.cs" />
     <Compile Include="GameModes\TRT\Cards\Disguiser.cs" />
+    <Compile Include="GameModes\TRT\Cards\JesterEmulator.cs" />
     <Compile Include="GameModes\TRT\Cards\Silencer.cs" />
     <Compile Include="GMCObjects\CardSpawnPoint.cs" />
     <Compile Include="Extensions\CardVisuals.cs" />
@@ -260,6 +261,7 @@
     <Compile Include="Patches\DamagableEvent.cs" />
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Destructible.cs" />
+    <Compile Include="Patches\PhotonPlayer.cs" />
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\GamefeelManager.cs" />
     <Compile Include="Patches\GeneralInput.cs" />

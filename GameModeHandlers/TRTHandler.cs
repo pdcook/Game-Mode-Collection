@@ -57,6 +57,8 @@ namespace GameModeCollection.GameModeHandlers
                 {GameModeCollection.IgnoreGameFeelKey, true }, // do not shake the screen or add chromatic aberration
                 {GameModeCollection.DisableColliderDamageKey, true }, // physics objects do not deal damage
                 {GameModeCollection.DefaultBlockCooldownMultiplierKey, 2f }, // block cooldown is twice as long
+                {GameModeCollection.SuffocationDamageEnabledKey, true }, // players take suffocation damage
+                {GameModeCollection.HideGunOnDeathKey, true }, // guns are hidden when players die
             };
         }
         internal static void TRTMenu(GameObject menu)
@@ -210,9 +212,9 @@ namespace GameModeCollection.GameModeHandlers
             }
             else
             {
-                message += $"{GetPlayerColorNameAsColoredString(player)} ";
+                message += $"{GetPlayerNameAsColoredString(player)} ";
             }
-            message += $"found the body of {GetPlayerColorNameAsColoredString(body.Player)}, they were a{((new List<char> { 'a', 'e', 'i', 'o', 'u' }).Contains(role.Name.ToLower().First()) ? "n" : "")} {RoleManager.GetRoleColoredName(role)}!";
+            message += $"found the body of {GetPlayerNameAsColoredString(body.Player)}, they were a{((new List<char> { 'a', 'e', 'i', 'o', 'u' }).Contains(role.Name.ToLower().First()) ? "n" : "")} {RoleManager.GetRoleColoredName(role)}!";
             SendChat(null, message, alreadyIDed);
 
             if (alreadyInvestigated)
@@ -231,7 +233,7 @@ namespace GameModeCollection.GameModeHandlers
             {
                 message += $"The {RoleManager.GetRoleColoredName(Detective.RoleAppearance)} ";
             }
-            message += $"searched the body of {GetPlayerColorNameAsColoredString(body.Player)}, ";
+            message += $"searched the body of {GetPlayerNameAsColoredString(body.Player)}, ";
             int ageInMinutes = UnityEngine.Mathf.RoundToInt((Time.realtimeSinceStartup - body.TimeOfDeath) / 60f);
             message += "they died ";
             if (ageInMinutes == 0)
@@ -315,29 +317,27 @@ namespace GameModeCollection.GameModeHandlers
             {
                 if (local)
                 {
-                    MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(">>> ", null, ExtraPlayerSkins.GetTeamColorName(player.colorID()), player.colorID(), message, "");
+                    MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage(">>> ", null, player.data.view.Owner.NickName, player.colorID(), message, "");
                 }
                 else
                 {
-                    NetworkingManager.RPC(typeof(TRTHandler), nameof(RPCA_TRT_CreateMessage), player.colorID(), message);
+                    NetworkingManager.RPC(typeof(TRTHandler), nameof(RPCA_TRT_CreateMessage), player.playerID, message);
                 }
             }
         }
         [UnboundRPC]
-        private static void RPCA_TRT_CreateMessage(int senderColorID, string message)
+        private static void RPCA_TRT_CreateMessage(int senderPlayerID, string message)
         {
-            if (senderColorID >= 0)
+            if (senderPlayerID >= 0)
             {
-                MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage("@", null, ExtraPlayerSkins.GetTeamColorName(senderColorID), senderColorID, message);
+                Player player = PlayerManager.instance.GetPlayerWithID(senderPlayerID);
+                if (player is null) { return; }
+                MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage("@", null, player.data.view.Owner.NickName, senderPlayerID, message);
             }
             else
             {
                 MenuControllerHandler.instance.GetComponent<BetterChat.ChatMonoGameManager>().CreateLocalMessage("", null, ChatName, -1, message, "");
             }
-        }
-        public static string GetPlayerColorNameAsColoredString(Player player)
-        {
-            return player is null ? "" : $"<b><color=#{ColorUtility.ToHtmlStringRGB(player.GetTeamColors().color)}>{ExtraPlayerSkins.GetTeamColorName(player.colorID())}</color></b>";
         }
         // inspect or interact with a body
         public static void TryInspectBody(Player player, bool interact)
@@ -356,7 +356,7 @@ namespace GameModeCollection.GameModeHandlers
                 var nearest = GetNearestVisiblePlayer(player, true, MaxVisibleDistance);
                 if (nearest != null)
                 {
-                    SendChat(player, $"I'm with {GetPlayerColorNameAsColoredString(nearest)}.");
+                    SendChat(player, $"I'm with {GetPlayerNameAsColoredString(nearest)}.");
                 }
             }
         }
@@ -368,7 +368,7 @@ namespace GameModeCollection.GameModeHandlers
                 var nearest = GetNearestVisiblePlayer(player, true, MaxVisibleDistance);
                 if (nearest != null)
                 {
-                    SendChat(player, $"{GetPlayerColorNameAsColoredString(nearest)} is suspicious.");
+                    SendChat(player, $"{GetPlayerNameAsColoredString(nearest)} is suspicious.");
                 }
             }
         }
@@ -380,7 +380,7 @@ namespace GameModeCollection.GameModeHandlers
                 var nearest = GetNearestVisiblePlayer(player, true, MaxVisibleDistance);
                 if (nearest != null)
                 {
-                    SendChat(player, $"{GetPlayerColorNameAsColoredString(nearest)} is a traitor!");
+                    SendChat(player, $"{GetPlayerNameAsColoredString(nearest)} is a traitor!");
                 }
             }
         }
@@ -392,9 +392,13 @@ namespace GameModeCollection.GameModeHandlers
                 var nearest = GetNearestVisiblePlayer(player, true, MaxVisibleDistance);
                 if (nearest != null)
                 {
-                    SendChat(player, $"{GetPlayerColorNameAsColoredString(nearest)} is innocent.");
+                    SendChat(player, $"{GetPlayerNameAsColoredString(nearest)} is innocent.");
                 }
             }
+        }
+        public static string GetPlayerNameAsColoredString(Player player)
+        {
+            return player is null ? "" : $"<b><color=#{ColorUtility.ToHtmlStringRGB(player.GetTeamColors().color)}>{player.data.view.Owner.NickName}</color></b>";
         }
     }
 }

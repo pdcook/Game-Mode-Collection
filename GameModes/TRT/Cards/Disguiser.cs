@@ -12,6 +12,7 @@ using GameModeCollection.Objects;
 using GameModeCollection.GameModeHandlers;
 using Sonigon;
 using Sonigon.Internal;
+using Photon.Pun;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -97,6 +98,18 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             DisguiserCard.Card = card;
             ModdingUtils.Utils.Cards.instance.AddHiddenCard(card);
+
+            GameModeManager.AddHook(GameModeHooks.HookPointEnd, HookPointEnd_ResetNames);
+        }
+        private static IEnumerator HookPointEnd_ResetNames(IGameModeHandler gm)
+        {
+            PlayerManager.instance.ForEachPlayer(p =>
+            {
+                p.data.GetData().forcedNickName = null;
+                p.data.GetData().forcedReputability = null;
+                p.gameObject.GetComponent<TRTNamePlate>()?.ForceUpdate();
+            });
+            yield break;
         }
     }
     internal class A_Disguiser : MonoBehaviour
@@ -132,10 +145,23 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             if (copyingPlayer.data.view.IsMine)
             {
-                // TODO: send a message to the copying player telling them who they copied
-                // then copy the player's face, skin, name, and reputation (but not role)
-            }
+                // send a chat message to the copying player telling them who they copied
+                TRTHandler.SendChat(null, $"You have assumed the identity of {TRTHandler.GetPlayerNameAsColoredString(copiedPlayer)}.", true);
 
+                // copy the player's face
+                PlayerFace newFace = copiedPlayer.data.GetData().CurrentFace;
+                copyingPlayer.data.view.RPC(nameof(Player.RPCA_SetFace), RpcTarget.All, newFace.eyeID, newFace.eyeOffset, newFace.mouthID, newFace.mouthOffset, newFace.detailID, newFace.detailOffset, newFace.detail2ID, newFace.detail2Offset);
+            }
+            // copy the player's skin
+            UnboundLib.Extensions.PlayerExtensions.AssignColorID(copyingPlayer, UnboundLib.Extensions.PlayerExtensions.colorID(copiedPlayer));
+            // copy the player's name
+            copyingPlayer.data.GetData().forcedNickName = copiedPlayer.data.view.Owner.NickName;
+            // copy the player's reputation
+            copyingPlayer.data.GetData().forcedReputability = copiedPlayer.data.Reputability();
+            // force update the copying player's nameplate
+            copyingPlayer.gameObject.GetComponent<TRTNamePlate>()?.ForceUpdate();
+            // update the player's gun color with LocalZoom
+            LocalZoom.LocalZoom.instance.MakeGunHidden(copyingPlayer);
         }
     }
 }

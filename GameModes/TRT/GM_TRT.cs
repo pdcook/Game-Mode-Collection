@@ -186,7 +186,7 @@ namespace GameModeCollection.GameModes
             LocalZoom.LocalZoom.SetEnableCameraSetting(true);
             TRTHandler.InitChatGroups();
             BetterChat.BetterChat.SetDeadChat(true);
-            BetterChat.BetterChat.UsePlayerColors = true;
+            BetterChat.BetterChat.UsePlayerColors = false;
             BetterChat.BetterChat.EnableTypingIndicators = false;
 
             TRTShopHandler.BuildTRTShops();
@@ -460,7 +460,7 @@ namespace GameModeCollection.GameModes
             PlayerManager.instance.ForEachPlayer(this.PlayerJoined);
 
             BetterChat.BetterChat.SetDeadChat(true);
-            BetterChat.BetterChat.UsePlayerColors = true;
+            BetterChat.BetterChat.UsePlayerColors = false;
             BetterChat.BetterChat.EnableTypingIndicators = false;
             ControllerManager.SetMapController(TRTMapController.ControllerID);
             ControllerManager.SetBoundsController(TRTBoundsController.ControllerID);
