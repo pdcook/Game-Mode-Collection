@@ -287,7 +287,7 @@ namespace GameModeCollection.GameModeHandlers
 
         public static void InitChatGroups()
         {
-            BetterChat.BetterChat.GroupSettings TraitorChatGroup = new BetterChat.BetterChat.GroupSettings(CanReceiveTraitorChat, KeyCode.V, canSeeGroup: CanSeeTraitorGroup);
+            BetterChat.BetterChat.GroupSettings TraitorChatGroup = new BetterChat.BetterChat.GroupSettings(CanReceiveTraitorChat, KeyCode.Y, canSeeGroup: CanSeeTraitorGroup);
             BetterChat.BetterChat.CreateGroup("Traitors", TraitorChatGroup);
         }
         public static void SendPointOverChat(IRoleHandler winningRole)

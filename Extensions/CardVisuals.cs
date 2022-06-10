@@ -11,29 +11,9 @@ namespace GameModeCollection.Extensions
 			if (local)
             {
 				instance.ChangeSelected(setSelected);
-				return;
             }
-
-			if (!(GeneralParticleSystem)instance.GetFieldValue("part"))
-			{
-				return;
-			}
-			if (instance.isSelected == setSelected)
-			{
-				return;
-			}
-			instance.isSelected = setSelected;
-			Action<bool> action = instance.toggleSelectionAction;
-			if (action != null)
-			{
-				action(instance.isSelected);
-			}
-			if (instance.isSelected)
-			{
-				((ScaleShake)instance.GetFieldValue("shake")).targetScale = 1.15f;
-				return;
-			}
-			((ScaleShake)instance.GetFieldValue("shake")).targetScale = 0.9f;
+            // always set the scale to 1 to prevent weird physics interactions for non-host players
+			((ScaleShake)instance.GetFieldValue("shake")).targetScale = 1f;
 		}
     }
 }

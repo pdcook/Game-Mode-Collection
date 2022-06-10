@@ -87,6 +87,9 @@
     <Reference Include="PlayerCustomization">
       <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\PlayerCustomization.dll</HintPath>
     </Reference>
+    <Reference Include="RoundsVC">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\RoundsVC.dll</HintPath>
+    </Reference>
     <Reference Include="RoundsWithFriends, Version=2.1.10.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(ProfileFolder)\BepInEx\plugins\RoundsWithFriends\RoundsWithFriends.dll</HintPath>
@@ -153,6 +156,10 @@
     <Compile Include="GameModes\TRT\Cards\Disguiser.cs" />
     <Compile Include="GameModes\TRT\Cards\JesterEmulator.cs" />
     <Compile Include="GameModes\TRT\Cards\Silencer.cs" />
+    <Compile Include="GameModes\TRT\RoundSummary.cs" />
+    <Compile Include="GameModes\TRT\VoiceChat\IntercomChannel.cs" />
+    <Compile Include="GameModes\TRT\VoiceChat\TraitorChannel.cs" />
+    <Compile Include="GameModes\TRT\VoiceChat\SpectatorChannel.cs" />
     <Compile Include="GMCObjects\CardSpawnPoint.cs" />
     <Compile Include="Extensions\CardVisuals.cs" />
     <Compile Include="Extensions\CharacterData.cs" />
@@ -234,6 +241,7 @@
     <Compile Include="GMCObjects\MapObjects.cs" />
     <Compile Include="GMCObjects\Teleporter.cs" />
     <Compile Include="GMCObjects\TraitorTrap_Destructible.cs" />
+    <Compile Include="GameModes\TRT\VoiceChat\ProximityChannel.cs" />
     <Compile Include="Objects\CardItem.cs" />
     <Compile Include="Objects\DamagableNetworkPhysicsItem.cs" />
     <Compile Include="Objects\GameModeObjects\BombObjectHandler.cs" />
@@ -303,6 +311,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="AssetsEmbedded\trt_card_art" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="GameModes\TRT\RoundEvents\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

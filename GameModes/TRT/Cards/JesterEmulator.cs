@@ -135,7 +135,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
     }
     public class JesterEmulatorGun : ReversibleEffect
     {
-        private List<ObjectsToSpawn> OriginalObjectsToSpawn;
         private int NumCards;
         public override void OnAwake()
         {

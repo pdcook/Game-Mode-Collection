@@ -10,4 +10,12 @@ namespace GameModeCollection.Patches
             return (!__instance.GetData().disabled && !__instance.GetData().disabledFromCardBar);
         }
     }
+    [HarmonyPatch(typeof(Gun), "ResetStats")]
+    class GunPatchResetStats
+    {
+        private static void Prefix(Gun __instance)
+        {
+            __instance.GetData().silenced = false;
+        }
+    }
 }

@@ -11,6 +11,7 @@ using UnboundLib.Networking;
 using UnityEngine;
 using SoundImplementation;
 using Sonigon;
+using Photon.Pun;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -29,10 +30,23 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 return _AWP;
             }
         }
+        private static GameObject _AWPDealtDamageEffect = null;
+        public static GameObject AWPDealtDamageEffect
+        {
+            get
+            {
+                if (_AWPDealtDamageEffect is null)
+                {
+                    _AWPDealtDamageEffect = new GameObject("A_AWPDealtDamageEffect", typeof(AWPDealtDamageEffect));
+                    UnityEngine.GameObject.DontDestroyOnLoad(_AWPDealtDamageEffect);
+                }
+                return _AWPDealtDamageEffect;
+            }
+        }
     }
 
     public class AWPCard : CustomCard
-    {    
+    {
         // one shot, very slow rate of fire, sniper rifle available to both traitors and detectives
 
         internal static CardInfo Card = null;
@@ -50,10 +64,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
-           if (player.gameObject.GetComponent<AWPGun>() != null)
-           {
+            if (player.gameObject.GetComponent<AWPGun>() != null)
+            {
                 Destroy(player.gameObject.GetComponent<AWPGun>());
-           }
+            }
         }
 
         protected override string GetTitle()
@@ -158,13 +172,14 @@ namespace GameModeCollection.GameModes.TRT.Cards
     }
     public class AWPGun : ReversibleEffect
     {
-        private const float BarrelLength = 7f;
+        private const float BarrelLength = 5f;
         private const float BarrelWidth = 0.5f;
 
         private Vector3 OriginalScale;
         private Vector3 OriginalRightPos;
         private Vector3 OriginalLeftPos;
         private List<ObjectsToSpawn> OriginalObjectsToSpawn;
+        private bool OriginalUnblockable = false;
         private int NumCards;
 
         private SoundShotModifier SoundShotModifier;
@@ -211,7 +226,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.numberOfProjectiles_mult = 0;
             this.gunStatModifier.numberOfProjectiles_add = 1;
             this.gunStatModifier.damage_mult = 0f;
-            this.gunStatModifier.damage_add = 1000f;
+            this.gunStatModifier.damage_add = 0.001f; // damage can't be 0 since HealthHandler::DoDamage would instantly return
             this.gunStatModifier.attackSpeed_mult = 0f;
             this.gunStatModifier.attackSpeed_add = 5f;
             this.gunAmmoStatModifier.reloadTimeMultiplier_mult = 0f;
@@ -219,6 +234,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.gravity_mult = 0f;
             this.gunStatModifier.projectileSpeed_mult = 0f;
             this.gunStatModifier.projectileSpeed_add = 100f;
+
+            this.characterStatModifiersModifier.objectsToAddToPlayer = new List<GameObject>() { A_AWPPrefab.AWPDealtDamageEffect };
 
             base.OnStart();
         }
@@ -249,6 +266,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             // restore originals
             this.gun.objectsToSpawn = this.OriginalObjectsToSpawn.Concat(this.gun.objectsToSpawn).ToArray();
             this.gun.dontAllowAutoFire = this.data.currentCards.Any(c => (c.gameObject?.GetComponent<Gun>()?.dontAllowAutoFire ?? false));
+            this.gun.unblockable = this.OriginalUnblockable;
             this.gun.soundGun.RemoveSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.RemoveSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
@@ -263,6 +281,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject barrel = spring.transform.GetChild(3).gameObject;
+            spring.GetComponentInChildren<SpriteRenderer>().color = this.player.GetTeamColors().color;
+            barrel.GetComponentInChildren<SpriteRenderer>().color = this.player.GetTeamColors().color;
             barrel.transform.localScale = this.OriginalScale;
             RightLeftMirrorSpring mirrorSpring = barrel.GetComponent<RightLeftMirrorSpring>();
             mirrorSpring.leftPos = this.OriginalLeftPos;
@@ -286,10 +306,12 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             // save originals
             this.OriginalObjectsToSpawn = this.gun.objectsToSpawn.ToList();
+            this.OriginalUnblockable = this.gun.unblockable;
 
             // disable auto-fire (requires demonicpactpatch to reset properly)
             this.gun.dontAllowAutoFire = true; // will be reset by reading all of the cards the player has when this is removed
             this.gun.objectsToSpawn = new ObjectsToSpawn[] { };
+            this.gun.unblockable = true; // can't block the awp
             this.gun.soundGun.AddSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.AddSoundImpactModifier(this.SoundImpactModifier);
             this.gun.soundGun.RefreshSoundModifiers();
@@ -297,6 +319,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject barrel = spring.transform.GetChild(3).gameObject;
+            spring.GetComponentInChildren<SpriteRenderer>().color = GM_TRT.DullWhite;
+            barrel.GetComponentInChildren<SpriteRenderer>().color = GM_TRT.DullWhite;
             this.OriginalScale = barrel.transform.localScale;
             barrel.transform.localScale = Vector3.Scale(new Vector3(BarrelLength, BarrelWidth, 1f), this.OriginalScale);
             RightLeftMirrorSpring mirrorSpring = barrel.GetComponent<RightLeftMirrorSpring>();
@@ -310,6 +334,36 @@ namespace GameModeCollection.GameModes.TRT.Cards
             // recalculate localzoom
             if (ControllerManager.CurrentCameraControllerID != MyCameraController.ControllerID) { return; }
             ((MyCameraController)ControllerManager.CurrentCameraController).ResetZoomLevel(this.player);
+        }
+    }
+    public class AWPDealtDamageEffect : DealtDamageEffect
+    {
+        // awp instakills players. always.
+
+        const float DMG = 1000f;
+
+        public override void DealtDamage(Vector2 damage, bool selfDamage, Player damagedPlayer = null)
+        {
+            if (damagedPlayer is null) { return; }
+            if (damage.sqrMagnitude > 0.01f) { return; } // detect if the player shot a bullet and then very quickly switched to the awp
+            if (!this.transform.root.GetComponent<Player>().data.view.IsMine) { return; }
+
+            Player ownPlayer = this.transform.root.GetComponent<Player>();
+
+            NetworkingManager.RPC(typeof(AWPDealtDamageEffect), nameof(RPCA_KillPlayer), damage, damagedPlayer.playerID, ownPlayer.playerID);
+        }
+        [UnboundRPC]
+        private static void RPCA_KillPlayer(Vector2 damage, int playerIDToKill, int killingPlayerID)
+        {
+            // instakill, no revives
+            Player playerToKill = PlayerManager.instance.GetPlayerWithID(playerIDToKill);
+            Player killingPlayer = PlayerManager.instance.GetPlayerWithID(killingPlayerID);
+            if (playerToKill is null) { return; }
+            playerToKill.data.lastSourceOfDamage = killingPlayer;
+            if (playerToKill.data.view.IsMine)
+            {
+                playerToKill.data.view.RPC("RPCA_Die", RpcTarget.All, DMG*damage.normalized);
+            }
         }
     }
 }

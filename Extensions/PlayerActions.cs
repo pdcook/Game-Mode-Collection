@@ -16,10 +16,12 @@ namespace GameModeCollection.Extensions
         public PlayerAction trt_radio_innocent_mod_item4; // reports "<playerColor> is innocent."
         public PlayerAction trt_shop_mod_item5; // open the TRT shop
         public PlayerAction discard_last_card_mod_item0; // discards the player's last card
+        public PlayerAction trt_traitor_chat_ptt; // traitor chat push-to-talk key
         public bool try_discard = false;
         public bool try_interact_was_pressed = false;
         public bool try_interact_is_pressed = false;
         public bool try_interact_was_released = false;
+        public bool trt_traitor_ptt_is_held = false;
         public PlayerAction modifier; // for controller only, when this button is held it changes the actions of many of the controller buttons
 
         // TRT items (unassigned on controller, accessible through modifier combos only)
@@ -65,6 +67,7 @@ namespace GameModeCollection.Extensions
         public static bool InteractIsPressed(this PlayerActions playerActions) => playerActions.GetAdditionalData().try_interact_is_pressed;
         public static bool InteractWasReleased(this PlayerActions playerActions) => playerActions.GetAdditionalData().try_interact_was_released;
         public static bool Discard(this PlayerActions playerActions) => playerActions.GetAdditionalData().try_discard;
+        public static bool TraitorPTTIsHeld(this PlayerActions playerActions) => playerActions.GetAdditionalData().trt_traitor_ptt_is_held;
 
         public static bool ItemIsPressed(this PlayerActions playerActions, int itemNum)
         {

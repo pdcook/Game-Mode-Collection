@@ -20,6 +20,9 @@ namespace GameModeCollection.Patches
             __instance.GetAdditionalData().interact = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Interact" });
+            __instance.GetAdditionalData().trt_traitor_chat_ptt = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
+                                    BindingFlags.Instance | BindingFlags.InvokeMethod |
+                                    BindingFlags.NonPublic, null, __instance, new object[] { "Traitor Chat Push-To-Talk" });
             __instance.GetAdditionalData().trt_radio_imwith_mod_item1 = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Radio \"I'm with ___.\" (TRT) [Mod: Item 1]" });
@@ -103,6 +106,8 @@ namespace GameModeCollection.Patches
             __result.GetAdditionalData().trt_inspect_body.AddDefaultBinding(Key.E);
 
             __result.GetAdditionalData().interact.AddDefaultBinding(Key.F);
+
+            __result.GetAdditionalData().trt_traitor_chat_ptt.AddDefaultBinding(Key.V);
 
             __result.GetAdditionalData().trt_radio_imwith_mod_item1.AddDefaultBinding(Key.X);
 

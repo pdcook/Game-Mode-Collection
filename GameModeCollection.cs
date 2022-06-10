@@ -17,6 +17,8 @@ using UnboundLib.GameModes;
 using UnboundLib.Utils.UI;
 using UnityEngine;
 using PlayerCustomizationUtils;
+using RoundsVC;
+using GameModeCollection.GameModes.TRT.VoiceChat;
 
 namespace GameModeCollection
 {
@@ -31,6 +33,7 @@ namespace GameModeCollection
     [BepInDependency("com.dk.rounds.plugins.zerogpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.willuwontu.rounds.itemshops", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.pykess.rounds.GMCObjects", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("pykess-and-root.plugins.rounds.vc", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ModId, ModName, Version)]
     [BepInProcess("Rounds.exe")]
     public class GameModeCollection : BaseUnityPlugin
@@ -158,6 +161,10 @@ namespace GameModeCollection
             CustomCard.BuildCard<JesterEmulatorCard>(JesterEmulatorCard.BuildCardCallback);
             CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.BuildCardCallback);
             CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.BuildCardCallback);
+            RoundsVC.VoiceChat.AddChannel(new ProximityChannel());
+            RoundsVC.VoiceChat.AddChannel(new TraitorChannel());
+            RoundsVC.VoiceChat.AddChannel(new IntercomChannel());
+            RoundsVC.VoiceChat.AddChannel(new SpectatorChannel());
 
             // add detective hat character item
             GameObject detectiveHat = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Detective_Hat"));
