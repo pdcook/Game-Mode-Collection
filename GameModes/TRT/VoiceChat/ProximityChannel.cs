@@ -16,7 +16,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override AudioFilters AudioFilters { get; } = AudioFilters.None;
 
         // volume is a function of distance, walls between the players, max distance, and min distance
-        private const float MinDistance = 15f;
+        private const float MinDistance = 10f;
         private const float MaxDistance = 60f;
         private const float CutoffDistance = 60f; // distance at which players cannot hear eachother at all
         private const float WallPenaltyPercent = 0.5f;

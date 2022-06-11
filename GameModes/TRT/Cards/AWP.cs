@@ -174,6 +174,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
     {
         private const float BarrelLength = 5f;
         private const float BarrelWidth = 0.5f;
+        internal const float Damage = 12.3456f;
 
         private Vector3 OriginalScale;
         private Vector3 OriginalRightPos;
@@ -226,7 +227,9 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.numberOfProjectiles_mult = 0;
             this.gunStatModifier.numberOfProjectiles_add = 1;
             this.gunStatModifier.damage_mult = 0f;
-            this.gunStatModifier.damage_add = 0.001f; // damage can't be 0 since HealthHandler::DoDamage would instantly return
+            this.gunStatModifier.damage_add = Damage;
+            this.gunStatModifier.projectileSize_mult = 0f;
+            this.gunStatModifier.projectileSize_add = -0.99f;
             this.gunStatModifier.attackSpeed_mult = 0f;
             this.gunStatModifier.attackSpeed_add = 5f;
             this.gunAmmoStatModifier.reloadTimeMultiplier_mult = 0f;
@@ -341,11 +344,12 @@ namespace GameModeCollection.GameModes.TRT.Cards
         // awp instakills players. always.
 
         const float DMG = 1000f;
+        const float EPS = 0.001f;
 
         public override void DealtDamage(Vector2 damage, bool selfDamage, Player damagedPlayer = null)
         {
             if (damagedPlayer is null) { return; }
-            if (damage.sqrMagnitude > 0.01f) { return; } // detect if the player shot a bullet and then very quickly switched to the awp
+            if (UnityEngine.Mathf.Abs(damage.magnitude/55f - AWPGun.Damage) > EPS) { return; } // detect if the player shot a bullet and then very quickly switched to the awp
             if (!this.transform.root.GetComponent<Player>().data.view.IsMine) { return; }
 
             Player ownPlayer = this.transform.root.GetComponent<Player>();
