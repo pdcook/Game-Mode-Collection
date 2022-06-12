@@ -156,6 +156,8 @@
     <Compile Include="GameModes\TRT\Cards\Disguiser.cs" />
     <Compile Include="GameModes\TRT\Cards\JesterEmulator.cs" />
     <Compile Include="GameModes\TRT\Cards\Silencer.cs" />
+    <Compile Include="GameModes\TRT\RoundEvents\IRoundEvent.cs" />
+    <Compile Include="GameModes\TRT\RoundEvents\RoundEvent.cs" />
     <Compile Include="GameModes\TRT\RoundSummary.cs" />
     <Compile Include="GameModes\TRT\VoiceChat\IntercomChannel.cs" />
     <Compile Include="GameModes\TRT\VoiceChat\TraitorChannel.cs" />
@@ -312,9 +314,7 @@
   <ItemGroup>
     <EmbeddedResource Include="AssetsEmbedded\trt_card_art" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="GameModes\TRT\RoundEvents\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
          Other similar extension points exist, see Microsoft.Common.targets.
