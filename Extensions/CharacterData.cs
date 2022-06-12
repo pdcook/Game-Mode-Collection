@@ -26,6 +26,10 @@ namespace GameModeCollection.Extensions
         {
             return additionalData.GetOrCreateValue(instance);
         }
+        public static string NickName(this CharacterData instance)
+        {
+            return instance?.view?.Owner?.NickName ?? "Player";
+        }
         public static string Reputability(this CharacterData instance)
         {
             return string.IsNullOrEmpty(instance.GetData().forcedReputability) ? RoleManager.GetReputability(instance.player) : instance.GetData().forcedReputability;

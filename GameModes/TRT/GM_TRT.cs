@@ -142,6 +142,7 @@ namespace GameModeCollection.GameModes
                     if (!(p?.data?.view?.IsMine ?? false)) { return; }
                     p.data.view.RPC("RPCA_Die", RpcTarget.All, Vector2.up);
                     TRTHandler.SendChat(null, "You have been automatically slain for having too low karma. Avoid killing your teammates.", true);
+                    TRTHandler.SendChat(null, $"{p.data.NickName()} was slain for having low karma.", false);
                 }
             });
         }
