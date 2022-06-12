@@ -1,21 +1,24 @@
 ﻿using GameModeCollection.Extensions;
 using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
-using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.GameModes.TRT.Controllers;
-using Photon.Pun;
+using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.GameModes.TRT.VoiceChat;
+using GameModeCollection.GameModes.TRT.RoundEvents;
+using MapEmbiggener.Controllers;
+using RoundsVC;
 using RWF;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnboundLib;
+using UnboundLib.Cards;
 using UnboundLib.Extensions;
 using UnboundLib.GameModes;
 using UnboundLib.Networking;
-using UnboundLib.Utils;
-using UnityEngine;
-using MapsExt;
 using UnboundLib.Utils.UI;
-using TMPro;
+using UnityEngine;
 
 namespace GameModeCollection.GameModeHandlers
 {
@@ -41,6 +44,52 @@ namespace GameModeCollection.GameModeHandlers
         private static float TimeLastSent = -1f;
 
         public override UISettings UISettings => new UISettings("<size=125%>T</size>rouble in <size=125%>R</size>OUNDS <size=125%>T</size>own.\nGuide available at\nhttps://pdcook.github.io/Game-Mode-Collection/trt.html\nRequires at least 4 players to start.");
+
+        public static void SetupControllers()
+        {
+            ControllerManager.AddMapController(TRTMapController.ControllerID, new TRTMapController());
+            ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
+        }
+        public static void BuildCards()
+        {
+            CustomCard.BuildCard<C4Card>(C4Card.BuildCardCallback);
+            CustomCard.BuildCard<AWPCard>(AWPCard.BuildCardCallback);
+            CustomCard.BuildCard<VSSCard>(VSSCard.BuildCardCallback);
+            CustomCard.BuildCard<ClawCard>(ClawCard.BuildCardCallback);
+            CustomCard.BuildCard<KnifeCard>(KnifeCard.BuildCardCallback);
+            CustomCard.BuildCard<RadarCard>(RadarCard.BuildCardCallback);
+            CustomCard.BuildCard<RifleCard>(RifleCard.BuildCardCallback);
+            CustomCard.BuildCard<DefuserCard>(DefuserCard.BuildCardCallback);
+            CustomCard.BuildCard<GrenadeCard>(GrenadeCard.BuildCardCallback);
+            CustomCard.BuildCard<SilencerCard>(SilencerCard.BuildCardCallback);
+            CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.BuildCardCallback);
+            CustomCard.BuildCard<DisguiserCard>(DisguiserCard.BuildCardCallback);
+            CustomCard.BuildCard<HandcuffsCard>(HandcuffsCard.BuildCardCallback);
+            CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.BuildCardCallback);
+            CustomCard.BuildCard<DeathStationCard>(DeathStationCard.BuildCardCallback);
+            CustomCard.BuildCard<SmokeGrenadeCard>(SmokeGrenadeCard.BuildCardCallback);
+            CustomCard.BuildCard<HealthStationCard>(HealthStationCard.BuildCardCallback);
+            CustomCard.BuildCard<JesterEmulatorCard>(JesterEmulatorCard.BuildCardCallback);
+            CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.BuildCardCallback);
+            CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.BuildCardCallback);
+        }
+        public static void SetupRoundsVC()
+        {
+            RoundsVC.VoiceChat.AddChannel(new TRTProximityChannel());
+            RoundsVC.VoiceChat.AddChannel(new TRTTraitorChannel());
+            RoundsVC.VoiceChat.AddChannel(new TRTIntercomChannel());
+            RoundsVC.VoiceChat.AddChannel(new TRTSpectatorChannel());
+        }
+        public static void SetupRoundSummary()
+        {
+            RoundSummary.RegisterEvent(BlankEvent.ID, new BlankEvent());
+            RoundSummary.RegisterEvent(SlayEvent.ID, new SlayEvent());
+            RoundSummary.RegisterEvent(SuicideEvent.ID, new SuicideEvent());
+            RoundSummary.RegisterEvent(ReviveEvent.ID, new ReviveEvent());
+            RoundSummary.RegisterEvent(SwapEvent.ID, new SwapEvent());
+            RoundSummary.RegisterEvent(KilledChaosEvent.ID, new KilledChaosEvent());
+            RoundSummary.RegisterEvent(GoldenDeagleEvent.ID, new GoldenDeagleEvent());
+        }
 
         public TRTHandler() : base(gameModeId: GameModeID)
         {

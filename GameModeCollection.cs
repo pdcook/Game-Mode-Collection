@@ -140,32 +140,10 @@ namespace GameModeCollection
             GameModeManager.AddHandler<GM_Dodgeball>(DodgeballHandler.GameModeID, new DodgeballHandler());
             GameModeManager.AddHandler<GM_Dodgeball>(TeamDodgeballHandler.GameModeID, new TeamDodgeballHandler());
             GameModeManager.AddHandler<GM_TRT>(TRTHandler.GameModeID, new TRTHandler());
-            ControllerManager.AddMapController(TRTMapController.ControllerID, new TRTMapController());
-            ControllerManager.AddBoundsController(TRTBoundsController.ControllerID, new TRTBoundsController());
-            CustomCard.BuildCard<C4Card>(C4Card.BuildCardCallback);
-            CustomCard.BuildCard<AWPCard>(AWPCard.BuildCardCallback);
-            CustomCard.BuildCard<VSSCard>(VSSCard.BuildCardCallback);
-            CustomCard.BuildCard<ClawCard>(ClawCard.BuildCardCallback);
-            CustomCard.BuildCard<KnifeCard>(KnifeCard.BuildCardCallback);
-            CustomCard.BuildCard<RadarCard>(RadarCard.BuildCardCallback);
-            CustomCard.BuildCard<RifleCard>(RifleCard.BuildCardCallback);
-            CustomCard.BuildCard<DefuserCard>(DefuserCard.BuildCardCallback);
-            CustomCard.BuildCard<GrenadeCard>(GrenadeCard.BuildCardCallback);
-            CustomCard.BuildCard<SilencerCard>(SilencerCard.BuildCardCallback);
-            CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.BuildCardCallback);
-            CustomCard.BuildCard<DisguiserCard>(DisguiserCard.BuildCardCallback);
-            CustomCard.BuildCard<HandcuffsCard>(HandcuffsCard.BuildCardCallback);
-            CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.BuildCardCallback);
-            CustomCard.BuildCard<DeathStationCard>(DeathStationCard.BuildCardCallback);
-            CustomCard.BuildCard<SmokeGrenadeCard>(SmokeGrenadeCard.BuildCardCallback);
-            CustomCard.BuildCard<HealthStationCard>(HealthStationCard.BuildCardCallback);
-            CustomCard.BuildCard<JesterEmulatorCard>(JesterEmulatorCard.BuildCardCallback);
-            CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.BuildCardCallback);
-            CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.BuildCardCallback);
-            RoundsVC.VoiceChat.AddChannel(new ProximityChannel());
-            RoundsVC.VoiceChat.AddChannel(new TraitorChannel());
-            RoundsVC.VoiceChat.AddChannel(new IntercomChannel());
-            RoundsVC.VoiceChat.AddChannel(new SpectatorChannel());
+            TRTHandler.SetupControllers();
+            TRTHandler.BuildCards();
+            TRTHandler.SetupRoundsVC();
+            TRTHandler.SetupRoundSummary();
 
             // add detective hat character item
             GameObject detectiveHat = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_Detective_Hat"));

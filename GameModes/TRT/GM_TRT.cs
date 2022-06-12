@@ -4,6 +4,7 @@ using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.GameModes.TRT.Controllers;
 using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.GameModes.TRT.RoundEvents;
 using GameModeCollection.Objects;
 using GameModeCollection.Objects.GameModeObjects.TRT;
 using GameModeCollection.Utils;
@@ -143,6 +144,7 @@ namespace GameModeCollection.GameModes
                     p.data.view.RPC("RPCA_Die", RpcTarget.All, Vector2.up);
                     TRTHandler.SendChat(null, "You have been automatically slain for having too low karma. Avoid killing your teammates.", true);
                     TRTHandler.SendChat(null, $"{p.data.NickName()} was slain for having low karma.", false);
+                    RoundSummary.LogEvent(SlayEvent.ID, p.playerID);
                 }
             });
         }
@@ -509,6 +511,9 @@ namespace GameModeCollection.GameModes
             // reset karma
             PlayerManager.instance.ResetKarma();
 
+            // reset round summary
+            RoundSummary.ResetAll();
+
             TimeHandler.instance.DoSpeedUp();
 
             yield return new WaitForSecondsRealtime(1f);
@@ -537,6 +542,9 @@ namespace GameModeCollection.GameModes
 
             // players get karma reset on new round
             PlayerManager.instance.ResetKarma();
+
+            // reset round summary
+            RoundSummary.ResetAll();
 
             // Wait for MapManager to set all players to playing after map transition
             while (PlayerManager.instance.players.ToList().Any(p => !(bool)p.data.isPlaying))
@@ -573,6 +581,10 @@ namespace GameModeCollection.GameModes
             yield return new WaitWhile(() => this.prebattle && this.gracePeriod);
 
             yield return this.SyncBattleStart();
+
+            // reset round summary
+            RoundSummary.ResetAll();
+
             this.HideAllPlayerFaces();
 
             this.clocktime = RoundTime;
@@ -596,6 +608,8 @@ namespace GameModeCollection.GameModes
 
             // reset players completely
             PlayerManager.instance.InvokeMethod("ResetCharacters");
+            // reset round summary
+            RoundSummary.ResetAll();
 
             this.SetAllPlayersFOV();
             this.HideAllPlayerFaces();
@@ -635,6 +649,10 @@ namespace GameModeCollection.GameModes
             yield return new WaitWhile(() => this.prebattle && this.gracePeriod);
 
             yield return this.SyncBattleStart();
+
+            // reset round summary
+            RoundSummary.ResetAll();
+
             this.HideAllPlayerFaces();
 
             this.clocktime = RoundTime;
@@ -658,6 +676,9 @@ namespace GameModeCollection.GameModes
             this.prebattle = false;
             this.gracePeriod = false;
             this.clocktime = 0f;
+
+            // show round summary
+            RoundSummary.LogOutRoundEnd();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundEnd);
@@ -718,6 +739,9 @@ namespace GameModeCollection.GameModes
             this.prebattle = false;
             this.gracePeriod = false;
             this.clocktime = 0f;
+
+            // show round summary
+            RoundSummary.LogOutRoundEnd();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
 

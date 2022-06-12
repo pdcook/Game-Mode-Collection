@@ -49,7 +49,6 @@ namespace GameModeCollection.Patches
                 Player localPlayer = PlayerManager.instance.GetLocalPlayer();
                 if (localPlayer is null || localPlayer.data.dead || CanSeePlayer(localPlayer, soundPos))
                 {
-                    GameModeCollection.Log("PLAY SOUND");
                     return true;
                 }
                 else

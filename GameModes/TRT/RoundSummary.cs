@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System;
 using GameModeCollection.GameModes.TRT.RoundEvents;
+using GameModeCollection.Extensions;
 namespace GameModeCollection.GameModes.TRT
 {
     public static class RoundSummary
@@ -102,6 +103,16 @@ namespace GameModeCollection.GameModes.TRT
             }
             return 0;
         }
+        // damage from each playerID to themselves (DamageDealtToSelf[playerID] = amount)
+        private static Dictionary<int, float> DamageDealtToSelf = new Dictionary<int, float>() { };
+        public static float GetPlayerDamageDealtToSelf(int playerID)
+        {
+            if (DamageDealtToSelf.ContainsKey(playerID))
+            {
+                return DamageDealtToSelf[playerID];
+            }
+            return 0;
+        }
 
         // custom events by key (Events[playerID][key] = object)
         private static Dictionary<int, Dictionary<string, IRoundEvent>> Events = new Dictionary<int, Dictionary<string, IRoundEvent>>() { };
@@ -120,9 +131,9 @@ namespace GameModeCollection.GameModes.TRT
         {
             if (Events.ContainsKey(playerID))
             {
-                return Events[playerID].Values.OrderByDescending(x => x.Priority).FirstOrDefault();
+                return Events[playerID].Values.OrderByDescending(x => x.Priority).FirstOrDefault() ?? (IRoundEvent)(new BlankEvent());
             }
-            return null;
+            return (IRoundEvent)(new BlankEvent());
         }
 
         public static void ResetAll()
@@ -134,6 +145,7 @@ namespace GameModeCollection.GameModes.TRT
             DamageTaken.Clear();
             DamageDealtToEnemies.Clear();
             DamageDealtToAllies.Clear();
+            DamageDealtToSelf.Clear();
             Events.Clear();
         }
 
@@ -172,6 +184,19 @@ namespace GameModeCollection.GameModes.TRT
                     else
                     {
                         DamageDealtToAllies.Add(source.playerID, damage);
+                    }
+
+                    // log self-damage
+                    if (source.playerID == receiver.playerID)
+                    {
+                        if (DamageDealtToSelf.ContainsKey(source.playerID))
+                        {
+                            DamageDealtToSelf[source.playerID] += damage;
+                        }
+                        else
+                        {
+                            DamageDealtToSelf.Add(source.playerID, damage);
+                        }
                     }
                 }
                 else
@@ -224,24 +249,76 @@ namespace GameModeCollection.GameModes.TRT
                         TeamKills.Add(source.playerID, new List<int>() { receiver.playerID });
                     }
                 }
+
+                // log suicides
+                if (source.playerID == receiver.playerID)
+                {
+                    LogEvent(SuicideEvent.ID, source.playerID);
+                }
             }
         }
-        public static void LogEvent(string key, int playerID, params object[] args)
+        public static void LogEvent(string ID, int playerID, params object[] args)
         {
-            if (_CustomEvents.ContainsKey(key))
+            if (_CustomEvents.ContainsKey(ID))
             {
                 if (!Events.ContainsKey(playerID))
                 {
                     Events.Add(playerID, new Dictionary<string, IRoundEvent>());
                 }
 
-                if (!Events[playerID].ContainsKey(key))
+                if (!Events[playerID].ContainsKey(ID))
                 {
-                    Events[playerID].Add(key, (IRoundEvent)Activator.CreateInstance(_CustomEvents[key].GetType()));
+                    Events[playerID].Add(ID, (IRoundEvent)Activator.CreateInstance(_CustomEvents[ID].GetType()));
                 }
 
-                Events[playerID][key].LogEvent(playerID, args);
+                try
+                {
+                    Events[playerID][ID].LogEvent(playerID, args);
+                }
+                catch (Exception e)
+                {
+                    GameModeCollection.LogError($"[TRT Round Summary] Failed to log event {ID} for player {playerID}. Full exception follows.");
+                    GameModeCollection.LogError(e);
+                }
             }
+        }
+        public const string KILLS_KEY = "Kills";
+        public const string TEAM_KILLS_KEY = "TeamKills";
+        public const string ENEMY_KILLS_KEY = "EnemyKills";
+        public const string DAMAGE_DEALT_KEY = "DamageDealt";
+        public const string DAMAGE_TAKEN_KEY = "DamageTaken";
+        public const string DAMAGE_DEALT_TO_ENEMIES_KEY = "DamageDealtToEnemies";
+        public const string DAMAGE_DEALT_TO_ALLIES_KEY = "DamageDealtToAllies";
+        public const string DAMAGE_DEALT_TO_SELF_KEY = "DamageDealtToSelf";
+        public const string EVENTS_KEY = "Events";
+
+        public static Dictionary<string, string> GetPlayerRoundSummary(int playerID)
+        {
+            return new Dictionary<string, string>()
+            {
+                { KILLS_KEY, GetPlayerKills(playerID).Count().ToString("N0") },
+                { TEAM_KILLS_KEY, GetPlayerTeamKills(playerID).Count().ToString("N0") },
+                { ENEMY_KILLS_KEY, GetPlayerEnemyKills(playerID).Count().ToString("N0") },
+                { DAMAGE_DEALT_KEY, GetPlayerDamageDealt(playerID).ToString("N0") },
+                { DAMAGE_TAKEN_KEY, GetPlayerDamageTaken(playerID).ToString("N0") },
+                { DAMAGE_DEALT_TO_ENEMIES_KEY, GetPlayerDamageDealtToEnemies(playerID).ToString("N0") },
+                { DAMAGE_DEALT_TO_ALLIES_KEY, GetPlayerDamageDealtToAllies(playerID).ToString("N0") },
+                { DAMAGE_DEALT_TO_SELF_KEY, GetPlayerDamageDealtToSelf(playerID).ToString("N0") },
+                { EVENTS_KEY, GetPlayerHighestPriorityEvent(playerID).EventMessage() }
+            };
+        }
+
+        public static void LogOutRoundEnd()
+        {
+            if (!GameModeCollection.DEBUG) { return; }
+            PlayerManager.instance.ForEachPlayer(p =>
+            {
+                GameModeCollection.Log($"PLAYER {p.playerID} ROUND SUMMARY");
+                foreach (KeyValuePair<string, string> kv in GetPlayerRoundSummary(p.playerID))
+                {
+                    GameModeCollection.Log($"P{p.playerID} | {kv.Key}: {kv.Value}");
+                }
+            });
         }
     }
 }

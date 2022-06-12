@@ -1,20 +1,32 @@
-﻿using HarmonyLib;
-using UnityEngine;
-using UnboundLib;
-using UnboundLib.GameModes;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Linq;
-using System.Collections.Generic;
-using GameModeCollection.Extensions;
+﻿using GameModeCollection.Extensions;
 using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes.TRT;
-using GameModeCollection.GameModes.TRT.Roles;
 using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.GameModes.TRT.Roles;
+using GameModeCollection.GameModes.TRT.RoundEvents;
+using HarmonyLib;
 using Sonigon;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Emit;
+using UnboundLib;
+using UnboundLib.GameModes;
+using UnityEngine;
 
 namespace GameModeCollection.Patches
-{   
+{
+    [HarmonyPriority(Priority.Last)]
+    [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
+    class HealthHandler_Patch_DoDamage_TRT_RoundSummary
+    {
+        // postfix to log damage in TRT
+        private static void Postfix(HealthHandler __instance, CharacterData ___data, Vector2 damage, GameObject damagingWeapon = null, Player damagingPlayer = null)
+        {
+            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
+
+            RoundSummary.LogDamage(damagingPlayer, ___data.player, damage.magnitude);
+        }
+    }
     [HarmonyPriority(Priority.Normal)]
     [HarmonyPatch(typeof(HealthHandler), "DoDamage")]
     class HealthHandler_Patch_DoDamage_TRT_Claw
@@ -146,6 +158,18 @@ namespace GameModeCollection.Patches
             return true;
         }
     }
+    [HarmonyPriority(Priority.Last)]
+    [HarmonyPatch(typeof(HealthHandler), nameof(HealthHandler.Revive))]
+    class HealthHandler_Patch_Revive_TRT_RoundSummary
+    {
+        // postfix to log revives in TRT
+        private static void Postfix(HealthHandler __instance, CharacterData ___data)
+        {
+            if (!___data.dead || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
+
+            RoundSummary.LogEvent(ReviveEvent.ID, ___data.player.playerID);
+        }
+    }
     [HarmonyPatch(typeof(HealthHandler), nameof(HealthHandler.Revive))]
     class HealthHandler_Patch_Revive
     {
@@ -178,6 +202,19 @@ namespace GameModeCollection.Patches
             }
         }
     }
+    [HarmonyPriority(Priority.Last)]
+    [HarmonyPatch(typeof(HealthHandler), "RPCA_Die_Phoenix")]
+    class HealthHandler_Patch_RPCA_Die_Phoenix_TRT_RoundSummary
+    {
+        // prefix to log kills in TRT
+        // must be a prefix since ___data.dead will always be true in the postfix
+        private static void Prefix(HealthHandler __instance, CharacterData ___data)
+        {
+            if (___data.dead || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
+
+            RoundSummary.LogKill(___data.lastSourceOfDamage, ___data.player);
+        }
+    }
     [HarmonyPatch(typeof(HealthHandler), "RPCA_Die_Phoenix")]
     class HealthHandler_Patch_RPCA_Die_Phoenix
     {
@@ -194,6 +231,19 @@ namespace GameModeCollection.Patches
                 // hide gun on death
                 ((CharacterData)__instance.GetFieldValue("data")).weaponHandler.gameObject.SetActive(false);
             }
+        }
+    }
+    [HarmonyPriority(Priority.Last)]
+    [HarmonyPatch(typeof(HealthHandler), "RPCA_Die")]
+    class HealthHandler_Patch_RPCA_Die_TRT_RoundSummary
+    {
+        // postfix to log kills in TRT
+        // must be a prefix since ___data.dead will always be true in the postfix
+        private static void Prefix(HealthHandler __instance, CharacterData ___data)
+        {
+            if (___data.dead || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
+
+            RoundSummary.LogKill(___data.lastSourceOfDamage, ___data.player);
         }
     }
     [HarmonyPatch(typeof(HealthHandler), "RPCA_Die")]

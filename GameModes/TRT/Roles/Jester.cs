@@ -1,6 +1,7 @@
 ﻿using UnboundLib;
 using System.Linq;
 using UnityEngine;
+using GameModeCollection.GameModes.TRT.RoundEvents;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class JesterRoleHandler : IRoleHandler
@@ -83,6 +84,7 @@ namespace GameModeCollection.GameModes.TRT.Roles
             if (killingPlayer != null && killingPlayer.playerID != this.GetComponent<Player>().playerID)
             {
                 this.hasBeenKilled = true;
+                RoundSummary.LogEvent(KilledChaosEvent.ID, killingPlayer.playerID, Jester.RoleAppearance);
             }
         }
 

@@ -4,6 +4,6 @@
     {
         int Priority { get; }
         void LogEvent(int playerID, params object[] args);
-        string EventText();
+        string EventMessage();
     }
 }

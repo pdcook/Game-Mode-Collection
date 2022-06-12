@@ -7,7 +7,7 @@ using RoundsVC.VoiceChannels;
 
 namespace GameModeCollection.GameModes.TRT.VoiceChat
 {
-    public class ProximityChannel : VoiceChannel
+    public class TRTProximityChannel : VoiceChannel
     {
         public override int ChannelID { get; } = 601; // TRT channels start at 600
         public override int Priority { get; } = 101; // TRT priorities start at 100

@@ -5,6 +5,7 @@ using System.Linq;
 using GameModeCollection.GameModeHandlers;
 using GameModeCollection.Extensions;
 using System.Collections;
+using GameModeCollection.GameModes.TRT.RoundEvents;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
     public class SwapperRoleHandler : IRoleHandler
@@ -68,6 +69,10 @@ namespace GameModeCollection.GameModes.TRT.Roles
             ITRT_Role killingPlayerRole = RoleManager.GetPlayerRole(killingPlayer);
             string roleID = RoleManager.GetRoleID(killingPlayerRole);
             IRoleHandler roleHandler = RoleManager.GetHandler(roleID);
+
+            // log the swap
+            RoundSummary.LogEvent(SwapEvent.ID, this.GetComponent<Player>().playerID, killingPlayerRole.Appearance);
+            RoundSummary.LogEvent(KilledChaosEvent.ID, swappedID, Swapper.RoleAppearance);
 
             GameModeCollection.instance.StartCoroutine(Swapper.IDoSwapFromSwapper(this.GetComponent<Player>(), roleHandler, killingPlayerRole));
             GameModeCollection.instance.StartCoroutine(Swapper.IDoSwapToSwapper(killingPlayer));

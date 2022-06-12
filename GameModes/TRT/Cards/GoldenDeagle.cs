@@ -2,6 +2,7 @@
 using UnityEngine;
 using GameModeCollection.Extensions;
 using GameModeCollection.Objects.GameModeObjects.TRT;
+using GameModeCollection.GameModes.TRT.RoundEvents;
 using GameModeCollection.Objects;
 using UnboundLib.Networking;
 using UnboundLib;
@@ -273,7 +274,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             if (selfDamage || (damagedPlayer.playerID == ownPlayer.playerID))
             {
-                NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_KillPlayer), damage, ownPlayer.playerID, ownPlayer.playerID);
+                NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_GoldenGunKillPlayer), damage, ownPlayer.playerID, ownPlayer.playerID, (byte)GoldenDeagleEvent.Result.Suicide, ownPlayer.playerID);
             }
             else
             {
@@ -283,21 +284,18 @@ namespace GameModeCollection.GameModes.TRT.Cards
                     case null:
                         return;
                     case Alignment.Traitor:
-                        // instakill
-                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_KillPlayer), damage, damagedPlayer.playerID, ownPlayer.playerID);
-                        break;
                     case Alignment.Killer:
                         // instakill
-                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_KillPlayer), damage, damagedPlayer.playerID, ownPlayer.playerID);
+                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_GoldenGunKillPlayer), damage, damagedPlayer.playerID, ownPlayer.playerID, (byte)GoldenDeagleEvent.Result.Success, damagedPlayer.playerID);
                         break;
                     case Alignment.Innocent:
                         // suicide
-                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_KillPlayer), damage, ownPlayer.playerID, ownPlayer.playerID);
+                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_GoldenGunKillPlayer), damage, ownPlayer.playerID, ownPlayer.playerID, (byte)GoldenDeagleEvent.Result.Fail, damagedPlayer.playerID);
                         break;
                     case Alignment.Chaos:
                         // both players die by suicide
-                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_KillPlayer), damage, ownPlayer.playerID, ownPlayer.playerID);
-                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_KillPlayer), damage, damagedPlayer.playerID, damagedPlayer.playerID);
+                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_GoldenGunKillPlayer), damage, ownPlayer.playerID, ownPlayer.playerID, (byte)GoldenDeagleEvent.Result.Chaos, damagedPlayer.playerID);
+                        NetworkingManager.RPC(typeof(GoldenDeagleDealtDamageEffect), nameof(RPCA_GoldenGunKillPlayer), damage, damagedPlayer.playerID, damagedPlayer.playerID, (byte)GoldenDeagleEvent.Result.None, damagedPlayer.playerID);
                         break;
                     default:
                         break;
@@ -306,12 +304,33 @@ namespace GameModeCollection.GameModes.TRT.Cards
             }
         }
         [UnboundRPC]
-        private static void RPCA_KillPlayer(Vector2 damage, int playerIDToKill, int killingPlayerID)
+        private static void RPCA_GoldenGunKillPlayer(Vector2 damage, int playerIDToKill, int killingPlayerID, byte goldenGunEventResult, int targetPlayerID)
         {
+            GameModeCollection.Log("GoldenDeagleDealtDamageEffect.RPCA_GoldenGunKillPlayer");
             // instakill, no revives
             Player playerToKill = PlayerManager.instance.GetPlayerWithID(playerIDToKill);
             Player killingPlayer = PlayerManager.instance.GetPlayerWithID(killingPlayerID);
             if (playerToKill is null) { return; }
+
+            // for logging
+            
+            Player targetPlayer = PlayerManager.instance.GetPlayerWithID(targetPlayerID);
+            GoldenDeagleEvent.Result result = (GoldenDeagleEvent.Result)goldenGunEventResult;
+            TRT_Role_Appearance targetAppearance = RoleManager.GetPlayerRole(targetPlayer).Appearance;
+            switch (result)
+            {
+                case GoldenDeagleEvent.Result.Success:
+                case GoldenDeagleEvent.Result.Fail:
+                case GoldenDeagleEvent.Result.Chaos:
+                case GoldenDeagleEvent.Result.Suicide:
+                    RoundSummary.LogEvent(GoldenDeagleEvent.ID, killingPlayerID, result, targetAppearance);
+                    break;
+                case GoldenDeagleEvent.Result.None:
+                default:
+                    break;
+            }
+            RoundSummary.LogDamage(killingPlayer, playerToKill, playerToKill.data.health);
+            
             playerToKill.data.lastSourceOfDamage = killingPlayer;
             if (playerToKill.data.view.IsMine)
             {
