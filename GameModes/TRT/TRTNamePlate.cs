@@ -208,7 +208,6 @@ namespace GameModeCollection.GameModes.TRT
             if (other?.transform?.root?.GetComponent<Player>()?.data?.view?.IsMine ?? false)
             {
                 this.IsPlayerInRange = true;
-                GameModeCollection.Log("PLAYER IS IN RANGE");
             }
         }
         void OnTriggerExit2D(Collider2D other)
@@ -217,7 +216,6 @@ namespace GameModeCollection.GameModes.TRT
             if (other?.transform?.root?.GetComponent<Player>()?.data?.view?.IsMine ?? false)
             {
                 this.IsPlayerInRange = false;
-                GameModeCollection.Log("PLAYER LEFT RANGE");
             }
         }
 
@@ -225,14 +223,12 @@ namespace GameModeCollection.GameModes.TRT
         {
             // if the cursor is within range, display the player's name and reputability
             this.IsCursorInRange = true;
-            GameModeCollection.Log("CURSOR IS IN RANGE");
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
             // if the cursor is out of range, hide the player's name and reputability
             this.IsCursorInRange = false;
-            GameModeCollection.Log("CURSOR LEFT RANGE");
         }
     }
 }

@@ -51,7 +51,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return false; }
             if (player is null || player.data.dead) { return false; }
             Alignment? alignment = RoleManager.GetPlayerAlignment(player);
-            if (alignment != Alignment.Traitor || alignment != Alignment.Chaos)
+            if (alignment != Alignment.Traitor && alignment != Alignment.Chaos)
             {
                 return false;
             }
