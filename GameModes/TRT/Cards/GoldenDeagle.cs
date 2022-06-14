@@ -306,7 +306,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
         [UnboundRPC]
         private static void RPCA_GoldenGunKillPlayer(Vector2 damage, int playerIDToKill, int killingPlayerID, byte goldenGunEventResult, int targetPlayerID)
         {
-            GameModeCollection.Log("GoldenDeagleDealtDamageEffect.RPCA_GoldenGunKillPlayer");
             // instakill, no revives
             Player playerToKill = PlayerManager.instance.GetPlayerWithID(playerIDToKill);
             Player killingPlayer = PlayerManager.instance.GetPlayerWithID(killingPlayerID);
