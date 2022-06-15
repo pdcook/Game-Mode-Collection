@@ -33,14 +33,14 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
     public class RifleCard : CustomCard
     {    
-        // one shot, very slow rate of fire, sniper rifle available to both traitors and detectives
+        // powerful, slow rate of fire, sniper rifle available to both traitors and detectives
 
         internal static CardInfo Card = null;
         internal static string CardName => "Rifle";
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_CanSpawnNaturally, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_2, CardItem.IgnoreMaxCardsCategory };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_CanSpawnNaturally, TRTCardCategories.TRT_Slot_2 };
             cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_2 };
             statModifiers.AddObjectToPlayer = A_RiflePrefab.Rifle;
         }
