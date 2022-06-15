@@ -10,6 +10,7 @@ using UnboundLib.GameModes;
 using GameModeCollection.Objects;
 using Sonigon;
 using Sonigon.Internal;
+using ModdingUtils.MonoBehaviours;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -44,6 +45,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
+            player.gameObject.GetOrAddComponent<ClawSpeedEffect>();
         }
         public override void OnRemoveCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {
@@ -53,6 +55,11 @@ namespace GameModeCollection.GameModes.TRT.Cards
                 A_Claw.MakeGunClaw(player.playerID, false);
             }
             catch { }
+
+            if (player.gameObject.GetComponent<ClawSpeedEffect>() != null)
+            {
+                Destroy(player.gameObject.GetComponent<ClawSpeedEffect>());
+            }
         }
 
         protected override string GetTitle()
@@ -78,6 +85,13 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             return new CardInfoStat[]
             {
+                new CardInfoStat()
+                {
+                    stat = "Movement Speed When Active",
+                    amount = "Extra",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
+                    positive = true
+                },
             };
         }
         protected override CardThemeColor.CardThemeColorType GetTheme()
@@ -100,6 +114,36 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             ClawCard.Card = card;
             ModdingUtils.Utils.Cards.instance.AddHiddenCard(card);
+        }
+    }
+    internal class ClawSpeedEffect : ReversibleEffect
+    {
+        public override void OnAwake()
+        {
+            this.SetLivesToEffect(1);
+            this.applyImmediately = false;
+
+            base.OnAwake();
+        }
+        public override void OnStart()
+        {
+            this.characterStatModifiersModifier.movementSpeed_mult = 1.5f;
+
+            base.OnStart();
+        }
+        public override void OnOnDestroy()
+        {
+            this.DisableClawSpeed();
+            base.OnOnDestroy();
+        }
+        public void DisableClawSpeed()
+        {
+            this.ClearModifiers(false);
+        }
+
+        public void EnableClawSpeed()
+        {
+            this.ApplyModifiers();
         }
     }
     internal class A_Claw : MonoBehaviour
@@ -175,6 +219,18 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
+
+            // speed effect
+            ClawSpeedEffect clawSpeedEffect = player.gameObject.GetComponent<ClawSpeedEffect>();
+            if (claw)
+            {
+                clawSpeedEffect?.EnableClawSpeed();
+            }
+            else
+            {
+                clawSpeedEffect?.DisableClawSpeed();
+            }
+
             A_Claw ClawHandler = player.GetComponentInChildren<A_Claw>();
             Gun gun = player.GetComponent<Holding>().holdable.GetComponent<Gun>();
             GameObject springObj = gun.transform.GetChild(1).gameObject;
