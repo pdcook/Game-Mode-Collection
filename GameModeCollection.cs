@@ -176,6 +176,7 @@ namespace GameModeCollection
         public static string DefaultBlockCooldownMultiplierKey => GetConfigKey("defaultBlockCooldownMultiplier");
         public static string SuffocationDamageEnabledKey => GetConfigKey("suffocationDamageEnabled");
         public static string HideGunOnDeathKey => GetConfigKey("hideGunOnDeath");
+        public static string ForceEqualPlayerSizeKey => GetConfigKey("forceEqualPlayerSize");
 
         internal static bool EnemyDamageAllowed
         {
@@ -377,6 +378,26 @@ namespace GameModeCollection
                     return false;
                 }
                 if (GameModeManager.CurrentHandler.Settings.TryGetValue(HideGunOnDeathKey, out object hide) && (bool)hide)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+
+        public static bool ForceEqualPlayerSize
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(ForceEqualPlayerSizeKey, out object force) && (bool)force)
                 {
                     return true;
                 }
