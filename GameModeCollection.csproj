@@ -291,6 +291,7 @@
     <Compile Include="Patches\PlayerActions.cs" />
     <Compile Include="Patches\PlayerCollision.cs" />
     <Compile Include="Patches\PlayerFlyParticle.cs" />
+    <Compile Include="Patches\ProjectileCollision.cs" />
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />
     <Compile Include="Patches\SoundGun.cs" />

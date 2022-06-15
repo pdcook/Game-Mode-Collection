@@ -214,7 +214,7 @@ namespace GameModeCollection.GameModes.TRT
         }
         public static void LogKill(Player source, Player receiver)
         {
-            if (source != null)
+            if (source != null && receiver != null)
             {
                 if (Kills.ContainsKey(source.playerID))
                 {
@@ -224,9 +224,7 @@ namespace GameModeCollection.GameModes.TRT
                 {
                     Kills.Add(source.playerID, new List<int>() { receiver.playerID });
                 }
-            }
-            if (receiver != null)
-            {
+
                 if (EnemyKills.ContainsKey(receiver.playerID))
                 {
                     EnemyKills[receiver.playerID].Add(source.playerID);
@@ -235,9 +233,7 @@ namespace GameModeCollection.GameModes.TRT
                 {
                     EnemyKills.Add(receiver.playerID, new List<int>() { source.playerID });
                 }
-            }
-            if (source != null && receiver != null)
-            {
+
                 if (RoleManager.GetPlayerAlignment(source) == RoleManager.GetPlayerAlignment(receiver))
                 {
                     if (TeamKills.ContainsKey(source.playerID))

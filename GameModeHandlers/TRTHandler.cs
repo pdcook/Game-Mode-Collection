@@ -108,6 +108,7 @@ namespace GameModeCollection.GameModeHandlers
                 {GameModeCollection.DefaultBlockCooldownMultiplierKey, 2f }, // block cooldown is twice as long
                 {GameModeCollection.SuffocationDamageEnabledKey, true }, // players take suffocation damage
                 {GameModeCollection.HideGunOnDeathKey, true }, // guns are hidden when players die
+                {GameModeCollection.ForceEqualPlayerSizeKey, true }, // all players are the same size
             };
         }
         internal static void TRTMenu(GameObject menu)
