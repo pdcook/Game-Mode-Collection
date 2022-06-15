@@ -110,7 +110,48 @@ namespace GameModeCollection.GMCObjects
                 target.AddComponent<TraitorTrap_Destructible>();
             }
         }
+        public class JammerObj : MapObject
+        {
+            public Vector3 Loc;
+        }
+
+        [MapObjectSpec(typeof(JammerObj))]
+        public static class JammerSpec
+        {
+            private static GameObject _prefab = null;
+            [MapObjectPrefab]
+            public static GameObject Prefab
+            {
+                get
+                {
+                    if (_prefab == null)
+                    {
+                        GameObject spawnPoint = MapObjectManager.LoadCustomAsset<GameObject>("Spawn Point");
+                        _prefab = GameObject.Instantiate(spawnPoint);
+                        _prefab.name = "Jammer";
+                        GameObject.DontDestroyOnLoad(_prefab);
+                    }
+                    return _prefab;
+
+                }
+            }
+            [MapObjectSerializer]
+            public static void Serialize(GameObject instance, JammerObj target)
+            {
+                target.Loc = instance.transform.position;
+            }
+
+            [MapObjectDeserializer]
+            public static void Deserialize(JammerObj data, GameObject target)
+            {
+                target.transform.position = data.Loc;
+                GameObject.Destroy(target.GetComponent<SpawnPoint>());
+                target.AddComponent<TraitorTrap_Jammer>();
+            }
+        }
         #endregion
+        #endregion
+        #region Teleporter 
         public class TeleporterObj : MapObject
         {
             public Vector3 loc1;
@@ -155,8 +196,7 @@ namespace GameModeCollection.GMCObjects
                 GameObject.Destroy(target.transform.GetChild(1).GetComponent<SpawnPoint>());
                 target.AddComponent<Teleporter>();
             }
-        }        
-
+        }
         #endregion
     }
 }

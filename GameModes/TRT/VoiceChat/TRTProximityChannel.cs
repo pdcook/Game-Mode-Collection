@@ -4,6 +4,10 @@ using GameModeCollection.Objects;
 using GameModeCollection.GameModeHandlers;
 using UnboundLib.GameModes;
 using RoundsVC.VoiceChannels;
+using System.Collections;
+using UnboundLib.Networking;
+using UnboundLib;
+using Photon.Pun;
 
 namespace GameModeCollection.GameModes.TRT.VoiceChat
 {
@@ -14,6 +18,8 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override string ChannelName { get; } = "General Proximity";
         public override Color ChannelColor { get; } = GM_TRT.InnocentColor;
         public override AudioFilters AudioFilters { get; } = AudioFilters.None;
+
+        private static bool JamComms = false; // are the comms jammed?
 
         // volume is a function of distance, walls between the players, max distance, and min distance
         private const float MinDistance = 10f;
@@ -67,7 +73,26 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return false; }
             if (player is null || player.data.dead) { return false; }
             if (player.data?.isSilenced ?? true) { return false; } // silenced players cannot speak
+            if (JamComms) { return false; } // comms are jammed
             else { return true; }
+        }
+
+        public static void JamCommsFor(float jamTime)
+        {
+            NetworkingManager.RPC(typeof(TRTProximityChannel), nameof(RPCH_JamCommsFor), jamTime);
+        }
+        [UnboundRPC]
+        private static void RPCH_JamCommsFor(float jamTime)
+        {
+            if (!PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode) { return; }
+            GM_TRT.instance.StartCoroutine(IJamCommsFor(jamTime));
+            
+        }
+        private static IEnumerator IJamCommsFor(float jamTime)
+        {
+            JamComms = true;
+            yield return new WaitForSeconds(jamTime);
+            JamComms = false;
         }
     }
 }

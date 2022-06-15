@@ -53,6 +53,29 @@ namespace GMCObjectsEditor
         }
     }
     #endregion
+    #region TRT_Traitor_Trap_Jammer
+    [EditorMapObjectSpec(typeof(MapObjects.JammerObj), "Traitor Trap (Jammer)", "TRT")]
+    public static class EditorJammerSpec
+    {
+        [EditorMapObjectPrefab]
+        public static GameObject Prefab => MapObjects.JammerSpec.Prefab;
+
+        [EditorMapObjectSerializer]
+        public static void Serialize(GameObject instance, MapObjects.JammerObj target)
+        {
+            MapObjects.JammerSpec.Serialize(instance, target);
+        }
+
+        [EditorMapObjectDeserializer]
+        public static void Deserialize(MapObjects.JammerObj data, GameObject target)
+        {
+            MapObjects.JammerSpec.Deserialize(data, target);
+            target.gameObject.GetOrAddComponent<TraitorTrapJammerVisualizer>();
+            target.gameObject.GetOrAddComponent<SpawnActionHandler>();
+            target.transform.SetAsLastSibling();
+        }
+    }
+    #endregion
     #region TRT_Traitor_Trap
     [EditorMapObjectSpec(typeof(MapObjects.TraitorTrap_GroundDestructibleObj), "Traitor Trap Ground", "TRT")]
     public static class EditorTraitorTrap_GroundDestructibleSpec
