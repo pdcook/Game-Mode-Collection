@@ -7,6 +7,7 @@ namespace GameModeCollection.Extensions
         public bool disabled = false;
         public bool disabledFromCardBar = false;
         public bool silenced = false; // when a gun is silenced, it cannot be heard through walls
+        public bool pierce = false;
     }
     public static class GunExtensions
     {
