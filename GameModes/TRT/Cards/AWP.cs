@@ -287,6 +287,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             {
                 this.gun.GetData().silenced = false;
             }
+            this.gun.GetData().pierce = false;
 
             GameObject spring = this.gun.transform.GetChild(1).gameObject;
             GameObject barrel = spring.transform.GetChild(3).gameObject;
@@ -308,6 +309,9 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         public void EnableAWP()
         {
+            // AWPs pierce players
+            this.gun.GetData().pierce = true;
+
             // you can't cheese the attack speed by switching back and forth
             this.gun.sinceAttack = 0f;
 

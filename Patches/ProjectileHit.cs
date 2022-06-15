@@ -12,6 +12,43 @@ using GameModeCollection.Extensions;
 namespace GameModeCollection.Patches
 {
     [HarmonyPatch(typeof(ProjectileHit), nameof(ProjectileHit.RPCA_DoHit))]
+    class ProjectileHit_Patch_RPCA_DoHit_Pierce
+    {
+        // patch to only call DestroyMe if the bullet is a piercing bullet and hit something that doesn't have a Damagable
+
+        static void DestroyMeHandlePierce(ProjectileHit instance, HitInfo hit)
+        {
+            if (!(instance.ownWeapon?.GetComponent<Gun>()?.GetData().pierce ?? false))
+            {
+                // the bullet is not a piercing bullet
+                instance.InvokeMethod("DestroyMe");
+            }
+            else if (hit.transform?.GetComponent<HealthHandler>() is null && hit.collider?.GetComponentInParent<Damagable>() is null)
+            {
+                // the bullet is a piercing bullet and hit a wall
+                instance.InvokeMethod("DestroyMe");
+            }
+        }
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+            var m_DestroyMe = ExtensionMethods.GetMethodInfo(typeof(ProjectileHit), "DestroyMe");
+            var m_DestroyMeHandlePierce = ExtensionMethods.GetMethodInfo(typeof(ProjectileHit_Patch_RPCA_DoHit_Pierce), nameof(DestroyMeHandlePierce));
+
+            foreach (var instruction in instructions)
+            {
+                if (instruction.Calls(m_DestroyMe))
+                {
+                    yield return new CodeInstruction(OpCodes.Ldloc_0);
+                    yield return new CodeInstruction(OpCodes.Call, m_DestroyMeHandlePierce);
+                }
+                else
+                {
+                    yield return instruction;
+                }
+            }
+        }
+    }
+    [HarmonyPatch(typeof(ProjectileHit), nameof(ProjectileHit.RPCA_DoHit))]
     class ProjectileHit_Patch_RPCA_DoHit
     {
         static void CallBulletPush(ProjectileHit projectileHit, HitInfo hitInfo)

@@ -16,6 +16,7 @@ namespace GameModeCollection.Patches
         private static void Prefix(Gun __instance)
         {
             __instance.GetData().silenced = false;
+            __instance.GetData().pierce = false;
         }
     }
 }
