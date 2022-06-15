@@ -23,6 +23,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override bool SpeakingEnabled(Player player)
         {
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return false; }
+            if (player?.data?.isSilenced ?? true) { return false; } // silenced players cannot speak
 
             // TODO: players can use this channel if they are using the intercom map object
             return false;

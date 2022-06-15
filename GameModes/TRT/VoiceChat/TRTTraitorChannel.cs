@@ -50,6 +50,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
 
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return false; }
             if (player is null || player.data.dead) { return false; }
+            if (player.data?.isSilenced ?? true) { return false; } // silenced players cannot speak
             Alignment? alignment = RoleManager.GetPlayerAlignment(player);
             if (alignment != Alignment.Traitor && alignment != Alignment.Chaos)
             {
