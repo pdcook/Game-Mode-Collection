@@ -4,6 +4,9 @@ using GameModeCollection.GameModes.TRT;
 using HarmonyLib;
 using UnityEngine;
 using UnboundLib.GameModes;
+using LocalZoom;
+using System.Collections.Generic;
+using System;
 namespace GameModeCollection.Patches
 {
     [HarmonyPatch(typeof(GeneralInput), "Update")]
@@ -52,6 +55,21 @@ namespace GameModeCollection.Patches
                 data.trt_item4_was_pressed = data.trt_radio_innocent_mod_item4.WasPressed;
                 data.trt_item5_is_pressed = data.trt_shop_mod_item5.IsPressed;
                 data.trt_item5_was_pressed = data.trt_shop_mod_item5.WasPressed;
+
+                // traitor PTT is LB + RB for controller players
+                try
+                {
+                    PlayerActions actions = __instance.GetComponent<CharacterData>().playerActions;
+                    data.trt_traitor_ptt_is_held = actions[LocalZoom.Extensions.PlayerActionsExtension.GetAdditionalData(actions).modifier.Name].IsPressed;
+                }
+                catch (KeyNotFoundException e)
+                {
+                    GameModeCollection.LogError($"LocalZoom modifier keybind not found. Full error: {e}");
+                }
+                catch (Exception e)
+                {
+                    GameModeCollection.LogError($"Unknown exception while accessing LocalZoom modifier keybind. Full error: {e}");
+                }
             }
             else
             {
