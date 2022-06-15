@@ -101,6 +101,13 @@ namespace GameModeCollection.GameModes.TRT.Cards
                     amount = "Very Low",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
                     positive = false
+                },
+                new CardInfoStat()
+                {
+                    stat = "Movement Speed When Scoped",
+                    amount = "Very Low",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
+                    positive = false
                 }
             };
         }
@@ -226,6 +233,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.randomBounces_mult = 0;
             this.gunStatModifier.smartBounce_add = 0;
             this.gunStatModifier.smartBounce_mult = 0;
+
+            this.characterStatModifiersModifier.movementSpeed_mult = 0.5f;
 
             base.OnStart();
         }

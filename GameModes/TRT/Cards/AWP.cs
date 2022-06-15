@@ -116,6 +116,13 @@ namespace GameModeCollection.GameModes.TRT.Cards
                     amount = "Extremely Slow",
                     simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
                     positive = false
+                },
+                new CardInfoStat()
+                {
+                    stat = "Movement Speed When Scoped",
+                    amount = "Almost No",
+                    simepleAmount = CardInfoStat.SimpleAmount.notAssigned,
+                    positive = false
                 }
             };
         }
@@ -243,6 +250,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.randomBounces_mult = 0;
             this.gunStatModifier.smartBounce_add = 0;
             this.gunStatModifier.smartBounce_mult = 0;
+
+            this.characterStatModifiersModifier.movementSpeed_mult = 0.25f;
 
             this.characterStatModifiersModifier.objectsToAddToPlayer = new List<GameObject>() { A_AWPPrefab.AWPDealtDamageEffect };
 
