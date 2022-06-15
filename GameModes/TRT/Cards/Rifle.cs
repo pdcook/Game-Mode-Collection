@@ -220,6 +220,12 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.gravity_mult = 0f;
             this.gunStatModifier.projectileSpeed_mult = 0f;
             this.gunStatModifier.projectileSpeed_add = 100f;
+            this.gunStatModifier.reflects_add = 0;
+            this.gunStatModifier.reflects_mult = 0;
+            this.gunStatModifier.randomBounces_add = 0;
+            this.gunStatModifier.randomBounces_mult = 0;
+            this.gunStatModifier.smartBounce_add = 0;
+            this.gunStatModifier.smartBounce_mult = 0;
 
             base.OnStart();
         }
