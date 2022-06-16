@@ -151,6 +151,47 @@ namespace GameModeCollection.GMCObjects
         }
         #endregion
         #endregion
+        #region TRT_Intercom
+        public class IntercomObj : MapObject
+        {
+            public Vector3 Loc;
+        }
+
+        [MapObjectSpec(typeof(IntercomObj))]
+        public static class IntercomSpec
+        {
+            private static GameObject _prefab = null;
+            [MapObjectPrefab]
+            public static GameObject Prefab
+            {
+                get
+                {
+                    if (_prefab == null)
+                    {
+                        GameObject spawnPoint = MapObjectManager.LoadCustomAsset<GameObject>("Spawn Point");
+                        _prefab = GameObject.Instantiate(spawnPoint);
+                        _prefab.name = "TRT Intercom";
+                        GameObject.DontDestroyOnLoad(_prefab);
+                    }
+                    return _prefab;
+
+                }
+            }
+            [MapObjectSerializer]
+            public static void Serialize(GameObject instance, IntercomObj target)
+            {
+                target.Loc = instance.transform.position;
+            }
+
+            [MapObjectDeserializer]
+            public static void Deserialize(IntercomObj data, GameObject target)
+            {
+                target.transform.position = data.Loc;
+                GameObject.Destroy(target.GetComponent<SpawnPoint>());
+                target.AddComponent<TRT_Intercom>();
+            }
+        }
+        #endregion
         #region Teleporter 
         public class TeleporterObj : MapObject
         {

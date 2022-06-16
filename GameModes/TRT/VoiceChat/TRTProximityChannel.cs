@@ -5,9 +5,6 @@ using GameModeCollection.GameModeHandlers;
 using UnboundLib.GameModes;
 using RoundsVC.VoiceChannels;
 using System.Collections;
-using UnboundLib.Networking;
-using UnboundLib;
-using Photon.Pun;
 
 namespace GameModeCollection.GameModes.TRT.VoiceChat
 {
@@ -79,14 +76,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
 
         public static void JamCommsFor(float jamTime)
         {
-            NetworkingManager.RPC(typeof(TRTProximityChannel), nameof(RPCH_JamCommsFor), jamTime);
-        }
-        [UnboundRPC]
-        private static void RPCH_JamCommsFor(float jamTime)
-        {
-            if (!PhotonNetwork.IsMasterClient && !PhotonNetwork.OfflineMode) { return; }
             GM_TRT.instance.StartCoroutine(IJamCommsFor(jamTime));
-            
         }
         private static IEnumerator IJamCommsFor(float jamTime)
         {

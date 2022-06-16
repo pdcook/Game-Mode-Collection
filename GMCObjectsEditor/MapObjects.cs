@@ -76,6 +76,29 @@ namespace GMCObjectsEditor
         }
     }
     #endregion
+    #region TRT_Intercom
+    [EditorMapObjectSpec(typeof(MapObjects.IntercomObj), "Intercom", "TRT")]
+    public static class EditorIntercomSpec
+    {
+        [EditorMapObjectPrefab]
+        public static GameObject Prefab => MapObjects.IntercomSpec.Prefab;
+
+        [EditorMapObjectSerializer]
+        public static void Serialize(GameObject instance, MapObjects.IntercomObj target)
+        {
+            MapObjects.IntercomSpec.Serialize(instance, target);
+        }
+
+        [EditorMapObjectDeserializer]
+        public static void Deserialize(MapObjects.IntercomObj data, GameObject target)
+        {
+            MapObjects.IntercomSpec.Deserialize(data, target);
+            target.gameObject.GetOrAddComponent<TRTIntercomVisualizer>();
+            target.gameObject.GetOrAddComponent<SpawnActionHandler>();
+            target.transform.SetAsLastSibling();
+        }
+    }
+    #endregion
     #region TRT_Traitor_Trap
     [EditorMapObjectSpec(typeof(MapObjects.TraitorTrap_GroundDestructibleObj), "Traitor Trap Ground", "TRT")]
     public static class EditorTraitorTrap_GroundDestructibleSpec

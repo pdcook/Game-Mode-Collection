@@ -63,6 +63,7 @@ namespace GameModeCollection.GMCObjects
         public abstract Color IconColor { get; protected set; }
         public virtual Alignment? RequiredAlignment { get; protected set; } = null; // require player to be this alignment to interact
         public virtual float VisibleDistance { get; protected set; } = float.PositiveInfinity;
+        public virtual bool RequireLoS { get; protected set; } = false;
         public virtual bool InteractableInEditor { get; protected set; } = false;
         public bool IsEditorObj => this.GetComponent<DetectMapEditor>()?.IsMapEditor ?? false;
         public string UniqueKey { get; protected set; } // unique key for RPC
@@ -163,6 +164,7 @@ namespace GameModeCollection.GMCObjects
         private bool IsVisibleInEditor => this.InteractableObject?.GetComponent<Interactable>()?.InteractableInEditor ?? false;
 
         private Alignment? RequiredAlignment => this.InteractableObject?.GetComponent<Interactable>()?.RequiredAlignment;
+        private bool RequireLoS => this.InteractableObject?.GetComponent<Interactable>()?.RequireLoS ?? false;
 
         private float Scale => this.IsClicked ? ClickScale : this.IsHovering ? HoverScale : DefaultScale;
 
@@ -172,7 +174,28 @@ namespace GameModeCollection.GMCObjects
             get
             {
                 Player player = PlayerManager.instance?.GetLocalPlayer();
-                return ((this.IsEditorObj && this.IsVisibleInEditor) || (this.InteractableObject != null && player != null && !player.data.dead && player.data.isPlaying && (bool)player.data.playerVel.GetFieldValue("simulated") && (!this.RequiredAlignment.HasValue || RoleManager.GetPlayerAlignment(player) == this.RequiredAlignment.Value || GameModeCollection.DEBUG) && Vector2.Distance(player.transform.position, this.InteractableObject.position) <= this.InteractableObject.GetComponent<Interactable>().VisibleDistance));
+
+                // determine if the player is eligible to see and interact with this
+                return (
+                        (this.IsEditorObj && this.IsVisibleInEditor) // this is an editor object and is supposed to be visible in the editor
+                        || (                                         // OR ALL of the following:
+                            this.InteractableObject != null // the interactable object is not null
+                            && player != null // and the player is not null
+                            && !player.data.dead // and the player is alive
+                            && player.data.isPlaying // and the player is playing
+                            && (bool)player.data.playerVel.GetFieldValue("simulated") // and the player is simulated
+                            && (
+                                !this.RequiredAlignment.HasValue // and (there isn't a required alignment
+                                || RoleManager.GetPlayerAlignment(player) == this.RequiredAlignment.Value // OR the player's alignment is the same as the required alignment
+                                || GameModeCollection.DEBUG // OR we're in DEBUG)
+                               )
+                            && Vector2.Distance(player.transform.position, this.InteractableObject.position) <= this.InteractableObject.GetComponent<Interactable>().VisibleDistance // and the player is within range
+                            && (
+                                !this.RequireLoS // and (there isn't a line of sight requirement
+                                || PlayerManager.instance.CanSeePlayer(this.InteractableObject.position, player).canSee // OR the player can see the interactable)
+                               )
+                           )
+                       );
             }
         }
 

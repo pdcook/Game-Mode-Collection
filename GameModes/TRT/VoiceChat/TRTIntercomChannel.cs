@@ -4,6 +4,8 @@ using GameModeCollection.Objects;
 using GameModeCollection.GameModeHandlers;
 using UnboundLib.GameModes;
 using RoundsVC.VoiceChannels;
+using UnboundLib.Networking;
+using UnboundLib;
 
 namespace GameModeCollection.GameModes.TRT.VoiceChat
 {
@@ -15,6 +17,8 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override Color ChannelColor { get; } = GM_TRT.DullWhite;
         public override AudioFilters AudioFilters { get; } = new AudioFilters(reverb: AudioReverbPreset.Hangar, highPassCutoff: 500, distortion: 0.5f);
 
+        public static int IntercomPlayerID { get; private set; } = -1; // playerID of the player who is currently speaking in the intercom
+
         public override float RelativeVolume(Player speaking, Player listening)
         {
             return 1f;
@@ -24,9 +28,15 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         {
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return false; }
             if (player?.data?.isSilenced ?? true) { return false; } // silenced players cannot speak
+            if (player.playerID != IntercomPlayerID) { return false; }
 
-            // TODO: players can use this channel if they are using the intercom map object
-            return false;
+            return true;
+        }
+
+        public static void SetIntercomPlayer(Player player)
+        {
+            if (player == null) { IntercomPlayerID = -1; }
+            else { IntercomPlayerID = player.playerID; }
         }
     }
 }

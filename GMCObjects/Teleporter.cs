@@ -19,6 +19,7 @@ namespace GameModeCollection.GMCObjects
         public override Color TextColor { get; protected set; } = GM_TRT.DullWhite;
         public override Color IconColor { get; protected set; } = GM_TRT.DullWhite;
         public override float VisibleDistance { get; protected set; } = 5f;
+        public override bool RequireLoS { get; protected set; } = true;
         private TeleporterBase PairedTeleporter = null;
         float timer = 0f;
 

@@ -21,6 +21,7 @@ namespace GameModeCollection.GMCObjects
         public override bool InteractableInEditor { get; protected set; } = false;
         public override Alignment? RequiredAlignment { get; protected set; } = Alignment.Traitor;
         public override float VisibleDistance { get; protected set; } = 5f;
+        public override bool RequireLoS { get; protected set; } = true;
 
         public override void OnInteract(Player player)
         {
