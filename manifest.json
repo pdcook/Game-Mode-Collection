@@ -4,6 +4,8 @@
     "website_url": "https://pdcook.github.io/Game-Mode-Collection/",
     "description": "A collection of new game modes",
     "dependencies": [
+        "Pykess-TeleportPatch-0.0.0",
+        "Root-GunProjectileSizePatch-1.0.1",
         "olavim-RoundsWithFriends-2.2.0",
         "BossSloth-LocalZoom-1.0.0",
         "BossSloth-BetterChat-1.1.0",
