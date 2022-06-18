@@ -19,11 +19,11 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         private static bool JamComms = false; // are the comms jammed?
 
         // volume is a function of distance, walls between the players, max distance, and min distance
-        private const float MinDistance = 10f;
-        private const float MaxDistance = 60f;
-        private const float CutoffDistance = 60f; // distance at which players cannot hear eachother at all
-        private const float WallPenaltyPercent = 0.5f;
-        private const int MaxWallsCutoff = 5; // number of walls between players after which players cannot hear eachother at all
+        private const float MinDistance = 5f;
+        private const float MaxDistance = 40f;
+        private const float CutoffDistance = 40f; // distance at which players cannot hear eachother at all
+        private const float WallPenaltyPercent = 0.25f;
+        private const int MaxWallsCutoff = 3; // number of walls between players after which players cannot hear each other at all
 
         public override SpatialEffects SpatialEffects { get; } = 
             new SpatialEffects(

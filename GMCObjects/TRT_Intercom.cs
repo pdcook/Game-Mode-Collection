@@ -101,6 +101,7 @@ namespace GameModeCollection.GMCObjects
         }
         void Update()
         {
+            if (this.InteractionUI is null) { return; }
             if (this.broadcasting)
             {
                 this.InteractionUI.SetText($"<b>Broadcasting...</b>\n<b>{CommDuration - this.IC_Timer.Relative:N0}</b>");

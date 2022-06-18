@@ -180,19 +180,19 @@ namespace GameModeCollection.Patches
                 __instance.ReviveCorpse();
             }
         }
-        static void Postfix(HealthHandler __instance, bool isFullRevive)
+        static void Postfix(HealthHandler __instance, CharacterData ___data, bool isFullRevive)
         {
             if (GameModeCollection.HideGunOnDeath)
             {
                 // if the gun is hidden on death, show it when the player is revived
-                ((CharacterData)__instance.GetFieldValue("data")).weaponHandler.gameObject.SetActive(true);
+                ___data?.weaponHandler?.gun?.gameObject?.SetActive(true);
             }
             
             if (isFullRevive)
             {
                 // fix source of last damage
-                ((CharacterData)__instance.GetFieldValue("data")).lastDamagedPlayer = null;
-                ((CharacterData)__instance.GetFieldValue("data")).lastSourceOfDamage = null;
+                ___data.lastDamagedPlayer = null;
+                ___data.lastSourceOfDamage = null;
 
                 // destroy corpse component
                 if (__instance.GetComponent<TRT_Corpse>() != null)
@@ -224,12 +224,12 @@ namespace GameModeCollection.Patches
         {
             return !__instance.Invulnerable() && !__instance.Intangible() && (!__instance.isRespawning || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID);
         }
-        static void Postfix(HealthHandler __instance)
+        static void Postfix(HealthHandler __instance, CharacterData ___data)
         {
             if (GameModeCollection.HideGunOnDeath)
             {
                 // hide gun on death
-                ((CharacterData)__instance.GetFieldValue("data")).weaponHandler.gameObject.SetActive(false);
+                ___data?.weaponHandler?.gun?.gameObject?.SetActive(false);
             }
         }
     }
@@ -249,12 +249,12 @@ namespace GameModeCollection.Patches
     [HarmonyPatch(typeof(HealthHandler), "RPCA_Die")]
     class HealthHandler_Patch_RPCA_Die
     {
-        static void Postfix(HealthHandler __instance)
+        static void Postfix(HealthHandler __instance, CharacterData ___data)
         {
             if (GameModeCollection.HideGunOnDeath)
             {
                 // hide gun on death
-                ((CharacterData)__instance.GetFieldValue("data")).weaponHandler.gameObject.SetActive(false);
+                ___data?.weaponHandler?.gun?.gameObject?.SetActive(false);
             }
         }
         [HarmonyPriority(Priority.First)]
