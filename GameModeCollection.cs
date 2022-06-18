@@ -50,7 +50,6 @@ namespace GameModeCollection
         public static GameModeCollection instance;
 
         internal static AssetBundle TRT_Assets;
-        internal static AssetBundle TRT_Card_Assets;
 
         private Harmony harmony;
 
@@ -104,6 +103,7 @@ namespace GameModeCollection
             {
                 // ignored
             }
+            /*
             try
             {
                 TRT_Card_Assets = AssetUtils.LoadAssetBundleFromResources("trt_card_art", typeof(GameModeCollection).Assembly);
@@ -115,7 +115,7 @@ namespace GameModeCollection
             catch
             {
                 // ignored
-            }
+            }*/
 
             // add credits
             Unbound.RegisterCredits(ModName, new string[] { "Pykess (Crown Control, Trouble In Rounds Town, Dodgeball, Physics Items, MapEmbiggener)", "BossSloth (Hide & Seek, LocalZoom, MapEmbiggener)", " ", "Special Thanks To", "Willuwontu (TRT shop, sound effects, TRT Map)","TheCoconutDream (TRT Card Art)","LMS (TRT Maps)", "Ascyst (TRT Maps)" }, new string[] { "github", "Support Pykess", "Support BossSloth" }, new string[] { "https://github.com/pdcook/Game-Mode-Collection", "https://ko-fi.com/pykess", "https://www.buymeacoffee.com/BossSloth" });

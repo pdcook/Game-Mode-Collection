@@ -156,9 +156,9 @@ namespace GameModeCollection.GMCObjects
             }
         }
 
-        private UnityEngine.UI.Image IconImage { get; set; }
-        private UnityEngine.UI.Image ShadowImage { get; set; }
-        private TextMeshProUGUI Text { get; set; }
+        public UnityEngine.UI.Image IconImage { get; private set; }
+        public UnityEngine.UI.Image ShadowImage { get; private set; }
+        public TextMeshProUGUI Text { get; private set; }
 
         private bool IsEditorObj => this.InteractableObject?.GetComponent<Interactable>()?.IsEditorObj ?? false;
         private bool IsVisibleInEditor => this.InteractableObject?.GetComponent<Interactable>()?.InteractableInEditor ?? false;
@@ -184,6 +184,7 @@ namespace GameModeCollection.GMCObjects
                             && !player.data.dead // and the player is alive
                             && player.data.isPlaying // and the player is playing
                             && (bool)player.data.playerVel.GetFieldValue("simulated") // and the player is simulated
+                            && RoleManager.GetPlayerAlignment(player) != null // and the player has an alignment
                             && (
                                 !this.RequiredAlignment.HasValue // and (there isn't a required alignment
                                 || RoleManager.GetPlayerAlignment(player) == this.RequiredAlignment.Value // OR the player's alignment is the same as the required alignment
@@ -259,7 +260,12 @@ namespace GameModeCollection.GMCObjects
             this.ShadowImage?.transform.SetGlobalScale(DefaultScale * Vector3.one);
             this.Text = this.GetComponentInChildren<TextMeshProUGUI>();
             this.Text?.transform.SetGlobalScale(TextScale * Vector3.one);
-            this.Text.gameObject.SetActive(false);
+            if (this.Text != null)
+            {
+                this.Text.enableWordWrapping = false;
+                this.Text.overflowMode = TextOverflowModes.Overflow;
+            }
+            this.Text?.gameObject?.SetActive(false);
         }
         void Update()
         {

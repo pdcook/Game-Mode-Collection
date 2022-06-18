@@ -191,6 +191,7 @@ namespace GameModeCollection.GameModes
             BetterChat.BetterChat.SetDeadChat(true);
             BetterChat.BetterChat.UsePlayerColors = false;
             BetterChat.BetterChat.EnableTypingIndicators = false;
+            RoundsVC.RoundsVC.DefaultChannelEnabled = false;
 
             TRTShopHandler.BuildTRTShops();
 
@@ -462,6 +463,7 @@ namespace GameModeCollection.GameModes
 
             PlayerManager.instance.ForEachPlayer(this.PlayerJoined);
 
+            RoundsVC.RoundsVC.DefaultChannelEnabled = false;
             BetterChat.BetterChat.SetDeadChat(true);
             BetterChat.BetterChat.UsePlayerColors = false;
             BetterChat.BetterChat.EnableTypingIndicators = false;

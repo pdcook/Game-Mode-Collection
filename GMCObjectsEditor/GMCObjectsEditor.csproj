@@ -78,6 +78,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Visualizers\TRTIntercomVisualizer.cs" />
     <Compile Include="Visualizers\TraitorTrapJammerVisualizer.cs" />
     <Compile Include="Visualizers\CardSpawnPointVisualizer.cs" />
     <Compile Include="EditorActionHandlers\TeleporterActionHandler.cs" />

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 67.733332 67.733335"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="TRT_C4_Card.svg"
+   inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4_Card.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="2.096401"
+     inkscape:cx="66.542612"
+     inkscape:cy="189.13366"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer3"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-paths="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-global="true" />
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient3513"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#c0c0c0;stop-opacity:1;"
+         offset="0"
+         id="stop3511" />
+    </linearGradient>
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1115"
+       x="-0.039357886"
+       y="-0.094323243"
+       width="1.0787158"
+       height="1.1886465">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.0806821"
+         id="feGaussianBlur1117" />
+    </filter>
+  </defs>
+  <g
+     inkscape:groupmode="layer"
+     id="layer3"
+     inkscape:label="background">
+    <path
+       id="path971"
+       style="display:inline;fill:#c71918;stroke-width:0.264583;fill-opacity:1"
+       d="m 18.029297,40.558594 c -3.651452,0.05262 -7.314797,-0.07092 -10.9570314,0.21875 -1.7285791,0.213975 -3.0733144,1.817619 -3.2024087,3.524119 -0.1557173,1.574449 -0.2031362,3.191678 0.079362,4.753225 0.4511528,1.571094 1.9126369,2.80832 3.5,3.113281 0.5123363,0.02134 -0.3887465,0.03093 -0.4863282,0.130859 -1.7177636,0.598127 -3.1986639,2.191562 -3.1650669,4.09022 -0.014811,1.83953 -0.2735228,3.862642 0.6963169,5.523061 0.7299133,1.107129 2.0100487,1.795262 3.3421774,1.745077 6.488516,0.24881 12.98612,0.119994 19.478523,0.162519 10.605987,0.0091 21.211981,0.0025 31.817971,0.0045 1.193642,-0.712302 2.423009,-1.615706 2.794853,-3.033757 0.467151,-1.228315 0.10542,-2.585427 0.492257,-3.815853 0.768277,-1.062042 1.694845,-2.093918 1.914841,-3.440817 0.491863,-2.067223 -0.374264,-4.186226 -1.686325,-5.768167 -0.117453,-0.272163 -0.707371,-0.843259 -0.136719,-0.990234 1.523737,-0.349553 2.986122,-1.647135 2.886719,-3.316407 -0.07181,-1.458216 -1.457123,-2.491181 -2.849942,-2.523259 -3.543272,-0.378469 -7.117518,-0.207704 -10.674716,-0.3059 -11.281308,-0.08304 -22.562945,-0.0746 -33.844483,-0.07123 z m 44.058594,2.642578 c 0.365919,-0.0029 1.240202,0.310486 0.746093,0.753906 -0.496928,0.496436 -0.848638,0.375743 -0.845633,-0.350883 -2.35e-4,-0.202882 -0.325077,-0.522109 0.09954,-0.403023 z m -0.5,7.205078 c 0.546033,1.000263 0.767205,2.227983 0.1875,3.267578 -0.174219,0.920776 -0.610292,0.116677 -0.987642,-0.237337 -0.600328,-0.613321 -1.359804,-1.055745 -2.192046,-1.25485 1.177151,-0.259387 2.127399,-1.072502 2.904297,-1.958985 0.0293,0.0612 0.05859,0.122396 0.08789,0.183594 z" />
+    <path
+       id="path971-2"
+       style="display:inline;mix-blend-mode:normal;fill:#c71918;fill-opacity:1;stroke-width:0.264583;filter:url(#filter1115)"
+       d="m 15.298828,38.457031 c -3.323979,0.122151 -6.7403946,-0.272184 -9.9787923,0.647047 -2.5630288,1.081825 -3.8795032,4.036692 -3.6620894,6.710679 -0.152362,2.224708 0.1269233,4.662633 1.6818975,6.386415 -1.6055862,1.699317 -1.8443797,4.162745 -1.7128907,6.389453 -0.042475,2.588528 1.0095203,5.555063 3.570906,6.6117 1.7849243,0.74785 3.54352,0.616545 5.4599529,0.628927 14.750788,0.205001 29.504582,0.06088 44.256641,0.109039 1.622509,-0.02949 3.273205,0.06048 4.878115,-0.04361 2.625176,-1.262594 4.792157,-4.000447 4.49746,-7.033752 -0.06715,-0.969086 0.610704,-1.691012 1.126738,-2.418528 1.584993,-2.586104 1.547026,-6.06672 -0.164813,-8.58503 2.005706,-1.429212 2.9369,-4.386944 1.654297,-6.582031 -1.243731,-2.073179 -3.847555,-2.697283 -6.113281,-2.574219 -7.900854,-0.311459 -15.809805,-0.162668 -23.714451,-0.241952 -7.259902,-0.01468 -14.519782,-0.01057 -21.77969,-0.0041 z m 46.128906,12.847657 c 0.860221,0.215674 0.735484,1.662778 -0.179687,1.714843 -0.680641,0.19647 -1.49791,-0.504382 -1.08015,-1.195914 0.196325,-0.268021 0.656807,-0.421489 1.007884,-0.536508 0.08909,-0.03546 0.167888,-0.01804 0.251953,0.01758 z" />
+  </g>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:0.215111;stroke-linejoin:round"
+       id="rect7209"
+       width="49.551651"
+       height="4.698586"
+       x="8.2887316"
+       y="49.322277"
+       ry="0"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#364332;fill-opacity:1;stroke-width:0.209945;stroke-linejoin:round"
+       id="rect930"
+       width="57.383114"
+       height="10.619891"
+       x="4.2836537"
+       y="41.051682"
+       ry="4.0050778"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#364332;fill-opacity:1;stroke-width:0.209945;stroke-linejoin:round"
+       id="rect930-1"
+       width="57.383114"
+       height="10.619891"
+       x="4.2836537"
+       y="52.729908"
+       ry="4.0050778"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:0.266616;stroke-linejoin:round"
+       id="rect7466"
+       width="44.021358"
+       height="5.8055849"
+       x="3.2141709"
+       y="41.729752"
+       ry="1.4219904"
+       transform="matrix(1,0,0.17364818,0.98480775,0,0)"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#370000;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 53.926123,43.917159 c 11.732951,-5.464201 13.264714,1.756657 6.402512,2.069208"
+       id="path8612-8"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#181d18;fill-opacity:1;stroke:none;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect11049-2"
+       width="3.1234972"
+       height="2.4987984"
+       x="57.900612"
+       y="44.678879"
+       ry="0.78087443"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       style="fill:none;stroke:#333333;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="m 53.367188,45.290716 c 9.869863,0.06625 12.961174,8.581489 7.026283,11.492907"
+       id="path8612"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <rect
+       style="fill:#181d18;fill-opacity:1;stroke:none;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect11049"
+       width="3.1234972"
+       height="2.4987984"
+       x="57.885105"
+       y="55.46439"
+       ry="0.78087443"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="light"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <circle
+       style="fill:#ff0000;fill-opacity:1;stroke-width:0.264583;stroke-linejoin:round"
+       id="path7867"
+       cx="52.628887"
+       cy="42.595322"
+       r="0.75725019"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_C4Light.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>

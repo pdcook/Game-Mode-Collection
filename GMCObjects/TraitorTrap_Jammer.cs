@@ -3,6 +3,9 @@ using UnityEngine;
 using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.VoiceChat;
+using Sonigon;
+using Sonigon.Internal;
+using UnboundLib;
 
 namespace GameModeCollection.GMCObjects
 {
@@ -23,9 +26,44 @@ namespace GameModeCollection.GMCObjects
         public override float VisibleDistance { get; protected set; } = 5f;
         public override bool RequireLoS { get; protected set; } = true;
 
+        private const float StaticVol = 1f;
+
+        private static bool StaticPlaying = false;
+        private static SoundEvent _Static = null;
+        public static SoundEvent Static
+        {
+            get
+            {
+                if (_Static is null)
+                {
+                    AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("Static.ogg");
+                    SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+                    soundContainer.setting.volumeIntensityEnable = true;
+                    soundContainer.setting.loopEnabled = true;
+                    soundContainer.audioClip[0] = sound;
+                    _Static = ScriptableObject.CreateInstance<SoundEvent>();
+                    _Static.soundContainerArray[0] = soundContainer;
+                }
+                return _Static;
+            }
+        }
+
         public override void OnInteract(Player player)
         {
-            // play a static sound?
+            // play a static sound for the duration of the jam
+            if (!StaticPlaying)
+            {
+                SoundManager.Instance.PlayMusic(Static, false, true, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * StaticVol) });
+                StaticPlaying = true;
+
+                // start a coroutine to stop the static sound after the jam duration
+                // can't be on this object since it becomes inactive immediately
+                GM_TRT.instance.ExecuteAfterSeconds(JamDuration, () =>
+                {
+                    StaticPlaying = false;
+                    SoundManager.Instance.StopMusic(Static, false);
+                });
+            }
 
             // jam comms for 30 seconds
             TRTProximityChannel.JamCommsFor(JamDuration);

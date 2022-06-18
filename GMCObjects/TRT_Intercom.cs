@@ -4,6 +4,8 @@ using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.VoiceChat;
 using UnboundLib.Utils;
+using Sonigon;
+using Sonigon.Internal;
 
 namespace GameModeCollection.GMCObjects
 {
@@ -27,47 +29,109 @@ namespace GameModeCollection.GMCObjects
         public override float VisibleDistance { get; protected set; } = 5f;
         public override bool RequireLoS { get; protected set; } = true;
 
-        private TimeSince timer;
+        private TimeSince IC_Timer;
+        private TimeSince CheckPlayer_Timer;
         private bool broadcasting = false;
         private bool recharging = false;
+
+        private static SoundEvent _IC_Start = null;
+        private static SoundEvent _IC_Stop = null;
+        private const float SFX_Vol = 1f;
+        private Player IntercomPlayer = null;
+
+        private const float CheckPlayerEvery = 0.1f;
+
+        public static SoundEvent IC_Start
+        {
+            get
+            {
+                if (_IC_Start is null)
+                {
+                    AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("IntercomStart.ogg");
+                    SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+                    soundContainer.setting.volumeIntensityEnable = true;
+                    soundContainer.audioClip[0] = sound;
+                    _IC_Start = ScriptableObject.CreateInstance<SoundEvent>();
+                    _IC_Start.soundContainerArray[0] = soundContainer;
+                }
+                return _IC_Start;
+            }
+        }
+        public static SoundEvent IC_Stop
+        {
+            get
+            {
+                if (_IC_Stop is null)
+                {
+                    AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("IntercomStop.ogg");
+                    SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+                    soundContainer.setting.volumeIntensityEnable = true;
+                    soundContainer.audioClip[0] = sound;
+                    _IC_Stop = ScriptableObject.CreateInstance<SoundEvent>();
+                    _IC_Stop.soundContainerArray[0] = soundContainer;
+                }
+                return _IC_Stop;
+            }
+        }
+
+        private void SetIntercomPlayer(Player player)
+        {
+            this.IntercomPlayer = player;
+            TRTIntercomChannel.SetIntercomPlayer(player);
+        }
 
         public override void OnInteract(Player player)
         {
             if (this.broadcasting || this.recharging) { return; }
 
             // play start sound
+            SoundManager.Instance.PlayMusic(IC_Start, false, true, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SFX_Vol) });
 
             // enable this player to speak in the Intercom VC for 30 seconds
             this.broadcasting = true;
-            TRTIntercomChannel.SetIntercomPlayer(player);
-            this.timer = 0f;
+            this.SetIntercomPlayer(player);
+            this.IC_Timer = 0f;
+            this.CheckPlayer_Timer = 0f;
 
         }
         public void StartRecharge()
         {
             this.InteractionUI.SetText("<size=50%>Recharging...");
-            this.timer = RechargeTime;
+            this.IC_Timer = RechargeTime;
         }
         void Update()
         {
             if (this.broadcasting)
             {
-                this.InteractionUI.SetText($"<b>Broadcasting...</b>\n<b>{CommDuration - this.timer.Relative:N0}</b>");
+                this.InteractionUI.SetText($"<b>Broadcasting...</b>\n<b>{CommDuration - this.IC_Timer.Relative:N0}</b>");
                 this.InteractionUI.SetTextColor(BroadcastingColor);
-                if (this.timer > CommDuration)
+                bool stop = this.IC_Timer > CommDuration || this.IntercomPlayer is null || this.IntercomPlayer.data.dead;
+                if (!stop && this.CheckPlayer_Timer > CheckPlayerEvery)
+                {
+                    // check that the player is still within range
+                    stop = Vector2.Distance(this.IntercomPlayer.transform.position, this.transform.position) > this.VisibleDistance // the player is too far
+                            || (
+                                this.RequireLoS // or (there is a line of sight requirement
+                                && !PlayerManager.instance.CanSeePlayer(this.transform.position, this.IntercomPlayer).canSee // AND the player cannot see the interactable)
+                               );
+                    this.CheckPlayer_Timer = 0f;
+
+                }
+                if (stop)
                 {
                     this.broadcasting = false;
                     this.recharging = true;
-                    TRTIntercomChannel.SetIntercomPlayer(null);
-                    // play end sound
-                    this.timer = 0f;
+                    this.SetIntercomPlayer(null);
+                    // play stop sound
+                    SoundManager.Instance.PlayMusic(IC_Stop, false, true, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SFX_Vol) });
+                    this.IC_Timer = 0f;
                 }
             }
             else if (this.recharging)
             {
-                this.InteractionUI.SetText($"<size=50%>Recharging...\n{RechargeTime - this.timer.Relative:N0}");
+                this.InteractionUI.SetText($"<size=50%>Recharging...\n{RechargeTime - this.IC_Timer.Relative:N0}");
                 this.InteractionUI.SetTextColor(RechargingColor);
-                if (this.timer > RechargeTime)
+                if (this.IC_Timer > RechargeTime)
                 {
                     this.InteractionUI.SetText(this.HoverText);
                     this.InteractionUI.SetTextColor(this.TextColor);

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 67.733332 67.733335"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="TRT_HealthStation_Card.svg"
+   inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_HealthStation_Card.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="px"
+     showgrid="false"
+     inkscape:zoom="2.096401"
+     inkscape:cx="107.5653"
+     inkscape:cy="183.88658"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:object-paths="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:snap-midpoints="true"
+     inkscape:snap-bbox-midpoints="true"
+     inkscape:snap-object-midpoints="true"
+     inkscape:snap-global="true"
+     inkscape:snap-page="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-center="true"
+     inkscape:snap-text-baseline="true" />
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2933">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop2929" />
+      <stop
+         style="stop-color:#545454;stop-opacity:1"
+         offset="1"
+         id="stop2931" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3513"
+       inkscape:swatch="solid">
+      <stop
+         style="stop-color:#c0c0c0;stop-opacity:1;"
+         offset="0"
+         id="stop3511" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2933"
+       id="linearGradient2935"
+       x1="26.945486"
+       y1="64.050743"
+       x2="26.945486"
+       y2="32.814175"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(0.94303798,0,0,0.90303031,0.45488518,3.5161314)" />
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter1079"
+       x="-0.045046035"
+       y="-0.071732503"
+       width="1.0900921"
+       height="1.143465">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.3164778"
+         id="feGaussianBlur1081" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect940-9"
+       style="fill:#181dfd;fill-opacity:1;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round"
+       d="m 63.082031,27.919922 c -9.507778,0.0541 -19.020709,0.0065 -28.530468,0.02155 -10.133982,0.0136 -20.270216,-0.01321 -30.4027895,0.02759 -1.7087787,0.163193 -2.8146644,1.998664 -2.5296569,3.617655 0.014068,10.833795 -0.037624,21.670776 0.035224,32.50257 0.1945304,1.683542 2.0095538,2.74973 3.6081597,2.471271 19.487291,-0.0052 38.975226,0.01975 58.462109,-0.0215 1.729092,-0.138411 2.859485,-1.988019 2.570337,-3.621874 -0.01407,-10.833796 0.03762,-21.670777 -0.03522,-32.502571 -0.177044,-1.514305 -1.700481,-2.592649 -3.177691,-2.494695 z" />
+    <path
+       id="rect940-9-0"
+       style="mix-blend-mode:normal;fill:#181dfd;fill-opacity:1;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round;filter:url(#filter1079)"
+       d="m 62.652344,25.273438 c -19.676293,0.05663 -39.353749,-0.03138 -59.0292971,0.09961 -3.13719855,0.445233 -5.1877871,3.867099 -4.6504269,6.883203 0.012594,10.800482 -0.059933,21.602855 0.0957394,32.401953 0.49361921,3.097442 3.90294262,5.083673 6.88476562,4.548828 19.417905,-0.0073 38.836481,0.03305 58.253906,-0.0625 3.171919,-0.396633 5.280771,-3.846757 4.734399,-6.889062 -0.0065,-10.774482 0.04078,-21.550444 -0.0801,-32.323828 -0.413119,-2.886478 -3.37134,-4.939607 -6.208984,-4.658203 z" />
+    <rect
+       style="fill:#303030;fill-opacity:1;stroke-width:1.065;stroke-linecap:round;stroke-linejoin:round"
+       id="rect940"
+       width="62.559193"
+       height="36.500298"
+       x="2.6772838"
+       y="29.001965"
+       ry="1.8517896" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.92604167;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       d="M 53.367188,29.001963 V 65.50226"
+       id="path1936" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:0.847691;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect2040"
+       width="8.6296778"
+       height="33.809341"
+       x="55.218498"
+       y="30.347439"
+       ry="1.743215" />
+    <rect
+       style="fill:#181818;fill-opacity:1;stroke-width:1.05897;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect2279"
+       width="1.5171274"
+       height="25.880409"
+       x="48.536324"
+       y="34.311905"
+       ry="0.58007812" />
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke-width:0.857598;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect2689"
+       width="41.284565"
+       height="31.830584"
+       x="5.2232194"
+       y="31.336819"
+       ry="0.5058648" />
+    <rect
+       style="fill:url(#linearGradient2935);fill-opacity:1;stroke-width:0.854567;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect2847"
+       width="37.610092"
+       height="28.207569"
+       x="7.0604553"
+       y="33.148323"
+       ry="0.52382785" />
+    <rect
+       style="fill:#00ff00;fill-opacity:1;stroke-width:0.813125;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect3128"
+       width="6.6101022"
+       height="4.6291585"
+       x="56.256405"
+       y="31.648033"
+       ry="0.58007777"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_HealthStationLight.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>

@@ -84,7 +84,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return GameModeCollection.TRT_Card_Assets.LoadAsset<GameObject>("C_GOLDENGUN");
+            return GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_GoldenDeagle");
         }
 
         protected override CardInfo.Rarity GetRarity()
