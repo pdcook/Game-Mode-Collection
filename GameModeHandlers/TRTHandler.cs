@@ -109,6 +109,7 @@ namespace GameModeCollection.GameModeHandlers
                 {GameModeCollection.SuffocationDamageEnabledKey, true }, // players take suffocation damage
                 {GameModeCollection.HideGunOnDeathKey, true }, // guns are hidden when players die
                 {GameModeCollection.ForceEqualPlayerSizeKey, true }, // all players are the same size
+                {GameModeCollection.UseSpatialAudioKey, true }, // force all audio to be spatialized
             };
         }
         internal static void TRTMenu(GameObject menu)

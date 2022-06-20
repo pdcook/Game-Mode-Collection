@@ -5,6 +5,7 @@ using GameModeCollection.GameModeHandlers;
 using UnboundLib.GameModes;
 using RoundsVC.VoiceChannels;
 using System.Collections;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.GameModes.TRT.VoiceChat
 {
@@ -18,51 +19,24 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
 
         private static bool JamComms = false; // are the comms jammed?
 
-        // volume is a function of distance, walls between the players, max distance, and min distance
-        private const float MinDistance = 5f;
-        private const float MaxDistance = 40f;
-        private const float CutoffDistance = 40f; // distance at which players cannot hear eachother at all
-        private const float WallPenaltyPercent = 0.25f;
-        private const int MaxWallsCutoff = 3; // number of walls between players after which players cannot hear each other at all
-
         public override SpatialEffects SpatialEffects { get; } = 
             new SpatialEffects(
                 true,
-                AudioRolloffMode.Logarithmic,
+                Utils.GMCAudio.Rolloff,
                 true,
-                MinDistance, 
-                MaxDistance,
+                Utils.GMCAudio.MinDistance,
+                Utils.GMCAudio.MaxDistance,
                 0f, 
-                SpatialEffects.LogarithmicBlend(MinDistance)
+                SpatialEffects.LogarithmicBlend(Utils.GMCAudio.MinDistance)
                     );
-
-        public int GetWallsBetweenPlayers(Player player1, Player player2)
-        {
-            int walls = 0;
-            RaycastHit2D[] array = Physics2D.RaycastAll(player1.data.playerVel.position, (player2.data.playerVel.position - (Vector2)player1.data.playerVel.position).normalized, Vector2.Distance(player1.data.playerVel.position, player2.data.playerVel.position), PlayerManager.instance.canSeePlayerMask);
-            for (int i = 0; i < array.Length; i++)
-            {
-                if (array[i].transform
-                    && !array[i].transform.root.GetComponent<SpawnedAttack>()
-                    && !array[i].transform.root.GetComponent<Player>()
-                    && !array[i].transform.root.GetComponentInChildren<PhysicsItem>()
-                    )
-                {
-                    walls++;
-                }
-            }
-            return walls;
-        }
 
         public override float RelativeVolume(Player speaking, Player listening)
         {
             if (speaking is null) { return 0f; }
             if (listening is null) { return 1f; }
             float distance = Vector2.Distance(speaking.data.playerVel.position, listening.data.playerVel.position);
-            if (distance > CutoffDistance) { return 0f; }
-            int walls = this.GetWallsBetweenPlayers(speaking, listening);
-            if (walls > MaxWallsCutoff) { return 0f; }
-            return UnityEngine.Mathf.Pow(WallPenaltyPercent, walls);
+            if (distance > Utils.GMCAudio.CutoffDistance) { return 0f; }
+            return Utils.GMCAudio.FalloffByWalls(speaking.data.playerVel.position, listening.data.playerVel.position);
         }
 
         public override bool SpeakingEnabled(Player player)

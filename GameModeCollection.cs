@@ -178,6 +178,7 @@ namespace GameModeCollection
         public static string SuffocationDamageEnabledKey => GetConfigKey("suffocationDamageEnabled");
         public static string HideGunOnDeathKey => GetConfigKey("hideGunOnDeath");
         public static string ForceEqualPlayerSizeKey => GetConfigKey("forceEqualPlayerSize");
+        public static string UseSpatialAudioKey => GetConfigKey("useSpatialAudio");
 
         internal static bool EnemyDamageAllowed
         {
@@ -399,6 +400,26 @@ namespace GameModeCollection
                     return false;
                 }
                 if (GameModeManager.CurrentHandler.Settings.TryGetValue(ForceEqualPlayerSizeKey, out object force) && (bool)force)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+
+        public static bool UseSpatialAudio
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(UseSpatialAudioKey, out object use) && (bool)use)
                 {
                     return true;
                 }

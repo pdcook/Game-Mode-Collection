@@ -11,6 +11,8 @@ using UnboundLib.Networking;
 using UnityEngine;
 using SoundImplementation;
 using Sonigon;
+using Sonigon.Internal;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.GameModes.TRT.Cards
 {
@@ -177,6 +179,16 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         private SoundShotModifier SoundShotModifier;
         private SoundImpactModifier SoundImpactModifier;
+
+        private SoundParameterBase[] SoundParameters =
+            new SoundParameterBase[]
+                {
+                    new SoundParameterSpatializeCutoffDistance(GMCAudio.CutoffDistance * 2), // rifle can be heard twice as far away
+                    new SoundParameterSpatializeMaxDistance(GMCAudio.MaxDistance * 2),
+                    new SoundParameterSpatializeMinDistance(GMCAudio.MinDistance * 2), // the min distance is doubled
+                    new SoundParameterSpatializeWalls(UnityEngine.Mathf.Clamp01(GMCAudio.WallPenaltyPercent / 5f), GMCAudio.MaxWallsCutoff * 2), // the wall penalty is decreased by 5 times and the max number of walls is doubled
+                };
+
         public override void OnAwake()
         {
             this.SetLivesToEffect(1);
@@ -195,6 +207,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
             shoot.soundContainerArray[0] = soundContainer;
 
             this.SoundShotModifier = new SoundShotModifier() { single = shoot };
+            this.SoundShotModifier.SetSoundParameterArray(this.SoundParameters);
+
 
             AudioClip soundHitSurface = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("SniperHitSurface.ogg");
             SoundContainer soundContainer2 = ScriptableObject.CreateInstance<SoundContainer>();
@@ -210,6 +224,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             hitCharacter.soundContainerArray[0] = soundContainer3;
 
             this.SoundImpactModifier = new SoundImpactModifier() { impactCharacter = hitCharacter, impactEnvironment = hitSurface };
+            this.SoundImpactModifier.SetSoundParameterArray(this.SoundParameters);
 
             this.NumCards = this.data.currentCards.Count();
 

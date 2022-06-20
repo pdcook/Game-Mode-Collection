@@ -152,6 +152,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\SoundImpactModifier.cs" />
+    <Compile Include="Extensions\SoundShotModifier.cs" />
     <Compile Include="Extensions\Transform.cs" />
     <Compile Include="GameModes\TRT\Cards\Disguiser.cs" />
     <Compile Include="GameModes\TRT\Cards\JesterEmulator.cs" />
@@ -272,6 +274,8 @@
     <Compile Include="Objects\PlayerDoNotFollow.cs" />
     <Compile Include="Objects\GameModeObjects\TRT\C4.cs" />
     <Compile Include="Patches\ApplyCardStats.cs" />
+    <Compile Include="Patches\Audio\SoundManagerData.cs" />
+    <Compile Include="Patches\Audio\SoundParameterType.cs" />
     <Compile Include="Patches\CardBar.cs" />
     <Compile Include="Patches\CharacterCreatorItemEquipper.cs" />
     <Compile Include="Patches\CharacterData.cs" />
@@ -286,7 +290,7 @@
     <Compile Include="Patches\GeneralInput.cs" />
     <Compile Include="Patches\Gun.cs" />
     <Compile Include="Patches\HealthHandler.cs" />
-    <Compile Include="Patches\MapsExtended_UpdateMapFiles.cs" />
+    <Compile Include="Patches\MapsExt\MapsExtended_UpdateMapFiles.cs" />
     <Compile Include="Patches\NetworkPhysicsObject.cs" />
     <Compile Include="Patches\Block.cs" />
     <Compile Include="Patches\Player.cs" />
@@ -296,13 +300,20 @@
     <Compile Include="Patches\ProjectileCollision.cs" />
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />
-    <Compile Include="Patches\SoundGun.cs" />
+    <Compile Include="Patches\Audio\SoundGun.cs" />
     <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\GameModeObjects\CrownHandler.cs" />
     <Compile Include="GMCObjects\TraitorDoor.cs" />
     <Compile Include="GMCObjects\Interactable.cs" />
     <Compile Include="GMCObjects\TransformExtension.cs" />
+    <Compile Include="Utils\SoundParameterSpatializeCutoffDistance.cs" />
+    <Compile Include="Utils\SoundParameterSpatializeMaxDistance.cs" />
+    <Compile Include="Utils\SoundParameterSpatializeRolloff.cs" />
+    <Compile Include="Utils\SoundParameterSpatializeMinDistance.cs" />
+    <Compile Include="Utils\SoundParameterSpatializeWalls.cs" />
+    <Compile Include="Utils\SoundParameterBypassSpatialize.cs" />
+    <Compile Include="Utils\GMCAudio.cs" />
     <Compile Include="Utils\CardUtils.cs" />
     <Compile Include="Utils\RandomUtils.cs" />
   </ItemGroup>
