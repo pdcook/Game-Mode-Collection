@@ -5,10 +5,28 @@ using System.Linq;
 using GameModeCollection.GameModeHandlers;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class PhantomRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Phantom.RoleAppearance;
+        public Alignment RoleAlignment => Phantom.RoleAlignment;
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Traitor.RoleAppearance, Hypnotist.RoleAppearance, Vampire.RoleAppearance, Killer.RoleAppearance };
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Glitch.RoleAppearance, Detective.RoleAppearance, Mercenary.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Traitor.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"A special {Innocent.RoleAppearance}.
+
+When the {Phantom.RoleAppearance} is killed, they will <b><i>haunt</i></b> their killer.
+    <b><i>Haunted</i></b> players will constantly emit smoke.
+    When a <b><i>haunted</i></b> player dies, the {Phantom.RoleAppearance} will respawn with 50% HP.
+    The {Phantom.RoleAppearance} can only <b><i>haunt</i></b> once per round.
+
+{Detective.RoleAppearance}s are notified when the {Phantom.RoleAppearance} is killed or revived.";
+    }
     public class PhantomRoleHandler : IRoleHandler
     {
         public static string PhantomRoleName => Phantom.RoleAppearance.Name;
         public static string PhantomRoleID = $"GM_TRT_{PhantomRoleName}";
+        public IRoleHelp RoleHelp => new PhantomRoleHelp();
         public Alignment RoleAlignment => Phantom.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;

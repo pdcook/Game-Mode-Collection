@@ -25,6 +25,8 @@ namespace GameModeCollection.GameModeHandlers
     public class TRTHandler : GameModeHandler<GM_TRT>
     {
 
+        public static TMP_FontAsset TRTFont = GameModeCollection.TRT_Assets.LoadAsset<TMP_FontAsset>("SF Fedora SDF");
+
         public const string ChatName = "<b>[TRT]</b>";
         private const float SendFreq = 1f;
         private const float MaxVisibleDistance = 10f;

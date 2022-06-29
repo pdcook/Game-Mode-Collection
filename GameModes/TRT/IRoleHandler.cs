@@ -3,6 +3,7 @@ namespace GameModeCollection.GameModes.TRT
 {
     public interface IRoleHandler
     {
+        IRoleHelp RoleHelp { get; }
         Alignment RoleAlignment { get; }
         string WinMessage { get; }
         Color WinColor { get; }

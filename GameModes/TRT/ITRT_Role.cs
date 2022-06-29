@@ -26,6 +26,19 @@ namespace GameModeCollection.GameModes.TRT
             this.Color = Color;
         }
 
+        public override string ToString()
+        {
+            return this.RoleColoredName();
+        }
+        public string RoleColoredName()
+        {
+            return this is null ? "" : $"<b><color={this.RoleColorHTML()}>{this.Name}</color></b>";
+        }
+
+        public string RoleColorHTML()
+        {
+            return this is null ? "white" : "#" + ColorUtility.ToHtmlStringRGB(this.Color);
+        }
     }
     public interface ITRT_Role
     {

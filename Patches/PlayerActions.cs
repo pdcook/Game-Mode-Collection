@@ -65,6 +65,10 @@ namespace GameModeCollection.Patches
             __instance.GetAdditionalData().trt_item5 = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Item 5" });
+            
+            __instance.GetAdditionalData().role_help = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
+                        BindingFlags.Instance | BindingFlags.InvokeMethod |
+                        BindingFlags.NonPublic, null, __instance, new object[] { "Show Help" });
 
         }
     }
@@ -95,6 +99,8 @@ namespace GameModeCollection.Patches
             __result.Jump.RemoveBinding(new DeviceBindingSource(InputControlType.LeftBumper));
 
             __result.GetAdditionalData().modifier.AddDefaultBinding(InputControlType.LeftBumper);
+            
+            __result.GetAdditionalData().role_help.AddDefaultBinding(InputControlType.Select);
         }
     }
     // postfix PlayerActions to add keyboard controls
@@ -127,6 +133,8 @@ namespace GameModeCollection.Patches
             __result.GetAdditionalData().trt_item3.AddDefaultBinding(Key.Key3);
             __result.GetAdditionalData().trt_item4.AddDefaultBinding(Key.Key4);
             __result.GetAdditionalData().trt_item5.AddDefaultBinding(Key.Key5);
+
+            __result.GetAdditionalData().role_help.AddDefaultBinding(Key.H);
         }
     }
 }

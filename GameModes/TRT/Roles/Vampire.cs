@@ -12,8 +12,28 @@ using Photon.Pun;
 using GameModeCollection.GameModeHandlers;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class VampireRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Vampire.RoleAppearance;
+        public Alignment RoleAlignment => Vampire.RoleAlignment;
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Assassin.RoleAppearance, Hypnotist.RoleAppearance, Traitor.RoleAppearance };
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Detective.RoleAppearance, Mercenary.RoleAppearance, Glitch.RoleAppearance, Phantom.RoleAppearance, Killer.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Innocent.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"A special {Traitor.RoleAppearance}.
+
+The {Vampire.RoleAppearance} can become temporarily invisible by double-tapping [Interact].
+The {Vampire.RoleAppearance} can eat bodies by holding [Interact] near a corpse.
+    Eating a body will restore some HP.
+    Eating a body will completely destroy it and all evidence related to it.
+
+Has access to the {Traitor.RoleAppearance} shop.
+    Spawns with no credits.
+    Receives an additional credit each time a certain portion of the {Innocent.RoleAppearance} team has been killed.";
+    }
     public class VampireRoleHandler : IRoleHandler
     {
+        public IRoleHelp RoleHelp => new VampireRoleHelp();
         public Alignment RoleAlignment => Vampire.RoleAlignment;
         public string WinMessage => "TRAITORS WIN";
         public Color WinColor => Traitor.RoleAppearance.Color;

@@ -8,10 +8,29 @@ using System.Collections;
 using GameModeCollection.GameModes.TRT.RoundEvents;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class SwapperRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Swapper.RoleAppearance;
+        public Alignment RoleAlignment => Swapper.RoleAlignment;
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { };
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { };
+        public string WinCondition => $"Be killed by another player, then complete their win condition.";
+        public string Description =>
+$@"The {Swapper.RoleAppearance} cannot deal damage,
+    nor can they take damage from the environment.
+
+When another player kills the {Swapper.RoleAppearance}, they will instantly die
+    and the {Swapper.RoleAppearance} will respawn with the role of their killer.
+
+{Traitor.RoleAppearance}s and {Killer.RoleAppearance}s are alerted to the <i>identities</i> of all {Swapper.RoleAppearance}s.
+{Swapper.RoleAppearance}s appear as {Jester.RoleAppearance}s to {Traitor.RoleAppearance}s and {Killer.RoleAppearance}s.
+{Swapper.RoleAppearance}s can talk (but not receive responses) in {Traitor.RoleAppearance} chat.";
+    }
     public class SwapperRoleHandler : IRoleHandler
     {
         public static string SwapperRoleName => Swapper.RoleAppearance.Name;
         public static string SwapperRoleID = $"GM_TRT_{SwapperRoleName}";
+        public IRoleHelp RoleHelp => new SwapperRoleHelp();
         public Alignment RoleAlignment => Swapper.RoleAlignment;
         public string WinMessage => "THE SWAPPER WINS"; // this shouldn't even be possible
         public Color WinColor => Swapper.RoleAppearance.Color;

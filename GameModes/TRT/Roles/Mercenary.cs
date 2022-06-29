@@ -8,8 +8,23 @@ using System.Linq;
 using GameModeCollection.Utils;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class MercenaryRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Mercenary.RoleAppearance;
+        public Alignment RoleAlignment => Mercenary.RoleAlignment;
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Traitor.RoleAppearance, Hypnotist.RoleAppearance, Vampire.RoleAppearance, Killer.RoleAppearance };
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Glitch.RoleAppearance, Detective.RoleAppearance, Phantom.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Traitor.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"A special {Innocent.RoleAppearance}.
+
+Has access to a shop with <i>all<\i> weapons and equipment
+    available to both {Detective.RoleAppearance}s and {Traitor.RoleAppearance}s.
+Spawns with 1 credit.";
+    }
     public class MercenaryRoleHandler : IRoleHandler
     {
+        public IRoleHelp RoleHelp => new MercenaryRoleHelp();
         public Alignment RoleAlignment => Mercenary.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;

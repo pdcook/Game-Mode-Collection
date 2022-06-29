@@ -3,10 +3,28 @@ using UnboundLib;
 using System.Linq;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class GlitchRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Glitch.RoleAppearance;
+        public Alignment RoleAlignment => Glitch.RoleAlignment;
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Traitor.RoleAppearance, Hypnotist.RoleAppearance, Vampire.RoleAppearance, Killer.RoleAppearance };
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Mercenary.RoleAppearance, Detective.RoleAppearance, Phantom.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Traitor.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"A special {Innocent.RoleAppearance}.
+
+Appears as a {Traitor.RoleAppearance} to all members of the {Traitor.RoleAppearance} team.
+    Or as a {Zombie.RoleAppearance} to {Zombie.RoleAppearance}s.
+
+Prevents {Traitor.RoleAppearance}s from using {Traitor.RoleAppearance} chat.
+
+All {Traitor.RoleAppearance}s are notified of the presence, <i>but not the identity</i>, of a {Glitch.RoleAppearance} at the start of the round.";
+    }
     public class GlitchRoleHandler : IRoleHandler
     {
         public static string GlitchRoleName => Glitch.RoleAppearance.Name;
         public static string GlitchRoleID = $"GM_TRT_{GlitchRoleName}";
+        public IRoleHelp RoleHelp => new GlitchRoleHelp();
         public Alignment RoleAlignment => Glitch.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;

@@ -17,6 +17,7 @@ namespace GameModeCollection.Patches
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID || !__instance.GetComponent<CharacterData>().view.IsMine || BetterChat.BetterChat.isLockingInput) { return; }
 
             PlayerActionsAdditionalData data = __instance.GetComponent<CharacterData>().playerActions.GetAdditionalData();
+            Player player = __instance.GetComponent<Player>();
 
             // TRT traitor VC push-to-talk
             data.trt_traitor_ptt_is_held = data.trt_traitor_chat_ptt.IsPressed;
@@ -24,14 +25,14 @@ namespace GameModeCollection.Patches
             // TRT inspect body
             if (data.trt_inspect_body.WasPressed)
             {
-                TRTHandler.TryInspectBody(__instance.GetComponent<Player>(), false);
+                TRTHandler.TryInspectBody(player, false);
             }
 
             // interact
             if (data.interact.WasPressed)
             {
                 data.try_interact_was_pressed = true;
-                TRTHandler.TryInspectBody(__instance.GetComponent<Player>(), true);
+                TRTHandler.TryInspectBody(player, true);
             }
             else
             {
@@ -39,6 +40,16 @@ namespace GameModeCollection.Patches
             }
             data.try_interact_is_pressed = data.interact.IsPressed;
             data.try_interact_was_released = data.interact.WasReleased;
+
+            // help
+            if (data.role_help.IsPressed)
+            {
+                RoleHelpManager.ShowHelp(player);
+            }
+            else
+            {
+                RoleHelpManager.HideHelp();
+            }
 
             // actions that can be modified by the modifier button/key
             if (data.modifier.IsPressed)
@@ -76,19 +87,19 @@ namespace GameModeCollection.Patches
                 // TRT radios
                 if (data.trt_radio_imwith_mod_item1.WasPressed)
                 {
-                    TRTHandler.ImWith(__instance.GetComponent<Player>());
+                    TRTHandler.ImWith(player);
                 }
                 if (data.trt_radio_traitor_mod_item2.WasPressed)
                 {
-                    TRTHandler.IsTraitor(__instance.GetComponent<Player>());
+                    TRTHandler.IsTraitor(player);
                 }
                 if (data.trt_radio_suspect_mod_item3.WasPressed)
                 {
-                    TRTHandler.IsSuspect(__instance.GetComponent<Player>());
+                    TRTHandler.IsSuspect(player);
                 }
                 if (data.trt_radio_innocent_mod_item4.WasPressed)
                 {
-                    TRTHandler.IsInnocent(__instance.GetComponent<Player>());
+                    TRTHandler.IsInnocent(player);
                 }
 
                 // discard cards

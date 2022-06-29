@@ -6,8 +6,32 @@ using System.Collections.Generic;
 using GameModeCollection.GameModeHandlers;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class AssassinRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Assassin.RoleAppearance;
+        public Alignment RoleAlignment => Assassin.RoleAlignment;
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Traitor.RoleAppearance, Hypnotist.RoleAppearance, Vampire.RoleAppearance };
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Detective.RoleAppearance, Mercenary.RoleAppearance, Glitch.RoleAppearance, Phantom.RoleAppearance, Killer.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Innocent.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"A special {Traitor.RoleAppearance} which is given a target at the beginning of the round.
+
+The {Assassin.RoleAppearance} deals <b>double</b> damage to their target,
+    but <b>half</b> damage to all other players.
+
+When the target dies a new target is assigned.
+
+If the {Assassin.RoleAppearance} kills someone other than their target,
+    they will fail the contract
+    and <b>deal half damage for the rest of the round.</b>
+
+Has access to the {Traitor.RoleAppearance} shop.
+    Spawns with no credits.
+    Receives an additional credit each time a certain portion of the {Innocent.RoleAppearance} team has been killed.";
+    }
     public class AssassinRoleHandler : IRoleHandler
     {
+        public IRoleHelp RoleHelp => new AssassinRoleHelp();
         public Alignment RoleAlignment => Assassin.RoleAlignment;
         public string WinMessage => "TRAITORS WIN";
         public Color WinColor => Traitor.RoleAppearance.Color;

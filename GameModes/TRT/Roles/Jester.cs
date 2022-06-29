@@ -4,8 +4,23 @@ using UnityEngine;
 using GameModeCollection.GameModes.TRT.RoundEvents;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class JesterRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Jester.RoleAppearance;
+        public Alignment RoleAlignment => Jester.RoleAlignment;
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] {};
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] {};
+        public string WinCondition => $"Be killed by another player.";
+        public string Description =>
+$@"The {Jester.RoleAppearance} cannot deal damage,
+    nor can they take damage from the environment.
+
+{Traitor.RoleAppearance}s and {Killer.RoleAppearance}s are alerted to the <i>identities</i> of all {Jester.RoleAppearance}s.
+{Jester.RoleAppearance}s can talk (but not receive responses) in {Traitor.RoleAppearance} chat.";
+    }
     public class JesterRoleHandler : IRoleHandler
     {
+        public IRoleHelp RoleHelp => new JesterRoleHelp();
         public Alignment RoleAlignment => Jester.RoleAlignment;
         public string WinMessage => "THE JESTER WINS";
         public Color WinColor => Jester.RoleAppearance.Color;

@@ -6,8 +6,26 @@ using GameModeCollection.Extensions;
 using System.Collections;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class HypnotistRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Hypnotist.RoleAppearance;
+        public Alignment RoleAlignment => Hypnotist.RoleAlignment;
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Traitor.RoleAppearance, Assassin.RoleAppearance, Vampire.RoleAppearance };
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Detective.RoleAppearance, Mercenary.RoleAppearance, Glitch.RoleAppearance, Phantom.RoleAppearance, Killer.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Innocent.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"A special {Traitor.RoleAppearance} which can revive one player during the round.
+
+The {Hypnotist.RoleAppearance} can [Interact] with a player's body to revive them.
+    Revived players will be {Traitor.RoleAppearance}s for the rest of the round.
+
+Has access to the {Traitor.RoleAppearance} shop.
+    Spawns with no credits.
+    Receives an additional credit each time a certain portion of the {Innocent.RoleAppearance} team has been killed.";
+    }
     public class HypnotistRoleHandler : IRoleHandler
     {
+        public IRoleHelp RoleHelp => new HypnotistRoleHelp();
         public Alignment RoleAlignment => Hypnotist.RoleAlignment;
         public string WinMessage => "TRAITORS WIN";
         public Color WinColor => Traitor.RoleAppearance.Color;

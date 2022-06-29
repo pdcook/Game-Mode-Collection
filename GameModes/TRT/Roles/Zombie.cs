@@ -11,10 +11,31 @@ using UnboundLib.Networking;
 using UnityEngine;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class ZombieRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Zombie.RoleAppearance;
+        public Alignment RoleAlignment => Zombie.RoleAlignment;
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] {Zombie.RoleAppearance};
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Detective.RoleAppearance, Mercenary.RoleAppearance, Glitch.RoleAppearance, Phantom.RoleAppearance, Killer.RoleAppearance };
+        public string WinCondition => $"Kill <b><i>or infect</i></b> all members of the {Innocent.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"Replaces all {Traitor.RoleAppearance}s for the round.
+
+Spawns with <b>Claws</b>, a melee weapon which can be switched to with [Item 2].
+    <b>Claws</b> deal 50 damage per slash.
+    Killing a player with the <b>Claws</b> will infect them, and they will immediately respawn as a {Zombie.RoleAppearance}.
+
+{Zombie.RoleAppearance}s <b><i>deal 50% damage with all non-Claw weapons.</i></b>
+
+Has access to the {Zombie.RoleAppearance} shop.
+    Spawns with no credits.
+    Receives an additional credit each time they infect another player.";
+    }
     public class ZombieRoleHandler : IRoleHandler
     {
         public static string ZombieRoleName => Zombie.RoleAppearance.Name;
         public static string ZombieRoleID = $"GM_TRT_{ZombieRoleName}";
+        public IRoleHelp RoleHelp => new ZombieRoleHelp();
         public Alignment RoleAlignment => Zombie.RoleAlignment;
         public string WinMessage => "ZOMBIES WIN";
         public Color WinColor => Zombie.RoleAppearance.Color;

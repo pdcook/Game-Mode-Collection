@@ -2,6 +2,8 @@
 using TMPro;
 using System.Collections.Generic;
 using RWF;
+using SoundImplementation;
+using Sonigon;
 
 namespace GameModeCollection.Extensions
 {
@@ -27,5 +29,24 @@ namespace GameModeCollection.Extensions
 			instance.StopAllCoroutines();
 			instance.StartCoroutine(roundStartPulse.StartPulse());
 		}
-	}
+        // overload for custom fonts
+        public static void ShowJoinGameText(this UIHandler instance, string text, Color color, TMP_FontAsset font)
+        {
+            SoundManager.Instance.Play(instance.soundTextAppear, instance.transform);
+            if (text != "")
+            {
+                instance.jointGameText.text = text;
+            }
+            if (color != Color.black)
+            {
+                instance.joinGamePart.particleSettings.color = color;
+            }
+            if (font != null)
+            {
+                instance.jointGameText.font = font;
+            }
+            instance.joinGamePart.loop = true;
+            instance.joinGamePart.Play();
+        }
+    }
 }

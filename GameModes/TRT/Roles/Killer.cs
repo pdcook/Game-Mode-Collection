@@ -7,10 +7,26 @@ using GameModeCollection.Objects;
 using GameModeCollection.Utils;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class KillerRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Killer.RoleAppearance;
+        public Alignment RoleAlignment => Killer.RoleAlignment;
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { };
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { };
+        public string WinCondition => $"Kill all non-{Jester.RoleAppearance} players.";
+        public string Description =>
+$@"Spawns with 150% HP.
+
+Has access to a shop with <i>all<\i> weapons and equipment
+    available to both {Detective.RoleAppearance}s and {Traitor.RoleAppearance}s.
+Spawns with 2 credits.
+";
+    }
     public class KillerRoleHandler : IRoleHandler
     {
         public static string KillerRoleName => Killer.RoleAppearance.Name;
         public static string KillerRoleID = $"GM_TRT_{KillerRoleName}";
+        public IRoleHelp RoleHelp => new KillerRoleHelp();
         public Alignment RoleAlignment => Killer.RoleAlignment;
         public string WinMessage => "THE KILLER WINS";
         public Color WinColor => Killer.RoleAppearance.Color;

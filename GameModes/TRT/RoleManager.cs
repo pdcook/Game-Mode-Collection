@@ -395,6 +395,26 @@ namespace GameModeCollection.GameModes.TRT
         {
             return roleAppearance is null ? "white" : "#" + ColorUtility.ToHtmlStringRGB(roleAppearance.Color);
         }
+        public static string GetAlignmentColorHTML(Alignment? alignment)
+        {
+            switch (alignment)
+            {
+                case Alignment.Innocent:
+                    return GetRoleColorHTML(Innocent.RoleAppearance);
+                case Alignment.Traitor:
+                    return GetRoleColorHTML(Traitor.RoleAppearance);
+                case Alignment.Chaos:
+                    return GetRoleColorHTML(Jester.RoleAppearance);
+                case Alignment.Killer:
+                    return GetRoleColorHTML(Killer.RoleAppearance);
+                default:
+                    return GetRoleColorHTML(null);
+            }
+        }
+        public static string GetAlignmentColoredName(Alignment? alignment)
+        {
+            return alignment is null ? "" : $"<b><color={GetAlignmentColorHTML(alignment)}>{alignment.ToString()}</color></b>";
+        }
 
         public static string GetWinningRoleID(Player[] players)
         {

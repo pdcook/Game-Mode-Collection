@@ -7,11 +7,24 @@ using GameModeCollection.GameModes.TRT.Cards;
 using UnboundLib.Networking;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class TraitorRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Traitor.RoleAppearance;
+        public Alignment RoleAlignment => Traitor.RoleAlignment;
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Assassin.RoleAppearance, Hypnotist.RoleAppearance, Vampire.RoleAppearance };
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Detective.RoleAppearance, Mercenary.RoleAppearance, Glitch.RoleAppearance, Phantom.RoleAppearance, Killer.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Innocent.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"Has access to the {Traitor.RoleAppearance} shop.
+    Spawns with 1 credit.
+    Receives an additional credit each time a certain portion of the {Innocent.RoleAppearance} team has been killed.";
+    }
     public class TraitorRoleHandler : IRoleHandler
     {
         public static string TraitorRoleName => Traitor.RoleAppearance.Name;
         public static string TraitorRoleID = $"GM_TRT_{TraitorRoleName}";
         public const float TraitorRarity = 0.25f;
+        public IRoleHelp RoleHelp => new TraitorRoleHelp();
         public Alignment RoleAlignment => Traitor.RoleAlignment;
         public string WinMessage => "TRAITORS WIN";
         public Color WinColor => Traitor.RoleAppearance.Color;

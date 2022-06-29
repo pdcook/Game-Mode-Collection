@@ -5,11 +5,22 @@ using System.Linq;
 
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class InnocentRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Innocent.RoleAppearance;
+        public Alignment RoleAlignment => Innocent.RoleAlignment;
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Traitor.RoleAppearance, Hypnotist.RoleAppearance, Vampire.RoleAppearance, Assassin.RoleAppearance, Killer.RoleAppearance };
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Detective.RoleAppearance, Mercenary.RoleAppearance, Glitch.RoleAppearance, Phantom.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Traitor.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"The most common role.";
+    }
     public class InnocentRoleHandler : IRoleHandler
     {
         public static string InnocentRoleName => Innocent.RoleAppearance.Name;
         public static string InnocentRoleID = $"GM_TRT_{InnocentRoleName}";
         public const float MinimumPercInnocent = 0.5f;
+        public IRoleHelp RoleHelp => new InnocentRoleHelp();
         public Alignment RoleAlignment => Innocent.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;

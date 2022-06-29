@@ -491,7 +491,7 @@ namespace GameModeCollection.GameModes
 
             GameManager.instance.battleOngoing = false;
 
-            UIHandler.instance.ShowJoinGameText("TROUBLE\nIN\nROUNDS TOWN", Color.white);
+            UIHandler.instance.ShowJoinGameText("Trouble\n\nin\n\nRounds Town", Color.white, TRTHandler.TRTFont);
             yield return new WaitForSecondsRealtime(2f);
             UIHandler.instance.HideJoinGameText();
             yield return this.WaitForSyncUp();

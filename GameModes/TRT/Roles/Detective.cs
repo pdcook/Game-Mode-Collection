@@ -11,11 +11,33 @@ using System.Collections.Generic;
 using PlayerCustomizationUtils.Extensions;
 namespace GameModeCollection.GameModes.TRT.Roles
 {
+    public class DetectiveRoleHelp : IRoleHelp
+    {
+        public TRT_Role_Appearance RoleAppearance => Detective.RoleAppearance;
+        public Alignment RoleAlignment => Detective.RoleAlignment;
+        public TRT_Role_Appearance[] OpposingRoles => new TRT_Role_Appearance[] { Traitor.RoleAppearance, Hypnotist.RoleAppearance, Vampire.RoleAppearance, Assassin.RoleAppearance, Killer.RoleAppearance };
+        public TRT_Role_Appearance[] AlliedRoles => new TRT_Role_Appearance[] { Innocent.RoleAppearance, Mercenary.RoleAppearance, Glitch.RoleAppearance, Phantom.RoleAppearance };
+        public string WinCondition => $"Kill all members of the {Traitor.RoleAppearance} team and the {Killer.RoleAppearance} if present.";
+        public string Description =>
+$@"A special {Innocent.RoleAppearance}.
+
+All players are able to see the identity of all {Detective.RoleAppearance}s.
+
+{Detective.RoleAppearance}s can investigate bodies, which reveals information to <b>all</b> players such as
+    approximately how long ago they died,
+    the approximate color of the last player they shot,
+    and the approximate color of the last player that shot them.
+
+Has access to the { Detective.RoleAppearance } shop.
+    Spawns with 2 credits.
+    Receives an additional credit each time a member of the {Traitor.RoleAppearance} team is killed.";
+    }
     public class DetectiveRoleHandler : IRoleHandler
     {
         public static string DetectiveRoleName => Detective.RoleAppearance.Name;
         public static string DetectiveRoleID = $"GM_TRT_{DetectiveRoleName}";
         public const float DetectiveRarity = 0.125f;
+        public IRoleHelp RoleHelp => new DetectiveRoleHelp();
         public Alignment RoleAlignment => Detective.RoleAlignment;
         public string WinMessage => "INNOCENTS WIN";
         public Color WinColor => Innocent.RoleAppearance.Color;
