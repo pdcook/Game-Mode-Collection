@@ -78,6 +78,7 @@ namespace GameModeCollection.Patches
     {
         private static void Postfix(ref PlayerActions __result)
         {
+
             __result.GetAdditionalData().trt_inspect_body.AddDefaultBinding(InputControlType.RightStickButton);
 
             __result.GetAdditionalData().interact.AddDefaultBinding(InputControlType.LeftStickButton);
@@ -99,8 +100,11 @@ namespace GameModeCollection.Patches
             __result.Jump.RemoveBinding(new DeviceBindingSource(InputControlType.LeftBumper));
 
             __result.GetAdditionalData().modifier.AddDefaultBinding(InputControlType.LeftBumper);
-            
+          
             __result.GetAdditionalData().role_help.AddDefaultBinding(InputControlType.Select);
+            __result.GetAdditionalData().role_help.AddDefaultBinding(InputControlType.Minus);
+            __result.GetAdditionalData().role_help.AddDefaultBinding(InputControlType.Options);
+            __result.GetAdditionalData().role_help.AddDefaultBinding(InputControlType.View);
         }
     }
     // postfix PlayerActions to add keyboard controls

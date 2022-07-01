@@ -42,11 +42,11 @@ namespace GameModeCollection.Patches
             data.try_interact_was_released = data.interact.WasReleased;
 
             // help
-            if (data.role_help.IsPressed)
+            if (data.role_help.WasPressed)
             {
                 RoleHelpManager.ShowHelp(player);
             }
-            else
+            else if (data.role_help.WasReleased)
             {
                 RoleHelpManager.HideHelp();
             }

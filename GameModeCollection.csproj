@@ -102,6 +102,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="TRTAfterActionReport">
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\BepInEx\plugins\TRTAfterActionReport.dll</HintPath>
+    </Reference>
     <Reference Include="UnboundLib">
       <HintPath>$(RoundsFolder)\BepInEx\plugins\UnboundLib\UnboundLib.dll</HintPath>
     </Reference>
@@ -149,9 +152,6 @@
     </Reference>
     <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\UnityEngine.UIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="YamlDotNet, Version=11.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
-      <HintPath>packages\YamlDotNet.11.2.1\lib\net45\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -289,6 +289,7 @@
     <Compile Include="Patches\DamagableEvent.cs" />
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Destructible.cs" />
+    <Compile Include="Patches\EscapeMenuHandler.cs" />
     <Compile Include="Patches\PhotonPlayer.cs" />
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\GamefeelManager.cs" />

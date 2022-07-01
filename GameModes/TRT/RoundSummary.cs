@@ -4,6 +4,9 @@ using System.Linq;
 using System;
 using GameModeCollection.GameModes.TRT.RoundEvents;
 using GameModeCollection.Extensions;
+using TRTAfterActionReport.Utils;
+using UnityEngine;
+using GameModeCollection.GameModeHandlers;
 namespace GameModeCollection.GameModes.TRT
 {
     public static class RoundSummary
@@ -17,6 +20,10 @@ namespace GameModeCollection.GameModes.TRT
         /// - all kills (killer and victim)
         /// - all player damage (source, target, amount)
         /// - custom events registered by key
+
+        // sprites
+        private static Sprite WinIcon = GameModeCollection.TRT_Assets.LoadAsset<Sprite>("WinIcon");
+        private static Sprite LoseIcon = GameModeCollection.TRT_Assets.LoadAsset<Sprite>("LoseIcon");
 
         // custom events
         private static Dictionary<string, IRoundEvent> _CustomEvents = new Dictionary<string, IRoundEvent>();
@@ -113,6 +120,16 @@ namespace GameModeCollection.GameModes.TRT
             }
             return 0;
         }
+        // win/loss by each playerID (WinLoss[playerID] = win/loss)
+        private static Dictionary<int, bool> WinLoss = new Dictionary<int, bool>() { };
+        public static bool GetPlayerWinLoss(int playerID)
+        {
+            if (WinLoss.ContainsKey(playerID))
+            {
+                return WinLoss[playerID];
+            }
+            return false;
+        }
 
         // custom events by key (Events[playerID][key] = object)
         private static Dictionary<int, Dictionary<string, IRoundEvent>> Events = new Dictionary<int, Dictionary<string, IRoundEvent>>() { };
@@ -146,6 +163,7 @@ namespace GameModeCollection.GameModes.TRT
             DamageDealtToEnemies.Clear();
             DamageDealtToAllies.Clear();
             DamageDealtToSelf.Clear();
+            WinLoss.Clear();
             Events.Clear();
         }
 
@@ -253,6 +271,39 @@ namespace GameModeCollection.GameModes.TRT
                 }
             }
         }
+        public static void LogWin(string winningRoleID)
+        {
+            if (winningRoleID is null) { return; }
+
+            Alignment winningAlignment = RoleManager.GetHandler(winningRoleID).RoleAlignment;
+
+            PlayerManager.instance.ForEachPlayer(p =>
+            {
+                // hardcoded that the swapper doesn't win when Chaos wins
+                if (RoleManager.GetPlayerAlignment(p) == winningAlignment && RoleManager.GetPlayerRoleID(p) != Roles.SwapperRoleHandler.SwapperRoleID)
+                {
+                    LogWinLoss(p, true);
+                }
+                else
+                {
+                    LogWinLoss(p, false);
+                }
+            });
+        }
+        public static void LogWinLoss(Player player, bool win)
+        {
+            if (player != null)
+            {
+                if (WinLoss.ContainsKey(player.playerID))
+                {
+                    WinLoss[player.playerID] = win;
+                }
+                else
+                {
+                    WinLoss.Add(player.playerID, win);
+                }
+            }
+        }
         public static void LogEvent(string ID, int playerID, params object[] args)
         {
             if (_CustomEvents.ContainsKey(ID))
@@ -286,6 +337,7 @@ namespace GameModeCollection.GameModes.TRT
         public const string DAMAGE_DEALT_TO_ENEMIES_KEY = "DamageDealtToEnemies";
         public const string DAMAGE_DEALT_TO_ALLIES_KEY = "DamageDealtToAllies";
         public const string DAMAGE_DEALT_TO_SELF_KEY = "DamageDealtToSelf";
+        public const string WIN_LOSS_KEY = "WinLoss";
         public const string EVENTS_KEY = "Events";
 
         public static Dictionary<string, string> GetPlayerRoundSummary(int playerID)
@@ -315,6 +367,103 @@ namespace GameModeCollection.GameModes.TRT
                     GameModeCollection.Log($"P{p.playerID} | {kv.Key}: {kv.Value}");
                 }
             });
+        }
+        private const string IconColumn = "";
+        private const string PlayerColumn = "Player";
+        private const string RoleColumn = "Role";
+        private const string KillsColumn = "Kills";
+        private const string TeamKillsColumn = "Team Kills";
+        private const string EnemyKillsColumn = "Enemy Kills";
+        private const string DamageDealtColumn = "Damage Dealt";
+        private const string DamageTakenColumn = "Damage Taken";
+        private const string DamageDealtToEnemiesColumn = "Damage Dealt To Enemies";
+        private const string DamageDealtToAlliesColumn = "Damage Dealt To Allies";
+        private const string DamageDealtToSelfColumn = "Damage Dealt To Self";
+        private const string HighlightColumn = "Highlight";
+        public static void CreateRoundSummary()
+        {
+            Report report = ReportManager.instance.CreateReport("ROUND SUMMARY");
+
+            Report.Column[] columns = report.AddColumns(new string[]
+                {
+                    IconColumn,
+                    PlayerColumn,
+                    RoleColumn,
+                    KillsColumn,
+                    TeamKillsColumn,
+                    EnemyKillsColumn,
+                    DamageDealtColumn,
+                    DamageTakenColumn,
+                    DamageDealtToEnemiesColumn,
+                    DamageDealtToAlliesColumn,
+                    DamageDealtToSelfColumn,
+                    HighlightColumn
+
+                },
+                new float[] { 100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f, 500f },
+                autoSizing: new bool[] { true });
+
+            Report.Row header = report.AddRow();
+            header.AddOrChangeItems(report.Columns.ToDictionary(c => c, c => (CellItem)new TextItem(c.Name)));
+            foreach (Player player in PlayerManager.instance.players.OrderBy(p => p.data.view.Owner.NickName))
+            {
+                Report.Row row = report.AddRow();
+                AddItems(player, row, columns);
+            }
+        }
+        private static void AddItems(Player player, Report.Row row, Report.Column[] columns)
+        {
+            GameModeCollection.Log("Get Row");
+            bool won = WinLoss.ContainsKey(player.playerID) ? WinLoss[player.playerID] : false;
+            string nickName = player.data.view?.Owner?.NickName ?? "Player";
+            GameModeCollection.Log("Get Role");
+            ITRT_Role role = RoleManager.GetPlayerRole(player);
+            GameModeCollection.Log("Get Stats");
+            int kills = GetPlayerKills(player.playerID).Count();
+            int teamKills = GetPlayerTeamKills(player.playerID).Count();
+            int enemyKills = GetPlayerEnemyKills(player.playerID).Count();
+            float damageDealt = GetPlayerDamageDealt(player.playerID);
+            float damageTaken = GetPlayerDamageTaken(player.playerID);
+            float damageDealtToEnemies = GetPlayerDamageDealtToEnemies(player.playerID);
+            float damageDealtToAllies = GetPlayerDamageDealtToAllies(player.playerID);
+            float damageDealtToSelf = GetPlayerDamageDealtToSelf(player.playerID);
+            GameModeCollection.Log("Get Event");
+            string highlight = GetPlayerHighestPriorityEvent(player.playerID).EventMessage();
+
+            GameModeCollection.Log("Make icon");
+            ImageItem icon = new ImageItem(im =>
+            {
+                im.sprite = won ? RoundSummary.WinIcon : RoundSummary.LoseIcon;
+                im.color = player.GetTeamColors().color;
+            });
+            row.AddOrChangeItem(columns.First(c => c.Name == IconColumn), icon);
+            GameModeCollection.Log("Make texts");
+            TextItem playerName = new TextItem(nickName);
+            row.AddOrChangeItem(columns.First(c => c.Name == PlayerColumn), playerName);
+            TextItem playerRole = new TextItem(role.Appearance.Name);
+            // add item so that it is created before changing the font
+            row.AddOrChangeItem(columns.First(c => c.Name == RoleColumn), playerRole);
+            playerRole.tmp.font = TRTHandler.TRTFont;
+            playerRole.tmp.color = role.Appearance.Color;
+            playerRole.tmp.margin = new Vector4(0, 0, 10, 0);
+            TextItem playerKills = new TextItem(kills.ToString("N0"));
+            row.AddOrChangeItem(columns.First(c => c.Name == KillsColumn), playerKills);
+            TextItem playerTeamKills = new TextItem(teamKills.ToString("N0"));
+            row.AddOrChangeItem(columns.First(c => c.Name == TeamKillsColumn), playerTeamKills);
+            TextItem playerEnemyKills = new TextItem(enemyKills.ToString("N0"));
+            row.AddOrChangeItem(columns.First(c => c.Name == EnemyKillsColumn), playerEnemyKills);
+            TextItem playerDamageDealt = new TextItem(damageDealt.ToString("N0"));
+            row.AddOrChangeItem(columns.First(c => c.Name == DamageDealtColumn), playerDamageDealt);
+            TextItem playerDamageTaken = new TextItem(damageTaken.ToString("N0"));
+            row.AddOrChangeItem(columns.First(c => c.Name == DamageTakenColumn), playerDamageTaken);
+            TextItem playerDamageDealtToEnemies = new TextItem(damageDealtToEnemies.ToString("N0"));
+            row.AddOrChangeItem(columns.First(c => c.Name == DamageDealtToEnemiesColumn), playerDamageDealtToEnemies);
+            TextItem playerDamageDealtToAllies = new TextItem(damageDealtToAllies.ToString("N0"));
+            row.AddOrChangeItem(columns.First(c => c.Name == DamageDealtToAlliesColumn), playerDamageDealtToAllies);
+            TextItem playerDamageDealtToSelf = new TextItem(damageDealtToSelf.ToString("N0"));
+            row.AddOrChangeItem(columns.First(c => c.Name == DamageDealtToSelfColumn), playerDamageDealtToSelf);
+            TextItem playerHighlight = new TextItem(highlight);
+            row.AddOrChangeItem(columns.First(c => c.Name == HighlightColumn), playerHighlight);
         }
     }
 }

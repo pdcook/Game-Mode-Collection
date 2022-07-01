@@ -679,9 +679,6 @@ namespace GameModeCollection.GameModes
             this.gracePeriod = false;
             this.clocktime = 0f;
 
-            // show round summary
-            RoundSummary.LogOutRoundEnd();
-
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundEnd);
 
@@ -741,9 +738,6 @@ namespace GameModeCollection.GameModes
             this.prebattle = false;
             this.gracePeriod = false;
             this.clocktime = 0f;
-
-            // show round summary
-            RoundSummary.LogOutRoundEnd();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
 
@@ -918,6 +912,9 @@ namespace GameModeCollection.GameModes
             {
                 return;
             }
+
+            RoundSummary.LogWin(winningRoleID);
+            RoundSummary.CreateRoundSummary();
 
             instance.StartCoroutine(instance.ClearRolesAndVisuals());
 
