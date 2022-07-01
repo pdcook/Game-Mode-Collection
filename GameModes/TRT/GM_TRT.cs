@@ -914,7 +914,7 @@ namespace GameModeCollection.GameModes
             }
 
             RoundSummary.LogWin(winningRoleID);
-            RoundSummary.CreateRoundSummary();
+            RoundSummary.CreateRoundSummary(winningRoleID);
 
             instance.StartCoroutine(instance.ClearRolesAndVisuals());
 

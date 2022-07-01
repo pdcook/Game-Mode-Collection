@@ -41,6 +41,12 @@ namespace GameModeCollection.Patches
             data.try_interact_is_pressed = data.interact.IsPressed;
             data.try_interact_was_released = data.interact.WasReleased;
 
+            // summaries
+            if (data.toggle_summary.WasPressed)
+            {
+                RoundSummary.ToggleReportVisibility();
+            }
+
             // help
             if (data.role_help.WasPressed)
             {

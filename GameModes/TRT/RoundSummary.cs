@@ -21,6 +21,9 @@ namespace GameModeCollection.GameModes.TRT
         /// - all player damage (source, target, amount)
         /// - custom events registered by key
 
+        // current summary
+        private static Report Report = null;
+
         // sprites
         private static Sprite WinIcon = GameModeCollection.TRT_Assets.LoadAsset<Sprite>("WinIcon");
         private static Sprite LoseIcon = GameModeCollection.TRT_Assets.LoadAsset<Sprite>("LoseIcon");
@@ -380,11 +383,36 @@ namespace GameModeCollection.GameModes.TRT
         private const string DamageDealtToAlliesColumn = "Damage Dealt To Allies";
         private const string DamageDealtToSelfColumn = "Damage Dealt To Self";
         private const string HighlightColumn = "Highlight";
-        public static void CreateRoundSummary()
+        public static void CreateRoundSummary(string winningRoleID)
         {
-            Report report = ReportManager.instance.CreateReport("ROUND SUMMARY");
+            IRoleHandler winningRole = winningRoleID is null ? null : RoleManager.GetHandler(winningRoleID);
 
-            Report.Column[] columns = report.AddColumns(new string[]
+            if (RoundSummary.Report != null)
+            {
+                try
+                {
+                    ReportManager.instance.DestroyReport(RoundSummary.Report);
+                }
+                catch (Exception e)
+                {
+                    GameModeCollection.LogError($"[TRT Round Summary] Failed to destroy report {RoundSummary.Report.Name}. Full exception follows.");
+                    GameModeCollection.LogError(e);
+                }
+            }
+
+            if (winningRole is null)
+            {
+                Report = ReportManager.instance.CreateReport("ROUND SUMMARY");
+            }
+            else
+            {
+                Report = ReportManager.instance.CreateReport("ROUND SUMMARY");
+                Report.TitleText.text = winningRole.WinMessage;
+                Report.TitleText.color = winningRole.WinColor;
+                Report.TitleText.font = TRTHandler.TRTFont;
+            }
+
+            Report.Column[] columns = Report.AddColumns(new string[]
                 {
                     IconColumn,
                     PlayerColumn,
@@ -403,11 +431,11 @@ namespace GameModeCollection.GameModes.TRT
                 new float[] { 100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f, 100f, 500f },
                 autoSizing: new bool[] { true });
 
-            Report.Row header = report.AddRow();
-            header.AddOrChangeItems(report.Columns.ToDictionary(c => c, c => (CellItem)new TextItem(c.Name)));
+            Report.Row header = Report.AddRow();
+            header.AddOrChangeItems(Report.Columns.ToDictionary(c => c, c => (CellItem)new TextItem(c.Name)));
             foreach (Player player in PlayerManager.instance.players.OrderBy(p => p.data.view.Owner.NickName))
             {
-                Report.Row row = report.AddRow();
+                Report.Row row = Report.AddRow();
                 AddItems(player, row, columns);
             }
         }
@@ -464,6 +492,15 @@ namespace GameModeCollection.GameModes.TRT
             row.AddOrChangeItem(columns.First(c => c.Name == DamageDealtToSelfColumn), playerDamageDealtToSelf);
             TextItem playerHighlight = new TextItem(highlight);
             row.AddOrChangeItem(columns.First(c => c.Name == HighlightColumn), playerHighlight);
+        }
+
+        public static void ToggleReportVisibility()
+        {
+            GameModeCollection.Log("Toggle Report");
+            if (Report is null) { return; }
+            GameModeCollection.Log("Report is not null");
+            GameModeCollection.Log("Set report to: " + (!Report.gameObject.activeSelf));
+            ReportManager.instance.ShowHideReport(Report, !Report.gameObject.activeSelf);
         }
     }
 }
