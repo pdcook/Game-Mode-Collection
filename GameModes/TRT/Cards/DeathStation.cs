@@ -107,7 +107,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if (this.Player is null || !this.Player.data.view.IsMine) { return; }
             if (!HasPlaced && this.Player.data.playerActions.ItemWasPressed(1))
             {
-                GameModeCollection.Log("PLACE DeathStation");
                 this.HasPlaced = true;
                 GameModeCollection.instance.StartCoroutine(DeathStationHandler.AskHostToMakeDeathStation(this.Player.playerID, this.Player.transform.position, this.Player.transform.rotation));
                 CardUtils.Call_RemoveCardFromPlayer_ClientsideCardBar(this.Player, DeathStationCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);

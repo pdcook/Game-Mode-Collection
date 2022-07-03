@@ -333,7 +333,6 @@ namespace GameModeCollection.GameModes
         {
             PlayerManager.instance.ForEachPlayer(player =>
             {
-                if (PhotonNetwork.IsMasterClient) { GameModeCollection.Log($"PLAYER {player.playerID} | {this.RoleIDsToAssign[player.playerID]}"); }
                 RoleManager.GetHandler(this.RoleIDsToAssign[player.playerID]).AddRoleToPlayer(player);
             });
         }

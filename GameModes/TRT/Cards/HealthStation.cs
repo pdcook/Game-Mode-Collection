@@ -107,7 +107,6 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if (this.Player is null || !this.Player.data.view.IsMine) { return; }
             if (!HasPlaced && this.Player.data.playerActions.ItemWasPressed(1))
             {
-                GameModeCollection.Log("PLACE HealthStation");
                 this.HasPlaced = true;
                 GameModeCollection.instance.StartCoroutine(HealthStationHandler.AskHostToMakeHealthStation(200f, this.Player.transform.position, this.Player.transform.rotation));
                 CardUtils.Call_RemoveCardFromPlayer_ClientsideCardBar(this.Player, HealthStationCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);

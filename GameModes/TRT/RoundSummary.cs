@@ -443,12 +443,9 @@ namespace GameModeCollection.GameModes.TRT
         }
         private static void AddItems(Player player, Report.Row row, Report.Column[] columns)
         {
-            GameModeCollection.Log("Get Row");
             bool won = WinLoss.ContainsKey(player.playerID) ? WinLoss[player.playerID] : false;
             string nickName = player.data.view?.Owner?.NickName ?? "Player";
-            GameModeCollection.Log("Get Role");
             ITRT_Role role = RoleManager.GetPlayerRole(player);
-            GameModeCollection.Log("Get Stats");
             int kills = GetPlayerKills(player.playerID).Count();
             int teamKills = GetPlayerTeamKills(player.playerID).Count();
             int enemyKills = GetPlayerEnemyKills(player.playerID).Count();
@@ -457,17 +454,14 @@ namespace GameModeCollection.GameModes.TRT
             float damageDealtToEnemies = GetPlayerDamageDealtToEnemies(player.playerID);
             float damageDealtToAllies = GetPlayerDamageDealtToAllies(player.playerID);
             float damageDealtToSelf = GetPlayerDamageDealtToSelf(player.playerID);
-            GameModeCollection.Log("Get Event");
             string highlight = GetPlayerHighestPriorityEvent(player.playerID).EventMessage();
 
-            GameModeCollection.Log("Make icon");
             ImageItem icon = new ImageItem(im =>
             {
                 im.sprite = won ? RoundSummary.WinIcon : RoundSummary.LoseIcon;
                 im.color = player.GetTeamColors().color;
             });
             row.AddOrChangeItem(columns.First(c => c.Name == IconColumn), icon);
-            GameModeCollection.Log("Make texts");
             TextItem playerName = new TextItem(nickName);
             row.AddOrChangeItem(columns.First(c => c.Name == PlayerColumn), playerName);
             TextItem playerRole = new TextItem(role.Appearance.Name);

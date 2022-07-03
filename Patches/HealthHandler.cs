@@ -260,11 +260,6 @@ namespace GameModeCollection.Patches
         [HarmonyPriority(Priority.First)]
         static bool Prefix(HealthHandler __instance)
         {
-            GameModeCollection.Log($"IS INVULNERABLE: {__instance.Invulnerable()}");
-            GameModeCollection.Log($"IS INTANGIBLE: {__instance.Intangible()}");
-            GameModeCollection.Log($"IS RESPAWNING: {__instance.isRespawning}");
-            GameModeCollection.Log($"CURRENT GAMEMODE IS TRT: {GameModeManager.CurrentHandlerID == TRTHandler.GameModeID}");
-            GameModeCollection.Log($"DIE?: {!__instance.Invulnerable() && !__instance.Intangible() && (!__instance.isRespawning || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID)}");
             return !__instance.Invulnerable() && !__instance.Intangible() && (!__instance.isRespawning || GameModeManager.CurrentHandlerID != TRTHandler.GameModeID);
         }
 

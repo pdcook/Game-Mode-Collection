@@ -46,7 +46,6 @@ namespace GameModeCollection.Objects
                 {
 
                     GameObject card = new GameObject("CardItemPrefab", typeof(CardItem));
-                    GameModeCollection.Log("Card Item Prefab Instantiated");
                     UnityEngine.GameObject.DontDestroyOnLoad(card);
 
                     PhotonNetwork.PrefabPool.RegisterPrefab(card.name, card);
