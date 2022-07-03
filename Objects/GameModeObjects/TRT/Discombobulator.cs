@@ -66,9 +66,12 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	public class DiscombobulatorHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
 
+        public const float Volume = 1f;
         public const float ScaleBy = 0.15f;
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
+        public const float RangeMult = 2f;
+        private SoundEvent Sound = null;
         public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
         public bool IsPrefab { get; internal set; } = false;
 		public float FuseTimer { get; private set; } = TotalFuseTime;
@@ -122,7 +125,15 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		{
 			base.Start();
 
-			this.Exploded = false;
+            // load sound
+            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("Discombobulator.ogg");
+            SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+            soundContainer.setting.volumeIntensityEnable = true;
+            soundContainer.audioClip[0] = sound;
+            this.Sound = ScriptableObject.CreateInstance<SoundEvent>();
+            this.Sound.soundContainerArray[0] = soundContainer;
+
+            this.Exploded = false;
 			this.FuseTimer = TotalFuseTime;
 
             this.transform.localScale = new Vector3(ScaleBy, ScaleBy, 1f);
@@ -174,14 +185,19 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		private void RPCA_Explode()
         {
 			this.Exploded = true;
-			// spawn the shockwave explosion
-			GameObject innerExplosionObj = GameObject.Instantiate(DiscombobulatorPrefab.DiscombobulatorExplosion, this.transform.position, Quaternion.identity);
+
+            // play sound
+            SoundManager.Instance.Play(this.Sound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * Volume) });
+            
+            // spawn the shockwave explosion
+            GameObject innerExplosionObj = GameObject.Instantiate(DiscombobulatorPrefab.DiscombobulatorExplosion, this.transform.position, Quaternion.identity);
 			Explosion innerExpl = innerExplosionObj.GetComponent<Explosion>();
 			innerExplosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
             innerExpl.ignoreTeam = false;
             innerExpl.ignoreWalls = false;
 
-			innerExplosionObj.SetActive(true);
+            innerExplosionObj.transform.localScale *= RangeMult;
+            innerExplosionObj.SetActive(true);
 
 			Destroy(this.gameObject);
         }

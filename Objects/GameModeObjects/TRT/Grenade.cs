@@ -61,9 +61,53 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				return GrenadePrefab._GrenadeExplosion;
             }
         }
+        private static SoundEvent _explode1 = null;
+        private static SoundEvent _explode2 = null;
+        private static SoundEvent _explode3 = null;
+        public static SoundEvent GrenadeExplodeSound
+        {
+            get
+            {
+                if (_explode1 is null || _explode2 is null || _explode3 is null)
+                {
+                    // load sounds
+                    AudioClip sound1 = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("Grenade1.ogg");
+                    SoundContainer soundContainer1 = ScriptableObject.CreateInstance<SoundContainer>();
+                    soundContainer1.setting.volumeIntensityEnable = true;
+                    soundContainer1.audioClip[0] = sound1;
+                    _explode1 = ScriptableObject.CreateInstance<SoundEvent>();
+                    _explode1.soundContainerArray[0] = soundContainer1;
+                    AudioClip sound2 = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("Grenade2.ogg");
+                    SoundContainer soundContainer2 = ScriptableObject.CreateInstance<SoundContainer>();
+                    soundContainer2.setting.volumeIntensityEnable = true;
+                    soundContainer2.audioClip[0] = sound2;
+                    _explode2 = ScriptableObject.CreateInstance<SoundEvent>();
+                    _explode2.soundContainerArray[0] = soundContainer2;
+                    AudioClip sound3 = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("Grenade3.ogg");
+                    SoundContainer soundContainer3 = ScriptableObject.CreateInstance<SoundContainer>();
+                    soundContainer3.setting.volumeIntensityEnable = true;
+                    soundContainer3.audioClip[0] = sound3;
+                    _explode3 = ScriptableObject.CreateInstance<SoundEvent>();
+                    _explode3.soundContainerArray[0] = soundContainer3;
+                }
+                int rnd = UnityEngine.Random.Range(0, 3);
+                switch (rnd)
+                {
+                    case 0:
+                        return _explode1;
+                    case 1:
+                        return _explode2;
+                    case 2:
+                        return _explode3;
+                    default:
+                        return _explode1;
+                }
+            }
+        }
 	}
 	public class GrenadeHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
+        public const float Volume = 1f;
         public const float ScaleBy = 0.25f;
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
@@ -175,6 +219,10 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		private void RPCA_Explode()
         {
 			this.Exploded = true;
+
+            // play sound
+            SoundManager.Instance.Play(GrenadePrefab.GrenadeExplodeSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * Volume) });
+            
 			GameObject explosionObj = GameObject.Instantiate(GrenadePrefab.GrenadeExplosion, this.transform.position, Quaternion.identity);
 			Explosion explosion = explosionObj.GetComponent<Explosion>();
 			explosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
