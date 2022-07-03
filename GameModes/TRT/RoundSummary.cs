@@ -246,15 +246,6 @@ namespace GameModeCollection.GameModes.TRT
                     Kills.Add(source.playerID, new List<int>() { receiver.playerID });
                 }
 
-                if (EnemyKills.ContainsKey(receiver.playerID))
-                {
-                    EnemyKills[receiver.playerID].Add(source.playerID);
-                }
-                else
-                {
-                    EnemyKills.Add(receiver.playerID, new List<int>() { source.playerID });
-                }
-
                 if (RoleManager.GetPlayerAlignment(source) == RoleManager.GetPlayerAlignment(receiver))
                 {
                     if (TeamKills.ContainsKey(source.playerID))
@@ -264,6 +255,17 @@ namespace GameModeCollection.GameModes.TRT
                     else
                     {
                         TeamKills.Add(source.playerID, new List<int>() { receiver.playerID });
+                    }
+                }
+                else if (RoleManager.GetPlayerAlignment(receiver) != Alignment.Chaos)
+                {
+                    if (EnemyKills.ContainsKey(source.playerID))
+                    {
+                        EnemyKills[source.playerID].Add(receiver.playerID);
+                    }
+                    else
+                    {
+                        EnemyKills.Add(source.playerID, new List<int>() { receiver.playerID });
                     }
                 }
 
