@@ -32,8 +32,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 					// placeholder circle sprite
 					GameObject incendiaryGrenade = new GameObject("IncendiaryGrenade", typeof(SpriteRenderer));
-					incendiaryGrenade.GetComponent<SpriteRenderer>().sprite = Sprites.Circle;
-                    incendiaryGrenade.GetComponent<SpriteRenderer>().color = new Color32(100, 0, 0, 255);
+                    incendiaryGrenade.GetComponent<SpriteRenderer>().sprite = GameModeCollection.TRT_Assets.LoadAsset<Sprite>("TRT_Incendiary");
                     incendiaryGrenade.AddComponent<PhotonView>();
 					incendiaryGrenade.AddComponent<IncendiaryGrenadeHandler>();
 					incendiaryGrenade.name = "IncendiaryGrenadePrefab";
@@ -102,6 +101,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
     }
 	public class IncendiaryGrenadeHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
+        public const float ScaleBy = 0.15f;
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
         public const int Fragments = 5;
@@ -145,11 +145,13 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		}
 		protected override void Awake()
 		{
-			this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.55f,
+			this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.25f,
 														playerPushMult: 10000f,
 														playerDamageMult: 0f,
 														collisionDamageThreshold: float.MaxValue,
-														friction: 0.7f,
+														friction: 0.9f,
+                                                        minAngularDrag: 1f,
+                                                        maxAngularDrag: 100f,
 														impulseMult: 1f,
 														forceMult: 1f, visibleThroughShader: false);
 
@@ -162,7 +164,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			this.Exploded = false;
 			this.FuseTimer = TotalFuseTime;
 
-			this.Col.radius = 0.25f;
+            this.transform.localScale = Vector3.one * ScaleBy;
+            this.Col.radius = 0.25f/ScaleBy;
 
 			if (this.IsPrefab)
             {
@@ -264,11 +267,11 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
         }
         protected override void Awake()
         {
-            this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0f,
+            this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.55f,
                                                         playerPushMult: 10000f,
                                                         playerDamageMult: 0f,
                                                         collisionDamageThreshold: float.MaxValue,
-                                                        friction: 0.7f,
+                                                        friction: 0f,
                                                         impulseMult: 1f,
                                                         forceMult: 1f, visibleThroughShader: false);
 
@@ -403,6 +406,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
         public const float BurnEvery = 0.2f;
         public const float BURNDAMAGE = 5f;
         public const float BurnVolume = 0.75f;
+        public const float RepelFragmentStrength = 1f;
 
         private int OwnerID = -1;
         private float Duration = -1f;
@@ -490,6 +494,16 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             {
                 this.PlayerEnterFlame(player);
             }
+            else
+            {
+                IncendiaryGrenadeFragmentHandler fragment = collider2D?.transform?.root.GetComponent<IncendiaryGrenadeFragmentHandler>();
+                if (fragment != null)
+                {
+                    // fragments should bounce off of flames
+                    fragment.SetVel(fragment.Rig.velocity + (Vector2)this.transform.up * RepelFragmentStrength);
+
+                }
+            }
         }
         void OnTriggerStay2D(Collider2D collider2D)
         {
@@ -497,6 +511,16 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             if (player != null)
             {
                 this.PlayerEnterFlame(player);
+            }
+            else
+            {
+                IncendiaryGrenadeFragmentHandler fragment = collider2D?.transform?.root.GetComponent<IncendiaryGrenadeFragmentHandler>();
+                if (fragment != null)
+                {
+                    // fragments should bounce off of flames
+                    fragment.SetVel(fragment.Rig.velocity + (Vector2)this.transform.up * RepelFragmentStrength);
+
+                }
             }
         }
         void OnTriggerExit2D(Collider2D collider2D)

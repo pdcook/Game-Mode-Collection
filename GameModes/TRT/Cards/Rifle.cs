@@ -278,7 +278,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             // things that can't be changed with ReversibleEffect
 
             // restore originals
-            this.gun.objectsToSpawn = this.OriginalObjectsToSpawn.Concat(this.gun.objectsToSpawn).ToArray();
+            this.gun.objectsToSpawn = this.OriginalObjectsToSpawn?.ToArray() ?? new ObjectsToSpawn[] {};//.Concat(this.gun.objectsToSpawn).ToArray();
             this.gun.dontAllowAutoFire = this.data.currentCards.Any(c => (c.gameObject?.GetComponent<Gun>()?.dontAllowAutoFire ?? false));
             this.gun.soundGun.RemoveSoundShotModifier(this.SoundShotModifier);
             this.gun.soundGun.RemoveSoundImpactModifier(this.SoundImpactModifier);

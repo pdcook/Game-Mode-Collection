@@ -26,8 +26,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 					// placeholder circle sprite
 					GameObject smokeGrenade = new GameObject("SmokeGrenade", typeof(SpriteRenderer));
-					smokeGrenade.GetComponent<SpriteRenderer>().sprite = Sprites.Circle;
-                    smokeGrenade.GetComponent<SpriteRenderer>().color = new Color32(100, 100, 100, 255);
+                    smokeGrenade.GetComponent<SpriteRenderer>().sprite = GameModeCollection.TRT_Assets.LoadAsset<Sprite>("TRT_SmokeGrenade");
+                    //smokeGrenade.GetComponent<SpriteRenderer>().color = new Color32(100, 100, 100, 255);
                     smokeGrenade.AddComponent<PhotonView>();
 					smokeGrenade.AddComponent<SmokeGrenadeHandler>();
 					smokeGrenade.name = "SmokeGrenadePrefab";
@@ -121,6 +121,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
     }
 	public class SmokeGrenadeHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
+        public const float ScaleBy = 0.125f;
         public const float SmokeVolume = 1f;
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
@@ -162,12 +163,14 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		}
 		protected override void Awake()
 		{
-			this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.55f,
+			this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.25f,
 														playerPushMult: 10000f,
 														playerDamageMult: 0f,
 														collisionDamageThreshold: float.MaxValue,
-														friction: 0.7f,
-														impulseMult: 1f,
+														friction: 0.9f,
+                                                        minAngularDrag: 1f,
+                                                        maxAngularDrag: 100f,
+                                                        impulseMult: 1f,
 														forceMult: 1f, visibleThroughShader: false);
 
 			base.Awake();
@@ -179,7 +182,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			this.Exploded = false;
 			this.FuseTimer = TotalFuseTime;
 
-			this.Col.radius = 0.25f;
+            this.transform.localScale = Vector3.one * ScaleBy;
+            this.Col.radius = 0.25f/ScaleBy;
 
             // load smoke sound
             AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("SmokeGrenade.ogg");

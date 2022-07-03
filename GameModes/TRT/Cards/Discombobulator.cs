@@ -62,9 +62,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
         protected override GameObject GetCardArt()
         {
-            return null;
-            //return GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_Discombobulator");
-
+            return GameModeCollection.TRT_Assets.LoadAsset<GameObject>("C_Discombobulator");
         }
 
         protected override CardInfo.Rarity GetRarity()

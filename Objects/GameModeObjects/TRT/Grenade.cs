@@ -32,8 +32,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 					// placeholder circle sprite
 					GameObject grenade = new GameObject("Grenade", typeof(SpriteRenderer));
-					grenade.GetComponent<SpriteRenderer>().sprite = Sprites.Circle;
-                    grenade.GetComponent<SpriteRenderer>().color = new Color32(100, 100, 0, 255);
+                    grenade.GetComponent<SpriteRenderer>().sprite = GameModeCollection.TRT_Assets.LoadAsset<Sprite>("TRT_Grenade");
                     grenade.AddComponent<PhotonView>();
 					grenade.AddComponent<GrenadeHandler>();
 					grenade.name = "GrenadePrefab";
@@ -65,10 +64,11 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	}
 	public class GrenadeHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
+        public const float ScaleBy = 0.25f;
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
 		public const float ExplosionDamage = 100f;
-		public const float ExplosionRange = 50f;
+		public const float ExplosionRange = 15f;
 
         public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
         public bool IsPrefab { get; internal set; } = false;
@@ -107,11 +107,13 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		}
 		protected override void Awake()
 		{
-			this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.55f,
+			this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.25f,
 														playerPushMult: 10000f,
 														playerDamageMult: 0f,
 														collisionDamageThreshold: float.MaxValue,
-														friction: 0.7f,
+														friction: 0.9f,
+                                                        minAngularDrag: 1f,
+                                                        maxAngularDrag: 100f,
 														impulseMult: 1f,
 														forceMult: 1f, visibleThroughShader: false);
 
@@ -124,7 +126,9 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			this.Exploded = false;
 			this.FuseTimer = TotalFuseTime;
 
-			this.Col.radius = 0.25f;
+            this.transform.localScale = Vector3.one * ScaleBy;
+
+            this.Col.radius = 0.25f/ScaleBy;
 
 			if (this.IsPrefab)
             {

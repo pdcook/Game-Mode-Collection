@@ -32,8 +32,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 					// placeholder circle sprite
 					GameObject discombobulator = new GameObject("Discombobulator", typeof(SpriteRenderer));
-					discombobulator.GetComponent<SpriteRenderer>().sprite = Sprites.Circle;
-                    discombobulator.GetComponent<SpriteRenderer>().color = new Color32(0, 0, 100, 255);
+                    discombobulator.GetComponent<SpriteRenderer>().sprite = GameModeCollection.TRT_Assets.LoadAsset<Sprite>("TRT_Discombobulator");
+                    //discombobulator.GetComponent<SpriteRenderer>().color = new Color32(0, 0, 100, 255);
                     discombobulator.AddComponent<PhotonView>();
 					discombobulator.AddComponent<DiscombobulatorHandler>();
 					discombobulator.name = "DiscombobulatorPrefab";
@@ -65,6 +65,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	}
 	public class DiscombobulatorHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
+
+        public const float ScaleBy = 0.15f;
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
         public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
@@ -104,13 +106,15 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		}
 		protected override void Awake()
 		{
-			this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.55f,
-														playerPushMult: 10000f,
-														playerDamageMult: 0f,
-														collisionDamageThreshold: float.MaxValue,
-														friction: 0.7f,
-														impulseMult: 1f,
-														forceMult: 1f, visibleThroughShader: false);
+            this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0.25f,
+                                                        playerPushMult: 10000f,
+                                                        playerDamageMult: 0f,
+                                                        collisionDamageThreshold: float.MaxValue,
+                                                        friction: 0.9f,
+                                                        minAngularDrag: 1f,
+                                                        maxAngularDrag: 100f,
+                                                        impulseMult: 1f,
+                                                        forceMult: 1f, visibleThroughShader: false);
 
 			base.Awake();
 		}
@@ -121,7 +125,9 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			this.Exploded = false;
 			this.FuseTimer = TotalFuseTime;
 
-			this.Col.radius = 0.25f;
+            this.transform.localScale = new Vector3(ScaleBy, ScaleBy, 1f);
+
+            this.Col.radius = 0.25f/ScaleBy;
 
 			if (this.IsPrefab)
             {
