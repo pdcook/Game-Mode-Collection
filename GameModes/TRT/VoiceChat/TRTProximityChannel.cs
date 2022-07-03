@@ -15,6 +15,8 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override int Priority { get; } = 101; // TRT priorities start at 100
         public override string ChannelName { get; } = "General Proximity";
         public override Color ChannelColor { get; } = GM_TRT.InnocentColor;
+        public override bool GlobalUIIconsEnabled => false;
+        public override bool LocalUIIconsEnabled => true;
         public override AudioFilters AudioFilters { get; } = AudioFilters.None;
 
         private static bool JamComms = false; // are the comms jammed?
@@ -32,6 +34,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
 
         public override float RelativeVolume(Player speaking, Player listening)
         {
+            if (GM_TRT.instance.CurrentPhase == GM_TRT.RoundPhase.PostBattle) { return 0f; }
             if (speaking is null) { return 0f; }
             if (listening is null) { return 1f; }
             float distance = Vector2.Distance(speaking.data.playerVel.position, listening.data.playerVel.position);
@@ -42,7 +45,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override bool SpeakingEnabled(Player player)
         {
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return false; }
-            if (player is null || player.data.dead) { return false; }
+            if (player is null || player.data.dead || GM_TRT.instance.CurrentPhase == GM_TRT.RoundPhase.PostBattle) { return false; }
             if (player.data?.isSilenced ?? true) { return false; } // silenced players cannot speak
             if (JamComms) { return false; } // comms are jammed
             else { return true; }
@@ -56,6 +59,10 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         {
             JamComms = true;
             yield return new WaitForSeconds(jamTime);
+            JamComms = false;
+        }
+        public static void ForceUnjamComms()
+        {
             JamComms = false;
         }
     }

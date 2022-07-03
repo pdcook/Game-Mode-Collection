@@ -15,11 +15,14 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override int Priority { get; } = 102; // TRT priorities start at 100
         public override string ChannelName { get; } = "Traitors";
         public override Color ChannelColor { get; } = GM_TRT.TraitorColor;
+        public override bool GlobalUIIconsEnabled => true;
+        public override bool LocalUIIconsEnabled => true;
         public override AudioFilters AudioFilters { get; } = new AudioFilters(highPassCutoff: 500, distortion: 0.5f);
 
 
         public override float RelativeVolume(Player speaking, Player listening)
         {
+            if (GM_TRT.instance.CurrentPhase == GM_TRT.RoundPhase.PostBattle) { return 0f; }
             // players can only hear this channel if:
             /*
              * - the current gamemode is TRT
@@ -49,7 +52,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
              */
 
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return false; }
-            if (player is null || player.data.dead) { return false; }
+            if (player is null || player.data.dead || GM_TRT.instance.CurrentPhase == GM_TRT.RoundPhase.PostBattle) { return false; }
             if (player.data?.isSilenced ?? true) { return false; } // silenced players cannot speak
             Alignment? alignment = RoleManager.GetPlayerAlignment(player);
             if (alignment != Alignment.Traitor && alignment != Alignment.Chaos)

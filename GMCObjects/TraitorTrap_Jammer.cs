@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using UnityEngine;
 using GameModeCollection.GameModes;
+using GameModeCollection.GameModeHandlers;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.VoiceChat;
 using Sonigon;
 using Sonigon.Internal;
 using UnboundLib;
+using UnboundLib.GameModes;
 
 namespace GameModeCollection.GMCObjects
 {
@@ -15,6 +17,21 @@ namespace GameModeCollection.GMCObjects
     /// </summary>
     public class TraitorTrap_Jammer : Interactable
     {
+
+        public static IEnumerator ForceStop(IGameModeHandler gm)
+        {
+            if (GameModeManager.CurrentHandlerID == TRTHandler.GameModeID)
+            {
+                if (StaticPlaying)
+                {
+                    StaticPlaying = false;
+                    SoundManager.Instance.Stop(Static, SoundManager.Instance.GetTransform(), true);
+                }
+                TRTProximityChannel.ForceUnjamComms();
+            }
+
+            yield break;
+        }
 
         public const float JamDuration = 30f;
 
@@ -26,7 +43,7 @@ namespace GameModeCollection.GMCObjects
         public override float VisibleDistance { get; protected set; } = 5f;
         public override bool RequireLoS { get; protected set; } = true;
 
-        private const float StaticVol = 1f;
+        private const float StaticVol = 0.5f;
 
         private static bool StaticPlaying = false;
         private static SoundEvent _Static = null;
@@ -53,7 +70,7 @@ namespace GameModeCollection.GMCObjects
             // play a static sound for the duration of the jam
             if (!StaticPlaying)
             {
-                SoundManager.Instance.PlayMusic(Static, false, true, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * StaticVol) });
+                SoundManager.Instance.Play(Static, SoundManager.Instance.GetTransform(), new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * StaticVol) });
                 StaticPlaying = true;
 
                 // start a coroutine to stop the static sound after the jam duration
@@ -61,7 +78,7 @@ namespace GameModeCollection.GMCObjects
                 GM_TRT.instance.ExecuteAfterSeconds(JamDuration, () =>
                 {
                     StaticPlaying = false;
-                    SoundManager.Instance.StopMusic(Static, false);
+                    SoundManager.Instance.Stop(Static, SoundManager.Instance.GetTransform(), true);
                 });
             }
 

@@ -6,6 +6,7 @@ using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.GameModes.TRT.Controllers;
 using GameModeCollection.Objects;
+using GameModeCollection.GMCObjects;
 using HarmonyLib;
 using Jotunn.Utils;
 using MapEmbiggener.Controllers;
@@ -135,6 +136,8 @@ namespace GameModeCollection
             GameModeManager.AddHook(GameModeHooks.HookPointStart, A_Knife.RemoveAllKnives);
             GameModeManager.AddHook(GameModeHooks.HookPointEnd, Cuffed.RemoveAllCuffsFromPlayers);
             GameModeManager.AddHook(GameModeHooks.HookPointStart, Cuffed.RemoveAllCuffsFromPlayers);
+            GameModeManager.AddHook(GameModeHooks.HookPointEnd, TraitorTrap_Jammer.ForceStop);
+            GameModeManager.AddHook(GameModeHooks.HookRoundEnd, TraitorTrap_Jammer.ForceStop);
 
             // Pykess game mode stuff
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());

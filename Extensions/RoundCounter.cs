@@ -77,6 +77,8 @@ namespace GameModeCollection.Extensions
                 teamText = new GameObject($"P{teamID}-Text", typeof(TextMeshProUGUI)).transform;
                 teamText.GetComponent<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
                 teamText.GetComponent<TextMeshProUGUI>().fontSize = 10f;
+                teamText.GetComponent<TextMeshProUGUI>().fontSizeMin = 5f;
+                teamText.GetComponent<TextMeshProUGUI>().margin = new Vector4(5f, 5f, 5f, 5f);
                 teamText.GetComponent<TextMeshProUGUI>().color = PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
                 teamText.SetParent(instance.PointInfoHolder());
                 teamText.SetSiblingIndex(teamID + 1);
@@ -109,7 +111,7 @@ namespace GameModeCollection.Extensions
             instance.TeamClock(teamID).gameObject.SetActive(false);
         }
 
-        public static void UpdateText(this RoundCounter instance, int teamID, string text, Color? colorToSet = null, float? fontSize = null, Vector3? scale = null, Color? backgroundColorToSet = null)
+        public static void UpdateText(this RoundCounter instance, int teamID, string text, Color? colorToSet = null, float? fontSize = null, Vector3? scale = null, Color? backgroundColorToSet = null, bool? autoSize = null)
         {
             Color color = colorToSet ?? PlayerManager.instance.GetPlayersInTeam(teamID).First().GetTeamColors().color;
 
@@ -118,6 +120,7 @@ namespace GameModeCollection.Extensions
             tmpro.text = text;
             tmpro.color = color;
             if (fontSize != null) { tmpro.fontSize = (float)fontSize; }
+            if (autoSize != null) { tmpro.enableAutoSizing = (bool)autoSize; }
             if (scale != null) { tmpro.gameObject.transform.localScale = (Vector3)scale; }
             if (backgroundColorToSet != null)
             {

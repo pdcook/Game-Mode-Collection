@@ -15,19 +15,22 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override int Priority { get; } = 103; // TRT priorities start at 100
         public override string ChannelName { get; } = "Intercom";
         public override Color ChannelColor { get; } = GM_TRT.DullWhite;
+        public override bool GlobalUIIconsEnabled => true;
+        public override bool LocalUIIconsEnabled => true;
         public override AudioFilters AudioFilters { get; } = new AudioFilters(reverb: AudioReverbPreset.Hangar, highPassCutoff: 500, distortion: 0.5f);
 
         public static int IntercomPlayerID { get; private set; } = -1; // playerID of the player who is currently speaking in the intercom
 
         public override float RelativeVolume(Player speaking, Player listening)
         {
+            if (GM_TRT.instance.CurrentPhase == GM_TRT.RoundPhase.PostBattle) { return 0f; }
             return 1f;
         }
 
         public override bool SpeakingEnabled(Player player)
         {
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return false; }
-            if (player?.data?.isSilenced ?? true) { return false; } // silenced players cannot speak
+            if (player?.data?.isSilenced ?? true || GM_TRT.instance.CurrentPhase == GM_TRT.RoundPhase.PostBattle) { return false; } // silenced players cannot speak
             if (player.playerID != IntercomPlayerID) { return false; }
 
             return true;

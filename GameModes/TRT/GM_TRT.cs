@@ -36,10 +36,22 @@ namespace GameModeCollection.GameModes
     /// </summary>
     public class GM_TRT : MonoBehaviour
     {
+
+        public enum RoundPhase
+        {
+            PreBattle,
+            GracePeriod,
+            Starting,
+            Active,
+            PostBattle,
+            Transitioning
+        }
+
         internal static GM_TRT instance;
 
         private const float RoundTime = 300f; // default 300f
         private const float PrepPhaseTime = 30f; // default 30f
+        private const float PostPhaseTime = 30f; // default 30f
         private const float GracePeriodTime = 6f; // default 5f, amount of time at the end of the prep phase during which players cannot shoot or block
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
@@ -96,9 +108,14 @@ namespace GameModeCollection.GameModes
         private Dictionary<int, string> RoleIDsToAssign = null;
         private int? timeUntilBattleStart = null;
 
-        internal bool battleOngoing = false;
-        private bool prebattle = false;
+        public RoundPhase CurrentPhase { get; private set; } = RoundPhase.Transitioning;
+        public bool BattleOngoing => this.CurrentPhase == RoundPhase.Active;
+        /*
+        internal bool BattleOngoing = false;
+        private bool preBattle = false;
         private bool gracePeriod = false;
+        private bool postBattle = false;
+        */
 
         private float clocktime = RoundTime;
         private float syncCounter = -1f;
@@ -390,7 +407,7 @@ namespace GameModeCollection.GameModes
         {
             foreach (CardInfo card in cardsToDrop.Where(c => !c.categories.Contains(TRTCardCategories.TRT_DoNotDropOnDeath)))
             {
-                if (!this.battleOngoing) { yield break; }
+                if (!this.BattleOngoing) { yield break; }
                 yield return new WaitForSecondsRealtime(TimeBetweenCardDrops);
                 yield return this.PlayerDropCard(player, card);
             }
@@ -410,14 +427,15 @@ namespace GameModeCollection.GameModes
 
         public void PlayerDied(Player killedPlayer, int teamsAlive)
         {
+
+            if (this.CurrentPhase != RoundPhase.Active) { return; }
+            
             // every time a player dies, time is added to the clock
             this.clocktime += HasteModeAddPerDeath / PlayerManager.instance.players.Select(p => p.data.view.ControllerActorNr).Distinct().Count();
 
             // handle TRT corpse creation, dropping cards, check win conditions
 
             // drop cards
-            GameModeCollection.Log($"Player {killedPlayer.playerID} dropping cards...");
-
             CardInfo[] cardsToDrop = killedPlayer.data.currentCards.ToArray();
             killedPlayer.InvokeMethod("FullReset");
             this.StartCoroutine(this.DropCardsOnDeath(killedPlayer, cardsToDrop));
@@ -427,7 +445,7 @@ namespace GameModeCollection.GameModes
             
             if (killedPlayer.data.view.IsMine)
             {
-                UIHandler.instance.roundCounterSmall.UpdateText(1, "ONGOING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
+                UIHandler.instance.roundCounterSmall.UpdateText(1, "ONGOING", DullWhite, 30, Vector3.one, DisplayBackgroundColor, false);
             }
 
             float checkAfter = GM_TRT.DelayRevivesFor + 0.5f;
@@ -572,18 +590,21 @@ namespace GameModeCollection.GameModes
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointStart);
 
             this.clocktime = PrepPhaseTime;
-            this.prebattle = true;
-            this.gracePeriod = false;
+            //this.preBattle = true;
+            //this.gracePeriod = false;
+            this.CurrentPhase = RoundPhase.PreBattle;
 
-            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor, false);
 
-            yield return new WaitWhile(() => this.prebattle && !this.gracePeriod);
+            //yield return new WaitWhile(() => this.preBattle && !this.gracePeriod);
+            yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PreBattle);
 
-            UIHandler.instance.roundCounterSmall.UpdateText(1, "READY", GracePeriodColor, 30, Vector3.one, DisplayBackgroundColor);
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "READY", GracePeriodColor, 30, Vector3.one, DisplayBackgroundColor, false);
             PlayerManager.instance.SetPlayersSimulated(false);
             yield return this.WaitForSyncUp();
 
-            yield return new WaitWhile(() => this.prebattle && this.gracePeriod);
+            //yield return new WaitWhile(() => this.preBattle && this.gracePeriod);
+            yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.GracePeriod);
 
             yield return this.SyncBattleStart();
 
@@ -593,9 +614,10 @@ namespace GameModeCollection.GameModes
             this.HideAllPlayerFaces();
 
             this.clocktime = RoundTime;
-            this.prebattle = false;
-            this.gracePeriod = false;
-            this.battleOngoing = true;
+            //this.preBattle = false;
+            //this.gracePeriod = false;
+            //this.BattleOngoing = true;
+            this.CurrentPhase = RoundPhase.Active;
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             PlayerManager.instance.SetPlayersSimulated(true);
@@ -640,18 +662,21 @@ namespace GameModeCollection.GameModes
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointStart);
 
             this.clocktime = PrepPhaseTime;
-            this.prebattle = true;
-            this.gracePeriod = false;
+            //this.preBattle = true;
+            //this.gracePeriod = false;
+            this.CurrentPhase = RoundPhase.PreBattle;
 
-            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor);
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "PREPARING", DullWhite, 30, Vector3.one, DisplayBackgroundColor, false);
 
-            yield return new WaitWhile(() => this.prebattle && !this.gracePeriod);
+            //yield return new WaitWhile(() => this.preBattle && !this.gracePeriod);
+            yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PreBattle);
 
-            UIHandler.instance.roundCounterSmall.UpdateText(1, "READY", GracePeriodColor, 30, Vector3.one, DisplayBackgroundColor);
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "READY", GracePeriodColor, 30, Vector3.one, DisplayBackgroundColor, false);
             PlayerManager.instance.SetPlayersSimulated(false);
             yield return this.WaitForSyncUp();
 
-            yield return new WaitWhile(() => this.prebattle && this.gracePeriod);
+            //yield return new WaitWhile(() => this.preBattle && this.gracePeriod);
+            yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.GracePeriod);
 
             yield return this.SyncBattleStart();
 
@@ -661,9 +686,10 @@ namespace GameModeCollection.GameModes
             this.HideAllPlayerFaces();
 
             this.clocktime = RoundTime;
-            this.prebattle = false;
-            this.gracePeriod = false;
-            this.battleOngoing = true;
+            //this.preBattle = false;
+            //this.gracePeriod = false;
+            //this.BattleOngoing = true;
+            this.CurrentPhase = RoundPhase.Active;
 
             SoundManager.Instance.Play(PointVisualizer.instance.sound_UI_Arms_Race_C_Ball_Pop_Shake, this.transform);
             PlayerManager.instance.SetPlayersSimulated(true);
@@ -677,30 +703,41 @@ namespace GameModeCollection.GameModes
         }
         public IEnumerator RoundTransition(string winningRoleID)
         {
-            this.battleOngoing = false;
-            this.prebattle = false;
-            this.gracePeriod = false;
-            this.clocktime = 0f;
+            //this.BattleOngoing = false;
+            //this.preBattle = false;
+            //this.gracePeriod = false;
+            this.clocktime = PostPhaseTime;
+            this.CurrentPhase = RoundPhase.PostBattle;
+            IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+            string winMessage = winningRole?.WinMessage ?? "ROUND OVER";
+            Color winColor = winningRole?.WinColor ?? DullWhite;
+            UIHandler.instance.roundCounterSmall.UpdateText(1, winMessage, winColor, 30, Vector3.one, DisplayBackgroundColor, true);
+            
+            if (winningRoleID is null)
+            {
+                //this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
+                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendChat(null, "<b>DRAW - NOBODY WINS</b>", false); }
+            }
+            else
+            {
+                //IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+                //this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
+            }
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundEnd);
+            
+            yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PostBattle);
+            
+            PlayerManager.instance.SetPlayersSimulated(false);
+
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "LOADING", DullWhite, 30, Vector3.one, DisplayBackgroundColor, false);
 
             if (this.roundsPlayed >= (int)GameModeManager.CurrentHandler.Settings["roundsToWinGame"])
             {
                 this.GameOver();
                 yield break;
-            }
-
-            if (winningRoleID is null)
-            {
-                this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
-                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendChat(null, "<b>DRAW - NOBODY WINS</b>", false); }
-            }
-            else
-            {
-                IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
-                this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
-                if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
             }
 
             yield return new WaitForSecondsRealtime(1f);
@@ -737,24 +774,35 @@ namespace GameModeCollection.GameModes
         }
         public IEnumerator PointTransition(string winningRoleID)
         {
-            this.battleOngoing = false;
-            this.prebattle = false;
-            this.gracePeriod = false;
-            this.clocktime = 0f;
-
-            yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
+            //this.BattleOngoing = false;
+            //this.preBattle = false;
+            //this.gracePeriod = false;
+            this.clocktime = PostPhaseTime;
+            this.CurrentPhase = RoundPhase.PostBattle;
+            IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+            string winMessage = winningRole?.WinMessage ?? "ROUND OVER";
+            Color winColor = winningRole?.WinColor ?? DullWhite;
+            UIHandler.instance.roundCounterSmall.UpdateText(1, winMessage, winColor, 30, Vector3.one, DisplayBackgroundColor, true);
 
             if (winningRoleID is null)
             {
-                this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
+                //this.StartCoroutine(PointVisualizer.instance.DoSequence("DRAW", DullWhite));
                 if (PhotonNetwork.IsMasterClient) { TRTHandler.SendChat(null, "<b>DRAW - NOBODY WINS</b>", false); }
             }
             else
             {
-                IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
-                this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
+                //IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+                //this.StartCoroutine(PointVisualizer.instance.DoSequence(winningRole.WinMessage, winningRole.WinColor));
                 if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
             }
+
+            yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
+            
+            yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PostBattle);
+
+            PlayerManager.instance.SetPlayersSimulated(false);
+
+            UIHandler.instance.roundCounterSmall.UpdateText(1, "LOADING", DullWhite, 30, Vector3.one, DisplayBackgroundColor, false);
 
             yield return new WaitForSecondsRealtime(1f);
             //MapManager.instance.LoadNextLevel(false, false);
@@ -907,7 +955,7 @@ namespace GameModeCollection.GameModes
         [UnboundRPC]
         public static void RPCA_NextRound(string winningRoleID)
         {
-            TimeHandler.instance.DoSlowDown();
+            //TimeHandler.instance.DoSlowDown();
 
             var instance = GM_TRT.instance;
 
@@ -915,6 +963,13 @@ namespace GameModeCollection.GameModes
             {
                 return;
             }
+
+            instance.CurrentPhase = RoundPhase.PostBattle;
+            instance.clocktime = PostPhaseTime;
+            IRoleHandler winningRole = RoleManager.GetHandler(winningRoleID);
+            string winMessage = winningRole?.WinMessage ?? "ROUND OVER";
+            Color winColor = winningRole?.WinColor ?? DullWhite;
+            UIHandler.instance.roundCounterSmall.UpdateText(1, winMessage, winColor, 30, Vector3.one, DisplayBackgroundColor, true);
 
             RoundSummary.LogWin(winningRoleID);
             RoundSummary.CreateRoundSummary(winningRoleID);
@@ -924,7 +979,7 @@ namespace GameModeCollection.GameModes
             GameManager.instance.battleOngoing = false;
             instance.isTransitioning = true;
 
-            PlayerManager.instance.SetPlayersSimulated(false);
+            //PlayerManager.instance.SetPlayersSimulated(false);
 
             instance.pointsPlayedOnCurrentMap++;
 
@@ -959,7 +1014,7 @@ namespace GameModeCollection.GameModes
                 NetworkingManager.RPC_Others(typeof(GM_TRT), nameof(RPCO_SetClockTime), this.clocktime);
             }
 
-            if (!this.prebattle && !this.battleOngoing)
+            if (this.CurrentPhase == RoundPhase.Transitioning)
             {
                 UIHandler.instance.roundCounterSmall.ClearTexts();
                 this.clocktime = 0f;
@@ -969,23 +1024,57 @@ namespace GameModeCollection.GameModes
             this.clocktime -= TimeHandler.deltaTime;
             this.clocktime = UnityEngine.Mathf.Clamp(this.clocktime, 0f, float.PositiveInfinity);
 
-            Color timeColor = this.prebattle ? (this.gracePeriod ? GracePeriodColor : DullWhite) : (this.clocktime < HasteModeAddPerDeath ? WarningColor : DullWhite);
-
-            UIHandler.instance.roundCounterSmall.UpdateText(0, GetClockString(clocktime), timeColor, 30, Vector3.one, DisplayBackgroundColor);
-
-            if (this.clocktime < GracePeriodTime && PhotonNetwork.IsMasterClient && this.prebattle && !this.gracePeriod)
+            Color timeColor = DullWhite;
+            switch (this.CurrentPhase)
             {
-                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetGracePeriod), true);
+                case RoundPhase.PreBattle:
+                    timeColor = DullWhite;
+                    break;
+                case RoundPhase.GracePeriod:
+                    timeColor = GracePeriodColor;
+                    break;
+                case RoundPhase.Active:
+                    if (this.clocktime < HasteModeAddPerDeath)
+                    {
+                        timeColor = WarningColor;
+                    }
+                    else
+                    {
+                        timeColor = DullWhite;
+                    }
+                    break;
+                case RoundPhase.PostBattle:
+                    timeColor = DullWhite;
+                    break;
+                case RoundPhase.Transitioning:
+                    timeColor = DullWhite;
+                    break;
+                default:
+                    timeColor = DullWhite;
+                    break;
+            }
+
+            UIHandler.instance.roundCounterSmall.UpdateText(0, GetClockString(clocktime), timeColor, 30, Vector3.one, DisplayBackgroundColor, false);
+
+            if (this.clocktime < GracePeriodTime && PhotonNetwork.IsMasterClient && this.CurrentPhase == RoundPhase.PreBattle)
+            {
+                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetRoundPhase), (byte)RoundPhase.GracePeriod);
                 return;
             }
 
-            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.prebattle)
+            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && (this.CurrentPhase == RoundPhase.PreBattle || this.CurrentPhase == RoundPhase.GracePeriod))
             {
-                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetPreBattle), false);
+                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetRoundPhase), (byte)RoundPhase.Starting);
                 return;
             }
 
-            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.battleOngoing)
+            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.CurrentPhase == RoundPhase.PostBattle)
+            {
+                NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SetRoundPhase), (byte)RoundPhase.Transitioning);
+                return;
+            }
+
+            if (this.clocktime == 0f && PhotonNetwork.IsMasterClient && this.BattleOngoing)
             {
                 // short delay to allow things like phantom spawning and swapper swapping to happen
                 if (this.isCheckingWinCondition) { return; }
@@ -1013,16 +1102,11 @@ namespace GameModeCollection.GameModes
                     }
 
                     // if none of the above, (this shouldn't be a valid game state) then it's a draw
-                    NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_DoSlowDown));
+                    //NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_DoSlowDown));
                     NetworkingManager.RPC(typeof(GM_TRT), nameof(GM_TRT.RPCA_NextRound), winningRoleID);
                 });
 
             }
-        }
-        [UnboundRPC]
-        private static void RPCA_DoSlowDown()
-        {
-            TimeHandler.instance.DoSlowDown();
         }
 
         [UnboundRPC]
@@ -1031,14 +1115,9 @@ namespace GameModeCollection.GameModes
             GM_TRT.instance.clocktime = time;
         }
         [UnboundRPC]
-        private static void RPCA_SetPreBattle(bool prebattle)
+        private static void RPCA_SetRoundPhase(byte phase)
         {
-            GM_TRT.instance.prebattle = prebattle;
-        }
-        [UnboundRPC]
-        private static void RPCA_SetGracePeriod(bool gracePeriod)
-        {
-            GM_TRT.instance.gracePeriod = gracePeriod;
+            GM_TRT.instance.CurrentPhase = (RoundPhase)phase;
         }
     }
 }

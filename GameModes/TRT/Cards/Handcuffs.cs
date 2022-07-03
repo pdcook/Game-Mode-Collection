@@ -252,7 +252,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         {
             foreach (CardInfo card in cardsToDrop)
             {
-                if (!GM_TRT.instance.battleOngoing) { yield break; }
+                if (!GM_TRT.instance.BattleOngoing) { yield break; }
                 yield return new WaitForSecondsRealtime(GM_TRT.TimeBetweenCardDrops);
                 yield return GM_TRT.instance.PlayerDropCard(player, card);
             }
