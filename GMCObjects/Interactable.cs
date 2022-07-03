@@ -108,7 +108,12 @@ namespace GameModeCollection.GMCObjects
         public void RPCA_TryInteract(int playerID)
         {
             Player player = playerID == -1 ? null : PlayerManager.instance?.GetPlayerWithID(playerID);
-            if (!GameModeCollection.DEBUG && (player is null || player.data.dead || RoleManager.GetPlayerAlignment(player) != Alignment.Traitor))
+            if ((player is null
+                || player.data.dead
+                || ( this.RequiredAlignment != null
+                    && RoleManager.GetPlayerAlignment(player) != this.RequiredAlignment))
+               && !GameModeCollection.DEBUG)
+                    
             {
                 return;
             }
