@@ -78,7 +78,7 @@ namespace GameModeCollection.Objects
                         position,
                         rotation,
                         0,
-                        new object[] { card.cardName, velocity, angularVelocity, maxHealth, requireInteract }
+                        new object[] { card.gameObject.name, velocity, angularVelocity, maxHealth, requireInteract }
                     );
 
                 // create card
@@ -91,7 +91,7 @@ namespace GameModeCollection.Objects
         public bool HasBeenTaken { get; private set; } = false;
         public bool RequiresInteraction { get; private set; } = false;
         public CardInfo Card { get; private set; }
-        public string CardName { get; private set; }
+        public string CardObjectName { get; private set; }
         public GameObject CardObj { get; internal set; } = null;
         public const float CollectionDistance = 2f;
         public bool CardBackVisibleThroughShader = false;
@@ -101,7 +101,7 @@ namespace GameModeCollection.Objects
             object[] data = info.photonView.InstantiationData;
 
             // data[0] is the name of the card
-            this.CardName = (string)data[0];
+            this.CardObjectName = (string)data[0];
             // data[1] is the starting velocity of the card
             Vector2 velocty = (Vector2)data[1];
             // data[2] is the starting angular velocity of the card
@@ -114,16 +114,16 @@ namespace GameModeCollection.Objects
             this.Health.Revive();
             if (health <= 0f) { this.Health.SetInvulnerableFor(float.PositiveInfinity); }
 
-            this.Card = ModdingUtils.Utils.Cards.instance.GetCardWithName(this.CardName);
+            this.Card = ModdingUtils.Utils.Cards.instance.GetCardWithObjectName(this.CardObjectName);
 
-            this.gameObject.name = $"{this.CardName} Item";
+            this.gameObject.name = $"{this.CardObjectName} Item";
 
             this.gameObject.transform.SetParent(CardItemPrefabs.CardItemHandler.transform);
 
             this.SetAngularVel(angularVelocity);
             this.SetVel(velocty);
 
-            GameModeCollection.Log($"Instantiated {this.CardName} item");
+            GameModeCollection.Log($"Instantiated {this.CardObjectName} item");
 
             this.gameObject.SetActive(true);
         }
@@ -421,7 +421,7 @@ namespace GameModeCollection.Objects
         {
             if (collider?.transform?.root?.GetComponent<CardInfo>() != null)
             {
-                CardItem cardItem = this.FindMatchingCardItem(collider.transform.root.GetComponent<CardInfo>().cardName); 
+                CardItem cardItem = this.FindMatchingCardItem(collider.transform.root.GetComponent<CardInfo>().gameObject.name); 
                 if (cardItem != null)
                 {
                     GameModeCollection.Log($"Assigning {collider.transform.root.GetComponent<CardInfo>().cardName} to item.");
@@ -446,14 +446,14 @@ namespace GameModeCollection.Objects
                 }
                 else
                 {
-                    GameModeCollection.LogWarning($"Destroying {collider.transform.root.GetComponent<CardInfo>().cardName}, as there is no card item for it to be assigned to.");
+                    GameModeCollection.LogError($"Destroying {collider.transform.root.GetComponent<CardInfo>().cardName}, as there is no card item for it to be assigned to.");
                     Destroy(collider.gameObject.transform.root.gameObject);
                 }
             }
         }
         CardItem FindMatchingCardItem(string cardName)
         {
-            return this.transform.GetComponentsInChildren<CardItem>().ToList().Find(c => c.CardName == cardName && c.CardObj == null);
+            return this.transform.GetComponentsInChildren<CardItem>().ToList().Find(c => c.CardObjectName.Replace("(Clone)","") == cardName.Replace("(Clone)","") && c.CardObj == null);
         }
         /*
         public static void ClientsideAddToCardBar(int playerID, CardInfo card, string twoLetterCode = "")

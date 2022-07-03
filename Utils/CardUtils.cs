@@ -15,41 +15,41 @@ namespace GameModeCollection.Utils
     {
         internal static void AddCardsToPlayer_ClientsideCardBar(Player player, CardInfo[] cards, bool silent = false)
         {
-            RPCA_AddCardsToPlayer_ClientsideCardBar(player.playerID, cards.Select(c => c.cardName).ToArray(), silent);
+            RPCA_AddCardsToPlayer_ClientsideCardBar(player.playerID, cards.Select(c => c.gameObject.name).ToArray(), silent);
         }
         internal static void Call_AddCardsToPlayer_ClientsideCardBar(Player player, CardInfo[] cards, bool silent = false)
         {
-            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_AddCardsToPlayer_ClientsideCardBar), player.playerID, cards.Select(c => c.cardName).ToArray(), silent);
+            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_AddCardsToPlayer_ClientsideCardBar), player.playerID, cards.Select(c => c.gameObject.name).ToArray(), silent);
         }
         [UnboundRPC]
         private static void RPCA_AddCardsToPlayer_ClientsideCardBar(int playerID, string[] cardNames, bool silent)
         {
             Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
             if (player is null) { return; }
-            if (cardNames.Any(c => Cards.instance.GetCardWithName(c) is null)) { return; }
-            ModdingUtils.Utils.Cards.instance.AddCardsToPlayer(player, cardNames.Select(c => Cards.instance.GetCardWithName(c)).ToArray(), false, null, null, null, false);
+            if (cardNames.Any(c => Cards.instance.GetCardWithObjectName(c) is null)) { return; }
+            ModdingUtils.Utils.Cards.instance.AddCardsToPlayer(player, cardNames.Select(c => Cards.instance.GetCardWithObjectName(c)).ToArray(), false, null, null, null, false);
             if (player.data.view.IsMine)
             {
                 foreach (string cardName in cardNames)
                 {
-                    ClientsideAddToCardBar(player.playerID, Cards.instance.GetCardWithName(cardName), silent: silent);
+                    ClientsideAddToCardBar(player.playerID, Cards.instance.GetCardWithObjectName(cardName), silent: silent);
                 }
             }
         }
         internal static void AddCardToPlayer_ClientsideCardBar(Player player, CardInfo card, bool silent = false)
         {
-            RPCA_AddCardToPlayer_ClientsideCardBar(player.playerID, card.cardName, silent);
+            RPCA_AddCardToPlayer_ClientsideCardBar(player.playerID, card.gameObject.name, silent);
         }
         internal static void Call_AddCardToPlayer_ClientsideCardBar(Player player, CardInfo card, bool silent = false)
         {
-            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_AddCardToPlayer_ClientsideCardBar), player.playerID, card.cardName, silent);
+            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_AddCardToPlayer_ClientsideCardBar), player.playerID, card.gameObject.name, silent);
         }
         [UnboundRPC]
         private static void RPCA_AddCardToPlayer_ClientsideCardBar(int playerID, string cardName, bool silent)
         {
             Player player = PlayerManager.instance.players.Find(p => p.playerID == playerID);
             if (player is null) { return; }
-            CardInfo card = Cards.instance.GetCardWithName(cardName);
+            CardInfo card = Cards.instance.GetCardWithObjectName(cardName);
             if (card is null) { return; }
             ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, card, false, "", 0, 0, false);
             if (player.data.view.IsMine)
@@ -59,18 +59,18 @@ namespace GameModeCollection.Utils
         }
         internal static void RemoveCardFromPlayer_ClientsideCardBar(Player player, CardInfo card, Cards.SelectionType selectionType, bool silent = true)
         {
-            RPCA_RemoveCardFromPlayer_ClientsideCardBar(player.playerID, card.cardName, (byte)selectionType, silent);
+            RPCA_RemoveCardFromPlayer_ClientsideCardBar(player.playerID, card.gameObject.name, (byte)selectionType, silent);
         }
         internal static void Call_RemoveCardFromPlayer_ClientsideCardBar(Player player, CardInfo card, Cards.SelectionType selectionType, bool silent = true)
         {
-            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_RemoveCardFromPlayer_ClientsideCardBar), player.playerID, card.cardName, (byte)selectionType, silent);
+            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_RemoveCardFromPlayer_ClientsideCardBar), player.playerID, card.gameObject.name, (byte)selectionType, silent);
         }
         [UnboundRPC]
         private static void RPCA_RemoveCardFromPlayer_ClientsideCardBar(int playerID, string cardName, byte selectionByte, bool silent)
         {
             Player player = PlayerManager.instance.GetPlayerWithID(playerID);
             if (player is null) { return; }
-            CardInfo card = Cards.instance.GetCardWithName(cardName);
+            CardInfo card = Cards.instance.GetCardWithObjectName(cardName);
             if (card is null) { return; }
             int numCards = player.data.currentCards.Count();
             ModdingUtils.Utils.Cards.instance.RemoveCardFromPlayer(player, card, (ModdingUtils.Utils.Cards.SelectionType)selectionByte, false);
