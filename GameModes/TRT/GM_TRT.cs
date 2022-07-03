@@ -45,6 +45,8 @@ namespace GameModeCollection.GameModes
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 
         private const float DefaultZoom = 40f;
+        internal const float DefaultFOV = 361f;
+        internal const float DefaultVisibility = 1000f;
 
         public const float DelayRevivesFor = 1f;
 
@@ -107,8 +109,8 @@ namespace GameModeCollection.GameModes
             {
                 if (player.GetComponentInChildren<ViewSphere>(true) != null)
                 {
-                    player.GetComponentInChildren<ViewSphere>(true).fov = 361f;
-                    player.GetComponentInChildren<ViewSphere>(true).viewDistance = 1000f;
+                    player.GetComponentInChildren<ViewSphere>(true).fov = DefaultFOV;
+                    player.GetComponentInChildren<ViewSphere>(true).viewDistance = DefaultVisibility;
                 }
             });
         }
@@ -164,7 +166,8 @@ namespace GameModeCollection.GameModes
             _ = C4Prefab.C4;
             _ = GrenadePrefab.Grenade;
             _ = DiscombobulatorPrefab.Discombobulator;
-            _ = IncendiaryGrenadePrefab.IncendiaryGrenade;
+            _ = IncendiaryGrenadePrefabs.IncendiaryGrenade;
+            _ = IncendiaryGrenadePrefabs.IncendiaryGrenadeFragment;
             _ = SmokeGrenadePrefab.SmokeGrenade;
             // spawn handler
             _ = CardItemPrefabs.CardItemHandler;

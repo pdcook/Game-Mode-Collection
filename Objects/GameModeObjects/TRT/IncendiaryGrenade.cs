@@ -19,7 +19,7 @@ using GameModeCollection.Objects;
 
 namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
-	public static class IncendiaryGrenadePrefab
+	public static class IncendiaryGrenadePrefabs
 	{
 		private static GameObject _IncendiaryGrenade = null;
 
@@ -27,7 +27,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		{
 			get
 			{
-				if (IncendiaryGrenadePrefab._IncendiaryGrenade == null)
+				if (IncendiaryGrenadePrefabs._IncendiaryGrenade == null)
 				{
 
 					// placeholder circle sprite
@@ -45,30 +45,68 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 					PhotonNetwork.PrefabPool.RegisterPrefab(incendiaryGrenade.name, incendiaryGrenade);
 
-					IncendiaryGrenadePrefab._IncendiaryGrenade = incendiaryGrenade;
+					IncendiaryGrenadePrefabs._IncendiaryGrenade = incendiaryGrenade;
 				}
-				return IncendiaryGrenadePrefab._IncendiaryGrenade;
+				return IncendiaryGrenadePrefabs._IncendiaryGrenade;
 			}
 		}
-		private static GameObject _IncendiaryGrenadeExplosion = null;
-		// TODO: replace default explosion with an incendiary explosion
-		public static GameObject IncendiaryGrenadeExplosion
-        {
+        private static GameObject _IncendiaryGrenadeFragment = null;
+
+		public static GameObject IncendiaryGrenadeFragment
+		{
 			get
+			{
+				if (IncendiaryGrenadePrefabs._IncendiaryGrenadeFragment == null)
+				{
+
+					// placeholder circle sprite
+					GameObject incendiaryGrenadeFragment = new GameObject("IncendiaryGrenadeFragment", typeof(SpriteRenderer));
+					incendiaryGrenadeFragment.GetComponent<SpriteRenderer>().sprite = Sprites.Box;
+                    incendiaryGrenadeFragment.GetComponent<SpriteRenderer>().color = new Color32(100, 0, 0, 255);
+                    incendiaryGrenadeFragment.AddComponent<PhotonView>();
+					incendiaryGrenadeFragment.AddComponent<IncendiaryGrenadeFragmentHandler>();
+					incendiaryGrenadeFragment.name = "IncendiaryGrenadeFragmentPrefab";
+
+					incendiaryGrenadeFragment.GetComponent<IncendiaryGrenadeFragmentHandler>().IsPrefab = true;
+
+					GameModeCollection.Log("IncendiaryGrenadeFragment Prefab Instantiated");
+					UnityEngine.GameObject.DontDestroyOnLoad(incendiaryGrenadeFragment);
+
+					PhotonNetwork.PrefabPool.RegisterPrefab(incendiaryGrenadeFragment.name, incendiaryGrenadeFragment);
+
+					IncendiaryGrenadePrefabs._IncendiaryGrenadeFragment = incendiaryGrenadeFragment;
+				}
+				return IncendiaryGrenadePrefabs._IncendiaryGrenadeFragment;
+			}
+		}
+
+        private static GameObject _IncendiaryGrenadeExplosion = null;
+        public static GameObject IncendiaryGrenadeExplosion
+        {
+            get
             {
-				if (IncendiaryGrenadePrefab._IncendiaryGrenadeExplosion is null)
+                if (IncendiaryGrenadePrefabs._IncendiaryGrenadeExplosion is null)
                 {
-					_IncendiaryGrenadeExplosion = CardManager.cards.Values.Select(card => card.cardInfo).Where(card => card.cardName.ToLower() == "EXPLOSIVE BULLET".ToLower()).First().GetComponent<Gun>().objectsToSpawn[0].effect;
+                    _IncendiaryGrenadeExplosion = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("IncendiaryFlame"));
+                    _IncendiaryGrenadeExplosion.transform.Find("Flames").gameObject.GetOrAddComponent<IncendiaryParticleHandler>();
+                    _IncendiaryGrenadeExplosion.transform.Find("Trigger").gameObject.GetOrAddComponent<BurnHandler>();
+                    _IncendiaryGrenadeExplosion.transform.Find("Trigger").gameObject.layer = PhysicsItem.TriggerLayer;
+                    _IncendiaryGrenadeExplosion.SetActive(false);
+                    _IncendiaryGrenadeExplosion.name = "IncendiaryGrenadeExplosion";
+
+                    GameObject.DontDestroyOnLoad(_IncendiaryGrenadeExplosion);
                 }
-				return IncendiaryGrenadePrefab._IncendiaryGrenadeExplosion;
+                return IncendiaryGrenadePrefabs._IncendiaryGrenadeExplosion;
             }
         }
-	}
+    }
 	public class IncendiaryGrenadeHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
-		public const float ExplosionRange = 50f;
+        public const int Fragments = 5;
+        public const float FragmentSpeed = 30f;
+        public const float RandomFragDirXRatio = 2f;
 
         public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
         public bool IsPrefab { get; internal set; } = false;
@@ -95,7 +133,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			if ((PlayerManager.instance.GetPlayerWithID(placerID)?.data?.view?.IsMine ?? false) || PhotonNetwork.OfflineMode)
 			{
 				PhotonNetwork.Instantiate(
-                        IncendiaryGrenadePrefab.IncendiaryGrenade.name,
+                        IncendiaryGrenadePrefabs.IncendiaryGrenade.name,
                         position,
                         rotation,
                         0,
@@ -171,25 +209,303 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		private void RPCA_Explode()
         {
 			this.Exploded = true;
-			GameObject explosionObj = GameObject.Instantiate(IncendiaryGrenadePrefab.IncendiaryGrenadeExplosion, this.transform.position, Quaternion.identity);
-			Explosion explosion = explosionObj.GetComponent<Explosion>();
-			explosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
 
-			explosion.ignoreTeam = false;
-			explosion.ignoreWalls = false;
-			explosion.scaleDmg = false;
-			explosion.scaleForce = false;
-			explosion.scaleRadius = false;
-			explosion.scaleSilence = false;
-			explosion.scaleSlow = false;
-			explosion.scaleStun = false;
-			explosion.auto = true;
+            for (int _ = 0; _ < Fragments; _++)
+            {
+                Vector2 random_direction = new Vector2(RandomFragDirXRatio * UnityEngine.Random.Range(-1f, 1f), 1f);
+                random_direction.Normalize();
+                Vector2 random_velocity = FragmentSpeed * random_direction * UnityEngine.Random.Range(0.5f, 1f);
+                GameModeCollection.instance.StartCoroutine(IncendiaryGrenadeFragmentHandler.MakeIncendiaryGrenadeFragmentHandler(this.PlacerID, random_velocity, this.transform.position, Quaternion.identity));
+            }
 
-			explosion.range = ExplosionRange;
+            Destroy(this.gameObject);
+        }
+    }
+    public class IncendiaryGrenadeFragmentHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
+    {
+        public const float AngularVelocityMult = 10f;
+        public const float IgniteVolume = 1f;
 
-			explosionObj.SetActive(true);
+        private SoundEvent IgniteSound = null;
 
-			Destroy(this.gameObject);
+        public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
+        public bool IsPrefab { get; internal set; } = false;
+        public bool Exploded { get; private set; } = false;
+        public int OwnerID { get; private set; } = -1;
+
+        internal SpriteRenderer Renderer => this.transform.GetChild(0).GetComponent<SpriteRenderer>();
+        public override void OnPhotonInstantiate(PhotonMessageInfo info)
+        {
+            // the instantiation data is the player ID and the initial velocity
+            object[] data = info.photonView.InstantiationData;
+
+            this.OwnerID = (int)data[0];
+
+            Vector2 intialVelocity = (Vector2)data[1];
+
+            this.SetVel(intialVelocity);
+            this.SetAngularVel(-AngularVelocityMult * intialVelocity.x);
+
+        }
+        internal static IEnumerator MakeIncendiaryGrenadeFragmentHandler(int ownerID, Vector2 initial_velocity, Vector3 position, Quaternion rotation)
+        {
+            if ((PlayerManager.instance.GetPlayerWithID(ownerID)?.data?.view?.IsMine ?? false) || PhotonNetwork.OfflineMode)
+            {
+                PhotonNetwork.Instantiate(
+                        IncendiaryGrenadePrefabs.IncendiaryGrenadeFragment.name,
+                        position,
+                        rotation,
+                        0,
+                        new object[] { ownerID, initial_velocity }
+                    );
+            }
+
+            yield break;
+        }
+        protected override void Awake()
+        {
+            this.PhysicalProperties = new ItemPhysicalProperties(mass: 10000f, bounciness: 0f,
+                                                        playerPushMult: 10000f,
+                                                        playerDamageMult: 0f,
+                                                        collisionDamageThreshold: float.MaxValue,
+                                                        friction: 0.7f,
+                                                        impulseMult: 1f,
+                                                        forceMult: 1f, visibleThroughShader: false);
+
+            base.Awake();
+        }
+        protected override void Start()
+        {
+            base.Start();
+
+            // load ignite sound
+            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("IncendiaryIgnite.ogg");
+            SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+            soundContainer.setting.volumeIntensityEnable = true;
+            soundContainer.audioClip[0] = sound;
+            this.IgniteSound = ScriptableObject.CreateInstance<SoundEvent>();
+            this.IgniteSound.soundContainerArray[0] = soundContainer;
+
+            // resize sprite
+            this.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
+
+            this.Exploded = false;
+
+            this.Col.radius = 0.1f;
+
+            if (this.IsPrefab)
+            {
+                this.SetPos(1000000f * Vector2.one);
+                this.Rig.isKinematic = true;
+                this.gameObject.SetActive(false);
+            }
+            else
+            {
+                this.Rig.isKinematic = false;
+                this.gameObject.SetActive(true);
+            }
+        }
+        private Vector2 GetCollisionSurfaceNormal(Collision2D collision)
+        {
+            // find collision point and normal. You may want to average over all contacts
+            Vector2 point = collision.contacts[0].point;
+            Vector2 dir = -collision.contacts[0].normal; // you need vector pointing TOWARDS the collision, not away from it
+            // step back a bit
+            point -= dir;
+
+            // temporarily disable this object's collider(s) so we don't get them in the raycast
+            this.Col.enabled = false;
+            this.Trig.enabled = false;
+            
+            // cast a ray twice as far as your step back. This seems to work in all
+            // situations, at least when speeds are not ridiculously big
+            RaycastHit2D hitInfo = Physics2D.Raycast(point, dir, 2*dir.magnitude);
+            if (hitInfo.collider is null)
+            {
+                GameModeCollection.LogError("[IncendiaryGrenadeFragmentHandler] Raycast failed!");
+                return Vector2.up;
+            }
+            else
+            {
+                // this is the collider surface normal
+                return hitInfo.normal;
+            }
+        }
+        protected internal override void OnCollisionEnter2D(Collision2D collision2D)
+        {
+            // check if the collision was with a map object, if so, detonate
+            if (!this.Exploded && this.View.IsMine && collision2D?.collider?.transform.root.GetComponent<Map>() != null)
+            {
+                Vector2 normal = collision2D.contacts[0].normal;
+                this.View.RPC(nameof(RPCA_Explode), RpcTarget.All, this.GetCollisionSurfaceNormal(collision2D));
+                this.Exploded = true;
+            }
+
+            base.OnCollisionEnter2D(collision2D);
+        }        
+
+        private const string SyncedExplodedKey = "IncendiaryGrenadeFragment_Exploded";
+
+        protected override void SetDataToSync()
+        {
+            this.SetSyncedInt(SyncedExplodedKey, this.Exploded ? 1 : 0);
+        }
+        protected override void ReadSyncedData()
+        {
+            // syncing
+            this.Exploded = this.GetSyncedInt(SyncedExplodedKey, this.Exploded ? 1 : 0) == 1;
+        }
+        protected override bool SyncDataNow()
+        {
+            return true;
+        }
+        [PunRPC]
+        private void RPCA_Explode(Vector2 up)
+        {
+            this.Exploded = true;
+
+            // play ignite sound
+            SoundManager.Instance.Play(this.IgniteSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * IgniteVolume) });
+
+            GameObject expl = GameObject.Instantiate(IncendiaryGrenadePrefabs.IncendiaryGrenadeExplosion, this.transform.position, Quaternion.identity);
+            expl.transform.up = up;
+            expl.SetActive(true);
+            BurnHandler burnHandler = expl.transform.Find("Trigger").GetComponent<BurnHandler>();
+            burnHandler.SetOwnerID(this.OwnerID);
+            burnHandler.SetDuration(expl.transform.Find("Flames").GetComponent<ParticleSystem>().main.duration);
+            expl.transform.Find("Flames").GetComponent<ParticleSystem>().Play();
+
+            Destroy(this.gameObject);
+        }
+    }
+    public class IncendiaryParticleHandler : MonoBehaviour
+    {
+        ParticleSystem flames;
+        void Start()
+        {
+            // ensure the stop action is set to Callback
+            this.flames = this.GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule main = this.flames.main;
+            main.stopAction = ParticleSystemStopAction.Callback;
+
+            // ensure the renderer has the correct sorting layer
+            //this.flames.GetComponent<ParticleSystemRenderer>().sortingLayerID = SortingLayer.NameToID("MostFront");
+        }
+        public void OnParticleSystemStopped()
+        {
+            GameModeCollection.Log("[IncendiaryParticleHandler] OnParticleSystemStopped");
+            // this is called when the particle system stops
+            GameObject.Destroy(this.transform.parent.gameObject, 5f);
+        }
+    }
+    public class BurnHandler : MonoBehaviour
+    {
+        public const float BurnEvery = 0.2f;
+        public const float BURNDAMAGE = 5f;
+        public const float BurnVolume = 0.75f;
+
+        private int OwnerID = -1;
+        private float Duration = -1f;
+        private TimeSince Timer = 0f;
+        private SoundEvent BurnLoop = null;
+
+        private Dictionary<int, TimeSince> playerBurnTimers = new Dictionary<int, TimeSince>();
+
+        void Start()
+        {
+            this.Timer = 0f;
+
+            // get sound loop
+            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("IncendiaryLoop.ogg");
+            SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+            soundContainer.setting.volumeIntensityEnable = true;
+            soundContainer.setting.loopEnabled = true;
+            soundContainer.audioClip[0] = sound;
+            this.BurnLoop = ScriptableObject.CreateInstance<SoundEvent>();
+            this.BurnLoop.soundContainerArray[0] = soundContainer;
+
+		    SoundManager.Instance.Play(this.BurnLoop, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * BurnVolume) });
+        }
+        void OnDestroy()
+        {
+		    SoundManager.Instance.Stop(this.BurnLoop, this.transform, true);
+        }
+
+        internal void SetOwnerID(int ownerID)
+        {
+            this.OwnerID = ownerID;
+        }
+        internal void SetDuration(float duration)
+        {
+            this.Duration = duration;
+        }
+
+        void Update()
+        {
+
+            if (this.Timer > this.Duration && this.Duration > 0f)
+            {
+                Destroy(this.gameObject);
+                return;
+            }
+
+            foreach (Player player in PlayerManager.instance.players.ToList().Where(p => this.playerBurnTimers.ContainsKey(p.playerID)))
+            {
+                if (this.playerBurnTimers[player.playerID] > BurnEvery)
+                {
+                    this.DoBurnDamage(player);
+                }
+            }
+        }
+
+        void PlayerEnterFlame(Player player)
+        {
+            if (!this.playerBurnTimers.ContainsKey(player.playerID))
+            {
+                this.playerBurnTimers.Add(player.playerID, new TimeSince());
+                this.playerBurnTimers[player.playerID] = 0f;
+                this.DoBurnDamage(player);
+            }
+        }
+        void PlayerExitFlame(Player player)
+        {
+            this.playerBurnTimers.Remove(player.playerID);
+        }
+        void DoBurnDamage(Player player)
+        {
+            if (this.playerBurnTimers.ContainsKey(player.playerID))
+            {
+                this.playerBurnTimers[player.playerID] = 0f;
+                if (player.data.view.IsMine)
+                {
+                    player.data.healthHandler.CallTakeDamage(BURNDAMAGE * Vector2.up, player.transform.position, this.transform.parent.gameObject, this.OwnerID == -1 ? null : PlayerManager.instance.GetPlayerWithID(this.OwnerID), true);
+                }
+            }
+        }
+
+        void OnTriggerEnter2D(Collider2D collider2D)
+        {
+            Player player = collider2D?.GetComponent<Player>();
+            if (player != null)
+            {
+                this.PlayerEnterFlame(player);
+            }
+        }
+        void OnTriggerStay2D(Collider2D collider2D)
+        {
+            Player player = collider2D?.GetComponent<Player>();
+            if (player != null)
+            {
+                this.PlayerEnterFlame(player);
+            }
+        }
+        void OnTriggerExit2D(Collider2D collider2D)
+        {
+            Player player = collider2D?.GetComponent<Player>();
+            if (player != null)
+            {
+                this.PlayerExitFlame(player);
+            }
         }
     }
 }

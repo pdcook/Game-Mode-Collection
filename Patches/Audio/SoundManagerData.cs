@@ -52,10 +52,6 @@ namespace GameModeCollection.Patches
                 return;
             }
 
-            GameModeCollection.Log($"Patching Sound: {owner.name}");
-
-            //SoundManagerPatchPlaySoundEventHelper.PatchVolumeIntensityWithVolumeRatio(ref soundEvent, ref soundParameterArray);
-
             if (playType == PlayType.PlayAtVector && positionVector.HasValue)
             {
                 soundParameterArray = SoundManagerPatchPlaySoundEventHelper.PatchSoundParameterArray(soundParameterArray ?? new SoundParameterBase[0], positionVector);
@@ -68,34 +64,6 @@ namespace GameModeCollection.Patches
     }
     static class SoundManagerPatchPlaySoundEventHelper
     {
-        /*
-        internal static void PatchVolumeIntensityWithVolumeRatio(ref SoundEvent soundEvent, ref SoundParameterBase[] soundParameterArray)
-        {
-            if (soundEvent.soundContainerArray.Any(s => s?.setting?.volumeIntensityEnable ?? false))
-            {
-                GameModeCollection.Log("Patch Sound: REMOVE VOLUME BY INTENSITY");
-                foreach (SoundContainer soundContainer in soundEvent.soundContainerArray)
-                {
-                    soundContainer.setting.volumeIntensityEnable = false;
-                }
-
-                // replace all SoundParameterIntensitys with SoundParameterVolumeRatios
-                soundParameterArray = soundParameterArray?.Select(s =>
-                {
-                    if (s is SoundParameterIntensity)
-                    {
-                        return new SoundParameterVolumeRatio(s.root.valueFloat, s.root.updateMode);
-                    }
-                    else
-                    {
-                        return s;
-                    }
-
-                }).ToArray();
-            }
-        }
-        */
-
         internal static SoundParameterBase[] PatchSoundParameterArray(SoundParameterBase[] original, Vector2? position)
         {
             if (!position.HasValue)
@@ -119,13 +87,11 @@ namespace GameModeCollection.Patches
             SoundParameterVolumeRatio soundParameterVolumeRatio = original.OfType<SoundParameterVolumeRatio>().FirstOrDefault();
             if (soundParameterVolumeRatio is null)
             {
-                GameModeCollection.Log($"patch sound, volume: {volume}");
                 soundParameterVolumeRatio = new SoundParameterVolumeRatio(volumeRatio: volume);
                 return original.Concat(new SoundParameterBase[] { soundParameterVolumeRatio }).ToArray();
             }
             else
             {
-                GameModeCollection.Log($"patch sound, volume MULT: {volume}");
                 int index = Array.IndexOf(original, soundParameterVolumeRatio);
                 soundParameterVolumeRatio.volumeRatio *= volume;
                 original[index] = soundParameterVolumeRatio;

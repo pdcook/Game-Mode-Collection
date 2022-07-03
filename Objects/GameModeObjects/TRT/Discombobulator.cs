@@ -172,6 +172,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			GameObject innerExplosionObj = GameObject.Instantiate(DiscombobulatorPrefab.DiscombobulatorExplosion, this.transform.position, Quaternion.identity);
 			Explosion innerExpl = innerExplosionObj.GetComponent<Explosion>();
 			innerExplosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
+            innerExpl.ignoreTeam = false;
+            innerExpl.ignoreWalls = false;
 
 			innerExplosionObj.SetActive(true);
 

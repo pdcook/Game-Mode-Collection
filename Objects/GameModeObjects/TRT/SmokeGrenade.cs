@@ -1,21 +1,15 @@
-﻿using GameModeCollection.GameModes.TRT.Cards;
-using MapEmbiggener;
+﻿using GameModeCollection.GameModes;
 using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using UnboundLib;
-using UnboundLib.GameModes;
 using UnityEngine;
-using TMPro;
-using System;
-using UnboundLib.Networking;
 using GameModeCollection.Extensions;
+using UnboundLib;
 using UnboundLib.Utils;
-using UnityEngine.UI.ProceduralImage;
+using GameModeCollection.Objects;
+using System.Linq;
 using Sonigon;
 using Sonigon.Internal;
-using GameModeCollection.Objects;
 
 namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
@@ -51,23 +45,86 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			}
 		}
 		private static GameObject _SmokeGrenadeExplosion = null;
-		// TODO: replace shockwave effect with custom smokescreen effect
 		public static GameObject SmokeGrenadeExplosion
         {
 			get
             {
 				if (SmokeGrenadePrefab._SmokeGrenadeExplosion is null)
                 {
-					_SmokeGrenadeExplosion = CardManager.cards.Values.Select(card => card.cardInfo).Where(card => card.cardName.ToLower() == "Shockwave".ToLower()).First().GetComponent<CharacterStatModifiers>().AddObjectToPlayer.GetComponent<SpawnObjects>().objectToSpawn[0];
+					_SmokeGrenadeExplosion = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("Smoke"));
+                    _SmokeGrenadeExplosion.GetComponentInChildren<ParticleSystem>().gameObject.GetOrAddComponent<SmokeParticleHandler>();
+                    _SmokeGrenadeExplosion.GetOrAddComponent<SmokeHandler>();
+                    _SmokeGrenadeExplosion.SetActive(false);
+                    _SmokeGrenadeExplosion.name = "SmokeGrenadeExplosion";
+
+                    GameObject.DontDestroyOnLoad(_SmokeGrenadeExplosion);
                 }
 				return SmokeGrenadePrefab._SmokeGrenadeExplosion;
             }
         }
 	}
+    public class SmokeParticleHandler : MonoBehaviour
+    {
+        ParticleSystem smoke;
+        void Start()
+        {
+            // ensure the stop action is set to Callback
+            this.smoke = this.GetComponent<ParticleSystem>();
+            ParticleSystem.MainModule main = this.smoke.main;
+            main.stopAction = ParticleSystemStopAction.Callback;
+
+            // ensure the renderer has the correct sorting layer
+            this.smoke.GetComponent<ParticleSystemRenderer>().sortingLayerID = SortingLayer.NameToID("MostFront");
+        }
+        public void OnParticleSystemStopped()
+        {
+            // this is called when the particle system stops
+            this.GetComponentInParent<SmokeHandler>().OnSmokeStop();
+        }
+    }
+    public class SmokeHandler : MonoBehaviour
+    {
+        private float duration = -1;
+        private bool smokeEnding = false;
+        private TimeSince timeSinceStart = 0f;
+
+        void Start()
+        {
+            this.smokeEnding = false;
+            this.timeSinceStart = 0f;
+            this.duration = this.GetComponentInChildren<ParticleSystem>().main.duration;
+            // ensure the collider is on the correct layer to not interact with players but to block visibility
+            this.transform.Find("Collider").gameObject.layer = LayerMask.NameToLayer("Corpse");
+        }
+        void Update()
+        {
+            if (!this.smokeEnding)
+            {
+                if (this.timeSinceStart > this.duration)
+                {
+                    this.smokeEnding = true;
+                    this.OnSmokeEnding();
+                }
+            }
+        }
+        public void OnSmokeEnding()
+        {
+            this.transform.Find("Collider").gameObject.SetActive(false);
+        }
+
+        public void OnSmokeStop()
+        {
+            Destroy(this.gameObject);
+
+        }
+
+    }
 	public class SmokeGrenadeHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
+        public const float SmokeVolume = 1f;
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
+        private SoundEvent SmokeSound = null;
         public override bool RemoveOnPointEnd { get => !this.IsPrefab; protected set => base.RemoveOnPointEnd = value; }
         public bool IsPrefab { get; internal set; } = false;
 		public float FuseTimer { get; private set; } = TotalFuseTime;
@@ -124,7 +181,15 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 			this.Col.radius = 0.25f;
 
-			if (this.IsPrefab)
+            // load smoke sound
+            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("SmokeGrenade.ogg");
+            SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
+            soundContainer.setting.volumeIntensityEnable = true;
+            soundContainer.audioClip[0] = sound;
+            this.SmokeSound = ScriptableObject.CreateInstance<SoundEvent>();
+            this.SmokeSound.soundContainerArray[0] = soundContainer;
+
+            if (this.IsPrefab)
             {
 				this.SetPos(1000000f * Vector2.one);
 				this.Rig.isKinematic = true;
@@ -169,12 +234,16 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 		private void RPCA_Explode()
         {
 			this.Exploded = true;
-			// spawn the shockwave explosion
-			GameObject innerExplosionObj = GameObject.Instantiate(SmokeGrenadePrefab.SmokeGrenadeExplosion, this.transform.position, Quaternion.identity);
-			Explosion innerExpl = innerExplosionObj.GetComponent<Explosion>();
-			innerExplosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
 
-			innerExplosionObj.SetActive(true);
+            // play sound
+            SoundManager.Instance.Play(this.SmokeSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SmokeVolume) });
+
+            // spawn smoke
+			GameObject smokeObj = GameObject.Instantiate(SmokeGrenadePrefab.SmokeGrenadeExplosion, this.transform.position, Quaternion.identity);
+            
+
+            smokeObj.SetActive(true);
+            smokeObj.GetComponentInChildren<ParticleSystem>().Play();
 
 			Destroy(this.gameObject);
         }

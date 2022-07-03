@@ -496,10 +496,7 @@ namespace GameModeCollection.GameModes.TRT
 
         public static void ToggleReportVisibility()
         {
-            GameModeCollection.Log("Toggle Report");
             if (Report is null) { return; }
-            GameModeCollection.Log("Report is not null");
-            GameModeCollection.Log("Set report to: " + (!Report.gameObject.activeSelf));
             ReportManager.instance.ShowHideReport(Report, !Report.gameObject.activeSelf);
         }
     }
