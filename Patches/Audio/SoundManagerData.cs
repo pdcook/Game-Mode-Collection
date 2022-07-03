@@ -20,7 +20,7 @@ namespace GameModeCollection.Patches
             {
                 return true;
             }
-            else if (owner == (Transform)SoundManager.Instance.InvokeMethod("GetMusicTransform"))
+            else if (owner == (Transform)SoundManager.Instance.InvokeMethod("GetMusicTransform") || owner == SoundManager.Instance.GetTransform())
             {
                 return true;
             }
