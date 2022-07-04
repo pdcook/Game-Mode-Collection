@@ -8,6 +8,7 @@ using Sonigon;
 using Sonigon.Internal;
 using UnboundLib;
 using UnboundLib.GameModes;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.GMCObjects
 {
@@ -25,7 +26,8 @@ namespace GameModeCollection.GMCObjects
                 if (StaticPlaying)
                 {
                     StaticPlaying = false;
-                    SoundManager.Instance.Stop(Static, SoundManager.Instance.GetTransform(), true);
+                    //SoundManager.Instance.Stop(Static, StaticSource, true);
+                    StaticSource.Stop();
                 }
                 TRTProximityChannel.ForceUnjamComms();
             }
@@ -43,23 +45,42 @@ namespace GameModeCollection.GMCObjects
         public override float VisibleDistance { get; protected set; } = 5f;
         public override bool RequireLoS { get; protected set; } = true;
 
-        private const float StaticVol = 0.5f;
+        private const float StaticVol = 0.2f;
 
+        private static AudioSource StaticSource
+        {
+            get
+            {
+                Transform t = PlayerManager.instance?.GetLocalPlayer()?.transform;
+                if (t is null)
+                {
+                    t = MainCam.instance.cam.transform;
+                }
+                AudioSource audioSource = t.Find("StaticAudio")?.GetComponent<AudioSource>();
+                if (audioSource is null)
+                {
+                    audioSource = new GameObject("StaticAudio", typeof(AudioSource)).GetComponent<AudioSource>();
+                    audioSource.transform.SetParent(t);
+                    audioSource.spatialBlend = 0;
+                    audioSource.minDistance = 0;
+                    audioSource.maxDistance = 1000;
+                    audioSource.loop = true;
+                    audioSource.volume = StaticVol;
+                    audioSource.clip = Static;
+                    audioSource.playOnAwake = false;
+                }
+                return audioSource;
+            }
+        }
         private static bool StaticPlaying = false;
-        private static SoundEvent _Static = null;
-        public static SoundEvent Static
+        private static AudioClip _Static = null;
+        public static AudioClip Static
         {
             get
             {
                 if (_Static is null)
                 {
-                    AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("Static.ogg");
-                    SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
-                    soundContainer.setting.volumeIntensityEnable = true;
-                    soundContainer.setting.loopEnabled = true;
-                    soundContainer.audioClip[0] = sound;
-                    _Static = ScriptableObject.CreateInstance<SoundEvent>();
-                    _Static.soundContainerArray[0] = soundContainer;
+                    _Static = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("Static.ogg");
                 }
                 return _Static;
             }
@@ -70,7 +91,8 @@ namespace GameModeCollection.GMCObjects
             // play a static sound for the duration of the jam
             if (!StaticPlaying)
             {
-                SoundManager.Instance.Play(Static, SoundManager.Instance.GetTransform(), new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * StaticVol) });
+                //SoundManager.Instance.Play(Static, StaticSource, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * StaticVol), new SoundParameterBypassSpatialize() });
+                StaticSource.Play();
                 StaticPlaying = true;
 
                 // start a coroutine to stop the static sound after the jam duration
@@ -78,7 +100,8 @@ namespace GameModeCollection.GMCObjects
                 GM_TRT.instance.ExecuteAfterSeconds(JamDuration, () =>
                 {
                     StaticPlaying = false;
-                    SoundManager.Instance.Stop(Static, SoundManager.Instance.GetTransform(), true);
+                    //SoundManager.Instance.Stop(Static, StaticSource, true);
+                    StaticSource.Stop();
                 });
             }
 

@@ -184,9 +184,9 @@ namespace GameModeCollection.GameModes.TRT.Cards
         private const float BarrelWidth = 0.5f;
         internal const float Damage = 12.3456f;
 
-        private Vector3 OriginalScale;
-        private Vector3 OriginalRightPos;
-        private Vector3 OriginalLeftPos;
+        private Vector3? OriginalScale = null;
+        private Vector3? OriginalRightPos = null;
+        private Vector3? OriginalLeftPos = null;
         private List<ObjectsToSpawn> OriginalObjectsToSpawn;
         private bool OriginalUnblockable = false;
         private int NumCards;
@@ -313,10 +313,10 @@ namespace GameModeCollection.GameModes.TRT.Cards
             GameObject barrel = spring.transform.GetChild(3).gameObject;
             spring.GetComponentInChildren<SpriteRenderer>().color = this.player.GetTeamColors().color;
             barrel.GetComponentInChildren<SpriteRenderer>().color = this.player.GetTeamColors().color;
-            barrel.transform.localScale = this.OriginalScale;
+            if (this.OriginalScale.HasValue) { barrel.transform.localScale = this.OriginalScale.Value; }
             RightLeftMirrorSpring mirrorSpring = barrel.GetComponent<RightLeftMirrorSpring>();
-            mirrorSpring.leftPos = this.OriginalLeftPos;
-            mirrorSpring.SetFieldValue("rightPos", this.OriginalRightPos);
+            if (this.OriginalLeftPos.HasValue) { mirrorSpring.leftPos = this.OriginalLeftPos.Value; }
+            if (this.OriginalRightPos.HasValue) { mirrorSpring.SetFieldValue("rightPos", this.OriginalRightPos.Value); }
 
             this.ClearModifiers(false);
 
@@ -355,12 +355,12 @@ namespace GameModeCollection.GameModes.TRT.Cards
             spring.GetComponentInChildren<SpriteRenderer>().color = GM_TRT.DullWhite;
             barrel.GetComponentInChildren<SpriteRenderer>().color = GM_TRT.DullWhite;
             this.OriginalScale = barrel.transform.localScale;
-            barrel.transform.localScale = Vector3.Scale(new Vector3(BarrelLength, BarrelWidth, 1f), this.OriginalScale);
+            barrel.transform.localScale = Vector3.Scale(new Vector3(BarrelLength, BarrelWidth, 1f), this.OriginalScale.Value);
             RightLeftMirrorSpring mirrorSpring = barrel.GetComponent<RightLeftMirrorSpring>();
             this.OriginalLeftPos = mirrorSpring.leftPos;
             this.OriginalRightPos = (Vector3)mirrorSpring.GetFieldValue("rightPos");
-            mirrorSpring.leftPos = Vector3.Scale(new Vector3(1f, BarrelLength * 0.9f, 1f), this.OriginalLeftPos);
-            mirrorSpring.SetFieldValue("rightPos", Vector3.Scale(new Vector3(1f, BarrelLength * 0.9f, 1f), this.OriginalRightPos));
+            mirrorSpring.leftPos = Vector3.Scale(new Vector3(1f, BarrelLength * 0.9f, 1f), this.OriginalLeftPos.Value);
+            mirrorSpring.SetFieldValue("rightPos", Vector3.Scale(new Vector3(1f, BarrelLength * 0.9f, 1f), this.OriginalRightPos.Value));
 
             this.ApplyModifiers();
 

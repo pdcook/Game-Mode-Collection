@@ -8,6 +8,7 @@ using GameModeCollection.GameModes;
 using GameModeCollection.Extensions;
 using UnboundLib;
 using System;
+using System.Collections;
 namespace GameModeCollection.GMCObjects
 {
     public static class InteractablePrefabs
@@ -78,7 +79,7 @@ namespace GameModeCollection.GMCObjects
             " ",
             base.transform.GetSiblingIndex()
             });
-            MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.Add(this.UniqueKey, new Action<int>(this.RPCA_TryInteract));
+            this.StartCoroutine(this.RegisterRPCWhenReady());
 
             // add the interaction UI
             GameObject interactableUI = GameObject.Instantiate(InteractablePrefabs.InteractableUI, this.transform.parent);
@@ -90,11 +91,26 @@ namespace GameModeCollection.GMCObjects
             interactableUI.GetComponentInChildren<TextMeshProUGUI>().alignment = TextAlignmentOptions.Center;
             interactableUI.GetComponentInChildren<TextBackground>().CheckForChanges();
         }
+        private IEnumerator RegisterRPCWhenReady()
+        {
+            yield return new WaitForEndOfFrame();
+            yield return new WaitWhile(() => MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.ContainsKey(this.UniqueKey));
+            yield return new WaitForEndOfFrame();
+            MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.Add(this.UniqueKey, new Action<int>(this.RPCA_TryInteract));
+            yield break;
+        }
         private void OnDestroy()
         {
-            if (MapManager.instance)
+            if (MapManager.instance != null)
             {
-                MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.Remove(this.UniqueKey);
+                try
+                {
+                    MapManager.instance.GetComponent<ChildRPC>().childRPCsInt.Remove(this.UniqueKey);
+                }
+                catch
+                {
+                    GameModeCollection.LogWarning("Failed to remove RPC for " + this.UniqueKey);
+                }
             }
             if (this.InteractionUI != null)
             {

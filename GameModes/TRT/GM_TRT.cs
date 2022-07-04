@@ -204,12 +204,7 @@ namespace GameModeCollection.GameModes
             PlayerManager.instance.SetPlayersSimulated(false);
             PlayerAssigner.instance.maxPlayers = RWF.RWFMod.instance.MaxPlayers;
 
-            LocalZoom.MyCameraController.allowZoomIn = true;
-            LocalZoom.MyCameraController.defaultZoomLevel = DefaultZoom;
-            LocalZoom.LocalZoom.scaleCamWithBulletSpeed = true;
-            LocalZoom.LocalZoom.enableLoSNamePlates = true;
-            LocalZoom.LocalZoom.SetEnableShaderSetting(true);
-            LocalZoom.LocalZoom.SetEnableCameraSetting(true);
+            NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SyncLocalZoomSettings));
             TRTHandler.InitChatGroups();
             BetterChat.BetterChat.SetDeadChat(true);
             BetterChat.BetterChat.UsePlayerColors = false;
@@ -222,6 +217,16 @@ namespace GameModeCollection.GameModes
             ControllerManager.SetBoundsController(TRTBoundsController.ControllerID);
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitEnd);
+        }
+        [UnboundRPC]
+        private static void RPCA_SyncLocalZoomSettings()
+        {
+            LocalZoom.MyCameraController.allowZoomIn = true;
+            LocalZoom.MyCameraController.defaultZoomLevel = DefaultZoom;
+            LocalZoom.LocalZoom.scaleCamWithBulletSpeed = true;
+            LocalZoom.LocalZoom.enableLoSNamePlates = true;
+            LocalZoom.LocalZoom.SetEnableShaderSetting(true);
+            LocalZoom.LocalZoom.SetEnableCameraSetting(true);
         }
 
         private void RandomizePlayerSkins()
@@ -509,8 +514,7 @@ namespace GameModeCollection.GameModes
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookGameStart);
 
-            LocalZoom.MyCameraController.defaultZoomLevel = DefaultZoom;
-            LocalZoom.MyCameraController.allowZoomIn = true;
+            NetworkingManager.RPC(typeof(GM_TRT), nameof(RPCA_SyncLocalZoomSettings));
 
             GameManager.instance.battleOngoing = false;
 
@@ -727,11 +731,12 @@ namespace GameModeCollection.GameModes
                 if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
             }
 
+            yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PostBattle);
+
             yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
             yield return GameModeManager.TriggerHook(GameModeHooks.HookRoundEnd);
             
-            yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PostBattle);
-            
+            this.StartCoroutine(this.ClearRolesAndVisuals());
             GameManager.instance.battleOngoing = false;
             PlayerManager.instance.SetPlayersSimulated(false);
 
@@ -799,10 +804,11 @@ namespace GameModeCollection.GameModes
                 if (PhotonNetwork.IsMasterClient) { TRTHandler.SendPointOverChat(winningRole); }
             }
 
-            yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
-            
             yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PostBattle);
 
+            yield return GameModeManager.TriggerHook(GameModeHooks.HookPointEnd);
+
+            this.StartCoroutine(this.ClearRolesAndVisuals());
             GameManager.instance.battleOngoing = false;
             PlayerManager.instance.SetPlayersSimulated(false);
 
@@ -978,7 +984,7 @@ namespace GameModeCollection.GameModes
             RoundSummary.LogWin(winningRoleID);
             RoundSummary.CreateRoundSummary(winningRoleID);
 
-            instance.StartCoroutine(instance.ClearRolesAndVisuals());
+            //instance.StartCoroutine(instance.ClearRolesAndVisuals());
 
             // dont set battleOngoing to false since it will break localzoom for alive players in the postgame
             //GameManager.instance.battleOngoing = false;

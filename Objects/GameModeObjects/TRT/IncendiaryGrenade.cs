@@ -16,6 +16,7 @@ using UnityEngine.UI.ProceduralImage;
 using Sonigon;
 using Sonigon.Internal;
 using GameModeCollection.Objects;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
@@ -87,6 +88,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
                 if (IncendiaryGrenadePrefabs._IncendiaryGrenadeExplosion is null)
                 {
                     _IncendiaryGrenadeExplosion = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("IncendiaryFlame"));
+                    _IncendiaryGrenadeExplosion.GetOrAddComponent<IncendiaryAudioHandler>();
                     _IncendiaryGrenadeExplosion.transform.Find("Flames").gameObject.GetOrAddComponent<IncendiaryParticleHandler>();
                     _IncendiaryGrenadeExplosion.transform.Find("Trigger").gameObject.GetOrAddComponent<BurnHandler>();
                     _IncendiaryGrenadeExplosion.transform.Find("Trigger").gameObject.layer = PhysicsItem.TriggerLayer;
@@ -368,7 +370,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             this.Exploded = true;
 
             // play ignite sound
-            SoundManager.Instance.Play(this.IgniteSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * IgniteVolume) });
+            //SoundManager.Instance.Play(this.IgniteSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * IgniteVolume) });
 
             GameObject expl = GameObject.Instantiate(IncendiaryGrenadePrefabs.IncendiaryGrenadeExplosion, this.transform.position, Quaternion.identity);
             expl.transform.up = up;
@@ -405,13 +407,13 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
     {
         public const float BurnEvery = 0.2f;
         public const float BURNDAMAGE = 5f;
-        public const float BurnVolume = 0.75f;
-        public const float RepelFragmentStrength = 1f;
+        public const float RepelFragmentStrength = 10f;
+        public const float RepelFragmentStrengthMin = 1f;
+        public const float RepelFragmentStrengthMax = 100f;
 
         private int OwnerID = -1;
         private float Duration = -1f;
         private TimeSince Timer = 0f;
-        private SoundEvent BurnLoop = null;
 
         private Dictionary<int, TimeSince> playerBurnTimers = new Dictionary<int, TimeSince>();
 
@@ -419,20 +421,9 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
         {
             this.Timer = 0f;
 
-            // get sound loop
-            AudioClip sound = GameModeCollection.TRT_Assets.LoadAsset<AudioClip>("IncendiaryLoop.ogg");
-            SoundContainer soundContainer = ScriptableObject.CreateInstance<SoundContainer>();
-            soundContainer.setting.volumeIntensityEnable = true;
-            soundContainer.setting.loopEnabled = true;
-            soundContainer.audioClip[0] = sound;
-            this.BurnLoop = ScriptableObject.CreateInstance<SoundEvent>();
-            this.BurnLoop.soundContainerArray[0] = soundContainer;
-
-		    SoundManager.Instance.Play(this.BurnLoop, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * BurnVolume) });
         }
         void OnDestroy()
         {
-		    SoundManager.Instance.Stop(this.BurnLoop, this.transform, true);
         }
 
         internal void SetOwnerID(int ownerID)
@@ -449,6 +440,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
             if (this.Timer > this.Duration && this.Duration > 0f)
             {
+                this.transform.parent.gameObject.GetComponent<IncendiaryAudioHandler>()?.FadeOut(1f);
                 Destroy(this.gameObject);
                 return;
             }
@@ -500,7 +492,14 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
                 if (fragment != null)
                 {
                     // fragments should bounce off of flames
-                    fragment.SetVel(fragment.Rig.velocity + (Vector2)this.transform.up * RepelFragmentStrength);
+
+                    // distance from fragment to bottom of flame
+                    Vector2 fragPos = fragment.transform.position;
+                    Vector2 flameCenter = this.transform.position;
+                    Vector2 flamePlane = this.transform.right;
+                    float sqDistance = ((fragPos - flameCenter) - (Vector2.Dot((fragPos - flameCenter), flamePlane)) * flamePlane).sqrMagnitude;
+
+                    fragment.SetVel(fragment.Rig.velocity + (Vector2)this.transform.up * UnityEngine.Mathf.Clamp(RepelFragmentStrength / sqDistance, RepelFragmentStrengthMin, RepelFragmentStrengthMax));
 
                 }
             }
@@ -518,7 +517,14 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
                 if (fragment != null)
                 {
                     // fragments should bounce off of flames
-                    fragment.SetVel(fragment.Rig.velocity + (Vector2)this.transform.up * RepelFragmentStrength);
+
+                    // distance from fragment to bottom of flame
+                    Vector2 fragPos = fragment.transform.position;
+                    Vector2 flameCenter = this.transform.position;
+                    Vector2 flamePlane = this.transform.right;
+                    float sqDistance = ((fragPos - flameCenter) - (Vector2.Dot((fragPos - flameCenter), flamePlane)) * flamePlane).sqrMagnitude;
+
+                    fragment.SetVel(fragment.Rig.velocity + (Vector2)this.transform.up * UnityEngine.Mathf.Clamp(RepelFragmentStrength / sqDistance, RepelFragmentStrengthMin, RepelFragmentStrengthMax));
 
                 }
             }
@@ -531,5 +537,48 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
                 this.PlayerExitFlame(player);
             }
         }
+    }
+    public class IncendiaryAudioHandler : MonoBehaviour
+    {
+        public const float Volume = 0.5f;
+
+        Player Player = null;
+        AudioSource[] audioSources = null;
+        bool fade = false;
+        TimeSince fadeTimer;
+        float fadeTime = 1f;
+
+        internal void FadeOut(float fadeTime)
+        {
+            this.fade = true;
+            this.fadeTimer = 0f;
+            this.fadeTime = fadeTime;
+        }
+
+        void Start()
+        {
+            this.Player = PlayerManager.instance.GetLocalPlayer();
+            this.audioSources = this.GetComponents<AudioSource>();
+            if (this.audioSources is null || this.audioSources.Length == 0)
+            {
+                GameModeCollection.LogError("IncendiaryAudioHandler: No audio sources found!");
+                Destroy(this);
+                return;
+            }
+            foreach (AudioSource audioSource in this.audioSources)
+            {
+                GMCAudio.ApplyToAudioSource(audioSource, vol: Volume, fadeOut: this.fade, fadeTimer: this.fadeTimer, fadeDuration: this.fadeTime);
+                audioSource.Play();
+            }
+        }
+        void Update()
+        {
+            if (this.audioSources is null) { return; }
+            foreach (AudioSource audioSource in this.audioSources)
+            {
+                GMCAudio.ApplyToAudioSource(audioSource, vol: Volume, fadeOut: this.fade, fadeTimer: this.fadeTimer, fadeDuration: this.fadeTime);
+            }
+        }
+
     }
 }

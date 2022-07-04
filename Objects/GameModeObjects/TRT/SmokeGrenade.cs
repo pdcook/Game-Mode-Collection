@@ -10,6 +10,7 @@ using GameModeCollection.Objects;
 using System.Linq;
 using Sonigon;
 using Sonigon.Internal;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.Objects.GameModeObjects.TRT
 {
@@ -54,6 +55,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 					_SmokeGrenadeExplosion = GameObject.Instantiate(GameModeCollection.TRT_Assets.LoadAsset<GameObject>("Smoke"));
                     _SmokeGrenadeExplosion.GetComponentInChildren<ParticleSystem>().gameObject.GetOrAddComponent<SmokeParticleHandler>();
                     _SmokeGrenadeExplosion.GetOrAddComponent<SmokeHandler>();
+                    _SmokeGrenadeExplosion.GetOrAddComponent<SmokeAudioHandler>();
                     _SmokeGrenadeExplosion.SetActive(false);
                     _SmokeGrenadeExplosion.name = "SmokeGrenadeExplosion";
 
@@ -122,7 +124,6 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 	public class SmokeGrenadeHandler : NetworkPhysicsItem<CircleCollider2D, CircleCollider2D>
 	{
         public const float ScaleBy = 0.125f;
-        public const float SmokeVolume = 1f;
 		public const float AngularVelocityMult = 10f;
 		public const float TotalFuseTime = 3f;
         private SoundEvent SmokeSound = null;
@@ -240,7 +241,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			this.Exploded = true;
 
             // play sound
-            SoundManager.Instance.Play(this.SmokeSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SmokeVolume) });
+            //SoundManager.Instance.Play(this.SmokeSound, this.transform, new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SmokeVolume) });
 
             // spawn smoke
 			GameObject smokeObj = GameObject.Instantiate(SmokeGrenadePrefab.SmokeGrenadeExplosion, this.transform.position, Quaternion.identity);
@@ -251,5 +252,37 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 
 			Destroy(this.gameObject);
         }
+    }
+    public class SmokeAudioHandler : MonoBehaviour
+    {
+        public const float Volume = 0.7f;
+        Player Player = null;
+        AudioSource[] audioSources = null;
+
+        void Start()
+        {
+            this.Player = PlayerManager.instance.GetLocalPlayer();
+            this.audioSources = this.GetComponents<AudioSource>();
+            if (this.audioSources is null || this.audioSources.Length == 0)
+            {
+                GameModeCollection.LogError("SmokeAudioHandler: No audio sources found!");
+                Destroy(this);
+                return;
+            }
+            foreach (AudioSource audioSource in this.audioSources)
+            {
+                GMCAudio.ApplyToAudioSource(audioSource, vol: Volume);
+                audioSource.Play();
+            }
+        }
+        void Update()
+        {
+            if (this.audioSources is null) { return; }
+            foreach (AudioSource audioSource in this.audioSources)
+            {
+                GMCAudio.ApplyToAudioSource(audioSource, vol: Volume);
+            }
+        }
+
     }
 }

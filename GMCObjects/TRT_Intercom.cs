@@ -6,6 +6,7 @@ using GameModeCollection.GameModes.TRT.VoiceChat;
 using UnboundLib.Utils;
 using Sonigon;
 using Sonigon.Internal;
+using GameModeCollection.Utils;
 
 namespace GameModeCollection.GMCObjects
 {
@@ -85,7 +86,7 @@ namespace GameModeCollection.GMCObjects
             if (this.broadcasting || this.recharging) { return; }
 
             // play start sound
-            SoundManager.Instance.Play(IC_Start, SoundManager.Instance.GetTransform(), new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SFX_Vol) });
+            SoundManager.Instance.Play(IC_Start, SoundManager.Instance.GetTransform(), new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SFX_Vol), new SoundParameterBypassSpatialize() });
 
             // enable this player to speak in the Intercom VC for 30 seconds
             this.broadcasting = true;
@@ -124,7 +125,7 @@ namespace GameModeCollection.GMCObjects
                     this.recharging = true;
                     this.SetIntercomPlayer(null);
                     // play stop sound
-                    SoundManager.Instance.Play(IC_Stop, SoundManager.Instance.GetTransform(), new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SFX_Vol) });
+                    SoundManager.Instance.Play(IC_Stop, SoundManager.Instance.GetTransform(), new SoundParameterBase[] { new SoundParameterIntensity(Optionshandler.vol_Master * Optionshandler.vol_Sfx * SFX_Vol), new SoundParameterBypassSpatialize() });
                     this.IC_Timer = 0f;
                 }
             }
