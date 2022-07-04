@@ -7,9 +7,10 @@ using GameModeCollection.Extensions;
 using TRTAfterActionReport.Utils;
 using UnityEngine;
 using GameModeCollection.GameModeHandlers;
+using UnboundLib.GameModes;
 namespace GameModeCollection.GameModes.TRT
 {
-    public static class RoundSummary
+    public class RoundSummary : MonoBehaviour
     {
         /// The class which handles:
         /// - tracking the info of the current round
@@ -20,6 +21,31 @@ namespace GameModeCollection.GameModes.TRT
         /// - all kills (killer and victim)
         /// - all player damage (source, target, amount)
         /// - custom events registered by key
+
+        private static RoundSummary Instance;
+        void Awake()
+        {
+            if (Instance != null)
+            {
+                GameModeCollection.LogError("RoundSummary: Instance already exists!");
+                try
+                {
+                    GameObject.DestroyImmediate(Instance);
+                }
+                catch
+                {
+                    
+                }
+            }
+            Instance = this;
+        }
+        void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.Slash) && GameModeManager.CurrentHandlerID == TRTHandler.GameModeID)
+            {
+                RoundSummary.ToggleReportVisibility();
+            }
+        }
 
         // current summary
         private static Report Report = null;

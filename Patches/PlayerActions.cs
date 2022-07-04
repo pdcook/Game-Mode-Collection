@@ -66,9 +66,11 @@ namespace GameModeCollection.Patches
                                     BindingFlags.Instance | BindingFlags.InvokeMethod |
                                     BindingFlags.NonPublic, null, __instance, new object[] { "Item 5" });
            
+            /*
             __instance.GetAdditionalData().toggle_summary = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                         BindingFlags.Instance | BindingFlags.InvokeMethod |
                         BindingFlags.NonPublic, null, __instance, new object[] { "Show Summary" });
+            */
             
             __instance.GetAdditionalData().role_help = (PlayerAction)typeof(PlayerActions).InvokeMember("CreatePlayerAction",
                         BindingFlags.Instance | BindingFlags.InvokeMethod |
@@ -142,7 +144,7 @@ namespace GameModeCollection.Patches
             __result.GetAdditionalData().trt_item4.AddDefaultBinding(Key.Key4);
             __result.GetAdditionalData().trt_item5.AddDefaultBinding(Key.Key5);
 
-            __result.GetAdditionalData().toggle_summary.AddDefaultBinding(Key.Slash);
+            //__result.GetAdditionalData().toggle_summary.AddDefaultBinding(Key.Slash);
 
             __result.GetAdditionalData().role_help.AddDefaultBinding(Key.H);
         }

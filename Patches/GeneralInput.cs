@@ -41,11 +41,14 @@ namespace GameModeCollection.Patches
             data.try_interact_is_pressed = data.interact.IsPressed;
             data.try_interact_was_released = data.interact.WasReleased;
 
+            // NOTE: for summaries to be togglable by spectators and dead players, they can't be a PlayerAction
+            // they COULD be a different derived class of PlayerActionSet, but then Rebind controls wouldn't work anyways
             // summaries
+            /*
             if (data.toggle_summary.WasPressed)
             {
                 RoundSummary.ToggleReportVisibility();
-            }
+            }*/
 
             // help
             if (data.role_help.WasPressed)

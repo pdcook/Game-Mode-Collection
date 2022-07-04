@@ -45,7 +45,7 @@ namespace GameModeCollection.Extensions
         public bool trt_item5_was_pressed = false;
 
         // TRT round summary toggle
-        public PlayerAction toggle_summary;
+        //public PlayerAction toggle_summary;
 
         // role help key
         public PlayerAction role_help;

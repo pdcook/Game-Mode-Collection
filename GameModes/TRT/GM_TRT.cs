@@ -176,6 +176,9 @@ namespace GameModeCollection.GameModes
 
         protected void Start()
         {
+            // add RoundSummary input handler
+            this.gameObject.GetOrAddComponent<RoundSummary>();
+
             // register prefabs
             GameObject _ = CardItemPrefabs.CardItem;
             _ = HealthStationPrefab.HealthStation;
@@ -729,6 +732,7 @@ namespace GameModeCollection.GameModes
             
             yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PostBattle);
             
+            GameManager.instance.battleOngoing = false;
             PlayerManager.instance.SetPlayersSimulated(false);
 
             UIHandler.instance.roundCounterSmall.UpdateText(1, "LOADING", DullWhite, 30, Vector3.one, DisplayBackgroundColor, false);
@@ -799,6 +803,7 @@ namespace GameModeCollection.GameModes
             
             yield return new WaitWhile(() => this.CurrentPhase == RoundPhase.PostBattle);
 
+            GameManager.instance.battleOngoing = false;
             PlayerManager.instance.SetPlayersSimulated(false);
 
             UIHandler.instance.roundCounterSmall.UpdateText(1, "LOADING", DullWhite, 30, Vector3.one, DisplayBackgroundColor, false);
@@ -975,7 +980,8 @@ namespace GameModeCollection.GameModes
 
             instance.StartCoroutine(instance.ClearRolesAndVisuals());
 
-            GameManager.instance.battleOngoing = false;
+            // dont set battleOngoing to false since it will break localzoom for alive players in the postgame
+            //GameManager.instance.battleOngoing = false;
             instance.isTransitioning = true;
 
             //PlayerManager.instance.SetPlayersSimulated(false);
