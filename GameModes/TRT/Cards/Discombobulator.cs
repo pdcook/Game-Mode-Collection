@@ -110,7 +110,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if ((this.Player?.data?.view?.IsMine ?? false) && !this.Player.data.dead && (bool)this.Player.data.playerVel.GetFieldValue("simulated") && this.Player.data.playerActions.ItemWasPressed(5) && !used)
             {
                 used = true;
-                GameModeCollection.instance.StartCoroutine(DiscombobulatorHandler.MakeDiscombobulatorHandler(this.Player.playerID, ThrowSpeed * this.Player.data.weaponHandler.gun.shootPosition.forward, this.Player.data.weaponHandler.transform.position, Quaternion.identity));
+                GameModeCollection.instance.StartCoroutine(DiscombobulatorHandler.MakeDiscombobulatorHandler(this.Player.playerID, ThrowSpeed * this.Player.data.weaponHandler.gun.shootPosition.forward, this.Player.data.weaponHandler.transform.position + this.Player.data.weaponHandler.gun.shootPosition.forward, Quaternion.identity));
                 CardUtils.Call_RemoveCardFromPlayer_ClientsideCardBar(this.Player, DiscombobulatorCard.Card, ModdingUtils.Utils.Cards.SelectionType.Oldest);
                 Destroy(this);
             }
