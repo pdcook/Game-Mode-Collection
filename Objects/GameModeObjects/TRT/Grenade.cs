@@ -158,8 +158,8 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 														friction: 0.9f,
                                                         minAngularDrag: 1f,
                                                         maxAngularDrag: 100f,
-														impulseMult: 1f,
-														forceMult: 1f, visibleThroughShader: false);
+														impulseMult: 0.01f,
+														forceMult: 0.01f, visibleThroughShader: false);
 
 			base.Awake();
 		}
