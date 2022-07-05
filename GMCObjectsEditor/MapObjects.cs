@@ -76,6 +76,29 @@ namespace GMCObjectsEditor
         }
     }
     #endregion
+    #region LightSwitch
+    [EditorMapObjectSpec(typeof(MapObjects.LightSwitchObj), "Light Switch", "TRT")]
+    public static class EditorLightSwitchSpec
+    {
+        [EditorMapObjectPrefab]
+        public static GameObject Prefab => MapObjects.LightSwitchSpec.Prefab;
+
+        [EditorMapObjectSerializer]
+        public static void Serialize(GameObject instance, MapObjects.LightSwitchObj target)
+        {
+            MapObjects.LightSwitchSpec.Serialize(instance, target);
+        }
+
+        [EditorMapObjectDeserializer]
+        public static void Deserialize(MapObjects.LightSwitchObj data, GameObject target)
+        {
+            MapObjects.LightSwitchSpec.Deserialize(data, target);
+            target.gameObject.GetOrAddComponent<LightSwitchVisualizer>();
+            target.gameObject.GetOrAddComponent<SpawnActionHandler>();
+            target.transform.SetAsLastSibling();
+        }
+    }
+    #endregion
     #region TRT_Intercom
     [EditorMapObjectSpec(typeof(MapObjects.IntercomObj), "Intercom", "TRT")]
     public static class EditorIntercomSpec

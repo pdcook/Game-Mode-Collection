@@ -137,6 +137,8 @@ namespace GameModeCollection
             GameModeManager.AddHook(GameModeHooks.HookPointStart, Cuffed.RemoveAllCuffsFromPlayers);
             GameModeManager.AddHook(GameModeHooks.HookPointEnd, TraitorTrap_Jammer.ForceStop);
             GameModeManager.AddHook(GameModeHooks.HookRoundEnd, TraitorTrap_Jammer.ForceStop);
+            GameModeManager.AddHook(GameModeHooks.HookPointEnd, LightSwitch.ForceStop);
+            GameModeManager.AddHook(GameModeHooks.HookRoundEnd, LightSwitch.ForceStop);
 
             // Pykess game mode stuff
             GameModeManager.AddHandler<GM_CrownControl>(CrownControlHandler.GameModeID, new CrownControlHandler());

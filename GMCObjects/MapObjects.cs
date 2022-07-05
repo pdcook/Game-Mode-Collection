@@ -150,6 +150,47 @@ namespace GameModeCollection.GMCObjects
             }
         }
         #endregion
+        #region LightSwitch
+        public class LightSwitchObj : MapObject
+        {
+            public Vector3 Loc;
+        }
+
+        [MapObjectSpec(typeof(LightSwitchObj))]
+        public static class LightSwitchSpec
+        {
+            private static GameObject _prefab = null;
+            [MapObjectPrefab]
+            public static GameObject Prefab
+            {
+                get
+                {
+                    if (_prefab == null)
+                    {
+                        GameObject spawnPoint = MapObjectManager.LoadCustomAsset<GameObject>("Spawn Point");
+                        _prefab = GameObject.Instantiate(spawnPoint);
+                        _prefab.name = "LightSwitch";
+                        GameObject.DontDestroyOnLoad(_prefab);
+                    }
+                    return _prefab;
+
+                }
+            }
+            [MapObjectSerializer]
+            public static void Serialize(GameObject instance, LightSwitchObj target)
+            {
+                target.Loc = instance.transform.position;
+            }
+
+            [MapObjectDeserializer]
+            public static void Deserialize(LightSwitchObj data, GameObject target)
+            {
+                target.transform.position = data.Loc;
+                GameObject.Destroy(target.GetComponent<SpawnPoint>());
+                target.AddComponent<LightSwitch>();
+            }
+        }
+        #endregion
         #endregion
         #region TRT_Intercom
         public class IntercomObj : MapObject
