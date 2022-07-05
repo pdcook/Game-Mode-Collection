@@ -72,13 +72,13 @@ namespace GameModeCollection.GMCObjects
 
         protected void Start()
         {
-            this.UniqueKey = string.Concat(new object[]
-            {
-            "Interactable ",
-            (int)base.GetComponentInParent<Map>().GetFieldValue("levelID"),
-            " ",
-            base.transform.GetSiblingIndex()
-            });
+            this.UniqueKey = this.gameObject.name + " "
+                                + "Interactable "
+                                + ((int)base.GetComponentInParent<Map>().GetFieldValue("levelID")).ToString()
+                                + " "
+                                + this.transform.GetSiblingIndex().ToString()
+                                + $"({this.GetType().Name})"
+                                + $"[{(this.transform.parent?.name ?? "root")}]";
             this.StartCoroutine(this.RegisterRPCWhenReady());
 
             // add the interaction UI
