@@ -36,7 +36,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         {
             if (GM_TRT.instance.CurrentPhase == GM_TRT.RoundPhase.PostBattle) { return 0f; }
             if (speaking is null) { return 0f; }
-            if (listening is null) { return 1f; }
+            if (listening is null || listening.data.dead) { return 0.5f; } // spectators can hear everyone at half volume
             float distance = Vector2.Distance(speaking.data.playerVel.position, listening.data.playerVel.position);
             if (distance > Utils.GMCAudio.CutoffDistance) { return 0f; }
             return Utils.GMCAudio.FalloffByWalls(speaking.data.playerVel.position, listening.data.playerVel.position);
