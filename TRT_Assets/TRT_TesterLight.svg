@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1000"
+   height="1000"
+   viewBox="0 0 264.58333 264.58334"
+   version="1.1"
+   id="svg2800"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="TRT_TesterLight.svg"
+   inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_TesterLight.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview2802"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     width="1000px"
+     inkscape:snap-page="true"
+     inkscape:snap-bbox="true"
+     inkscape:zoom="0.58831284"
+     inkscape:cx="444.4914"
+     inkscape:cy="517.58177"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs2797">
+    <filter
+       inkscape:label="Refractive Glass"
+       inkscape:menu-tooltip="Double reflection through glass with some refraction"
+       inkscape:menu="Non-Realistic 3D Shaders"
+       height="1.0907087"
+       y="-0.045354329"
+       width="1.0907087"
+       x="-0.045354329"
+       style="color-interpolation-filters:sRGB"
+       id="filter1634">
+      <feGaussianBlur
+         stdDeviation="5"
+         result="result8"
+         in="SourceGraphic"
+         id="feGaussianBlur1614" />
+      <feComposite
+         in="result8"
+         in2="result8"
+         operator="xor"
+         result="result18"
+         id="feComposite1616" />
+      <feComposite
+         in="result8"
+         k1="1"
+         k2="0.5"
+         operator="arithmetic"
+         result="result16"
+         in2="result18"
+         id="feComposite1618" />
+      <feComposite
+         in2="result8"
+         result="result6"
+         operator="atop"
+         in="result16"
+         id="feComposite1620" />
+      <feOffset
+         result="result17"
+         in="result6"
+         id="feOffset1622" />
+      <feDisplacementMap
+         in2="result16"
+         in="result17"
+         xChannelSelector="A"
+         yChannelSelector="A"
+         scale="100"
+         result="result4"
+         id="feDisplacementMap1624" />
+      <feComposite
+         in2="result4"
+         result="result2"
+         operator="arithmetic"
+         in="result17"
+         k3="1"
+         id="feComposite1626" />
+      <feComposite
+         in2="result17"
+         result="fbSourceGraphic"
+         in="result2"
+         operator="out"
+         id="feComposite1628" />
+      <feComposite
+         in="fbSourceGraphic"
+         in2="fbSourceGraphic"
+         operator="over"
+         result="result14"
+         id="feComposite1630" />
+      <feComposite
+         result="result15"
+         in2="SourceGraphic"
+         operator="in"
+         in="result14"
+         id="feComposite1632" />
+    </filter>
+    <filter
+       inkscape:label="Refractive Glass"
+       inkscape:menu-tooltip="Double reflection through glass with some refraction"
+       inkscape:menu="Non-Realistic 3D Shaders"
+       height="1.0907087"
+       y="-0.045354329"
+       width="1.0907087"
+       x="-0.045354329"
+       style="color-interpolation-filters:sRGB"
+       id="filter1634-5">
+      <feGaussianBlur
+         stdDeviation="5"
+         result="result8"
+         in="SourceGraphic"
+         id="feGaussianBlur1614-7" />
+      <feComposite
+         in="result8"
+         in2="result8"
+         operator="xor"
+         result="result18"
+         id="feComposite1616-7" />
+      <feComposite
+         in="result8"
+         k1="1"
+         k2="0.5"
+         operator="arithmetic"
+         result="result16"
+         in2="result18"
+         id="feComposite1618-0"
+         k3="0"
+         k4="0" />
+      <feComposite
+         in2="result8"
+         result="result6"
+         operator="atop"
+         in="result16"
+         id="feComposite1620-0" />
+      <feOffset
+         result="result17"
+         in="result6"
+         id="feOffset1622-0" />
+      <feDisplacementMap
+         in2="result16"
+         in="result17"
+         xChannelSelector="A"
+         yChannelSelector="A"
+         scale="100"
+         result="result4"
+         id="feDisplacementMap1624-0" />
+      <feComposite
+         in2="result4"
+         result="result2"
+         operator="arithmetic"
+         in="result17"
+         k3="1"
+         id="feComposite1626-3"
+         k1="0"
+         k2="0"
+         k4="0" />
+      <feComposite
+         in2="result17"
+         result="fbSourceGraphic"
+         in="result2"
+         operator="out"
+         id="feComposite1628-8" />
+      <feComposite
+         in="fbSourceGraphic"
+         in2="fbSourceGraphic"
+         operator="over"
+         result="result14"
+         id="feComposite1630-3" />
+      <feComposite
+         result="result15"
+         in2="SourceGraphic"
+         operator="in"
+         in="result14"
+         id="feComposite1632-6" />
+    </filter>
+    <filter
+       inkscape:label="Refractive Glass"
+       inkscape:menu-tooltip="Double reflection through glass with some refraction"
+       inkscape:menu="Non-Realistic 3D Shaders"
+       height="1.2382015"
+       y="-0.11910074"
+       width="1.2382015"
+       x="-0.11910074"
+       style="color-interpolation-filters:sRGB"
+       id="filter2580">
+      <feGaussianBlur
+         stdDeviation="13.130029"
+         result="result8"
+         in="SourceGraphic"
+         id="feGaussianBlur2560" />
+      <feComposite
+         in="result8"
+         in2="result8"
+         operator="xor"
+         result="result18"
+         id="feComposite2562" />
+      <feComposite
+         in="result8"
+         k1="1"
+         k2="0.5"
+         operator="arithmetic"
+         result="result16"
+         in2="result18"
+         id="feComposite2564" />
+      <feComposite
+         in2="result8"
+         result="result6"
+         operator="atop"
+         in="result16"
+         id="feComposite2566" />
+      <feOffset
+         result="result17"
+         in="result6"
+         id="feOffset2568" />
+      <feDisplacementMap
+         in2="result16"
+         in="result17"
+         xChannelSelector="A"
+         yChannelSelector="A"
+         scale="100"
+         result="result4"
+         id="feDisplacementMap2570" />
+      <feComposite
+         in2="result4"
+         result="result2"
+         operator="arithmetic"
+         in="result17"
+         k3="1"
+         id="feComposite2572" />
+      <feComposite
+         in2="result17"
+         result="fbSourceGraphic"
+         in="result2"
+         operator="out"
+         id="feComposite2574" />
+      <feComposite
+         in="fbSourceGraphic"
+         in2="fbSourceGraphic"
+         operator="over"
+         result="result14"
+         id="feComposite2576" />
+      <feComposite
+         result="result15"
+         in2="SourceGraphic"
+         operator="in"
+         in="result14"
+         id="feComposite2578" />
+    </filter>
+    <filter
+       inkscape:label="Refractive Glass"
+       inkscape:menu-tooltip="Double reflection through glass with some refraction"
+       inkscape:menu="Non-Realistic 3D Shaders"
+       height="1.2382015"
+       y="-0.11910073"
+       width="1.2382015"
+       x="-0.11910073"
+       style="color-interpolation-filters:sRGB"
+       id="filter2580-4">
+      <feGaussianBlur
+         stdDeviation="13.130029"
+         result="result8"
+         in="SourceGraphic"
+         id="feGaussianBlur2560-4" />
+      <feComposite
+         in="result8"
+         in2="result8"
+         operator="xor"
+         result="result18"
+         id="feComposite2562-7" />
+      <feComposite
+         in="result8"
+         k1="1"
+         k2="0.5"
+         operator="arithmetic"
+         result="result16"
+         in2="result18"
+         id="feComposite2564-5"
+         k3="0"
+         k4="0" />
+      <feComposite
+         in2="result8"
+         result="result6"
+         operator="atop"
+         in="result16"
+         id="feComposite2566-9" />
+      <feOffset
+         result="result17"
+         in="result6"
+         id="feOffset2568-1" />
+      <feDisplacementMap
+         in2="result16"
+         in="result17"
+         xChannelSelector="A"
+         yChannelSelector="A"
+         scale="100"
+         result="result4"
+         id="feDisplacementMap2570-2" />
+      <feComposite
+         in2="result4"
+         result="result2"
+         operator="arithmetic"
+         in="result17"
+         k3="1"
+         id="feComposite2572-7"
+         k1="0"
+         k2="0"
+         k4="0" />
+      <feComposite
+         in2="result17"
+         result="fbSourceGraphic"
+         in="result2"
+         operator="out"
+         id="feComposite2574-3" />
+      <feComposite
+         in="fbSourceGraphic"
+         in2="fbSourceGraphic"
+         operator="over"
+         result="result14"
+         id="feComposite2576-8" />
+      <feComposite
+         result="result15"
+         in2="SourceGraphic"
+         operator="in"
+         in="result14"
+         id="feComposite2578-0" />
+    </filter>
+    <filter
+       inkscape:label="Refractive Glass"
+       inkscape:menu-tooltip="Double reflection through glass with some refraction"
+       inkscape:menu="Non-Realistic 3D Shaders"
+       height="1.2382015"
+       y="-0.11910073"
+       width="1.2382015"
+       x="-0.11910073"
+       style="color-interpolation-filters:sRGB"
+       id="filter2580-3">
+      <feGaussianBlur
+         stdDeviation="13.130029"
+         result="result8"
+         in="SourceGraphic"
+         id="feGaussianBlur2560-2" />
+      <feComposite
+         in="result8"
+         in2="result8"
+         operator="xor"
+         result="result18"
+         id="feComposite2562-4" />
+      <feComposite
+         in="result8"
+         k1="1"
+         k2="0.5"
+         operator="arithmetic"
+         result="result16"
+         in2="result18"
+         id="feComposite2564-2"
+         k3="0"
+         k4="0" />
+      <feComposite
+         in2="result8"
+         result="result6"
+         operator="atop"
+         in="result16"
+         id="feComposite2566-6" />
+      <feOffset
+         result="result17"
+         in="result6"
+         id="feOffset2568-7" />
+      <feDisplacementMap
+         in2="result16"
+         in="result17"
+         xChannelSelector="A"
+         yChannelSelector="A"
+         scale="100"
+         result="result4"
+         id="feDisplacementMap2570-6" />
+      <feComposite
+         in2="result4"
+         result="result2"
+         operator="arithmetic"
+         in="result17"
+         k3="1"
+         id="feComposite2572-73"
+         k1="0"
+         k2="0"
+         k4="0" />
+      <feComposite
+         in2="result17"
+         result="fbSourceGraphic"
+         in="result2"
+         operator="out"
+         id="feComposite2574-7" />
+      <feComposite
+         in="fbSourceGraphic"
+         in2="fbSourceGraphic"
+         operator="over"
+         result="result14"
+         id="feComposite2576-9" />
+      <feComposite
+         result="result15"
+         in2="SourceGraphic"
+         operator="in"
+         in="result14"
+         id="feComposite2578-1" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:20.4343;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect843-6"
+       width="248.91661"
+       height="248.91661"
+       x="7.8333611"
+       y="7.8333611"
+       ry="49.364471" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer2"
+     inkscape:label="Front"
+     style="display:inline"
+     sodipodi:insensitive="true">
+    <rect
+       style="fill:#c8c8c8;fill-opacity:1;stroke:none;stroke-width:0.0264583;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;filter:url(#filter2580)"
+       id="rect843"
+       width="264.58331"
+       height="264.58331"
+       x="8.50586e-06"
+       y="8.50586e-06"
+       ry="52.471451"
+       transform="matrix(0.94078725,0,0,0.94078725,7.8333532,7.8333532)" />
+    <path
+       id="rect843-7"
+       style="fill:none;fill-opacity:1;stroke:#323232;stroke-width:8.71208;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 203.20657,5.3435826 C 153.86411,5.3512373 104.52116,5.3210149 55.179025,5.3848973 40.084333,5.8792967 25.368863,13.391985 16.185726,25.395046 8.9475403,34.727872 5.03378,46.585482 5.3579964,58.396998 c -0.02424,50.266442 -0.030204,100.532932 0.027671,150.799342 0.4193552,15.46198 8.2555656,30.5447 20.7104126,39.72958 9.245911,6.93412 20.860042,10.6257 32.413371,10.30361 50.180259,0.0233 100.360839,0.0106 150.540889,-0.0234 15.48896,-0.38273 30.61816,-8.19897 39.8346,-20.66445 6.93194,-9.22125 10.64849,-20.80366 10.34142,-32.33889 0.0306,-42.95108 0.0121,-85.9022 -9.4e-4,-128.853299 -0.0242,-7.524488 0.0139,-15.050337 -0.0491,-22.573973 C 258.569,39.462613 250.71085,24.598209 238.33508,15.54139 229.19254,8.7490735 217.77262,5.0931642 206.38283,5.3453031 c -1.05876,-0.01041 -2.11748,-0.00513 -3.17626,-0.00172 z" />
+  </g>
+</svg>

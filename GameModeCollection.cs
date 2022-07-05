@@ -52,7 +52,7 @@ namespace GameModeCollection
 
         public static GameModeCollection instance;
 
-        internal static AssetBundle TRT_Assets;
+        internal static AssetBundle TRT_Assets = AssetUtils.LoadAssetBundleFromResources("trt_assets", typeof(GameModeCollection).Assembly);
 
         private Harmony harmony;
 
@@ -96,7 +96,6 @@ namespace GameModeCollection
 
             try
             {
-                TRT_Assets = AssetUtils.LoadAssetBundleFromResources("trt_assets", typeof(GameModeCollection).Assembly);
                 if (TRT_Assets == null)
                 {
                     LogError("TRT Assets failed to load.");

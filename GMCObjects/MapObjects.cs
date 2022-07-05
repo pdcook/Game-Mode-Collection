@@ -239,5 +239,101 @@ namespace GameModeCollection.GMCObjects
             }
         }
         #endregion
+        #region TraitorTester 
+        public class TraitorTesterObj : SpatialMapObject
+        {
+            public Vector3 buttonLoc;
+            public Vector3 roomLoc;
+            public Vector3 lightLoc;
+        }
+
+        [MapObjectSpec(typeof(TraitorTesterObj))]
+        public static class TraitorTesterSpec
+        {
+            private static GameObject _prefab = null;
+            [MapObjectPrefab]
+            public static GameObject Prefab
+            {
+                get
+                {
+                    if (_prefab == null)
+                    {
+                        GameObject spawnPoint = MapObjectManager.LoadCustomAsset<GameObject>("Spawn Point");
+                        //GameObject testerParent = new GameObject("TraitorTester");
+                        GameObject testerParent = GameObject.Instantiate(MapObjectManager.LoadCustomAsset<GameObject>("Ground"));
+                        testerParent.name = "TraitorTester";
+                        GameObject.Instantiate(spawnPoint, testerParent.transform.position + 5f*Vector3.right, Quaternion.identity, testerParent.transform).name = "Button Loc";
+                        GameObject.Instantiate(spawnPoint, testerParent.transform.position - 5f*Vector3.right, Quaternion.identity, testerParent.transform).name = "Room Loc";
+                        GameObject lightPos = GameObject.Instantiate(spawnPoint, testerParent.transform.position + 5f*Vector3.up, Quaternion.identity, testerParent.transform);
+                        lightPos.name = "Light Pos";
+                        GameObject lightAsset = GameModeCollection.TRT_Assets.LoadAsset<GameObject>("TRT_TesterLight");
+                        if (lightAsset is null)
+                        {
+                            GameModeCollection.LogError("Could not load TRT_TesterLight");
+                        }
+                        GameObject light = GameObject.Instantiate(lightAsset, lightPos.transform.position + 5f*Vector3.up, Quaternion.identity, lightPos.transform);
+                        light.name = "TRT_TesterLight";
+                        light.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f);
+                        light.GetComponent<Canvas>().sortingLayerID = SortingLayer.NameToID("MostFront");
+                        light.GetComponent<Canvas>().sortingOrder = 100;
+                        //light.GetComponent<SpriteRenderer>().sortingLayerID = SortingLayer.NameToID("MostFront");
+                        //light.transform.GetChild(0).GetComponent<SpriteRenderer>().sortingLayerID = SortingLayer.NameToID("MostFront");
+                        _prefab = testerParent;
+                        _prefab.SetActive(false);
+                        GameObject.DontDestroyOnLoad(_prefab);
+                    }
+                    return _prefab;
+
+                }
+            }
+
+            [MapObjectSerializer]
+            public static void Serialize(GameObject instance, TraitorTesterObj target)
+            {
+                target.buttonLoc = instance.transform.GetChild(0).position;
+                target.roomLoc = instance.transform.GetChild(1).position;
+                target.lightLoc = instance.transform.GetChild(2).position;
+
+                // serialize door
+                SpatialSerializer.Serialize(instance, target);
+            }
+
+            [MapObjectDeserializer]
+            public static void Deserialize(TraitorTesterObj data, GameObject target)
+            {
+                // deserialize the door
+                SpatialSerializer.Deserialize(data, target);
+
+                GameObject.Destroy(target.transform.GetChild(0).GetComponent<SpawnPoint>());
+                GameObject.Destroy(target.transform.GetChild(1).GetComponent<SpawnPoint>());
+                GameObject.Destroy(target.transform.GetChild(2).GetComponent<SpawnPoint>());
+
+                // undo transforming caused by parenting
+                Transform child0 = target.transform.GetChild(0);
+                Transform child1 = target.transform.GetChild(1);
+                Transform child2 = target.transform.GetChild(2);
+                child0.rotation = Quaternion.identity;
+                child1.rotation = Quaternion.identity;
+                child2.rotation = Quaternion.identity;
+                
+                child0.SetParent(null);
+                child1.SetParent(null);
+                child2.SetParent(null);
+                child0.localScale = Vector3.one;
+                child1.localScale = Vector3.one;
+                child2.localScale = Vector3.one;
+                child0.SetParent(target.transform);
+                child1.SetParent(target.transform);
+                child2.SetParent(target.transform);
+                child0.position = data.buttonLoc;
+                child1.position = data.roomLoc;
+                child2.position = data.lightLoc;
+
+
+                target.AddComponent<TraitorTester>();
+                target.AddComponent<TesterDoor>();
+            }
+        }
+        #endregion
     }
 }

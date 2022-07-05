@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1000"
+   height="1000"
+   viewBox="0 0 264.58333 264.58334"
+   version="1.1"
+   id="svg2800"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="TRT_PortableTesterCard.svg"
+   inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterBase.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview2802"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     width="1000px"
+     inkscape:snap-bbox="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-midpoints="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:object-paths="true"
+     inkscape:zoom="0.7071068"
+     inkscape:cx="392.44425"
+     inkscape:cy="655.48797"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="120.84334,124.18245"
+       orientation="1,0"
+       id="guide2699" />
+    <sodipodi:guide
+       position="82.523283,85.862382"
+       orientation="0,-1"
+       id="guide2701" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2797">
+    <filter
+       inkscape:collect="always"
+       style="color-interpolation-filters:sRGB"
+       id="filter5557"
+       x="-0.05718645"
+       y="-0.057186724"
+       width="1.1143729"
+       height="1.1143734">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="2.1877139"
+         id="feGaussianBlur5559" />
+    </filter>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect2073-9"
+       style="fill:#181dfd;fill-opacity:1;stroke-width:15;stroke-linejoin:round"
+       d="m 98.507812,136.50781 c -4.89413,0.13107 -10.073053,1.07535 -13.929687,4.30469 -3.510275,2.93799 -5.177086,7.48801 -5.676009,11.92859 -1.111963,8.7049 1.48184,17.331 1.482037,25.96943 0.04612,5.61505 -1.117358,11.14262 -1.544401,16.72537 -0.415865,5.25115 -0.368014,10.74996 1.716889,15.67739 1.387384,3.24845 3.896794,6.03004 7.121741,7.52303 4.925461,2.38943 10.574041,2.51806 15.931408,2.12723 7.31195,-0.56609 14.57096,-2.19868 21.91002,-1.37168 7.52876,0.68104 15.12825,2.3542 22.68801,1.06953 4.43245,-0.72797 8.91242,-2.80143 11.43906,-6.66218 2.87874,-4.26908 3.47777,-9.60144 3.40106,-14.63033 -0.17092,-8.07008 -2.32606,-16.06937 -1.61951,-24.10284 0.57868,-7.70835 2.44029,-15.47627 1.22962,-23.23705 -0.65661,-4.56711 -2.70751,-9.23168 -6.66083,-11.8579 -4.26029,-2.91686 -9.60794,-3.52768 -14.64793,-3.45428 -8.29417,0.16504 -16.46623,2.42007 -24.75792,1.56798 -6.00688,-0.50172 -12.01513,-1.69055 -18.083558,-1.57698 z"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterCardBase.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       id="rect2073-9-2"
+       style="mix-blend-mode:normal;fill:#181dfd;fill-opacity:1;stroke-width:15;stroke-linejoin:round;filter:url(#filter5557)"
+       d="m 97.419922,132.84961 c -5.594513,0.26282 -11.411622,1.74661 -15.683594,5.54492 -4.325904,3.96744 -6.318677,9.88561 -6.677782,15.62535 -0.771255,9.78077 2.393744,19.38605 1.418067,29.15389 -0.739265,7.62111 -2.276764,15.31251 -1.108281,22.97364 0.729917,5.04356 2.935353,10.03151 6.885225,13.36801 3.863919,3.21085 8.921352,4.61021 13.85439,4.99383 10.059083,0.79186 19.933693,-2.5283 29.958463,-1.35105 7.66972,0.85698 15.59022,2.28137 23.3289,0.85709 5.59676,-1.01169 11.08757,-4.10298 13.95037,-9.15273 3.21434,-5.59243 3.72559,-12.26912 3.25226,-18.5789 -0.54006,-7.92353 -2.35461,-15.80575 -1.20956,-23.74511 0.86223,-7.55163 2.16145,-15.25768 0.65631,-22.81714 -1.11069,-5.50548 -4.24476,-10.85625 -9.27321,-13.61008 -5.60946,-3.13725 -12.25589,-3.6034 -18.54507,-3.13066 -7.81551,0.56543 -15.61569,2.31633 -23.42134,1.22548 -5.77434,-0.64191 -11.55749,-1.56634 -17.385148,-1.35654 z"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterCardBase.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <path
+       id="rect2073"
+       style="fill:#323232;stroke-width:15;stroke-linejoin:round"
+       d="m 89.201474,140.40089 c 9.744424,-4.03627 21.094576,0 31.641866,0 10.54729,0 21.89745,-4.03627 31.64188,0 2.90849,1.20474 5.47345,3.7697 6.67819,6.67819 4.03627,9.74443 0,21.09458 0,31.64187 0,10.54729 4.03627,21.89745 0,31.64188 -1.20474,2.90849 -3.7697,5.47345 -6.67819,6.67819 -9.74443,4.03627 -21.09459,0 -31.64188,0 -10.54729,0 -21.897442,4.03627 -31.641866,0 -2.908492,-1.20474 -5.473452,-3.7697 -6.678189,-6.67819 -4.036274,-9.74443 0,-21.09459 0,-31.64188 0,-10.54729 -4.036273,-21.89744 0,-31.64187 1.204737,-2.90849 3.769697,-5.47345 6.678189,-6.67819 z"
+       sodipodi:nodetypes="aaaaaaaaaaaaa"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterCardBase.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>

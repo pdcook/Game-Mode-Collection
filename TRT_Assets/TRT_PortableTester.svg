@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1000"
+   height="1000"
+   viewBox="0 0 264.58333 264.58334"
+   version="1.1"
+   id="svg2800"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="TRT_PortableTester.svg"
+   inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterBase.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview2802"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     width="1000px"
+     inkscape:snap-bbox="true"
+     inkscape:snap-bbox-edge-midpoints="true"
+     inkscape:snap-midpoints="true"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:snap-intersection-paths="true"
+     inkscape:snap-smooth-nodes="true"
+     inkscape:object-paths="true"
+     inkscape:zoom="1.4142136"
+     inkscape:cx="432.39579"
+     inkscape:cy="700.38926"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1">
+    <sodipodi:guide
+       position="120.84334,124.18245"
+       orientation="1,0"
+       id="guide2699" />
+    <sodipodi:guide
+       position="82.523283,85.862382"
+       orientation="0,-1"
+       id="guide2701" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2797" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="rect2073"
+       style="fill:#323232;stroke-width:15;stroke-linejoin:round"
+       d="m 89.201474,140.40089 c 9.744424,-4.03627 21.094576,0 31.641866,0 10.54729,0 21.89745,-4.03627 31.64188,0 2.90849,1.20474 5.47345,3.7697 6.67819,6.67819 4.03627,9.74443 0,21.09458 0,31.64187 0,10.54729 4.03627,21.89745 0,31.64188 -1.20474,2.90849 -3.7697,5.47345 -6.67819,6.67819 -9.74443,4.03627 -21.09459,0 -31.64188,0 -10.54729,0 -21.897442,4.03627 -31.641866,0 -2.908492,-1.20474 -5.473452,-3.7697 -6.678189,-6.67819 -4.036274,-9.74443 0,-21.09459 0,-31.64188 0,-10.54729 -4.036273,-21.89744 0,-31.64187 1.204737,-2.90849 3.769697,-5.47345 6.678189,-6.67819 z"
+       sodipodi:nodetypes="aaaaaaaaaaaaa"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterBase.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:15;stroke-linejoin:round"
+       id="path4549"
+       cx="170.78587"
+       cy="40.869438"
+       rx="7.0359449"
+       ry="11.090557"
+       transform="rotate(45)"
+       inkscape:transform-center-x="28.979111"
+       inkscape:transform-center-y="-29.058533"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterLights.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:15;stroke-linejoin:round"
+       id="path4549-8"
+       cx="-0.11321285"
+       cy="-211.88084"
+       rx="7.0359449"
+       ry="11.090557"
+       transform="rotate(135)"
+       inkscape:transform-center-x="-29.058533"
+       inkscape:transform-center-y="-28.979111"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterLights.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:15;stroke-linejoin:round"
+       id="path4549-4"
+       cx="-252.86349"
+       cy="-40.981758"
+       rx="7.0359449"
+       ry="11.090557"
+       transform="rotate(-135)"
+       inkscape:transform-center-x="-28.979111"
+       inkscape:transform-center-y="29.058533"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterLights.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+    <ellipse
+       style="fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:15;stroke-linejoin:round"
+       id="path4549-8-8"
+       cx="-81.964409"
+       cy="211.76852"
+       rx="7.0359449"
+       ry="11.090557"
+       transform="rotate(-45)"
+       inkscape:transform-center-x="29.058535"
+       inkscape:transform-center-y="28.979112"
+       inkscape:export-filename="C:\Users\qphys\Code\GameModeCollection\TRT_Assets\TRT_PortableTesterLights.png"
+       inkscape:export-xdpi="96"
+       inkscape:export-ydpi="96" />
+  </g>
+</svg>

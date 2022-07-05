@@ -255,6 +255,7 @@
     <Compile Include="GMCObjects\DetectMapEditor.cs" />
     <Compile Include="GMCObjects\GMCObjects.cs" />
     <Compile Include="GMCObjects\MapObjects.cs" />
+    <Compile Include="GMCObjects\TraitorTester.cs" />
     <Compile Include="GMCObjects\Teleporter.cs" />
     <Compile Include="GMCObjects\TRT_Intercom.cs" />
     <Compile Include="GMCObjects\TraitorTrap_Jammer.cs" />

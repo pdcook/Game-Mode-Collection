@@ -14,8 +14,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, CardItem.IgnoreMaxCardsCategory, TRTCardCategories.TRT_Slot_3 };
-            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_3 };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_Detective, CardItem.IgnoreMaxCardsCategory, TRTCardCategories.TRT_Slot_5 };
+            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_5 };
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)
         {

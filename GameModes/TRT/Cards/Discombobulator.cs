@@ -40,8 +40,8 @@ namespace GameModeCollection.GameModes.TRT.Cards
         public override void SetupCard(CardInfo cardInfo, Gun gun, ApplyCardStats cardStats, CharacterStatModifiers statModifiers)
         {
             cardInfo.allowMultiple = false;
-            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_CanSpawnNaturally, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_5, CardItem.IgnoreMaxCardsCategory };
-            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_5 };
+            cardInfo.categories = new CardCategory[] { TRTCardCategories.TRT_CanSpawnNaturally, TRTCardCategories.TRT_Detective, TRTCardCategories.TRT_Traitor, TRTCardCategories.TRT_Slot_3, CardItem.IgnoreMaxCardsCategory };
+            cardInfo.blacklistedCategories = new CardCategory[] { TRTCardCategories.TRT_Slot_3 };
             statModifiers.AddObjectToPlayer = A_DiscombobulatorPrefab.Discombobulator;
         }
         public override void OnAddCard(Player player, Gun gun, GunAmmo gunAmmo, CharacterData data, HealthHandler health, Gravity gravity, Block block, CharacterStatModifiers characterStats)

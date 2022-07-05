@@ -249,10 +249,12 @@ namespace GameModeCollection.GMCObjects
         }
         public void SetText(string text)
         {
+            if (this.Text is null) { return; }
             this.Text.text = text;
         }
         public void SetTextColor(Color color)
         {
+            if (this.Text is null) { return; }
             this.Text.color = color;
         }
         private void SetImages()
