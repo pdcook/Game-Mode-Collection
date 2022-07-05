@@ -45,7 +45,7 @@ namespace GameModeCollection.GMCObjects
         public override float VisibleDistance { get; protected set; } = 5f;
         public override bool RequireLoS { get; protected set; } = true;
 
-        private const float StaticVol = 0.2f;
+        private const float StaticVol = 0.05f;
 
         private static AudioSource StaticSource
         {

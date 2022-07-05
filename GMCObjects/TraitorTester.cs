@@ -8,7 +8,50 @@ using System.Collections.Generic;
 using System.Collections;
 namespace GameModeCollection.GMCObjects
 {
-    public class ForceTransform : MonoBehaviour
+    public class ForceScale : MonoBehaviour
+    {
+        Vector3 parentScaleLastFrame;
+        Quaternion parentRotationLastFrame;
+        void Start()
+        {
+            if (this.transform.parent is null)
+            {
+                Destroy(this);
+            }
+        }
+        void OnEnable()
+        {
+            this.parentScaleLastFrame = this.transform.parent.localScale;
+            this.parentRotationLastFrame = this.transform.parent.rotation;
+            
+            this.transform.rotation = Quaternion.identity;
+            Transform parent = this.transform.parent;
+            this.transform.SetParent(null);
+            this.transform.localScale = Vector3.one;
+            this.transform.SetParent(parent);
+        }
+        void LateUpdate()
+        {
+            Transform parent = this.transform.parent;
+
+            if (this.parentScaleLastFrame != parent.localScale
+                || this.parentRotationLastFrame != parent.rotation
+                )
+            {
+                this.transform.rotation = Quaternion.identity;
+                this.transform.SetParent(null);
+                this.transform.localScale = Vector3.one;
+                this.transform.SetParent(parent);
+            }
+
+        }
+        void FixedUpdate()
+        {
+            this.parentScaleLastFrame = this.transform.parent.localScale;
+            this.parentRotationLastFrame = this.transform.parent.rotation;
+        }
+    }
+    public class ForcePosition : MonoBehaviour
     {
         Vector3 parentPosLastFrame;
         Vector3 parentScaleLastFrame;
@@ -19,18 +62,17 @@ namespace GameModeCollection.GMCObjects
             if (this.transform.parent is null)
             {
                 Destroy(this);
-                return;
             }
+        }
+        void OnEnable()
+        {
             this.parentPosLastFrame = this.transform.parent.position;
             this.parentScaleLastFrame = this.transform.parent.localScale;
             this.parentRotationLastFrame = this.transform.parent.rotation;
             this.positionLastFrame = this.transform.position;
-            
+
             this.transform.rotation = Quaternion.identity;
             Transform parent = this.transform.parent;
-            this.transform.SetParent(null);
-            this.transform.localScale = Vector3.one;
-            this.transform.SetParent(parent);
         }
         void LateUpdate()
         {
@@ -43,9 +85,6 @@ namespace GameModeCollection.GMCObjects
             {
                 this.transform.rotation = Quaternion.identity;
                 this.transform.position = this.positionLastFrame;
-                this.transform.SetParent(null);
-                this.transform.localScale = Vector3.one;
-                this.transform.SetParent(parent);
             }
 
         }
@@ -67,6 +106,8 @@ namespace GameModeCollection.GMCObjects
             button.transform.SetParent(this.transform.GetChild(0));
             button.transform.localPosition = new Vector3(0f, -2f, 0f);
             button.GetComponent<DetectMapEditor>().IsMapEditor = this.transform.GetChild(0)?.GetComponent<DetectMapEditor>()?.IsMapEditor ?? false;
+            bool isMapEditor = button.GetComponent<DetectMapEditor>().IsMapEditor;
+            this.gameObject.GetOrAddComponent<DetectMapEditor>().IsMapEditor = isMapEditor;
             TraitorTesterBase tt = button.GetOrAddComponent<TraitorTesterBase>();
             // room
             tt.SetRoom(this.transform.GetChild(1).gameObject);
@@ -76,19 +117,15 @@ namespace GameModeCollection.GMCObjects
             tt.SetDoor(this.transform.gameObject);
 
             // force all child objects to have constant sizes and rotation
-            if (button.GetComponent<DetectMapEditor>().IsMapEditor)
+            if (isMapEditor)
             {
-                this.transform.GetChild(0).gameObject.GetOrAddComponent<ForceTransform>();
-                this.transform.GetChild(1).gameObject.GetOrAddComponent<ForceTransform>();
-                this.transform.GetChild(2).gameObject.GetOrAddComponent<ForceTransform>();
+                this.transform.GetChild(0).gameObject.GetOrAddComponent<ForceScale>();
+                this.transform.GetChild(1).gameObject.GetOrAddComponent<ForceScale>();
+                this.transform.GetChild(2).gameObject.GetOrAddComponent<ForceScale>();
+                this.transform.GetChild(0).gameObject.GetOrAddComponent<ForcePosition>();
+                this.transform.GetChild(1).gameObject.GetOrAddComponent<ForcePosition>();
+                this.transform.GetChild(2).gameObject.GetOrAddComponent<ForcePosition>();
             }
-            /*
-            else
-            {
-                this.transform.GetChild(2).SetParent(this.transform.parent);
-                this.transform.GetChild(1).SetParent(this.transform.parent);
-                this.transform.GetChild(0).SetParent(this.transform.parent);
-            }*/
         }
     }
     public class TraitorTesterBase : Interactable
@@ -350,7 +387,8 @@ namespace GameModeCollection.GMCObjects
         public Vector3 ClosePosition { get; private set; }
         private Quaternion _savedRotation;
         public DoorState State { get; private set; } = DoorState.Open;
-
+        public bool IsMapEditor => this.GetComponent<DetectMapEditor>()?.IsMapEditor ?? false;
+        
         private float _timer = 0f; // The timer for the door
 
         void Start()
@@ -371,9 +409,14 @@ namespace GameModeCollection.GMCObjects
         {
             this._savedRotation = this.transform.rotation; // save the rotation, so that if it changes later we can calculate the new open position (this is just for the map editor)
             // open the door by moving it a distance equal to its height in the local down direction
-            this.ClosePosition = this.transform.position - this.transform.up * this.GetComponent<BoxCollider2D>().size.y * this.transform.localScale.y;
+            this.ClosePosition = this.transform.position - this.transform.up * this.GetComponent<BoxCollider2D>().size.y * this.transform.lossyScale.y;
         }
-
+        private void SetForceTransforms(bool enabled)
+        {
+            this.transform.GetChild(0).gameObject.GetOrAddComponent<ForcePosition>().enabled = enabled;
+            this.transform.GetChild(1).gameObject.GetOrAddComponent<ForcePosition>().enabled = enabled;
+            this.transform.GetChild(2).gameObject.GetOrAddComponent<ForcePosition>().enabled = enabled;
+        }
         public void Close()
         {
             this.State = DoorState.Closing;
@@ -392,6 +435,7 @@ namespace GameModeCollection.GMCObjects
             }
             if (this._timer > 0f)
             {
+                this.SetForceTransforms(true);
                 this._timer -= TimeHandler.deltaTime;
                 switch (this.State)
                 {
@@ -411,11 +455,13 @@ namespace GameModeCollection.GMCObjects
                 {
                     case DoorState.Closing:
                         this.State = DoorState.Closed;
+                        this.SetForceTransforms(false);
                         break;
                     case DoorState.Closed:
                         break;
                     case DoorState.Opening:
                         this.State = DoorState.Open;
+                        this.SetForceTransforms(false);
                         break;
                     case DoorState.Open:
                         this.CalculateOpenPosition();

@@ -51,7 +51,7 @@ namespace GameModeCollection.GMCObjects
         {
             this._savedRotation = this.transform.rotation; // save the rotation, so that if it changes later we can calculate the new open position (this is just for the map editor)
             // open the door by moving it a distance equal to its height in the local up direction
-            this.OpenPosition = this.transform.position + this.transform.up * this.GetComponent<BoxCollider2D>().size.y * this.transform.localScale.y;
+            this.OpenPosition = this.transform.position + this.transform.up * this.GetComponent<BoxCollider2D>().size.y * this.transform.lossyScale.y;
         }
 
         public override void OnInteract(Player player)
