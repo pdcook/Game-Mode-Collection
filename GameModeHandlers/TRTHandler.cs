@@ -112,6 +112,7 @@ namespace GameModeCollection.GameModeHandlers
                 {GameModeCollection.HideGunOnDeathKey, true }, // guns are hidden when players die
                 {GameModeCollection.ForceEqualPlayerSizeKey, true }, // all players are the same size
                 {GameModeCollection.UseSpatialAudioKey, true }, // force all audio to be spatialized
+                {GameModeCollection.DisableMapShadowsKey, true }, // disable shadow casting by map objects
             };
         }
         internal static void TRTMenu(GameObject menu)
@@ -162,6 +163,7 @@ namespace GameModeCollection.GameModeHandlers
 
         public override void PlayerDied(Player player, int playersAlive)
         {
+            if (this.GameMode.CurrentPhase != GM_TRT.RoundPhase.Active) { return; }
             Player killingPlayer = player.data.lastSourceOfDamage;
             killingPlayer?.GetComponent<ITRT_Role>()?.OnKilledPlayer(player);
 

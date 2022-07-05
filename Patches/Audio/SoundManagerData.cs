@@ -40,8 +40,9 @@ namespace GameModeCollection.Patches
         {
             if (!GameModeCollection.UseSpatialAudio) { return; }
 
-            // if the owner is on the UI layer, or has "UI" or "Static" in the name, then skip
-            if (owner?.gameObject != null && IsStaticOrUI(owner))
+            // if there is no position specified to play the audio at
+            // and if the owner is on the UI layer, or has "UI" or "Static" in the name, then skip
+            if (!(playType == PlayType.PlayAtVector && positionVector.HasValue) && owner?.gameObject != null && IsStaticOrUI(owner))
             {
                 return;
             }

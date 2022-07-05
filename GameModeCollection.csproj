@@ -292,6 +292,7 @@
     <Compile Include="Patches\DamageBox.cs" />
     <Compile Include="Patches\Destructible.cs" />
     <Compile Include="Patches\EscapeMenuHandler.cs" />
+    <Compile Include="Patches\SFPolygon.cs" />
     <Compile Include="Patches\PhotonPlayer.cs" />
     <Compile Include="Patches\Explosion.cs" />
     <Compile Include="Patches\GamefeelManager.cs" />

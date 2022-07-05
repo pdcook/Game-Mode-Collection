@@ -225,6 +225,8 @@ namespace GameModeCollection.GameModes
             LocalZoom.MyCameraController.defaultZoomLevel = DefaultZoom;
             LocalZoom.LocalZoom.scaleCamWithBulletSpeed = true;
             LocalZoom.LocalZoom.enableLoSNamePlates = true;
+            LocalZoom.LocalZoom.disableLimbClipping = true;
+            LocalZoom.LocalZoom.enablePlayerCircles = false;
             LocalZoom.LocalZoom.SetEnableShaderSetting(true);
             LocalZoom.LocalZoom.SetEnableCameraSetting(true);
         }

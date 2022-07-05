@@ -184,8 +184,9 @@ namespace GameModeCollection
         public static string HideGunOnDeathKey => GetConfigKey("hideGunOnDeath");
         public static string ForceEqualPlayerSizeKey => GetConfigKey("forceEqualPlayerSize");
         public static string UseSpatialAudioKey => GetConfigKey("useSpatialAudio");
+        public static string DisableMapShadowsKey => GetConfigKey("disableMapShadows");
 
-        internal static bool EnemyDamageAllowed
+        public static bool EnemyDamageAllowed
         {
             get
             {
@@ -203,7 +204,7 @@ namespace GameModeCollection
                 }
             }
         }
-        internal static bool TeamDamageAllowed
+        public static bool TeamDamageAllowed
         {
             get
             {
@@ -425,6 +426,25 @@ namespace GameModeCollection
                     return false;
                 }
                 if (GameModeManager.CurrentHandler.Settings.TryGetValue(UseSpatialAudioKey, out object use) && (bool)use)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+        public static bool DisableMapShadows
+        {
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(DisableMapShadowsKey, out object use) && (bool)use)
                 {
                     return true;
                 }
