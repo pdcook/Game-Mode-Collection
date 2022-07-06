@@ -14,7 +14,7 @@ namespace GameModeCollection.GameModes.TRT.VoiceChat
         public override int ChannelID { get; } = 601; // TRT channels start at 600
         public override int Priority { get; } = 101; // TRT priorities start at 100
         public override string ChannelName { get; } = "General Proximity";
-        public override Color ChannelColor { get; } = GM_TRT.InnocentColor;
+        public override Color ChannelColor { get; } = new Color32(150, 150, 150, 255);
         public override bool GlobalUIIconsEnabled => false;
         public override bool LocalUIIconsEnabled => true;
         public override AudioFilters AudioFilters { get; } = AudioFilters.None;

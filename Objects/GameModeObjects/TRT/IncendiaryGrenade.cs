@@ -1,4 +1,5 @@
 ﻿using GameModeCollection.GameModes.TRT.Cards;
+using GameModeCollection.GameModes.TRT;
 using MapEmbiggener;
 using Photon.Pun;
 using System.Collections;
@@ -472,7 +473,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
             if (this.playerBurnTimers.ContainsKey(player.playerID))
             {
                 this.playerBurnTimers[player.playerID] = 0f;
-                if (player.data.view.IsMine)
+                if (player.data.view.IsMine && RoleManager.GetPlayerAlignment(player) != Alignment.Chaos)
                 {
                     player.data.healthHandler.CallTakeDamage(BURNDAMAGE * Vector2.up, player.transform.position, this.transform.parent.gameObject, this.OwnerID == -1 ? null : PlayerManager.instance.GetPlayerWithID(this.OwnerID), true);
                 }
@@ -540,7 +541,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
     }
     public class IncendiaryAudioHandler : MonoBehaviour
     {
-        public const float Volume = 0.5f;
+        public const float Volume = 0.2f;
 
         Player Player = null;
         AudioSource[] audioSources = null;

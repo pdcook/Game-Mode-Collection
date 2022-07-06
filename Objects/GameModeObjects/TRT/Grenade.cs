@@ -226,6 +226,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			GameObject explosionObj = GameObject.Instantiate(GrenadePrefab.GrenadeExplosion, this.transform.position, Quaternion.identity);
 			Explosion explosion = explosionObj.GetComponent<Explosion>();
 			explosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
+            explosionObj.GetOrAddComponent<SpawnedAttack>().GetData().canDamageChaos = false;
 
 			explosion.ignoreTeam = false;
 			explosion.ignoreWalls = false;

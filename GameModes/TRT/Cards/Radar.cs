@@ -71,7 +71,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "Shows the positions of all other players every 30 seconds.";
+            return "Shows the positions of all other players every 15 seconds.";
         }
 
         protected override GameObject GetCardArt()
@@ -110,7 +110,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
     }
     class RadarTimer : MonoBehaviour
     {
-        public const float ScanEvery = 30f;
+        public const float ScanEvery = 15f;
         private float ScanTimer = 0f;
         public bool IsReady => this.ScanTimer <= 0f;
         public float Perc => 1f - this.ScanTimer / ScanEvery;

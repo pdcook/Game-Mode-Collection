@@ -1,11 +1,15 @@
 ﻿using HarmonyLib;
 using UnityEngine;
 using GameModeCollection.Objects;
+using GameModeCollection.GameModeHandlers;
+using GameModeCollection.GameModes.TRT;
+using GameModeCollection.Extensions;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using System.Linq;
 using Photon.Pun;
 using UnboundLib;
+using UnboundLib.GameModes;
 
 namespace GameModeCollection.Patches
 {
@@ -61,6 +65,54 @@ namespace GameModeCollection.Patches
                     yield return new CodeInstruction(OpCodes.Call, m_DoPhysicsItemExplosions);
                 }
                 yield return code;
+            }
+
+        }
+    }
+    
+    [HarmonyPatch(typeof(Explosion), "DoExplosionEffects")]
+    class Explosion_Patch_DoExplosionEffects
+    {
+        ///  patch for explosions to conditionally apply damage to Jesters/Swappers
+
+        static void CallTakeDamageConditionally(Damagable damagable, Vector2 damage, Vector2 position, GameObject weapon, Player player, bool lethal, Explosion explosion)
+        {
+            if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID)
+            {
+                damagable.CallTakeDamage(damage, position, weapon, player, lethal);
+            }
+
+            Player damagedPlayer = damagable?.GetComponent<Player>();
+            if (damagedPlayer is null)
+            {
+                damagable.CallTakeDamage(damage, position, weapon, player, lethal);
+            }
+            Alignment? alignment = RoleManager.GetPlayerAlignment(damagedPlayer);
+            
+            if (alignment != Alignment.Chaos || explosion.GetComponent<SpawnedAttack>().GetData().canDamageChaos)
+            {
+                damagable.CallTakeDamage(damage, position, weapon, player, lethal);
+            }
+        }
+
+        static IEnumerable<CodeInstruction> Transpiler(IEnumerable<CodeInstruction> instructions)
+        {
+
+            var m_callTakeDamageConditionally = ExtensionMethods.GetMethodInfo(typeof(Explosion_Patch_DoExplosionEffects), nameof(Explosion_Patch_DoExplosionEffects.CallTakeDamageConditionally));
+            var m_callTakeDamage = ExtensionMethods.GetMethodInfo(typeof(Damagable), nameof(Damagable.CallTakeDamage));
+
+            foreach (var code in instructions)
+            {
+
+                if (code.Calls(m_callTakeDamage))
+                {
+                    yield return new CodeInstruction(OpCodes.Ldarg_0);
+                    yield return new CodeInstruction(OpCodes.Call, m_callTakeDamageConditionally);
+                }
+                else
+                {
+                    yield return code;
+                }
             }
 
         }

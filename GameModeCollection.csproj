@@ -155,6 +155,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\SpawnedAttack.cs" />
     <Compile Include="Extensions\SoundImpactModifier.cs" />
     <Compile Include="Extensions\SoundShotModifier.cs" />
     <Compile Include="Extensions\Transform.cs" />
@@ -326,6 +327,7 @@
     <Compile Include="Utils\GMCAudio.cs" />
     <Compile Include="Utils\CardUtils.cs" />
     <Compile Include="Utils\RandomUtils.cs" />
+    <Compile Include="Utils\SuffocationHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".editorconfig" />

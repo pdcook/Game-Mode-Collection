@@ -275,7 +275,7 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 				&& !collider2D.GetComponent<Player>().data.dead)
 			{
 				if ( collider2D.GetComponent<Player>().data.currentCards.Select(c => c.cardName).Contains(DefuserCard.CardName)
-					&& collider2D.GetComponent<Player>().data.playerActions.ItemIsPressed(3))
+					&& collider2D.GetComponent<Player>().data.playerActions.ItemIsPressed(5))
 				{
 					this.IsDefusing = true;
 				}
@@ -336,8 +336,10 @@ namespace GameModeCollection.Objects.GameModeObjects.TRT
 			Explosion outerExpl = outerExplosionObj.GetComponent<Explosion>();
 			innerExplosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
 			outerExplosionObj.GetOrAddComponent<SpawnedAttack>().spawner = PlayerManager.instance.GetPlayerWithID(this.PlacerID);
+            innerExplosionObj.GetOrAddComponent<SpawnedAttack>().GetData().canDamageChaos = false;
+            outerExplosionObj.GetOrAddComponent<SpawnedAttack>().GetData().canDamageChaos = false;
 
-			innerExpl.ignoreTeam = false;
+            innerExpl.ignoreTeam = false;
 			innerExpl.ignoreWalls = false;
 			innerExpl.scaleDmg = false;
 			innerExpl.scaleForce = false;

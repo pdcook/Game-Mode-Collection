@@ -24,7 +24,7 @@ namespace GameModeCollection.Patches
         {
             if (GameModeManager.CurrentHandlerID != TRTHandler.GameModeID) { return; }
 
-            RoundSummary.LogDamage(damagingPlayer, ___data.player, damage.magnitude);
+            RoundSummary.LogDamage(damagingPlayer, ___data.player, UnityEngine.Mathf.Clamp(damage.magnitude, 0f, ___data.health));
         }
     }
     [HarmonyPriority(Priority.Normal)]

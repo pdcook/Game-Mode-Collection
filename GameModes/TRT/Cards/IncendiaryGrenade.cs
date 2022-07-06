@@ -57,7 +57,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         protected override string GetDescription()
         {
-            return "An incendiary grenade. Ignites the area and players around where it detonates. Press [item 5] to throw it.";
+            return "An incendiary grenade. Ignites the area and players around where it detonates. Press [item 3] to throw it.";
         }
 
         protected override GameObject GetCardArt()
@@ -108,7 +108,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         }
         void Update()
         {
-            if ((this.Player?.data?.view?.IsMine ?? false) && !this.Player.data.dead && (bool)this.Player.data.playerVel.GetFieldValue("simulated") && this.Player.data.playerActions.ItemWasPressed(5) && !used)
+            if ((this.Player?.data?.view?.IsMine ?? false) && !this.Player.data.dead && (bool)this.Player.data.playerVel.GetFieldValue("simulated") && this.Player.data.playerActions.ItemWasPressed(3) && !used)
             {
                 used = true;
                 GameModeCollection.instance.StartCoroutine(IncendiaryGrenadeHandler.MakeIncendiaryGrenadeHandler(this.Player.playerID, ThrowSpeed * this.Player.data.weaponHandler.gun.shootPosition.forward, this.Player.data.weaponHandler.transform.position + this.Player.data.weaponHandler.gun.shootPosition.forward, Quaternion.identity));

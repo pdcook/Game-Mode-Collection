@@ -38,6 +38,7 @@ namespace GameModeCollection
     [BepInDependency("com.root.projectile.size.patch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("pykess.rounds.plugins.teleportpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.willuwontu.rounds.trtreports", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInIncompatibility("com.willuwontu.rounds.tabinfo")]
     [BepInPlugin(ModId, ModName, Version)]
     [BepInProcess("Rounds.exe")]
     public class GameModeCollection : BaseUnityPlugin
