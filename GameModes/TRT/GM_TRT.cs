@@ -195,6 +195,7 @@ namespace GameModeCollection.GameModes
         }
         private IEnumerator Init()
         {
+            TRTHandler.EnforceBannedMods();
 
             yield return GameModeManager.TriggerHook(GameModeHooks.HookInitStart);
 

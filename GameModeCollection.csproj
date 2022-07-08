@@ -311,6 +311,7 @@
     <Compile Include="Patches\ProjectileHit.cs" />
     <Compile Include="Patches\RayHitPoison.cs" />
     <Compile Include="Patches\Audio\SoundGun.cs" />
+    <Compile Include="Patches\Teleport.cs" />
     <Compile Include="Patches\Thruster.cs" />
     <Compile Include="Patches\UIHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

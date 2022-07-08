@@ -62,6 +62,9 @@ namespace GameModeCollection.Objects
     [RequireComponent(typeof(CardItemHealth))]
     class CardItem : DamagableNetworkPhysicsItem<BoxCollider2D, CircleCollider2D>
     {
+        public static readonly Vector3 TargetScale = new Vector3(0.1f, 0.1f, 0.1f);
+        public static readonly Vector3 MinimumScale = new Vector3(0.001f, 0.001f, 0.001f);
+        public const float ScaleSpeed = 0.01f;
 
         public static readonly CardCategory IgnoreMaxCardsCategory = CustomCardCategories.instance.CardCategory("CardItem_IgnoreMaxCards");
         public static readonly CardCategory CannotDiscard = CustomCardCategories.instance.CardCategory("CardItem_CannotDiscard");
@@ -148,7 +151,7 @@ namespace GameModeCollection.Objects
 
             this.Col.size = Vector3.one;
             this.Trig.radius = 40f;
-            this.transform.localScale = 0.1f * Vector3.one;
+            this.transform.localScale = TargetScale;
         }
 
         protected internal override void OnTriggerEnter2D(Collider2D collider2D)
@@ -202,6 +205,27 @@ namespace GameModeCollection.Objects
                 }
             }
             base.OnTriggerStay2D(collider2D);
+        }
+        protected internal override void OnCollisionStay2D(Collision2D collision2D)
+        {
+            // if the collision was with a map object, make the card a bit smaller
+            // this is to prevent cards from blocking small corridoors
+            if (collision2D?.collider?.transform.root.GetComponent<Map>() != null)
+            {
+                ContactPoint2D[] contacts = new ContactPoint2D[collision2D.contactCount];
+                collision2D.GetContacts(contacts);
+                // if the colliders are overlapping
+                if (contacts.Where(c => c.separation < -0.1f).Any())
+                {
+                    this.transform.localScale = Vector3.MoveTowards(this.transform.localScale, MinimumScale, ScaleSpeed * TimeHandler.fixedDeltaTime);
+                }
+            }
+        }
+        void LateUpdate()
+        {
+            // if the scale is less than the target scale, scale it back up
+            this.transform.localScale = Vector3.MoveTowards(this.transform.localScale, TargetScale, 0.1f * ScaleSpeed * TimeHandler.deltaTime);
+
         }
         protected override void FixedUpdate()
         {

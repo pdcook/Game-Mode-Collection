@@ -9,7 +9,7 @@ using GameModeCollection.Utils;
 
 namespace GameModeCollection.Patches
 {
-        [HarmonyPatch(typeof(Player), "FullReset")]
+    [HarmonyPatch(typeof(Player), "FullReset")]
     class PlayerPatchFullReset
     {
         static void Prefix(Player __instance)

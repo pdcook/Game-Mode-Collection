@@ -38,7 +38,6 @@ namespace GameModeCollection
     [BepInDependency("com.root.projectile.size.patch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("pykess.rounds.plugins.teleportpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.willuwontu.rounds.trtreports", BepInDependency.DependencyFlags.HardDependency)]
-    [BepInIncompatibility("com.willuwontu.rounds.tabinfo")]
     [BepInPlugin(ModId, ModName, Version)]
     [BepInProcess("Rounds.exe")]
     public class GameModeCollection : BaseUnityPlugin
@@ -186,6 +185,7 @@ namespace GameModeCollection
         public static string ForceEqualPlayerSizeKey => GetConfigKey("forceEqualPlayerSize");
         public static string UseSpatialAudioKey => GetConfigKey("useSpatialAudio");
         public static string DisableMapShadowsKey => GetConfigKey("disableMapShadows");
+        public static string PreventTeleportThroughWallsKey => GetConfigKey("preventTeleportThroughWalls");
 
         public static bool EnemyDamageAllowed
         {
@@ -456,6 +456,27 @@ namespace GameModeCollection
 
             }
         }
+        public static bool PreventTeleportThroughWalls
+        {
+            
+            get
+            {
+                if (GameModeManager.CurrentHandler is null || GameModeManager.CurrentHandler.Settings is null)
+                {
+                    return false;
+                }
+                if (GameModeManager.CurrentHandler.Settings.TryGetValue(PreventTeleportThroughWallsKey, out object use) && (bool)use)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+        }
+        
 
         private static void GUI(GameObject menu)
         {

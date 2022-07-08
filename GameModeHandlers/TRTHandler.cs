@@ -1,15 +1,19 @@
-﻿using GameModeCollection.Extensions;
+﻿using BepInEx;
+using GameModeCollection.Extensions;
 using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
 using GameModeCollection.GameModes.TRT.Cards;
 using GameModeCollection.GameModes.TRT.Controllers;
 using GameModeCollection.GameModes.TRT.Roles;
-using GameModeCollection.GameModes.TRT.VoiceChat;
 using GameModeCollection.GameModes.TRT.RoundEvents;
+using GameModeCollection.GameModes.TRT.VoiceChat;
 using MapEmbiggener.Controllers;
+using Photon.Pun;
 using RoundsVC;
 using RWF;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using TMPro;
 using UnboundLib;
@@ -24,6 +28,14 @@ namespace GameModeCollection.GameModeHandlers
 {
     public class TRTHandler : GameModeHandler<GM_TRT>
     {
+
+        public static readonly ReadOnlyCollection<string> BannedModIDs = new List<string>()
+        {
+            "com.willuwontu.rounds.tabinfo",
+            "com.penial.rounds.Infoholic",
+            "com.willis.rounds.damageindicators",
+            "com.sinai.unityexplorer"
+        }.AsReadOnly();
 
         public static TMP_FontAsset TRTFont = GameModeCollection.TRT_Assets.LoadAsset<TMP_FontAsset>("SF Fedora SDF");
 
@@ -113,6 +125,7 @@ namespace GameModeCollection.GameModeHandlers
                 {GameModeCollection.ForceEqualPlayerSizeKey, true }, // all players are the same size
                 {GameModeCollection.UseSpatialAudioKey, true }, // force all audio to be spatialized
                 {GameModeCollection.DisableMapShadowsKey, true }, // disable shadow casting by map objects
+                {GameModeCollection.PreventTeleportThroughWallsKey, true }, // prevent players from teleporting through walls
             };
         }
         internal static void TRTMenu(GameObject menu)
@@ -122,6 +135,19 @@ namespace GameModeCollection.GameModeHandlers
             MenuHandler.CreateSlider("Default map scale", menu, 30, GameModeCollection.TRTDefaultMapScale.Value, 5f, 1f, (val) => { GameModeCollection.TRTDefaultMapScale.Value = val; } , out var _, false);
 
         }
+        public static void EnforceBannedMods()
+        {
+            if (GameModeCollection.DEBUG) { return; }
+            Dictionary<string, PluginInfo> loadedMods = BepInEx.Bootstrap.Chainloader.PluginInfos;
+            string[] bannedMods = loadedMods.Select(kv => kv.Value).Where(p => TRTHandler.BannedModIDs.Contains(p.Metadata.GUID)).Select(p => p.Metadata.Name).ToArray();
+            if (bannedMods.Any())
+            {
+                Unbound.BuildModal("TRT ERROR", "The following mods are incompatibe with Trouble In Rounds Town:\n"+string.Join("\n", bannedMods));
+                Unbound.Instance.StartCoroutine((IEnumerator)NetworkConnectionHandler.instance.InvokeMethod("DoDisconnect", "TRT", "DISCONNECTED FOR INCOMPATIBLE MODS"));
+                PhotonNetwork.CloseConnection(PhotonNetwork.LocalPlayer);
+            }
+        }
+            
         public override int[] GetGameWinners()
         {
             if (this.GameMode.roundsPlayed >= (int)this.Settings["roundsToWinGame"])
