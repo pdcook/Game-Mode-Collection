@@ -92,6 +92,8 @@
     <Compile Include="Visualizers\TesterButtonVisualizer.cs" />
     <Compile Include="Visualizers\TesterVisualizer.cs" />
     <Compile Include="Visualizers\LightSwitchVisualizer.cs" />
+    <Compile Include="Visualizers\TraitorDoorOpenerVisualizer.cs" />
+    <Compile Include="Visualizers\TraitorDoorVisualizer.cs" />
     <Compile Include="Visualizers\TRTIntercomVisualizer.cs" />
     <Compile Include="Visualizers\TraitorTrapJammerVisualizer.cs" />
     <Compile Include="Visualizers\CardSpawnPointVisualizer.cs" />

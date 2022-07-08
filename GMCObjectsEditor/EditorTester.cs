@@ -18,28 +18,6 @@ namespace GMCObjectsEditor
         [EditorMapObjectPrefab]
         public static GameObject Prefab => MapObjects.TraitorTesterSpec.Prefab;
 
-        /*
-        [EditorMapObjectSerializer]
-        public static void Serialize(GameObject instance, MapObjects.TraitorTesterObj target)
-        {
-            MapObjects.TraitorTesterSpec.Serialize(instance, target);
-        }
-
-        [EditorMapObjectDeserializer]
-        public static void Deserialize(MapObjects.TraitorTesterObj data, GameObject target)
-        {
-            MapObjects.TraitorTesterSpec.Deserialize(data, target);
-            target.GetOrAddComponent<TesterVisualizer>();
-            target.transform.GetChild(0).gameObject.GetOrAddComponent<TesterButtonVisualizer>();
-            target.transform.GetChild(1).gameObject.GetOrAddComponent<TesterRoomVisualizer>();
-            target.transform.GetChild(0).gameObject.GetOrAddComponent<SpawnActionHandler>();
-            target.transform.GetChild(1).gameObject.GetOrAddComponent<SpawnActionHandler>();
-
-            target.transform.SetAsLastSibling();
-
-            target.gameObject.GetOrAddComponent<DetectMapEditor>().IsMapEditor = true;
-        }
-        */
         [EditorMapObjectSerializer]
         public static SerializerAction<MapObjects.TraitorTesterObj> Serialize => EditorSpatialSerializer.BuildSerializer<MapObjects.TraitorTesterObj>(MapObjects.TraitorTesterSpec.Serialize);
         [EditorMapObjectDeserializer]

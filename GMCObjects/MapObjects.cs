@@ -44,16 +44,36 @@ namespace GameModeCollection.GMCObjects
         public class TraitorDoorObj : SpatialMapObject
         {
             // a door that can be opened by a traitor, it always opens to the local up direction, and closes automatically
+            public Vector3 OpenerPos;
         }
 
         [MapObjectSpec(typeof(TraitorDoorObj))]
         public static class TraitorDoorSpec
-        {
-            [MapObjectPrefab] public static GameObject Prefab => MapObjectManager.LoadCustomAsset<GameObject>("Ground");
+        {   
+            private static GameObject _prefab = null;
+            [MapObjectPrefab] public static GameObject Prefab
+            {
+                get
+                {
+                    if (_prefab == null)
+                    {
+                        GameObject door = GameObject.Instantiate(MapObjectManager.LoadCustomAsset<GameObject>("Ground"));
+
+                        GameObject spawnPoint = MapObjectManager.LoadCustomAsset<GameObject>("Spawn Point");
+                        GameObject.Instantiate(spawnPoint, door.transform.position - Vector3.right, Quaternion.identity, door.transform).name = "AutoOpener";
+                        _prefab = door;
+                        _prefab.SetActive(false);
+                        GameObject.DontDestroyOnLoad(_prefab);
+                    }
+                    return _prefab;
+
+                }
+            }
 
             [MapObjectSerializer]
             public static void Serialize(GameObject instance, TraitorDoorObj target)
             {
+                target.OpenerPos = instance.transform.GetChild(0).position;
                 SpatialSerializer.Serialize(instance, target);
             }
 
@@ -61,6 +81,17 @@ namespace GameModeCollection.GMCObjects
             public static void Deserialize(TraitorDoorObj data, GameObject target)
             {
                 SpatialSerializer.Deserialize(data, target);
+
+                GameObject.Destroy(target.transform.GetChild(0).GetComponent<SpawnPoint>());
+
+                // undo transforming caused by parenting
+                Transform child0 = target.transform.GetChild(0);
+                child0.rotation = Quaternion.identity;
+                
+                child0.SetParent(null);
+                child0.localScale = Vector3.one;
+                child0.SetParent(target.transform);
+                child0.position = data.OpenerPos;
                 target.AddComponent<TraitorDoor>();
             }
         }

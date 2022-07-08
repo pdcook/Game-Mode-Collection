@@ -2,6 +2,7 @@
 using UnityEngine;
 using GameModeCollection.GameModes;
 using GameModeCollection.GameModes.TRT;
+using UnboundLib;
 
 namespace GameModeCollection.GMCObjects
 {
@@ -23,6 +24,7 @@ namespace GameModeCollection.GMCObjects
         public const float MoveTime = 1f; // The time it takes to move the door
         public const float OpenTime = 1f; // The time the door remains open
 
+        public Vector3 AutoOpenDetectorPosition { get; internal set; }
         public Vector3 ClosedPosition { get; private set; }
         public Vector3 OpenPosition { get; private set; }
         private Quaternion _savedRotation;
@@ -35,9 +37,24 @@ namespace GameModeCollection.GMCObjects
         {
             base.Start();
 
+            this.transform.GetChild(0).gameObject.GetOrAddComponent<TraitorDoorAutoOpener>().SetDoor(this);
+            Rigidbody2D rig = this.transform.GetChild(0).gameObject.GetOrAddComponent<Rigidbody2D>();
+            rig.isKinematic = true;
+
+            // force child object to have constant size and rotation
+            if (this.GetComponent<DetectMapEditor>()?.IsMapEditor ?? false)
+            {
+                this.transform.GetChild(0).gameObject.GetOrAddComponent<ForceScale>();
+                this.transform.GetChild(0).gameObject.GetOrAddComponent<ForcePosition>();
+            }
+
             this.CalculateClosePosition();
             this.CalculateOpenPosition();
         }
+        private void SetForceTransforms(bool enabled)
+        {
+            this.transform.GetChild(0).gameObject.GetOrAddComponent<ForcePosition>().enabled = enabled;
+        }        
         private void CalculateClosePosition()
         {
             // recalculate the close position when the door is closed (for the map editor)
@@ -84,6 +101,7 @@ namespace GameModeCollection.GMCObjects
             }
             if (this._timer > 0f)
             {
+                this.SetForceTransforms(true);
                 this._timer -= TimeHandler.deltaTime;
                 switch (this.State)
                 {
@@ -103,6 +121,7 @@ namespace GameModeCollection.GMCObjects
                 {
                     case DoorState.Opening:
                         this.State = DoorState.Open;
+                        this.SetForceTransforms(false);
                         if (this.AutoClose)
                         {
                             this._timer = OpenTime;
@@ -117,6 +136,7 @@ namespace GameModeCollection.GMCObjects
                         break;
                     case DoorState.Closing:
                         this.State = DoorState.Closed;
+                        this.SetForceTransforms(false);
                         break;
                     case DoorState.Closed:
                         this.CalculateClosePosition();
@@ -128,5 +148,35 @@ namespace GameModeCollection.GMCObjects
             }
         }            
         public enum DoorState { Opening, Open, Closing, Closed }
+    }
+    
+    class TraitorDoorAutoOpener : MonoBehaviour
+    {
+        CircleCollider2D trigger = null;
+        TraitorDoor Door = null;
+        void Start()
+        {
+            this.gameObject.layer = LayerMask.NameToLayer("PlayerObjectCollider");
+            this.trigger = this.gameObject.GetOrAddComponent<CircleCollider2D>();
+            this.trigger.isTrigger = true;
+            this.trigger.radius = 2f;
+        }
+        internal void SetDoor(TraitorDoor door)
+        {
+            this.Door = door;
+        }
+        void OnTriggerEnter2D(Collider2D collider2D)
+        {
+            if (this.Door is null) { return; }
+
+            // if the collider is a player and has LoS to this object, then open the door
+            if (this.Door.State == TraitorDoor.DoorState.Closed
+                && collider2D?.GetComponent<Player>() != null
+                && !collider2D.GetComponent<Player>().data.dead
+                && PlayerManager.instance.CanSeePlayer(this.transform.position, collider2D.GetComponent<Player>()).canSee)
+            {
+                this.Door.Open(true);
+            }
+        }
     }
 }
