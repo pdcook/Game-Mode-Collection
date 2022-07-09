@@ -74,18 +74,18 @@ namespace GameModeCollection.GameModeHandlers
             CustomCard.BuildCard<RadarCard>(RadarCard.BuildCardCallback);
             CustomCard.BuildCard<RifleCard>(RifleCard.BuildCardCallback);
             CustomCard.BuildCard<DefuserCard>(DefuserCard.BuildCardCallback);
-            //CustomCard.BuildCard<GrenadeCard>(GrenadeCard.BuildCardCallback);
+            CustomCard.BuildCard<GrenadeCard>(GrenadeCard.BuildCardCallback);
             CustomCard.BuildCard<SilencerCard>(SilencerCard.BuildCardCallback);
             CustomCard.BuildCard<BodyArmorCard>(BodyArmorCard.BuildCardCallback);
             CustomCard.BuildCard<DisguiserCard>(DisguiserCard.BuildCardCallback);
             CustomCard.BuildCard<HandcuffsCard>(HandcuffsCard.BuildCardCallback);
             CustomCard.BuildCard<GoldenDeagleCard>(GoldenDeagleCard.BuildCardCallback);
             CustomCard.BuildCard<DeathStationCard>(DeathStationCard.BuildCardCallback);
-            //CustomCard.BuildCard<SmokeGrenadeCard>(SmokeGrenadeCard.BuildCardCallback);
+            CustomCard.BuildCard<SmokeGrenadeCard>(SmokeGrenadeCard.BuildCardCallback);
             CustomCard.BuildCard<HealthStationCard>(HealthStationCard.BuildCardCallback);
             CustomCard.BuildCard<JesterEmulatorCard>(JesterEmulatorCard.BuildCardCallback);
-            //CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.BuildCardCallback);
-            //CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.BuildCardCallback);
+            CustomCard.BuildCard<DiscombobulatorCard>(DiscombobulatorCard.BuildCardCallback);
+            CustomCard.BuildCard<IncendiaryGrenadeCard>(IncendiaryGrenadeCard.BuildCardCallback);
         }
         public static void SetupRoundsVC()
         {

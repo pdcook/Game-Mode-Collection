@@ -41,8 +41,8 @@ Has access to the {Zombie.RoleAppearance} shop.
         public Color WinColor => Zombie.RoleAppearance.Color;
         public string RoleName => ZombieRoleName;
         public string RoleID => ZombieRoleID;
-        public int MinNumberOfPlayersForRole => 0;//5;
-        public float Rarity => 1f;//0.1f;
+        public int MinNumberOfPlayersForRole => 5;
+        public float Rarity => 0.1f;
         public string[] RoleIDsToOverwrite => new string[] { "GM_TRT_Traitor", "GM_TRT_Vampire", "GM_TRT_Hypnotist", "GM_TRT_Assassin" };
         public Alignment? AlignmentToReplace => Alignment.Traitor;
         public void AddRoleToPlayer(Player player)
