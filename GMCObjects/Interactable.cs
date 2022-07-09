@@ -76,9 +76,8 @@ namespace GameModeCollection.GMCObjects
                                 + "Interactable "
                                 + ((int)base.GetComponentInParent<Map>().GetFieldValue("levelID")).ToString()
                                 + " "
-                                + this.transform.GetSiblingIndex().ToString()
-                                + $"({this.GetType().Name})"
-                                + $"[{(this.transform.parent?.name ?? "root")}]";
+                                + string.Join(" ", this.transform.GetSiblingIndexTree())
+                                + $"({this.GetType().Name})";
             this.StartCoroutine(this.RegisterRPCWhenReady());
 
             // add the interaction UI
