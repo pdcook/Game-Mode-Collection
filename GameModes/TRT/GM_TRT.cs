@@ -448,6 +448,10 @@ namespace GameModeCollection.GameModes
             // drop cards
             CardInfo[] cardsToDrop = killedPlayer.data.currentCards.ToArray();
             killedPlayer.InvokeMethod("FullReset");
+            if (killedPlayer.data.view.IsMine)
+            {
+                CardUtils.ClientSideClearCardBar(killedPlayer);
+            }
             this.StartCoroutine(this.DropCardsOnDeath(killedPlayer, cardsToDrop));
 
             // corpse creation

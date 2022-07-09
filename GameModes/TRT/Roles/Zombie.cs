@@ -41,8 +41,8 @@ Has access to the {Zombie.RoleAppearance} shop.
         public Color WinColor => Zombie.RoleAppearance.Color;
         public string RoleName => ZombieRoleName;
         public string RoleID => ZombieRoleID;
-        public int MinNumberOfPlayersForRole => 5;
-        public float Rarity => 0.1f;
+        public int MinNumberOfPlayersForRole => 0;//5;
+        public float Rarity => 1f;//0.1f;
         public string[] RoleIDsToOverwrite => new string[] { "GM_TRT_Traitor", "GM_TRT_Vampire", "GM_TRT_Hypnotist", "GM_TRT_Assassin" };
         public Alignment? AlignmentToReplace => Alignment.Traitor;
         public void AddRoleToPlayer(Player player)
@@ -121,11 +121,22 @@ Has access to the {Zombie.RoleAppearance} shop.
         {
             Player player = PlayerManager.instance.players.FirstOrDefault(p => p.playerID == playerID);
             if (player is null) { return; }
-            ModdingUtils.Utils.Cards.instance.AddCardToPlayer(player, ClawCard.Card, addToCardBar: false);
-            if (player.data.view.IsMine)
+            // get list of cards that conflicts with the zombie claw
+            CardInfo[] conflictingCards = player.data.currentCards.Where(c => c.categories.Contains(TRTCardCategories.TRT_Slot_2)).ToArray();
+            if (conflictingCards.Any())
             {
-                CardUtils.ClientsideAddToCardBar(player.playerID, ClawCard.Card, silent: false);
+                CardUtils.RemoveCardsFromPlayer_ClientsideCardsBar(player, conflictingCards, ModdingUtils.Utils.Cards.SelectionType.All, silent: true);
             }
+            GameModeCollection.instance.StartCoroutine(IAddCardWhenReady(player));
+            
+        }
+        private static IEnumerator IAddCardWhenReady(Player player)
+        {
+            yield return new WaitWhile(() => player.data.currentCards.Where(c => c.categories.Contains(TRTCardCategories.TRT_Slot_2)).Any());
+            yield return new WaitForEndOfFrame();
+            yield return new WaitForEndOfFrame();
+            CardUtils.AddCardToPlayer_ClientsideCardBar(player, ClawCard.Card, silent: false);
+            yield break;    
         }
         public void CallZombieInfect(Player killedPlayer)
         {

@@ -165,7 +165,7 @@ namespace GameModeCollection.GMCObjects
         {
             this.Door = door;
         }
-        void OnTriggerEnter2D(Collider2D collider2D)
+        void OnTriggerStay2D(Collider2D collider2D)
         {
             if (this.Door is null) { return; }
 

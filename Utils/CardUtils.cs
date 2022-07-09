@@ -81,6 +81,50 @@ namespace GameModeCollection.Utils
             GameModeCollection.instance.StartCoroutine(RestoreCardBarWhenReady(player, numCards-1, silent));
 
         }
+        internal static void RemoveCardsFromPlayer_ClientsideCardsBar(Player player, CardInfo[] cards, Cards.SelectionType selectionType, bool silent = true)
+        {
+            RPCA_RemoveCardsFromPlayer_ClientsideCardsBar(player.playerID, cards.Select(c =>c.gameObject.name).ToArray(), (byte)selectionType, silent);
+        }
+        internal static void Call_RemoveCardsFromPlayer_ClientsideCardsBar(Player player, CardInfo[] cards, Cards.SelectionType selectionType, bool silent = true)
+        {
+            NetworkingManager.RPC(typeof(CardUtils), nameof(RPCA_RemoveCardsFromPlayer_ClientsideCardsBar), player.playerID, cards.Select(c => c.gameObject.name).ToArray(), (byte)selectionType, silent);
+        }
+        [UnboundRPC]
+        private static void RPCA_RemoveCardsFromPlayer_ClientsideCardsBar(int playerID, string[] cardNames, byte selectionByte, bool silent)
+        {
+            Player player = PlayerManager.instance.GetPlayerWithID(playerID);
+            if (player is null) { return; }
+            int numCards = player.data.currentCards.Count();
+            int numToRemove = -1;
+            switch ((ModdingUtils.Utils.Cards.SelectionType)selectionByte)
+            {
+                case Cards.SelectionType.All:
+                    numToRemove = player.data.currentCards.Select(c => c.gameObject.name).Where(c => cardNames.Contains(c)).Count();
+                    break;
+                case Cards.SelectionType.Oldest:
+                case Cards.SelectionType.Newest:
+                case Cards.SelectionType.Random:
+                default:
+                    numToRemove = player.data.currentCards.Select(c => c.gameObject.name).Distinct().Where(c => cardNames.Contains(c)).Count();
+                    break;
+            }
+            if (numToRemove == -1)
+            {
+                GameModeCollection.LogError("[CardUtils] Number of cards to remove is zero.");
+            }
+            if (numToRemove == 0)
+            {
+                return;
+            }
+            if (cardNames.Any(c => Cards.instance.GetCardWithObjectName(c) is null)) { return; }
+            ModdingUtils.Utils.Cards.instance.RemoveCardsFromPlayer(player, cardNames.Select(c => Cards.instance.GetCardWithObjectName(c)).ToArray(), (ModdingUtils.Utils.Cards.SelectionType)selectionByte, false);
+            if (player.data.view.IsMine)
+            {
+                ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar();
+            }
+            GameModeCollection.instance.StartCoroutine(RestoreCardBarWhenReady(player, numCards - numToRemove, silent));
+
+        }
         static IEnumerator RestoreCardBarWhenReady(Player player, int numCards, bool silent)
         {
             yield return new WaitUntil(() => player.data.currentCards.Count() == numCards);
@@ -88,6 +132,14 @@ namespace GameModeCollection.Utils
             foreach (CardInfo card in player.data.currentCards)
             {
                 ClientsideAddToCardBar(player.playerID, card, silent: silent);
+            }
+        }
+        public static void ClientSideClearCardBar(Player player)
+        {
+            if (player is null) { return; }
+            if (player.data.view.IsMine)
+            {
+                ModdingUtils.Utils.CardBarUtils.instance.PlayersCardBar(0).ClearBar();
             }
         }
         public static void ClientsideAddToCardBar(int playerID, CardInfo card, string twoLetterCode = "", bool silent = true)
