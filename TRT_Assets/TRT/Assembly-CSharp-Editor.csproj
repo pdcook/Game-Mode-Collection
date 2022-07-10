@@ -53,6 +53,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Editor\ControlButton.cs" />
+     <Compile Include="Assets\Editor\EditorMakeKeyTexts.cs" />
      <Compile Include="Assets\Editor\exportassetbundle.cs" />
  <Reference Include="UnityEngine.Purchasing">
  <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Library/ScriptAssemblies/UnityEngine.Purchasing.dll</HintPath>
@@ -317,6 +319,9 @@
  </Reference>
  <Reference Include="Unity.Analytics.Tracker">
  <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Tracker.dll</HintPath>
+ </Reference>
+ <Reference Include="InControl">
+ <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Assets/Assemblies/InControl.dll</HintPath>
  </Reference>
  <Reference Include="mscorlib">
  <HintPath>C:/Program Files/Unity/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
@@ -672,6 +677,10 @@
  <Reference Include="Boo.Lang">
  <HintPath>C:/Program Files/Unity/Editor/Data/MonoBleedingEdge/lib/mono/unityscript/Boo.Lang.dll</HintPath>
  </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="Assembly-CSharp.csproj">
+      <Project>{18C4F672-2B19-58FA-9CA6-1FDC243ABB5B}</Project>      <Name>Assembly-CSharp</Name>    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

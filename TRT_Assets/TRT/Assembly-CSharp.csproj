@@ -53,7 +53,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\RadarTextOrientator.cs" />
+     <Compile Include="Assets\Scripts\ControlButton.cs" />
+     <Compile Include="Assets\Scripts\MakeKeyTexts.cs" />
+     <Compile Include="Assets\Scripts\UnityExtensions.cs" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMP_SDF-Surface-Mobile.shader" />
      <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro_Properties.cginc" />
@@ -296,6 +298,9 @@
  </Reference>
  <Reference Include="Unity.Analytics.StandardEvents">
  <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Library/PackageCache/com.unity.analytics@3.2.3/AnalyticsStandardEvents/Unity.Analytics.StandardEvents.dll</HintPath>
+ </Reference>
+ <Reference Include="InControl">
+ <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Assets/Assemblies/InControl.dll</HintPath>
  </Reference>
  <Reference Include="netstandard">
  <HintPath>C:/Program Files/Unity/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
