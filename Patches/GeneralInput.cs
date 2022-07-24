@@ -54,10 +54,12 @@ namespace GameModeCollection.Patches
             if (data.role_help.WasPressed)
             {
                 RoleHelpManager.ShowHelp(player);
+                ControlHelpManager.ShowHelp(__instance.inputType == GeneralInput.InputType.Keyboard ? InControl.InputDeviceClass.Keyboard : InControl.InputDeviceClass.Controller);
             }
             else if (data.role_help.WasReleased)
             {
                 RoleHelpManager.HideHelp();
+                ControlHelpManager.HideHelp();
             }
 
             // actions that can be modified by the modifier button/key

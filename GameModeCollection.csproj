@@ -108,8 +108,9 @@
     <Reference Include="UnboundLib">
       <HintPath>$(RoundsFolder)\BepInEx\plugins\UnboundLib\UnboundLib.dll</HintPath>
     </Reference>
-    <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>$(RoundsFolder)\Rounds_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    <Reference Include="Unity.TextMeshPro, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files (x86)\Steam\steamapps\common\ROUNDS\Rounds_Data\Managed\Unity.TextMeshPro.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>$(RoundsFolder)\Rounds_Data\Managed\UnityEngine.dll</HintPath>
@@ -162,6 +163,7 @@
     <Compile Include="GameModes\TRT\Cards\Disguiser.cs" />
     <Compile Include="GameModes\TRT\Cards\JesterEmulator.cs" />
     <Compile Include="GameModes\TRT\Cards\Silencer.cs" />
+    <Compile Include="GameModes\TRT\ControlHelpManager.cs" />
     <Compile Include="GameModes\TRT\IRoleHelp.cs" />
     <Compile Include="GameModes\TRT\RoleHelpManager.cs" />
     <Compile Include="GameModes\TRT\RoundEvents\GoldenDeagleEvent.cs" />
@@ -350,6 +352,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="GMCUnityScripts\GMCUnityScripts.csproj">
+      <Project>{94a29762-674d-43b1-a711-c6476824fe12}</Project>
+      <Name>GMCUnityScripts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

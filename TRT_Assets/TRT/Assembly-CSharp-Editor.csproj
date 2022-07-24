@@ -8,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>TRT_Assets</RootNamespace>
     <ProjectGuid>{D34C12E2-C7AE-E783-FD6B-79AFE9A52733}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -53,9 +53,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Editor\ControlButton.cs" />
-     <Compile Include="Assets\Editor\EditorMakeKeyTexts.cs" />
+     <Compile Include="Assets\Editor\AddControlComponents.cs" />
      <Compile Include="Assets\Editor\exportassetbundle.cs" />
+     <Compile Include="Assets\Editor\RemoveAllMissingScripts.cs" />
  <Reference Include="UnityEngine.Purchasing">
  <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Library/ScriptAssemblies/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
@@ -308,6 +308,15 @@
  <Reference Include="UnityEditor.WindowsStandalone.Extensions">
  <HintPath>C:/Program Files/Unity/Editor/Data/PlaybackEngines/windowsstandalonesupport/UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
  </Reference>
+ <Reference Include="GMCUnityEditorScripts">
+ <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Assets/Assemblies/GMCUnityEditorScripts.dll</HintPath>
+ </Reference>
+ <Reference Include="GMCUnityScripts">
+ <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Assets/Assemblies/GMCUnityScripts.dll</HintPath>
+ </Reference>
+ <Reference Include="InControl">
+ <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Assets/Assemblies/InControl.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEditor.Advertisements">
  <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Library/PackageCache/com.unity.ads@2.0.8/Editor/UnityEditor.Advertisements.dll</HintPath>
  </Reference>
@@ -319,9 +328,6 @@
  </Reference>
  <Reference Include="Unity.Analytics.Tracker">
  <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Library/PackageCache/com.unity.analytics@3.2.3/Editor/Unity.Analytics.Tracker.dll</HintPath>
- </Reference>
- <Reference Include="InControl">
- <HintPath>C:/Users/qphys/Code/GameModeCollection/TRT_Assets/TRT/Assets/Assemblies/InControl.dll</HintPath>
  </Reference>
  <Reference Include="mscorlib">
  <HintPath>C:/Program Files/Unity/Editor/Data/MonoBleedingEdge/lib/mono/4.7.1-api/mscorlib.dll</HintPath>
