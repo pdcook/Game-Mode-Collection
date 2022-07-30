@@ -12,7 +12,7 @@ namespace GMCUnityScripts
     public class ControlHelpHandler : MonoBehaviour
     {
         public const float OPACITY = 0.75f;
-        public static readonly Color DEFAULTCOLOR = new Color32(200, 200, 200, 255);
+        public static readonly Color DEFAULTCOLOR = new Color(0.3922f, 0.3922f, 0.3922f, OPACITY);
 
         public static ControlHelpHandler Instance;
         public GameObject Controller => this.transform.GetChild(0).GetChild(0).gameObject;
@@ -105,14 +105,6 @@ namespace GMCUnityScripts
                 case InputDeviceClass.Mouse:
                     Lookup<string, Key[]> keys = GetKeys(playerActionSets.ToArray());
                     Lookup<string, Mouse[]> mouseButtons = GetMouseButtons(playerActionSets.ToArray());
-                    foreach (IGrouping<string, Mouse[]> grp in mouseButtons)
-                    {
-                        UnityEngine.Debug.Log(grp.Key);
-                        foreach (Mouse k in grp.SelectMany(c=>c))
-                        {
-                            UnityEngine.Debug.Log(k.ToString());
-                        }
-                    }
                     this.DrawKeyboard(keys);
                     this.DrawMouse(mouseButtons);
                     break;
@@ -133,42 +125,78 @@ namespace GMCUnityScripts
         {
             ControlButton[] controls = this.Keyboard.GetComponentsInChildren<ControlButton>(true);
             Dictionary<Key, string[]> binds = GetBinds<Key>(bindings);
+            Dictionary<ControlButton, List<string>> bindsByButton = new Dictionary<ControlButton, List<string>>() { };
             foreach (KeyValuePair<Key, string[]> binding in binds)
             {
                 foreach (ControlButton controlButton in controls.Where(c => c.BoundKeyboard.Contains(binding.Key)))
                 {
-                    Color color = this.NextColor;
-                    controlButton.SetColor(color);
-                    this.CreateKeybindText("["+ controlButton.Name + "] " + string.Join(", ", binding.Value), color);
+                    if (!bindsByButton.ContainsKey(controlButton))
+                    {
+                        bindsByButton.Add(controlButton, binding.Value.ToList());
+                    }
+                    else
+                    {
+                        bindsByButton[controlButton].AddRange(binding.Value);
+                    }
                 }
+            }
+            foreach (KeyValuePair<ControlButton, List<string>> binding in bindsByButton)
+            {
+                Color color = this.NextColor;
+                binding.Key.SetColor(color);
+                this.CreateKeybindText("[" + binding.Key.Name + "] " + string.Join(", ", binding.Value), color);
             }
         }
         private void DrawMouse(Lookup<string, Mouse[]> bindings)
         {
-            ControlButton[] controls = this.Keyboard.GetComponentsInChildren<ControlButton>(true);
+            ControlButton[] controls = this.Mouse.GetComponentsInChildren<ControlButton>(true);
             Dictionary<Mouse, string[]> binds = GetBinds<Mouse>(bindings);
+            Dictionary<ControlButton, List<string>> bindsByButton = new Dictionary<ControlButton, List<string>>() { };
             foreach (KeyValuePair<Mouse, string[]> binding in binds)
             {
                 foreach (ControlButton controlButton in controls.Where(c => c.BoundMouse.Contains(binding.Key)))
                 {
-                    Color color = this.NextColor;
-                    controlButton.SetColor(color);
-                    this.CreateKeybindText("["+ controlButton.Name + "] " + string.Join(", ", binding.Value), color);
+                    if (!bindsByButton.ContainsKey(controlButton))
+                    {
+                        bindsByButton.Add(controlButton, binding.Value.ToList());
+                    }
+                    else
+                    {
+                        bindsByButton[controlButton].AddRange(binding.Value);
+                    }
                 }
+            }
+            foreach (KeyValuePair<ControlButton, List<string>> binding in bindsByButton)
+            {
+                Color color = this.NextColor;
+                binding.Key.SetColor(color);
+                this.CreateKeybindText("[" + binding.Key.Name + "] " + string.Join(", ", binding.Value), color);
             }
         }
         private void DrawController(Lookup<string, InputControlType[]> bindings)
         {
-            ControlButton[] controls = this.Keyboard.GetComponentsInChildren<ControlButton>(true);
+            ControlButton[] controls = this.Controller.GetComponentsInChildren<ControlButton>(true);
             Dictionary<InputControlType, string[]> binds = GetBinds<InputControlType>(bindings);
+            Dictionary<ControlButton, List<string>> bindsByButton = new Dictionary<ControlButton, List<string>>() { };
             foreach (KeyValuePair<InputControlType, string[]> binding in binds)
             {
                 foreach (ControlButton controlButton in controls.Where(c => c.BoundController.Contains(binding.Key)))
                 {
-                    Color color = this.NextColor;
-                    controlButton.SetColor(color);
-                    this.CreateKeybindText("["+ controlButton.Name + "] " + string.Join(", ", binding.Value), color);
+                    if (!bindsByButton.ContainsKey(controlButton))
+                    {
+                        bindsByButton.Add(controlButton, binding.Value.ToList());
+                    }
+                    else
+                    {
+                        bindsByButton[controlButton].AddRange(binding.Value);
+                    }
                 }
+            }
+            foreach (KeyValuePair<ControlButton, List<string>> binding in bindsByButton)
+            {
+                Color color = this.NextColor;
+                binding.Key.SetColor(color);
+                this.CreateKeybindText("["+ binding.Key.Name + "] " + string.Join(", ", binding.Value), color);
             }
         }
         private void CreateKeybindText(string text, Color color)
@@ -213,13 +241,15 @@ namespace GMCUnityScripts
         }
         private static Lookup<string, Mouse[]> GetMouseButtons(PlayerActionSet[] playerActionSets)
         {
-            return (Lookup<string, Mouse[]>)playerActionSets.SelectMany(p => p.Actions)
+            return (Lookup<string, Mouse[]>)(playerActionSets.SelectMany(p => p.Actions)
+                .Where(a => a.Bindings.OfType<MouseBindingSource>().Any())
                 .ToLookup(a => a.Name, a => a.Bindings.OfType<MouseBindingSource>()
-                    .Select(b => ((MouseBindingSource)b).Control).ToArray());
+                    .Select(b => ((MouseBindingSource)b).Control).ToArray()));
         }
         private static Lookup<string, InputControlType[]> GetControllerButtons(PlayerActionSet[] playerActionSets)
         {
             return (Lookup<string, InputControlType[]>)playerActionSets.SelectMany(p => p.Actions)
+                .Where(a => a.Bindings.OfType<DeviceBindingSource>().Any())
                 .ToLookup(a => a.Name, a => a.Bindings.OfType<DeviceBindingSource>()
                     .Select(b => ((DeviceBindingSource)b).Control).ToArray());
         }
