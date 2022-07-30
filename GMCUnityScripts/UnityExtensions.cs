@@ -14,7 +14,18 @@ namespace GMCUnityScripts
         }
         public static void DestroyAllChildren(this GameObject gameObject)
         {
-            gameObject.transform.DestroyAllChildren();
+            if (gameObject?.transform != null)
+            {
+                if (gameObject is null)
+                {
+                    UnityEngine.Debug.Log("GameObject is null");
+                }
+                if (gameObject.transform is null)
+                {
+                    UnityEngine.Debug.Log("GameObject.transform is null");
+                }
+                gameObject.transform.DestroyAllChildren();
+            }
         }
     }
     public static class ComponentExtensions
@@ -53,10 +64,11 @@ namespace GMCUnityScripts
         }
         public static void DestroyAllChildren(this Transform transform)
         {
-            Transform[] children = transform.GetComponentsInChildren<Transform>(true);
+            Transform[] children = transform?.GetComponentsInChildren<Transform>(true);
+            if (children is null) { return; }
             foreach (Transform child in children)
             {
-                GameObject.Destroy(child.gameObject);
+                if (child?.gameObject != null && child != transform) { GameObject.Destroy(child.gameObject); }
             }
         }
     }

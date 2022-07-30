@@ -15,10 +15,10 @@ namespace GMCUnityScripts
         public static readonly Color DEFAULTCOLOR = new Color32(200, 200, 200, 255);
 
         public static ControlHelpHandler Instance;
-        public GameObject Controller { get; private set; }
-        public GameObject Keyboard { get; private set; }
-        public GameObject Mouse { get; private set; }
-        public GameObject KeybindTexts { get; private set; }
+        public GameObject Controller => this.transform.GetChild(0).GetChild(0).gameObject;
+        public GameObject Keyboard => this.transform.GetChild(0).GetChild(1).gameObject;
+        public GameObject Mouse => this.transform.GetChild(0).GetChild(2).gameObject;
+        public GameObject KeybindTexts => this.transform.GetChild(0).GetChild(3).gameObject;
 
         private static readonly List<Color> Colors = new List<Color>()
         {
@@ -37,7 +37,7 @@ namespace GMCUnityScripts
         {
             get
             {
-                this.colorIdx = mod(this.colorIdx, Colors.Count);
+                this.colorIdx = mod(this.colorIdx + 1, Colors.Count);
                 return Colors[colorIdx];
             }
         }
@@ -53,29 +53,72 @@ namespace GMCUnityScripts
         }
         void Start()
         {
-            this.Controller = this.transform.GetChild(0).GetChild(0).gameObject;
-            this.Keyboard = this.transform.GetChild(0).GetChild(1).gameObject;
-            this.Mouse = this.transform.GetChild(0).GetChild(2).gameObject;
-            this.KeybindTexts = this.transform.GetChild(0).GetChild(3).gameObject;
         }
         public void CreateControlHelp(InputDeviceClass device)
         {
             this.ResetAllColors();
-            this.KeybindTexts.DestroyAllChildren();
+            if (this.KeybindTexts != null)
+            {
+                this.KeybindTexts.DestroyAllChildren();
+            }
             switch (device)
             {
                 case InputDeviceClass.Keyboard:
                 case InputDeviceClass.Mouse:
-                    this.Controller.SetActive(false);
-                    this.Keyboard.SetActive(true);
-                    this.Mouse.SetActive(true);
+                    this.Controller?.SetActive(false);
+                    this.Keyboard?.SetActive(true);
+                    this.Mouse?.SetActive(true);
                     this.CreateKeybindsForDevice(device);
                     break;
                 case InputDeviceClass.Controller:
-                    this.Controller.SetActive(true);
-                    this.Keyboard.SetActive(false);
-                    this.Mouse.SetActive(false);
+                    this.Controller?.SetActive(true);
+                    this.Keyboard?.SetActive(false);
+                    this.Mouse?.SetActive(false);
                     this.CreateKeybindsForDevice(device);
+                    break;
+                case InputDeviceClass.Unknown:
+                case InputDeviceClass.Remote:
+                case InputDeviceClass.FlightStick:
+                default:
+                    this.gameObject?.SetActive(false);
+                    UnityEngine.Debug.LogError($"[ControllerHelpHandler] Control type {device} not supported.");
+                    return;
+            }
+            this.gameObject.GetOrAddComponent<SetOpacityOfAllChildrenUI>().SetOpacity(OPACITY);
+        }
+        private void ResetAllColors()
+        {
+            this.colorIdx = -1;
+            foreach (ControlButton cb in this.gameObject.GetComponentsInChildren<ControlButton>(true))
+            {
+                cb.SetColor(DEFAULTCOLOR);
+            }
+        }
+        private void CreateKeybindsForDevice(InputDeviceClass device)
+        {
+            List<PlayerActionSet> playerActionSets = (List<PlayerActionSet>)typeof(InputManager).GetField("playerActionSets", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
+
+
+            switch (device)
+            {
+                case InputDeviceClass.Keyboard:
+                case InputDeviceClass.Mouse:
+                    Lookup<string, Key[]> keys = GetKeys(playerActionSets.ToArray());
+                    Lookup<string, Mouse[]> mouseButtons = GetMouseButtons(playerActionSets.ToArray());
+                    foreach (IGrouping<string, Mouse[]> grp in mouseButtons)
+                    {
+                        UnityEngine.Debug.Log(grp.Key);
+                        foreach (Mouse k in grp.SelectMany(c=>c))
+                        {
+                            UnityEngine.Debug.Log(k.ToString());
+                        }
+                    }
+                    this.DrawKeyboard(keys);
+                    this.DrawMouse(mouseButtons);
+                    break;
+                case InputDeviceClass.Controller:
+                    Lookup<string, InputControlType[]> inputControlTypes = GetControllerButtons(playerActionSets.ToArray());
+                    this.DrawController(inputControlTypes);
                     break;
                 case InputDeviceClass.Unknown:
                 case InputDeviceClass.Remote:
@@ -85,84 +128,46 @@ namespace GMCUnityScripts
                     UnityEngine.Debug.LogError($"[ControllerHelpHandler] Control type {device} not supported.");
                     return;
             }
-            this.gameObject.GetOrAddComponent<SetOpacityOfAllChildrenUI>().SetOpacity(OPACITY);
         }
-        private void ResetAllColors()
-        {
-            foreach (Image im in this.gameObject.GetComponentsInChildren<Image>(true))
-            {
-                im.color = DEFAULTCOLOR;
-            }
-
-        }
-        private void CreateKeybindsForDevice(InputDeviceClass device)
-        {
-            List<PlayerActionSet> playerActionSets = (List<PlayerActionSet>)typeof(InputManager).GetField("playerActionSets", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
-
-            foreach (PlayerActionSet playerActionSet in playerActionSets)
-            {
-                switch (device)
-                {
-                    case InputDeviceClass.Keyboard:
-                    case InputDeviceClass.Mouse:
-                        Dictionary<string, Key[]> keys = GetKeys(playerActionSet);
-                        Dictionary<string, Mouse[]> mouseButtons = GetMouseButtons(playerActionSet);
-                        this.DrawKeyboard(keys);
-                        this.DrawMouse(mouseButtons);
-                        break;
-                    case InputDeviceClass.Controller:
-                        Dictionary<string, InputControlType[]> inputControlTypes = GetControllerButtons(playerActionSet);
-                        this.DrawController(inputControlTypes);
-                        break;
-                    case InputDeviceClass.Unknown:
-                    case InputDeviceClass.Remote:
-                    case InputDeviceClass.FlightStick:
-                    default:
-                        this.gameObject.SetActive(false);
-                        UnityEngine.Debug.LogError($"[ControllerHelpHandler] Control type {device} not supported.");
-                        return;
-                }
-            }
-        }
-        private void DrawKeyboard(Dictionary<string, Key[]> bindings)
+        private void DrawKeyboard(Lookup<string, Key[]> bindings)
         {
             ControlButton[] controls = this.Keyboard.GetComponentsInChildren<ControlButton>(true);
-            foreach (KeyValuePair<string, Key[]> binding in bindings)
+            Dictionary<Key, string[]> binds = GetBinds<Key>(bindings);
+            foreach (KeyValuePair<Key, string[]> binding in binds)
             {
-                foreach (ControlButton controlButton in controls.Where(c => c.BoundKeyboard.Intersect(binding.Value).Any()))
+                foreach (ControlButton controlButton in controls.Where(c => c.BoundKeyboard.Contains(binding.Key)))
                 {
                     Color color = this.NextColor;
                     controlButton.SetColor(color);
-                    //this.CreateKeybindText("["+string.Join(", ", controlButton.BoundKeyboard.Select(k => k.ToString()) + "] " + binding.Key), color);
-                    this.CreateKeybindText("["+ controlButton.Name + "] " + binding.Key, color);
+                    this.CreateKeybindText("["+ controlButton.Name + "] " + string.Join(", ", binding.Value), color);
                 }
             }
         }
-        private void DrawMouse(Dictionary<string, Mouse[]> bindings)
+        private void DrawMouse(Lookup<string, Mouse[]> bindings)
         {
-            ControlButton[] controls = this.Mouse.GetComponentsInChildren<ControlButton>(true);
-            foreach (KeyValuePair<string, Mouse[]> binding in bindings)
+            ControlButton[] controls = this.Keyboard.GetComponentsInChildren<ControlButton>(true);
+            Dictionary<Mouse, string[]> binds = GetBinds<Mouse>(bindings);
+            foreach (KeyValuePair<Mouse, string[]> binding in binds)
             {
-                foreach (ControlButton controlButton in controls.Where(c => c.BoundMouse.Intersect(binding.Value).Any()))
+                foreach (ControlButton controlButton in controls.Where(c => c.BoundMouse.Contains(binding.Key)))
                 {
                     Color color = this.NextColor;
                     controlButton.SetColor(color);
-                    //this.CreateKeybindText("["+string.Join(", ", controlButton.BoundMouse.Select(k => k.ToString()) + "] " + binding.Key), color);
-                    this.CreateKeybindText("["+ controlButton.Name + "] " + binding.Key, color);
+                    this.CreateKeybindText("["+ controlButton.Name + "] " + string.Join(", ", binding.Value), color);
                 }
             }
         }
-        private void DrawController(Dictionary<string, InputControlType[]> bindings)
+        private void DrawController(Lookup<string, InputControlType[]> bindings)
         {
-            ControlButton[] controls = this.Controller.GetComponentsInChildren<ControlButton>(true);
-            foreach (KeyValuePair<string, InputControlType[]> binding in bindings)
+            ControlButton[] controls = this.Keyboard.GetComponentsInChildren<ControlButton>(true);
+            Dictionary<InputControlType, string[]> binds = GetBinds<InputControlType>(bindings);
+            foreach (KeyValuePair<InputControlType, string[]> binding in binds)
             {
-                foreach (ControlButton controlButton in controls.Where(c => c.BoundController.Intersect(binding.Value).Any()))
+                foreach (ControlButton controlButton in controls.Where(c => c.BoundController.Contains(binding.Key)))
                 {
                     Color color = this.NextColor;
                     controlButton.SetColor(color);
-                    //this.CreateKeybindText("["+string.Join(", ", controlButton.BoundController.Select(k => k.ToString()) + "] " + binding.Key), color);
-                    this.CreateKeybindText("["+ controlButton.Name + "] " + binding.Key, color);
+                    this.CreateKeybindText("["+ controlButton.Name + "] " + string.Join(", ", binding.Value), color);
                 }
             }
         }
@@ -174,33 +179,49 @@ namespace GMCUnityScripts
             tmp.color = color;
             tmp.enableAutoSizing = true;
             tmp.fontSizeMin = 10;
-            tmp.fontSizeMax = 36;
+            tmp.fontSizeMax = 72;
             tmp.alignment = TextAlignmentOptions.MidlineLeft;
+            tmp.fontStyle = FontStyles.SmallCaps | FontStyles.Bold;
         }
-        private static Dictionary<string, Key[]> GetKeys(PlayerActionSet playerActionSet)
+        private static Dictionary<T, string[]> GetBinds<T>(Lookup<string, T[]> keys) where T: Enum
         {
-            return playerActionSet.Actions.ToDictionary(a => a.Name, a => a)
-                .ToDictionary(kv => kv.Key, kv => kv.Value.Bindings) // get all the bindings from all the actions
-                .Where(kv => kv.Value.GetType() == typeof(KeyBindingSource)) // get only the KeyBindings
-                .ToDictionary(kv => kv.Key, kv => kv.Value.Select(b => ((KeyBindingSource)b).Control)) // cast them and get their KeyCombos
-                .ToDictionary(kv => kv.Key, kv => kv.Value.SelectMany(c => Enumerable.Range(0, c.IncludeCount).Select(i => c.GetInclude(i)))) // get all the Keys from the bindings
-                .ToDictionary(kv => kv.Key, kv => kv.Value.ToArray()); // return them as an array
+            Dictionary<T, List<string>> binds = new Dictionary<T, List<string>>() { };
+
+            foreach (IGrouping<string, T[]> keyBind in keys)
+            {
+                foreach (T boundKey in keyBind.SelectMany(c=>c))
+                {
+                    if (binds.ContainsKey(boundKey))
+                    {
+                        binds[boundKey].Add(keyBind.Key);
+                    }
+                    else
+                    {
+                        binds.Add(boundKey, new List<string>() { keyBind.Key });
+                    }
+                }
+            }
+
+            return binds.ToDictionary(kv => kv.Key, kv => kv.Value.ToArray());
         }
-        private static Dictionary<string , Mouse[]> GetMouseButtons(PlayerActionSet playerActionSet)
+        private static Lookup<string, Key[]> GetKeys(PlayerActionSet[] playerActionSets)
         {
-            return playerActionSet.Actions.ToDictionary(a => a.Name, a => a)
-                .ToDictionary(kv => kv.Key, kv => kv.Value.Bindings) // get all the bindings from all the actions
-                .Where(kv => kv.Value.GetType() == typeof(MouseBindingSource)) // get only the MouseBindings
-                .ToDictionary(kv => kv.Key, kv => kv.Value.Select(b => ((MouseBindingSource)b).Control)) // cast them and get their Mouse s
-                .ToDictionary(kv => kv.Key, kv => kv.Value.ToArray()); // return them as an array
+            return (Lookup<string, Key[]>)playerActionSets.SelectMany(p => p.Actions)
+                .ToLookup(a => a.Name, a => a.Bindings.OfType<KeyBindingSource>()
+                    .Select(b => ((KeyBindingSource)b).Control)
+                    .SelectMany(c => Enumerable.Range(0, c.IncludeCount).Select(i => c.GetInclude(i))).ToArray());
         }
-        private static Dictionary<string, InputControlType[]> GetControllerButtons(PlayerActionSet playerActionSet)
+        private static Lookup<string, Mouse[]> GetMouseButtons(PlayerActionSet[] playerActionSets)
         {
-            return playerActionSet.Actions.ToDictionary(a => a.Name, a => a)
-                .ToDictionary(kv => kv.Key, kv => kv.Value.Bindings) // get all the bindings from all the actions
-                .Where(kv => kv.Value.GetType() == typeof(DeviceBindingSource)) // get only the DeviceBindings
-                .ToDictionary(kv => kv.Key, kv => kv.Value.Select(b => ((DeviceBindingSource)b).Control)) // cast them and get their InputControlType s
-                .ToDictionary(kv => kv.Key, kv => kv.Value.ToArray()); // return them as an array
+            return (Lookup<string, Mouse[]>)playerActionSets.SelectMany(p => p.Actions)
+                .ToLookup(a => a.Name, a => a.Bindings.OfType<MouseBindingSource>()
+                    .Select(b => ((MouseBindingSource)b).Control).ToArray());
+        }
+        private static Lookup<string, InputControlType[]> GetControllerButtons(PlayerActionSet[] playerActionSets)
+        {
+            return (Lookup<string, InputControlType[]>)playerActionSets.SelectMany(p => p.Actions)
+                .ToLookup(a => a.Name, a => a.Bindings.OfType<DeviceBindingSource>()
+                    .Select(b => ((DeviceBindingSource)b).Control).ToArray());
         }
     }
 }
