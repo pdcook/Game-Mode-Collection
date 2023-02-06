@@ -362,8 +362,8 @@ namespace GameModeCollection.GMCObjects
             [MapObjectSerializer]
             public static void Serialize(GameObject instance, TraitorTesterObj target)
             {
-                target.buttonLoc = instance.transform.GetChild(0).position;
-                target.roomLoc = instance.transform.GetChild(1).position;
+                target.buttonLoc = instance.transform.GetChild(1).position;
+                target.roomLoc = instance.transform.GetChild(0).position;
                 target.lightLoc = instance.transform.GetChild(2).position;
 
                 // serialize door
@@ -381,8 +381,8 @@ namespace GameModeCollection.GMCObjects
                 GameObject.Destroy(target.transform.GetChild(2).GetComponent<SpawnPoint>());
 
                 // undo transforming caused by parenting
-                Transform child0 = target.transform.GetChild(0);
-                Transform child1 = target.transform.GetChild(1);
+                Transform child0 = target.transform.GetChild(1);
+                Transform child1 = target.transform.GetChild(0);
                 Transform child2 = target.transform.GetChild(2);
                 child0.rotation = Quaternion.identity;
                 child1.rotation = Quaternion.identity;

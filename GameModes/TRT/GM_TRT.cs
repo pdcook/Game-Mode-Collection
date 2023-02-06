@@ -56,7 +56,7 @@ namespace GameModeCollection.GameModes
         private const float HasteModeAddPerDeath = 30f; // default 30f
         private const float SyncClockEvery = 5f; // sync clock with host every 5 seconds
 
-        private const float DefaultZoom = 40f;
+        private const float DefaultZoom = 60f;
         internal const float DefaultFOV = 361f;
         internal const float DefaultVisibility = 1000f;
 

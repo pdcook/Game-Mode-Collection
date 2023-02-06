@@ -5,9 +5,11 @@
     "description": "A collection of new game modes",
     "dependencies": [
         "olavim-RoundsWithFriends-2.2.0",
-        "BossSloth-LocalZoom-1.0.0",
-        "BossSloth-BetterChat-1.1.0",
+        "BossSloth-LocalZoom-1.1.0",
+        "BossSloth-BetterChat-1.2.0",
         "olavim-MapsExtended-0.9.5",
+        "Pykess-Map_Embiggener-2.2.0",
+        "PykessAndRoot-ROUNDS_VC-0.0.0",
         "willuwontu-ItemShops-0.0.1",
         "Pykess-ModdingUtils-0.3.1",
         "Pykess-TemporaryStatsPatch-0.0.0",
@@ -17,6 +19,8 @@
     "Pykess-GunUnblockablePatch-0.0.0",
     "Pykess-DemonicPactPatch-0.0.0",
     "TeamDK-ZeroGBulletPatch-1.1.0",
+    "Root-GunProjectileSizePatch-1.1.2",
+    "Pykess-TeleportPatch-0.0.1",
         "willis81808-UnboundLib-2.11.1",
 	"willis81808-MMHook-1.0.0",
 	"BepInEx-BepInExPack_ROUNDS-5.4.1100"

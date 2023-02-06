@@ -38,13 +38,14 @@ namespace GameModeCollection
     [BepInDependency("com.root.projectile.size.patch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("pykess.rounds.plugins.teleportpatch", BepInDependency.DependencyFlags.HardDependency)]
     [BepInDependency("com.willuwontu.rounds.trtreports", BepInDependency.DependencyFlags.HardDependency)]
+    [BepInDependency("pykess.rounds.plugins.playercustomizationutils", BepInDependency.DependencyFlags.HardDependency)]
     [BepInPlugin(ModId, ModName, Version)]
     [BepInProcess("Rounds.exe")]
     public class GameModeCollection : BaseUnityPlugin
     {
         private const string ModId = "pykessandbosssloth.rounds.plugins.gamemodecollection";
         private const string ModName = "Game Mode Collection";
-        public const string Version = "1.0.2";
+        public const string Version = "1.1.0";
         private static string CompatibilityModName => ModName.Replace(" ", "");
 
         internal static ConfigEntry<float> TRTDefaultMapScale;

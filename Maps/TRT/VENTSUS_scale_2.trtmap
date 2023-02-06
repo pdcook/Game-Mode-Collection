@@ -1,12 +1,12 @@
 {
     "$id": 0,
     "$type": "0|MapsExt.CustomMap, MapsExtended",
-    "id": "a4baf5ef-2cbf-4d12-b102-d60d2a92e5f9",
+    "id": "bdb781c0-1990-44ee-bf16-69066a10b01b",
     "name": "VENTSUS_scale_2",
     "mapObjects": {
         "$id": 1,
         "$type": "1|System.Collections.Generic.List`1[[MapsExt.MapObjects.MapObject, MapsExtended]], mscorlib",
-        "$rlength": 230,
+        "$rlength": 227,
         "$rcontent": [
             {
                 "$id": 2,
@@ -485,7 +485,7 @@
                     "$type": 3,
                     -1.30000019,
                     2.9,
-                    0
+                    -3
                 },
                 "endPosition": {
                     "$type": 3,
@@ -519,7 +519,7 @@
                     "$type": 3,
                     -1.30000019,
                     2.9,
-                    0
+                    -3
                 },
                 "endPosition": {
                     "$type": 3,
@@ -672,7 +672,7 @@
                     "$type": 3,
                     -1.30000019,
                     2.9,
-                    0
+                    -3
                 },
                 "endPosition": {
                     "$type": 3,
@@ -723,7 +723,7 @@
                     "$type": 3,
                     -1.30000019,
                     2.9,
-                    0
+                    -3
                 },
                 "endPosition": {
                     "$type": 3,
@@ -1133,7 +1133,7 @@
                     "$type": 3,
                     -1.30000019,
                     2.9,
-                    0
+                    -3
                 }
             },
             {
@@ -1495,14 +1495,14 @@
                 "active": true,
                 "position": {
                     "$type": 3,
-                    70.9918,
-                    1.43863511,
+                    69.6927261,
+                    0.6886351,
                     -3
                 },
                 "scale": {
                     "$type": 3,
                     2,
-                    77.1499939,
+                    80.14999,
                     2
                 },
                 "rotation": {
@@ -1539,57 +1539,6 @@
             },
             {
                 "$id": 79,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    35.75,
-                    -17,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
-                    85.25,
-                    15.375,
-                    0
-                }
-            },
-            {
-                "$id": 80,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    35.75,
-                    -17.25,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
-                    37,
-                    -18,
-                    -3
-                }
-            },
-            {
-                "$id": 81,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    34.75,
-                    -7.5,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
-                    36.25,
-                    -6.5,
-                    -3
-                }
-            },
-            {
-                "$id": 82,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -1613,7 +1562,7 @@
                 }
             },
             {
-                "$id": 83,
+                "$id": 80,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -1637,7 +1586,7 @@
                 }
             },
             {
-                "$id": 84,
+                "$id": 81,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -1661,7 +1610,7 @@
                 }
             },
             {
-                "$id": 85,
+                "$id": 82,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -1685,7 +1634,7 @@
                 }
             },
             {
-                "$id": 86,
+                "$id": 83,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -1709,7 +1658,7 @@
                 }
             },
             {
-                "$id": 87,
+                "$id": 84,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -1733,7 +1682,7 @@
                 }
             },
             {
-                "$id": 88,
+                "$id": 85,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -1757,7 +1706,7 @@
                 }
             },
             {
-                "$id": 89,
+                "$id": 86,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -1781,7 +1730,7 @@
                 }
             },
             {
-                "$id": 90,
+                "$id": 87,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1798,7 +1747,7 @@
                 }
             },
             {
-                "$id": 91,
+                "$id": 88,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1815,14 +1764,14 @@
                 }
             },
             {
-                "$id": 92,
+                "$id": 89,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
                     "$type": 3,
                     -21.7000084,
                     11.2,
-                    0
+                    -3
                 },
                 "endPosition": {
                     "$type": 3,
@@ -1832,14 +1781,14 @@
                 }
             },
             {
-                "$id": 93,
+                "$id": 90,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
                     "$type": 3,
                     -23.5000076,
                     11.2,
-                    0
+                    -3
                 },
                 "endPosition": {
                     "$type": 3,
@@ -1849,7 +1798,7 @@
                 }
             },
             {
-                "$id": 94,
+                "$id": 91,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1866,7 +1815,7 @@
                 }
             },
             {
-                "$id": 95,
+                "$id": 92,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1883,7 +1832,7 @@
                 }
             },
             {
-                "$id": 96,
+                "$id": 93,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1900,7 +1849,7 @@
                 }
             },
             {
-                "$id": 97,
+                "$id": 94,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1917,7 +1866,7 @@
                 }
             },
             {
-                "$id": 98,
+                "$id": 95,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1934,7 +1883,7 @@
                 }
             },
             {
-                "$id": 99,
+                "$id": 96,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1951,7 +1900,7 @@
                 }
             },
             {
-                "$id": 100,
+                "$id": 97,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1968,7 +1917,7 @@
                 }
             },
             {
-                "$id": 101,
+                "$id": 98,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -1985,7 +1934,7 @@
                 }
             },
             {
-                "$id": 102,
+                "$id": 99,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2002,7 +1951,7 @@
                 }
             },
             {
-                "$id": 103,
+                "$id": 100,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2019,7 +1968,7 @@
                 }
             },
             {
-                "$id": 104,
+                "$id": 101,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2036,7 +1985,7 @@
                 }
             },
             {
-                "$id": 105,
+                "$id": 102,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2053,75 +2002,75 @@
                 }
             },
             {
+                "$id": 103,
+                "$type": 6,
+                "active": true,
+                "startPosition": {
+                    "$type": 3,
+                    -11,
+                    8.5,
+                    -3
+                },
+                "endPosition": {
+                    "$type": 3,
+                    -11,
+                    8,
+                    -3
+                }
+            },
+            {
+                "$id": 104,
+                "$type": 6,
+                "active": true,
+                "startPosition": {
+                    "$type": 3,
+                    -9.25,
+                    11.25,
+                    -3
+                },
+                "endPosition": {
+                    "$type": 3,
+                    -9.25,
+                    10,
+                    -3
+                }
+            },
+            {
+                "$id": 105,
+                "$type": 6,
+                "active": true,
+                "startPosition": {
+                    "$type": 3,
+                    -9.25,
+                    8.5,
+                    -3
+                },
+                "endPosition": {
+                    "$type": 3,
+                    -9.25,
+                    8,
+                    -3
+                }
+            },
+            {
                 "$id": 106,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
                     "$type": 3,
                     -11,
-                    8.5,
+                    11.25,
                     -3
                 },
                 "endPosition": {
                     "$type": 3,
                     -11,
-                    8,
+                    10,
                     -3
                 }
             },
             {
                 "$id": 107,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    -9.25,
-                    11.25,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
-                    -9.25,
-                    10,
-                    -3
-                }
-            },
-            {
-                "$id": 108,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    -9.25,
-                    8.5,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
-                    -9.25,
-                    8,
-                    -3
-                }
-            },
-            {
-                "$id": 109,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    -11,
-                    11.25,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
-                    -11,
-                    10,
-                    -3
-                }
-            },
-            {
-                "$id": 110,
                 "$type": 5,
                 "active": true,
                 "id": 8,
@@ -2134,7 +2083,7 @@
                 }
             },
             {
-                "$id": 111,
+                "$id": 108,
                 "$type": 5,
                 "active": true,
                 "id": 9,
@@ -2147,7 +2096,7 @@
                 }
             },
             {
-                "$id": 112,
+                "$id": 109,
                 "$type": 5,
                 "active": true,
                 "id": 10,
@@ -2160,7 +2109,7 @@
                 }
             },
             {
-                "$id": 113,
+                "$id": 110,
                 "$type": 5,
                 "active": true,
                 "id": 11,
@@ -2173,7 +2122,7 @@
                 }
             },
             {
-                "$id": 114,
+                "$id": 111,
                 "$type": 5,
                 "active": true,
                 "id": 12,
@@ -2186,7 +2135,7 @@
                 }
             },
             {
-                "$id": 115,
+                "$id": 112,
                 "$type": 5,
                 "active": true,
                 "id": 13,
@@ -2199,7 +2148,7 @@
                 }
             },
             {
-                "$id": 116,
+                "$id": 113,
                 "$type": 5,
                 "active": true,
                 "id": 14,
@@ -2212,7 +2161,7 @@
                 }
             },
             {
-                "$id": 117,
+                "$id": 114,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -2236,7 +2185,7 @@
                 }
             },
             {
-                "$id": 118,
+                "$id": 115,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2253,7 +2202,7 @@
                 }
             },
             {
-                "$id": 119,
+                "$id": 116,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2270,7 +2219,7 @@
                 }
             },
             {
-                "$id": 120,
+                "$id": 117,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2287,7 +2236,7 @@
                 }
             },
             {
-                "$id": 121,
+                "$id": 118,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2304,7 +2253,7 @@
                 }
             },
             {
-                "$id": 122,
+                "$id": 119,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2321,7 +2270,7 @@
                 }
             },
             {
-                "$id": 123,
+                "$id": 120,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2338,7 +2287,7 @@
                 }
             },
             {
-                "$id": 124,
+                "$id": 121,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2355,7 +2304,7 @@
                 }
             },
             {
-                "$id": 125,
+                "$id": 122,
                 "$type": 2,
                 "active": true,
                 "position": {
@@ -2379,7 +2328,7 @@
                 }
             },
             {
-                "$id": 126,
+                "$id": 123,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2396,13 +2345,64 @@
                 }
             },
             {
-                "$id": 127,
+                "$id": 124,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
                     "$type": 3,
                     -30,
                     -14.75,
+                    -3
+                },
+                "endPosition": {
+                    "$type": 3,
+                    -14.25,
+                    -18.25,
+                    -3
+                }
+            },
+            {
+                "$id": 125,
+                "$type": 6,
+                "active": true,
+                "startPosition": {
+                    "$type": 3,
+                    -31.5,
+                    -18.25,
+                    -3
+                },
+                "endPosition": {
+                    "$type": 3,
+                    -15.75,
+                    -14.75,
+                    -3
+                }
+            },
+            {
+                "$id": 126,
+                "$type": 6,
+                "active": true,
+                "startPosition": {
+                    "$type": 3,
+                    -30,
+                    -14.75,
+                    -3
+                },
+                "endPosition": {
+                    "$type": 3,
+                    -17.25,
+                    -11.75,
+                    -3
+                }
+            },
+            {
+                "$id": 127,
+                "$type": 6,
+                "active": true,
+                "startPosition": {
+                    "$type": 3,
+                    -33.25,
+                    -21.25,
                     -3
                 },
                 "endPosition": {
@@ -2424,64 +2424,13 @@
                 },
                 "endPosition": {
                     "$type": 3,
-                    -15.75,
-                    -14.75,
-                    -3
-                }
-            },
-            {
-                "$id": 129,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    -30,
-                    -14.75,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
-                    -17.25,
-                    -11.75,
-                    -3
-                }
-            },
-            {
-                "$id": 130,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    -33.25,
-                    -21.25,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
-                    -14.25,
-                    -18.25,
-                    -3
-                }
-            },
-            {
-                "$id": 131,
-                "$type": 6,
-                "active": true,
-                "startPosition": {
-                    "$type": 3,
-                    -31.5,
-                    -18.25,
-                    -3
-                },
-                "endPosition": {
-                    "$type": 3,
                     -11.499999,
                     -21.25,
                     -3
                 }
             },
             {
-                "$id": 132,
+                "$id": 129,
                 "$type": 6,
                 "active": true,
                 "startPosition": {
@@ -2498,8 +2447,379 @@
                 }
             },
             {
+                "$id": 130,
+                "$type": "8|GameModeCollection.GMCObjects.MapObjects+LightSwitchObj, GameModeCollection",
+                "active": true,
+                "Loc": {
+                    "$type": 3,
+                    10.3,
+                    8.7,
+                    0
+                }
+            },
+            {
+                "$id": 131,
+                "$type": "9|GameModeCollection.GMCObjects.MapObjects+TraitorDoorObj, GameModeCollection",
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    15.4500008,
+                    17.5499859,
+                    -3
+                },
+                "scale": {
+                    "$type": 3,
+                    2.10000014,
+                    3.89999819,
+                    2
+                },
+                "rotation": {
+                    "$type": 4,
+                    0,
+                    0,
+                    0,
+                    1
+                },
+                "OpenerPos": {
+                    "$type": 3,
+                    14.1000175,
+                    16.4,
+                    0
+                }
+            },
+            {
+                "$id": 132,
+                "$type": 2,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    12.0000057,
+                    17.4,
+                    -3
+                },
+                "scale": {
+                    "$type": 3,
+                    2.19999981,
+                    0.1,
+                    2
+                },
+                "rotation": {
+                    "$type": 4,
+                    0,
+                    0,
+                    0,
+                    1
+                }
+            },
+            {
                 "$id": 133,
-                "$type": "8|MapsExt.MapObjects.Ball, MapsExtended",
+                "$type": "10|GameModeCollection.GMCObjects.MapObjects+JammerObj, GameModeCollection",
+                "active": true,
+                "Loc": {
+                    "$type": 3,
+                    12.2,
+                    16.7,
+                    0
+                }
+            },
+            {
+                "$id": 134,
+                "$type": "11|GameModeCollection.GMCObjects.MapObjects+TeleporterObj, GameModeCollection",
+                "active": true,
+                "loc1": {
+                    "$type": 3,
+                    -21.9,
+                    14.1,
+                    0
+                },
+                "loc2": {
+                    "$type": 3,
+                    12.2,
+                    18.2,
+                    0
+                }
+            },
+            {
+                "$id": 135,
+                "$type": 9,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -19.5,
+                    14,
+                    -3
+                },
+                "scale": {
+                    "$type": 3,
+                    2,
+                    2,
+                    2
+                },
+                "rotation": {
+                    "$type": 4,
+                    0,
+                    0,
+                    0,
+                    1
+                },
+                "OpenerPos": {
+                    "$type": 3,
+                    -20.9000015,
+                    13.2999992,
+                    0
+                }
+            },
+            {
+                "$id": 136,
+                "$type": 2,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -21.4,
+                    12,
+                    -3
+                },
+                "scale": {
+                    "$type": 3,
+                    6.39999676,
+                    2,
+                    2
+                },
+                "rotation": {
+                    "$type": 4,
+                    0,
+                    0,
+                    0,
+                    1
+                }
+            },
+            {
+                "$id": 137,
+                "$type": "12|GameModeCollection.GMCObjects.MapObjects+CardSpawnPointObject, GameModeCollection",
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    19.2,
+                    6.70000029,
+                    0
+                }
+            },
+            {
+                "$id": 138,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -1.30000007,
+                    18,
+                    0
+                }
+            },
+            {
+                "$id": 139,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -17.5,
+                    15.4000006,
+                    0
+                }
+            },
+            {
+                "$id": 140,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    26.2,
+                    -16.6,
+                    0
+                }
+            },
+            {
+                "$id": 141,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -8.5,
+                    15.4000006,
+                    0
+                }
+            },
+            {
+                "$id": 142,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -29,
+                    18.1,
+                    0
+                }
+            },
+            {
+                "$id": 143,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -3.3,
+                    -8.8,
+                    0
+                }
+            },
+            {
+                "$id": 144,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -20.6,
+                    -16.6,
+                    0
+                }
+            },
+            {
+                "$id": 145,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -26.3000011,
+                    -16.7,
+                    0
+                }
+            },
+            {
+                "$id": 146,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    28,
+                    6.8,
+                    0
+                }
+            },
+            {
+                "$id": 147,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    22.1,
+                    10.3,
+                    0
+                }
+            },
+            {
+                "$id": 148,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    29.8000011,
+                    1.6,
+                    0
+                }
+            },
+            {
+                "$id": 149,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -5.8,
+                    17.9,
+                    0
+                }
+            },
+            {
+                "$id": 150,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    -10.1,
+                    -16.4,
+                    0
+                }
+            },
+            {
+                "$id": 151,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    3.60000014,
+                    -16.7,
+                    0
+                }
+            },
+            {
+                "$id": 152,
+                "$type": 12,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    32.3,
+                    -16.5,
+                    0
+                }
+            },
+            {
+                "$id": 153,
+                "$type": "13|GameModeCollection.GMCObjects.MapObjects+TraitorTrap_GroundDestructibleObj, GameModeCollection",
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    79.7411346,
+                    14.2843084,
+                    -3
+                },
+                "scale": {
+                    "$type": 3,
+                    2,
+                    11.8,
+                    2
+                },
+                "rotation": {
+                    "$type": 4,
+                    0,
+                    0,
+                    0.258819073,
+                    0.9659259
+                }
+            },
+            {
+                "$id": 154,
+                "$type": 13,
+                "active": true,
+                "position": {
+                    "$type": 3,
+                    87.62818,
+                    20.2235355,
+                    -3
+                },
+                "scale": {
+                    "$type": 3,
+                    2,
+                    18.0000038,
+                    2
+                },
+                "rotation": {
+                    "$type": 4,
+                    0,
+                    0,
+                    0.258819073,
+                    0.9659259
+                }
+            },
+            {
+                "$id": 155,
+                "$type": "14|MapsExt.MapObjects.Ball, MapsExtended",
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2522,8 +2842,8 @@
                 }
             },
             {
-                "$id": 134,
-                "$type": 8,
+                "$id": 156,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2546,8 +2866,8 @@
                 }
             },
             {
-                "$id": 135,
-                "$type": 8,
+                "$id": 157,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2570,8 +2890,8 @@
                 }
             },
             {
-                "$id": 136,
-                "$type": 8,
+                "$id": 158,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2594,8 +2914,8 @@
                 }
             },
             {
-                "$id": 137,
-                "$type": 8,
+                "$id": 159,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2618,13 +2938,13 @@
                 }
             },
             {
-                "$id": 138,
-                "$type": 8,
+                "$id": 160,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
-                    0,
-                    0.5,
+                    -1.30000007,
+                    2.9,
                     -3
                 },
                 "scale": {
@@ -2642,8 +2962,8 @@
                 }
             },
             {
-                "$id": 139,
-                "$type": 8,
+                "$id": 161,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2666,8 +2986,8 @@
                 }
             },
             {
-                "$id": 140,
-                "$type": "9|MapsExt.MapObjects.Box, MapsExtended",
+                "$id": 162,
+                "$type": "15|MapsExt.MapObjects.Box, MapsExtended",
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2690,8 +3010,8 @@
                 }
             },
             {
-                "$id": 141,
-                "$type": "10|MapsExt.MapObjects.BoxDestructible, MapsExtended",
+                "$id": 163,
+                "$type": "16|MapsExt.MapObjects.BoxDestructible, MapsExtended",
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2714,8 +3034,8 @@
                 }
             },
             {
-                "$id": 142,
-                "$type": 10,
+                "$id": 164,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2738,8 +3058,8 @@
                 }
             },
             {
-                "$id": 143,
-                "$type": 10,
+                "$id": 165,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2762,8 +3082,8 @@
                 }
             },
             {
-                "$id": 144,
-                "$type": 10,
+                "$id": 166,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2786,8 +3106,8 @@
                 }
             },
             {
-                "$id": 145,
-                "$type": 8,
+                "$id": 167,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2810,8 +3130,8 @@
                 }
             },
             {
-                "$id": 146,
-                "$type": 8,
+                "$id": 168,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2834,8 +3154,8 @@
                 }
             },
             {
-                "$id": 147,
-                "$type": 8,
+                "$id": 169,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2858,8 +3178,8 @@
                 }
             },
             {
-                "$id": 148,
-                "$type": 8,
+                "$id": 170,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2882,8 +3202,8 @@
                 }
             },
             {
-                "$id": 149,
-                "$type": 8,
+                "$id": 171,
+                "$type": 14,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2906,8 +3226,8 @@
                 }
             },
             {
-                "$id": 150,
-                "$type": "11|MapsExt.MapObjects.SawDynamic, MapsExtended",
+                "$id": 172,
+                "$type": "17|MapsExt.MapObjects.SawDynamic, MapsExtended",
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2930,8 +3250,8 @@
                 }
             },
             {
-                "$id": 151,
-                "$type": 11,
+                "$id": 173,
+                "$type": 17,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -2954,37 +3274,13 @@
                 }
             },
             {
-                "$id": 152,
-                "$type": 10,
+                "$id": 174,
+                "$type": 17,
                 "active": true,
                 "position": {
                     "$type": 3,
-                    35.5,
-                    -12.375,
-                    -3
-                },
-                "scale": {
-                    "$type": 3,
-                    2,
-                    10.75,
-                    2
-                },
-                "rotation": {
-                    "$type": 4,
-                    0,
-                    0,
-                    0,
-                    1
-                }
-            },
-            {
-                "$id": 153,
-                "$type": 11,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    85.25,
-                    15.5,
+                    84.5499954,
+                    13.6,
                     0
                 },
                 "scale": {
@@ -3002,8 +3298,8 @@
                 }
             },
             {
-                "$id": 154,
-                "$type": 9,
+                "$id": 175,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3026,8 +3322,8 @@
                 }
             },
             {
-                "$id": 155,
-                "$type": 9,
+                "$id": 176,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3050,8 +3346,8 @@
                 }
             },
             {
-                "$id": 156,
-                "$type": 9,
+                "$id": 177,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3074,8 +3370,8 @@
                 }
             },
             {
-                "$id": 157,
-                "$type": 9,
+                "$id": 178,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3098,8 +3394,8 @@
                 }
             },
             {
-                "$id": 158,
-                "$type": 9,
+                "$id": 179,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3122,8 +3418,8 @@
                 }
             },
             {
-                "$id": 159,
-                "$type": 9,
+                "$id": 180,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3146,8 +3442,8 @@
                 }
             },
             {
-                "$id": 160,
-                "$type": 9,
+                "$id": 181,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3170,8 +3466,8 @@
                 }
             },
             {
-                "$id": 161,
-                "$type": 9,
+                "$id": 182,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3194,8 +3490,8 @@
                 }
             },
             {
-                "$id": 162,
-                "$type": 9,
+                "$id": 183,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3218,8 +3514,8 @@
                 }
             },
             {
-                "$id": 163,
-                "$type": 9,
+                "$id": 184,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3242,8 +3538,8 @@
                 }
             },
             {
-                "$id": 164,
-                "$type": 9,
+                "$id": 185,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3266,8 +3562,8 @@
                 }
             },
             {
-                "$id": 165,
-                "$type": 9,
+                "$id": 186,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3290,8 +3586,8 @@
                 }
             },
             {
-                "$id": 166,
-                "$type": 9,
+                "$id": 187,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3314,8 +3610,8 @@
                 }
             },
             {
-                "$id": 167,
-                "$type": 9,
+                "$id": 188,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3338,8 +3634,8 @@
                 }
             },
             {
-                "$id": 168,
-                "$type": 9,
+                "$id": 189,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3362,8 +3658,8 @@
                 }
             },
             {
-                "$id": 169,
-                "$type": 9,
+                "$id": 190,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3386,8 +3682,8 @@
                 }
             },
             {
-                "$id": 170,
-                "$type": 9,
+                "$id": 191,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3410,8 +3706,8 @@
                 }
             },
             {
-                "$id": 171,
-                "$type": 9,
+                "$id": 192,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3434,8 +3730,8 @@
                 }
             },
             {
-                "$id": 172,
-                "$type": 9,
+                "$id": 193,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3458,8 +3754,8 @@
                 }
             },
             {
-                "$id": 173,
-                "$type": 9,
+                "$id": 194,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3482,8 +3778,8 @@
                 }
             },
             {
-                "$id": 174,
-                "$type": 9,
+                "$id": 195,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3506,8 +3802,8 @@
                 }
             },
             {
-                "$id": 175,
-                "$type": 9,
+                "$id": 196,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3530,8 +3826,8 @@
                 }
             },
             {
-                "$id": 176,
-                "$type": 9,
+                "$id": 197,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3554,8 +3850,8 @@
                 }
             },
             {
-                "$id": 177,
-                "$type": 9,
+                "$id": 198,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3578,8 +3874,8 @@
                 }
             },
             {
-                "$id": 178,
-                "$type": 9,
+                "$id": 199,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3602,8 +3898,8 @@
                 }
             },
             {
-                "$id": 179,
-                "$type": 9,
+                "$id": 200,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3626,8 +3922,8 @@
                 }
             },
             {
-                "$id": 180,
-                "$type": 9,
+                "$id": 201,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3650,8 +3946,8 @@
                 }
             },
             {
-                "$id": 181,
-                "$type": 9,
+                "$id": 202,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3674,8 +3970,8 @@
                 }
             },
             {
-                "$id": 182,
-                "$type": 9,
+                "$id": 203,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3698,8 +3994,8 @@
                 }
             },
             {
-                "$id": 183,
-                "$type": 9,
+                "$id": 204,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3722,8 +4018,8 @@
                 }
             },
             {
-                "$id": 184,
-                "$type": 9,
+                "$id": 205,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3746,8 +4042,8 @@
                 }
             },
             {
-                "$id": 185,
-                "$type": 9,
+                "$id": 206,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3770,8 +4066,8 @@
                 }
             },
             {
-                "$id": 186,
-                "$type": 9,
+                "$id": 207,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3794,8 +4090,8 @@
                 }
             },
             {
-                "$id": 187,
-                "$type": 9,
+                "$id": 208,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3818,8 +4114,8 @@
                 }
             },
             {
-                "$id": 188,
-                "$type": "12|MapsExt.MapObjects.BoxBackground, MapsExtended",
+                "$id": 209,
+                "$type": "18|MapsExt.MapObjects.BoxBackground, MapsExtended",
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3842,8 +4138,8 @@
                 }
             },
             {
-                "$id": 189,
-                "$type": 12,
+                "$id": 210,
+                "$type": 18,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3866,8 +4162,8 @@
                 }
             },
             {
-                "$id": 190,
-                "$type": 12,
+                "$id": 211,
+                "$type": 18,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3890,8 +4186,8 @@
                 }
             },
             {
-                "$id": 191,
-                "$type": 12,
+                "$id": 212,
+                "$type": 18,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3914,8 +4210,8 @@
                 }
             },
             {
-                "$id": 192,
-                "$type": 12,
+                "$id": 213,
+                "$type": 18,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3938,8 +4234,8 @@
                 }
             },
             {
-                "$id": 193,
-                "$type": 12,
+                "$id": 214,
+                "$type": 18,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3962,8 +4258,8 @@
                 }
             },
             {
-                "$id": 194,
-                "$type": 9,
+                "$id": 215,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -3986,8 +4282,8 @@
                 }
             },
             {
-                "$id": 195,
-                "$type": 9,
+                "$id": 216,
+                "$type": 15,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4010,8 +4306,8 @@
                 }
             },
             {
-                "$id": 196,
-                "$type": 10,
+                "$id": 217,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4034,8 +4330,8 @@
                 }
             },
             {
-                "$id": 197,
-                "$type": 10,
+                "$id": 218,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4058,8 +4354,8 @@
                 }
             },
             {
-                "$id": 198,
-                "$type": 10,
+                "$id": 219,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4082,8 +4378,8 @@
                 }
             },
             {
-                "$id": 199,
-                "$type": 10,
+                "$id": 220,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4106,8 +4402,8 @@
                 }
             },
             {
-                "$id": 200,
-                "$type": 10,
+                "$id": 221,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4130,8 +4426,8 @@
                 }
             },
             {
-                "$id": 201,
-                "$type": 10,
+                "$id": 222,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4154,8 +4450,8 @@
                 }
             },
             {
-                "$id": 202,
-                "$type": 10,
+                "$id": 223,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4178,8 +4474,8 @@
                 }
             },
             {
-                "$id": 203,
-                "$type": 10,
+                "$id": 224,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4202,8 +4498,8 @@
                 }
             },
             {
-                "$id": 204,
-                "$type": 10,
+                "$id": 225,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4226,8 +4522,8 @@
                 }
             },
             {
-                "$id": 205,
-                "$type": 10,
+                "$id": 226,
+                "$type": 16,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4237,8 +4533,8 @@
                 },
                 "scale": {
                     "$type": 3,
-                    2.00000572,
-                    2.25000572,
+                    2.00000954,
+                    2.25000954,
                     2
                 },
                 "rotation": {
@@ -4250,37 +4546,13 @@
                 }
             },
             {
-                "$id": 206,
-                "$type": "13|GameModeCollection.GMCObjects.MapObjects+TraitorTrap_GroundDestructibleObj, GameModeCollection",
+                "$id": 227,
+                "$type": 17,
                 "active": true,
                 "position": {
                     "$type": 3,
-                    88.69959,
-                    19.1677952,
-                    0
-                },
-                "scale": {
-                    "$type": 3,
-                    2,
-                    12.9000025,
-                    2
-                },
-                "rotation": {
-                    "$type": 4,
-                    0,
-                    0,
-                    0.258819073,
-                    0.9659259
-                }
-            },
-            {
-                "$id": 207,
-                "$type": 11,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    93.7000046,
-                    19.7,
+                    93.3,
+                    19.1,
                     0
                 },
                 "scale": {
@@ -4298,8 +4570,8 @@
                 }
             },
             {
-                "$id": 208,
-                "$type": 11,
+                "$id": 228,
+                "$type": 17,
                 "active": true,
                 "position": {
                     "$type": 3,
@@ -4319,329 +4591,6 @@
                     0,
                     0,
                     1
-                }
-            },
-            {
-                "$id": 209,
-                "$type": "14|GameModeCollection.GMCObjects.MapObjects+LightSwitchObj, GameModeCollection",
-                "active": true,
-                "Loc": {
-                    "$type": 3,
-                    10.3,
-                    8.7,
-                    0
-                }
-            },
-            {
-                "$id": 210,
-                "$type": "15|GameModeCollection.GMCObjects.MapObjects+TraitorDoorObj, GameModeCollection",
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    15.4500008,
-                    17.5499859,
-                    0
-                },
-                "scale": {
-                    "$type": 3,
-                    2.10000014,
-                    3.89999819,
-                    2
-                },
-                "rotation": {
-                    "$type": 4,
-                    0,
-                    0,
-                    0,
-                    1
-                },
-                "OpenerPos": {
-                    "$type": 3,
-                    14.1,
-                    16.4,
-                    0
-                }
-            },
-            {
-                "$id": 211,
-                "$type": 2,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    12.0000057,
-                    17.4,
-                    0
-                },
-                "scale": {
-                    "$type": 3,
-                    2.19999981,
-                    0.1,
-                    2
-                },
-                "rotation": {
-                    "$type": 4,
-                    0,
-                    0,
-                    0,
-                    1
-                }
-            },
-            {
-                "$id": 212,
-                "$type": "16|GameModeCollection.GMCObjects.MapObjects+JammerObj, GameModeCollection",
-                "active": true,
-                "Loc": {
-                    "$type": 3,
-                    12.2,
-                    16.7,
-                    0
-                }
-            },
-            {
-                "$id": 213,
-                "$type": "17|GameModeCollection.GMCObjects.MapObjects+TeleporterObj, GameModeCollection",
-                "active": true,
-                "loc1": {
-                    "$type": 3,
-                    -21.9,
-                    14.1,
-                    0
-                },
-                "loc2": {
-                    "$type": 3,
-                    12.2,
-                    18.2,
-                    0
-                }
-            },
-            {
-                "$id": 214,
-                "$type": 15,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -19.5,
-                    14,
-                    0
-                },
-                "scale": {
-                    "$type": 3,
-                    2,
-                    2,
-                    2
-                },
-                "rotation": {
-                    "$type": 4,
-                    0,
-                    0,
-                    0,
-                    1
-                },
-                "OpenerPos": {
-                    "$type": 3,
-                    -20.9,
-                    13.3,
-                    0
-                }
-            },
-            {
-                "$id": 215,
-                "$type": 2,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -21.4,
-                    12,
-                    0
-                },
-                "scale": {
-                    "$type": 3,
-                    6.39999676,
-                    2,
-                    2
-                },
-                "rotation": {
-                    "$type": 4,
-                    0,
-                    0,
-                    0,
-                    1
-                }
-            },
-            {
-                "$id": 216,
-                "$type": "18|GameModeCollection.GMCObjects.MapObjects+CardSpawnPointObject, GameModeCollection",
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    19.2,
-                    6.70000029,
-                    0
-                }
-            },
-            {
-                "$id": 217,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -1.30000007,
-                    18,
-                    0
-                }
-            },
-            {
-                "$id": 218,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -17.5,
-                    15.4000006,
-                    0
-                }
-            },
-            {
-                "$id": 219,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    26.2,
-                    -16.6,
-                    0
-                }
-            },
-            {
-                "$id": 220,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -8.5,
-                    15.4000006,
-                    0
-                }
-            },
-            {
-                "$id": 221,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -29,
-                    18.1,
-                    0
-                }
-            },
-            {
-                "$id": 222,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -3.3,
-                    -8.8,
-                    0
-                }
-            },
-            {
-                "$id": 223,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -20.6,
-                    -16.6,
-                    0
-                }
-            },
-            {
-                "$id": 224,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -26.3000011,
-                    -16.7,
-                    0
-                }
-            },
-            {
-                "$id": 225,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    28,
-                    6.8,
-                    0
-                }
-            },
-            {
-                "$id": 226,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    22.1,
-                    10.3,
-                    0
-                }
-            },
-            {
-                "$id": 227,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    29.8000011,
-                    1.6,
-                    0
-                }
-            },
-            {
-                "$id": 228,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -5.8,
-                    17.9,
-                    0
-                }
-            },
-            {
-                "$id": 229,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    -10.1,
-                    -16.4,
-                    0
-                }
-            },
-            {
-                "$id": 230,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    3.60000014,
-                    -16.7,
-                    0
-                }
-            },
-            {
-                "$id": 231,
-                "$type": 18,
-                "active": true,
-                "position": {
-                    "$type": 3,
-                    32.3,
-                    -16.5,
-                    0
                 }
             }
         ]
