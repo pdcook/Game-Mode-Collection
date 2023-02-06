@@ -227,7 +227,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
 
             this.ClearModifiers(false);
 
-            GameModeCollection.instance.ExecuteAfterFrames(2, () => this.characterStatModifiers.WasUpdated());
+            GameModeCollection.instance.ExecuteAfterFrames(2, () => this.stats.WasUpdated());
         }
 
         public void EnableGoldenDeagle()

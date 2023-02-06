@@ -257,10 +257,12 @@ namespace GameModeCollection.GameModes.TRT.Cards
             this.gunStatModifier.projectileSpeed_add = 100f;
             this.gunStatModifier.reflects_add = 0;
             this.gunStatModifier.reflects_mult = 0;
+            /*
             this.gunStatModifier.randomBounces_add = 0;
             this.gunStatModifier.randomBounces_mult = 0;
             this.gunStatModifier.smartBounce_add = 0;
             this.gunStatModifier.smartBounce_mult = 0;
+            */
 
             this.characterStatModifiersModifier.movementSpeed_mult = 0.25f;
 
@@ -324,7 +326,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if (ControllerManager.CurrentCameraControllerID != MyCameraController.ControllerID) { return; }
             ((MyCameraController)ControllerManager.CurrentCameraController).ResetZoomLevel(this.player);
 
-            GameModeCollection.instance.ExecuteAfterFrames(2, () => this.characterStatModifiers.WasUpdated());
+            GameModeCollection.instance.ExecuteAfterFrames(2, () => this.stats.WasUpdated());
         }
 
         public void EnableAWP()

@@ -45,7 +45,7 @@ namespace GameModeCollection
     {
         private const string ModId = "pykessandbosssloth.rounds.plugins.gamemodecollection";
         private const string ModName = "Game Mode Collection";
-        public const string Version = "1.1.0";
+        public const string Version = "1.1.1";
         private static string CompatibilityModName => ModName.Replace(" ", "");
 
         internal static ConfigEntry<float> TRTDefaultMapScale;
