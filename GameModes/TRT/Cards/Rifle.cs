@@ -150,7 +150,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
         void Update()
         {
             this.Timer -= Time.deltaTime;
-            bool mismatch = this.Player?.GetComponent<RifleGun>() != null && this.IsOut != (bool)this.Player.GetComponent<RifleGun>().GetFieldValue("modifiersActive");
+            bool mismatch = this.Player?.GetComponent<RifleGun>() != null && this.IsOut != (bool)this.Player.GetComponent<RifleGun>().modifiersActive;
             if ((this.Player?.data?.view?.IsMine ?? false) && this.Timer <= 0f && !this.Player.data.dead && (this.Player.data.playerActions.ItemWasPressed(2) || mismatch))
             {
                 this.Timer = SwitchDelay;
@@ -261,7 +261,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if (this.data.currentCards.Count() != this.NumCards)
             {
                 this.NumCards = this.data.currentCards.Count();
-                if ((bool)this.GetFieldValue("modifiersActive"))
+                if (this.modifiersActive)
                 {
                     this.DisableRifle();
                     this.EnableRifle();

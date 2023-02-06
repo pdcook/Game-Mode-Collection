@@ -160,7 +160,7 @@ namespace GameModeCollection.GameModes.TRT.Cards
             if (this.data.currentCards.Count() != this.NumCards)
             {
                 this.NumCards = this.data.currentCards.Count();
-                if ((bool)this.GetFieldValue("modifiersActive"))
+                if (this.modifiersActive)
                 {
                     this.DisableJesterEmulator();
                     this.EnableJesterEmulator();

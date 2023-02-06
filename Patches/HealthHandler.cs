@@ -103,7 +103,7 @@ namespace GameModeCollection.Patches
         {
             JesterEmulatorGun jesterEmulatorGun = data.GetComponent<JesterEmulatorGun>();
             if (jesterEmulatorGun is null) { return false; }
-            return (bool)jesterEmulatorGun.GetFieldValue("modifiersActive");
+            return jesterEmulatorGun.modifiersActive;
         }
         // patch for TRT roles that cannot deal damage or take environmental damage
         // and the JesterEmulator card
